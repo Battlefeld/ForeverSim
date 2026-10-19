@@ -1,7 +1,7 @@
 name: ForeverCore Windows test package
 on:
   push:
-    branches: [ForeverCore]
+    branches: [main]
     paths: ['ForeverCore/**', 'ForeverCoreBridge/**', 'ForeverSimBridge/**', '.github/workflows/forevercore-package.yml']
   workflow_dispatch:
 permissions:

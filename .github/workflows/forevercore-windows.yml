@@ -1,7 +1,7 @@
 name: ForeverCore Windows bridge regression
 on:
   push:
-    branches: [ForeverCore]
+    branches: [main]
     paths: ['ForeverCore/**', '.github/workflows/forevercore-windows.yml']
   workflow_dispatch:
 permissions:

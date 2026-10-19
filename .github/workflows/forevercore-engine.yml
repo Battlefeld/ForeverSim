@@ -1,7 +1,7 @@
 # Follows MythicSim every day: newest upstream branch + ForeverCore patches + level 10-60 overlay.
 #
-# Scheduled runs only start from the repository's default branch, so this file has to be on main.
-# It always works on the ForeverCore branch (ENGINE_BRANCH) and commits the new lock there.
+# Scheduled runs start from the default branch (main); the engine lock is updated there as well.
+# It works on ENGINE_BRANCH (main) and commits the new lock there.
 # A failed run keeps the last good engine; the report and an issue say what stopped it.
 name: ForeverCore engine update
 
@@ -27,7 +27,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  ENGINE_BRANCH: ForeverCore
+  ENGINE_BRANCH: main
 
 jobs:
   update:
@@ -114,7 +114,7 @@ jobs:
           target=$(git rev-parse HEAD)
           gh release create "$tag" --target "$target" --draft --prerelease \
             --title "ForeverCore Engine $identity" \
-            --notes "MythicSim $identity mit Level-10-60-Overlay. Entwicklungsstand; Bericht im ForeverCore-Branch." \
+            --notes "MythicSim $identity mit Level-10-60-Overlay. Entwicklungsstand; Bericht im main-Branch." \
             "$RUNNER_TEMP"/dist/*
           gh release edit "$tag" --draft=false --prerelease
 

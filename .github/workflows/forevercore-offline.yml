@@ -1,7 +1,7 @@
 name: ForeverCore integration
 on:
   push:
-    branches: [ForeverCore]
+    branches: [main]
     paths:
       - 'ForeverCore/**'
       - 'ForeverCoreBridge/**'
