@@ -134,6 +134,7 @@ func TestNativeRouteProgression(t *testing.T) {
 	if root == "" || native == "" {
 		t.Skip("set FC_TEST_RUNTIME and FC_TEST_LUA")
 	}
+	skipWithoutRouteAddon(t, root)
 	s := RouteService{Root: root, Lua: native}
 	state := map[string]any{"race": "Human", "class": "WARRIOR", "faction": "Alliance", "level": float64(1), "map": float64(1429), "x": float64(48), "y": float64(42), "xp": float64(0), "xpMax": float64(400), "money": float64(0), "mode": "speed"}
 	a, e := s.Build(context.Background(), state)

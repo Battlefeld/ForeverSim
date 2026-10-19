@@ -279,6 +279,7 @@ func TestNativeHighLevelRoutes(t *testing.T) {
 	if root == "" || native == "" {
 		t.Skip("native route runtime not set")
 	}
+	skipWithoutRouteAddon(t, root)
 	service := RouteService{Root: root, Lua: native}
 	for _, sample := range []struct {
 		race, class, faction, mode string
