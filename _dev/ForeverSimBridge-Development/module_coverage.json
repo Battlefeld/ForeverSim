@@ -1,0 +1,72 @@
+{
+  "priest": {
+    "abilityFamilies": 12,
+    "ranks": 68,
+    "talents": 53,
+    "guardedTalents": {},
+    "encounterExcludedTalents": [
+      "martyrdom"
+    ]
+  },
+  "paladin": {
+    "abilityFamilies": 15,
+    "ranks": 49,
+    "talents": 52,
+    "guardedTalents": {},
+    "encounterExcludedTalents": [
+      "illumination",
+      "ironCreed",
+      "reckoning",
+      "shieldSpecialization",
+      "holyShield",
+      "voiceOfTruth"
+    ]
+  },
+  "hunter": {
+    "abilityFamilies": 12,
+    "ranks": 40,
+    "talents": 52,
+    "guardedTalents": {},
+    "encounterExcludedTalents": [
+      "trueshotAura",
+      "improvedAspectOfTheMonkey"
+    ]
+  },
+  "rogue": {
+    "abilityFamilies": 22,
+    "ranks": 68,
+    "talents": 53,
+    "guardedTalents": {},
+    "encounterExcludedTalents": [
+      "riposte"
+    ]
+  },
+  "warrior": {
+    "abilityFamilies": 14,
+    "ranks": 53,
+    "talents": 53,
+    "guardedTalents": {},
+    "encounterExcludedTalents": [
+      "improvedTacticalMastery",
+      "vanguard",
+      "improvedShieldBash",
+      "shieldSpecialization",
+      "masterOfDefense",
+      "sweepingStrikes",
+      "concussionBlow"
+    ]
+  },
+  "druid": {
+    "abilityFamilies": 15,
+    "ranks": 74,
+    "talents": 52,
+    "guardedTalents": {},
+    "encounterExcludedTalents": [
+      "naturalReaction",
+      "moonkinForm",
+      "leaderOfThePack",
+      "feralCharge",
+      "wildGrowth"
+    ]
+  }
+}

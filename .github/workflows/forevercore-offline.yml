@@ -1,0 +1,58 @@
+name: ForeverCore integration
+on:
+  push:
+    branches: [ForeverCore]
+    paths:
+      - 'ForeverCore/**'
+      - 'ForeverCoreBridge/**'
+      - 'ForeverSimBridge/**'
+      - '.github/workflows/forevercore-offline.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ForeverCore/go.mod
+          cache-dependency-path: ForeverCore/go.sum
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Lua
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lua5.1
+      - name: Core checks
+        run: |
+          python -m unittest discover -s ForeverCore/tests -p 'test_*.py' -v
+          cd ForeverCore
+          go test -race ./...
+          go vet ./...
+          GOOS=windows GOARCH=amd64 go build -o "$RUNNER_TEMP/ForeverCore.exe" .
+      - name: Addon boundaries and integration
+        run: |
+          lua5.1 ForeverCore/tests/bridge_test.lua .
+          lua5.1 ForeverCore/tests/offline_contract_test.lua .
+          lua5.1 ForeverCore/tests/integration_test.lua .
+          lua5.1 ForeverCore/tests/hunter_capture_test.lua .
+          lua5.1 ForeverCore/tests/request_storm_test.lua .
+          lua5.1 ForeverCore/tests/item_cache_test.lua .
+          lua5.1 ForeverCore/tests/dungeon_catalog_test.lua .
+          lua5.1 ForeverCore/tests/sim_cache_key_test.lua .
+          lua5.1 ForeverCore/tests/pixel_style_test.lua .
+          lua5.1 ForeverCore/tests/pixel_tune_test.lua .
+          lua5.1 ForeverCore/tests/item_batch_test.lua .
+          lua5.1 ForeverCore/tests/auction_export_test.lua .
+          lua5.1 ForeverCore/tests/copy_log_test.lua .
+          lua5.1 ForeverCore/tests/state_ref_test.lua .
+          lua5.1 ForeverCore/tests/suffix_stats_test.lua .
+          lua5.1 ForeverCore/tests/class_filter_test.lua .
+          lua5.1 ForeverCore/tests/requirements_test.lua .
+          lua5.1 ForeverCore/tests/ui_test.lua .
+          lua5.1 ForeverCore/tests/enchant_test.lua .
+          lua5.1 ForeverCore/tests/window_routes_test.lua .
+          lua5.1 ForeverCore/tests/scanner_owner_test.lua .
+          lua5.1 ForeverCore/tests/dungeon_report_test.lua .

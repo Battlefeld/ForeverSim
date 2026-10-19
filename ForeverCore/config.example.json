@@ -1,0 +1,9 @@
+{
+  "addons": "C:\\World of Warcraft\\_classic_beta_\\Interface\\AddOns",
+  "engine": "MythicSim.exe",
+  "engineRevision": "bcdda5184aa68466f407e3727f99abf7d5454a27+3327ee19c634dbc2",
+  "runtime": "Runtime",
+  "data": "Data",
+  "lua": "Lua.exe",
+  "autoSync": true
+}

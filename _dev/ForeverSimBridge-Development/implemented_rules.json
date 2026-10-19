@@ -1,0 +1,532 @@
+[
+  {
+    "class": "priest",
+    "talent": "DevouringContagion",
+    "scope": "combat"
+  },
+  {
+    "class": "priest",
+    "talent": "ImprovedMindFlay",
+    "scope": "combat"
+  },
+  {
+    "class": "priest",
+    "talent": "EarlyDemise",
+    "scope": "combat"
+  },
+  {
+    "class": "priest",
+    "talent": "PowerInfusion",
+    "scope": "combat"
+  },
+  {
+    "class": "priest",
+    "talent": "InnerFocus",
+    "scope": "combat"
+  },
+  {
+    "class": "priest",
+    "talent": "Martyrdom",
+    "scope": "Reference TODO; no effect on stationary damage-only fights. Healing and pushback are not represented."
+  },
+  {
+    "class": "priest",
+    "talent": "RenewedHope",
+    "scope": "Reference TODO; no effect on stationary damage-only fights. Healing and pushback are not represented."
+  },
+  {
+    "class": "priest",
+    "talent": "LitanyOfLight",
+    "scope": "Reference TODO; no effect on stationary damage-only fights. Healing and pushback are not represented."
+  },
+  {
+    "class": "priest",
+    "talent": "HolyNova",
+    "scope": "combat"
+  },
+  {
+    "class": "priest",
+    "talent": "SearingLight",
+    "scope": "combat"
+  },
+  {
+    "class": "priest",
+    "talent": "SearingLight",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "TwoHandedWeaponSpecialization",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "TwoHandedWeaponSpecialization",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "OneHandedWeaponSpecialization",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "Bastion",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "ImprovedSlam",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "ImprovedSlam",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "RagingBlows",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "DualWieldSpecialization",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "CarefulAim",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "FocusedFire",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "LoneWolf",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "RangedWeaponSpecialization",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "ImprovedAspectOfTheMonkey",
+    "scope": "Dodge has no effect without incoming attacks."
+  },
+  {
+    "class": "hunter",
+    "talent": "RapidFire",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "RapidKilling",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "BestialWrath",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "SniperShot",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "StriderKick",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "RapidRecuperation",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "Resourcefulness",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "RelentlessStrikes",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "SerratedBlades",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Murder",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "ColdBlood",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Hemorrhage",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "PuncturingWounds",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "PuncturingWounds",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Mutilate",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "ImprovedPoisons",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Venom",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "ThousandCuts",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Quietus",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "HeartOfTheWild",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "ImprovedStarfire",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "RendAndTear",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "BloodFrenzy",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "Berserk",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "FeralCharge",
+    "scope": "Movement/healing are outside stationary single-target DPS scope."
+  },
+  {
+    "class": "druid",
+    "talent": "WildGrowth",
+    "scope": "Movement/healing are outside stationary single-target DPS scope."
+  },
+  {
+    "class": "paladin",
+    "talent": "VoiceOfTruth",
+    "scope": "Silence/interrupt immunity has no effect without those encounter events."
+  },
+  {
+    "class": "paladin",
+    "talent": "ConsecratedGround",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "SanctifiedJudgement",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "SwiftJudgement",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "SealOfCommand",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "LightsVigil",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "PrimalBite",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "Eclipse",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "NaturesGrace",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "Vengeance",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "Enrage",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "SpearingStrike",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "BerserkerRage",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "ImprovedBerserkerRage",
+    "scope": "combat"
+  },
+  {
+    "class": "druid",
+    "talent": "ShiftingPower",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "Illumination",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "paladin",
+    "talent": "IronCreed",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "paladin",
+    "talent": "Reckoning",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "paladin",
+    "talent": "ShieldSpecialization",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "paladin",
+    "talent": "HolyShield",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "warrior",
+    "talent": "ImprovedTacticalMastery",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "warrior",
+    "talent": "Vanguard",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "warrior",
+    "talent": "ImprovedShieldBash",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "warrior",
+    "talent": "ShieldSpecialization",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "warrior",
+    "talent": "MasterOfDefense",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "warrior",
+    "talent": "SweepingStrikes",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "warrior",
+    "talent": "ConcussionBlow",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "druid",
+    "talent": "NaturalReaction",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "druid",
+    "talent": "MoonkinForm",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "druid",
+    "talent": "LeaderOfThePack",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "hunter",
+    "talent": "TrueshotAura",
+    "scope": "Captured static buff or no effect in fixed-form, single-target damage-only encounters. Incoming avoidance/healing/form changes are excluded."
+  },
+  {
+    "class": "rogue",
+    "talent": "FlawlessExecution",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "GhostlyStrike",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Riposte",
+    "scope": "Requires a parried incoming attack; has no effect without incoming attacks."
+  },
+  {
+    "class": "rogue",
+    "talent": "Preparation",
+    "scope": "combat"
+  },
+  {
+    "class": "enhancement",
+    "talent": "ShamanisticFocus",
+    "scope": "combat"
+  },
+  {
+    "class": "enhancement",
+    "talent": "ElementalDevastation",
+    "scope": "combat"
+  },
+  {
+    "class": "enhancement",
+    "talent": "ImprovedStormstrike",
+    "scope": "combat"
+  },
+  {
+    "class": "enhancement",
+    "talent": "ElementalWeapons",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "Weaponmaster",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "HackAndSlash",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "ImprovedOverpower",
+    "scope": "combat"
+  },
+  {
+    "class": "warrior",
+    "talent": "Bloodthrill",
+    "scope": "combat"
+  },
+  {
+    "class": "paladin",
+    "talent": "Vindication",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "Intimidation",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "Frenzy",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "ExposePrey",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "LaceratingStrikes",
+    "scope": "combat"
+  },
+  {
+    "class": "hunter",
+    "talent": "SummonHawk",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Cutthroat",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Initiative",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "ImprovedAmbush",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "DirtyDeeds",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Premeditation",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "Vanish",
+    "scope": "combat"
+  },
+  {
+    "class": "rogue",
+    "talent": "ImprovedExposeArmor",
+    "scope": "combat"
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "repository": "https://github.com/sage3648/mythicsim-forever-engine-go",
+  "commit": "bcdda5184aa68466f407e3727f99abf7d5454a27",
+  "buildTags": [
+    "with_db"
+  ],
+  "cliArguments": [
+    "sim",
+    "--strict",
+    "--infile",
+    "input.json",
+    "--outfile",
+    "output.json"
+  ],
+  "patches": [
+    {
+      "file": "engine-patches/139-fingers-of-frost.patch",
+      "sha256": "ddd406d884420c5c986fd92a2fcf66e73bd3fdc4d44865b739fd54026b410bf5",
+      "upstreamCommit": "ae0ed23d8cd49aa92f19ce2dab7346fff9ee06f8",
+      "reason": "Upstream combat fix on parallel MythicSim branch; remove once included in the base revision."
+    },
+    {
+      "file": "engine-patches/140-stormstrike.patch",
+      "sha256": "91bc75e5c469fbcd1ae813ed806034720b14b4afa6e902c9acace522069f2bec",
+      "upstreamCommit": "dff9d0691810c3319bdc9d6d794a0fc150dba46a",
+      "reason": "Upstream combat fix on parallel MythicSim branch; remove once included in the base revision.",
+      "adaptation": "Test context uses the 70425 remapped DefaultTalents; assertions and source change unchanged."
+    },
+    {
+      "file": "engine-patches/141-windfury-flametongue.patch",
+      "sha256": "b25c062fd9ca54ba5b83f3ca68990d4cdc7dbe7e4a6290513e1279f1ad228c50",
+      "upstreamCommit": "ec0b687da8ba3466b1f1138c0f5e4dccd51000f9",
+      "reason": "Upstream combat fix on parallel MythicSim branch; remove once included in the base revision."
+    }
+  ],
+  "characterLevel": 60,
+  "reference": "https://github.com/sage3648/mythicsim-forever-engine-go/tree/mythicsim/client70425",
+  "branch": "mythicsim/client70425",
+  "clientBuild": "1.60.1.70425",
+  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+7ebb1baa7f231d8009d7d1f0",
+  "overlay": "79a27325d2c024d9",
+  "levelDataSHA256": "2a029563bc2860cd4947e68726a0a40e6ea4cef82f95182c7542b88958819f19"
+}

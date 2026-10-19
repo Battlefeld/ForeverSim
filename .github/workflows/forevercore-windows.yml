@@ -1,0 +1,30 @@
+name: ForeverCore Windows bridge regression
+on:
+  push:
+    branches: [ForeverCore]
+    paths: ['ForeverCore/**', '.github/workflows/forevercore-windows.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bridge:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ForeverCore
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.4'
+          cache-dependency-path: ForeverCore/go.sum
+      - name: Exercise window polling beyond callback table capacity
+        run: go test -v -run '^(TestWowOriginCallbackReuse|TestPixelCalibration.*)$' -count=1 -timeout=3m .
+      - name: Build replacement executable
+        run: go build -trimpath -o ../hotfix/ForeverCore.exe .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ForeverCore-Windows-Hotfix2
+          path: hotfix/ForeverCore.exe
+          retention-days: 7

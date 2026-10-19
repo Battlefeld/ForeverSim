@@ -1,0 +1,140 @@
+# Follows MythicSim every day: newest upstream branch + ForeverCore patches + level 10-60 overlay.
+#
+# Scheduled runs only start from the repository's default branch, so this file has to be on main.
+# It always works on the ForeverCore branch (ENGINE_BRANCH) and commits the new lock there.
+# A failed run keeps the last good engine; the report and an issue say what stopped it.
+name: ForeverCore engine update
+
+on:
+  schedule:
+    - cron: '23 4 * * *'   # daily 04:23 UTC
+  workflow_dispatch:
+    inputs:
+      upstream_branch:
+        description: 'mythicsim/* branch to use instead of the newest one (optional)'
+        required: false
+      dry_run:
+        description: 'Check only, do not commit'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: forevercore-engine
+  cancel-in-progress: false
+
+env:
+  ENGINE_BRANCH: ForeverCore
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.ENGINE_BRANCH }}
+          fetch-depth: 1
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: protoc
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq protobuf-compiler lua5.1
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: ForeverCore regressions
+        run: |
+          python -m unittest discover -s ForeverCore/tests -p 'test_*.py' -v
+          (cd ForeverCore && go test -race ./... && go vet ./...)
+          lua5.1 ForeverCore/tests/bridge_test.lua .
+          lua5.1 ForeverCore/tests/offline_contract_test.lua .
+          lua5.1 ForeverCore/tests/integration_test.lua .
+          lua5.1 ForeverCore/tests/hunter_capture_test.lua .
+
+      - name: Update engine
+        id: update
+        env:
+          GOTOOLCHAIN: auto
+          UPSTREAM_BRANCH: ${{ inputs.upstream_branch }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          args=(--work "$RUNNER_TEMP/engine" --windows-exe "$RUNNER_TEMP/dist/MythicSim.exe")
+          if [ -n "$UPSTREAM_BRANCH" ]; then args+=(--branch "$UPSTREAM_BRANCH"); fi
+          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          python ForeverCore/engine_update.py "${args[@]}"
+
+      - name: Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-update-report
+          path: ForeverCore/engine-update-report.json
+          if-no-files-found: ignore
+
+      - name: Commit new lock
+        if: success() && inputs.dry_run != true
+        id: commit
+        run: |
+          git config user.name 'forevercore-bot'
+          git config user.email 'forevercore-bot@users.noreply.github.com'
+          git add ForeverCore/engine.lock.json ForeverCore/leveling-data.json ForeverCore/engine-data.json ForeverCore/engine-update-report.json
+          if [ -f ForeverCore/creature-families.json ]; then git add ForeverCore/creature-families.json; fi
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          identity=$(python -c "import json;print(json.load(open('ForeverCore/engine.lock.json'))['buildIdentity'])")
+          git commit -q -m "ForeverCore: MythicSim ${identity} mit Level-Overlay"
+          git push origin "HEAD:${ENGINE_BRANCH}"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "identity=${identity}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish engine
+        if: success() && steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp ForeverCore/engine-data.json ForeverCore/engine.lock.json ForeverCore/leveling-data.json "$RUNNER_TEMP/dist/"
+          if [ -f ForeverCore/creature-families.json ]; then cp ForeverCore/creature-families.json "$RUNNER_TEMP/dist/"; fi
+          identity="${{ steps.commit.outputs.identity }}"
+          tag="engine-${identity##*+}-${GITHUB_RUN_ID}"
+          target=$(git rev-parse HEAD)
+          gh release create "$tag" --target "$target" --draft --prerelease \
+            --title "ForeverCore Engine $identity" \
+            --notes "MythicSim $identity mit Level-10-60-Overlay. Entwicklungsstand; Bericht im ForeverCore-Branch." \
+            "$RUNNER_TEMP"/dist/*
+          gh release edit "$tag" --draft=false --prerelease
+
+      - name: Open issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="ForeverCore: Engine-Update gestoppt"
+          python - <<'PYREPORT' > "$RUNNER_TEMP/engine-failure.md"
+          import json, os
+          from pathlib import Path
+          try:
+              r = json.loads(Path('ForeverCore/engine-update-report.json').read_text())
+              print('Basis:', r.get('branch'), r.get('base'))
+              print('\n```\n' + str(r.get('error', 'Siehe Workflow-Log.'))[:6000] + '\n```')
+          except (OSError, ValueError):
+              print('Siehe Workflow-Log.')
+          print('\nLauf:', os.environ['GITHUB_SERVER_URL'] + '/' + os.environ['GITHUB_REPOSITORY'] + '/actions/runs/' + os.environ['GITHUB_RUN_ID'])
+          print('Vorherige Engine-Releases bleiben erhalten.')
+          PYREPORT
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then gh issue comment "$existing" --body-file "$RUNNER_TEMP/engine-failure.md"; else gh issue create --title "$title" --body-file "$RUNNER_TEMP/engine-failure.md"; fi

@@ -1,0 +1,24 @@
+// Exports {spellId: taughtLevel} for class spell ranks. Copied into a temp dir and run with the
+// engine checkout as working directory: go run <file> > spell-levels.json
+package main
+
+import (
+	"encoding/json"
+	"os"
+	"strconv"
+
+	"github.com/wowsims/forever/sim/core/spelldata"
+)
+
+func main() {
+	out := map[string]int{}
+	for _, s := range spelldata.All() {
+		if s.ClassFlags.Family == 0 || s.RankNumber() <= 0 || (s.SpellLevel == 60 && s.MaxLevel == 0) {
+			continue
+		}
+		out[strconv.Itoa(int(s.ID))] = int(s.SpellLevel)
+	}
+	if err := json.NewEncoder(os.Stdout).Encode(out); err != nil {
+		panic(err)
+	}
+}

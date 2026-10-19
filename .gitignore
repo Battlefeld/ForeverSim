@@ -1,0 +1,16 @@
+/*
+!/.gitignore
+!/README.md
+!/.github/
+!/ForeverSimBridge/
+!/ForeverCore/
+!/ForeverCoreBridge/
+!/_dev/
+_dev/out_*.txt
+_dev/guides/cache/
+_dev/out/
+__pycache__/
+*.py[cod]
+ForeverCore/*.exe
+ForeverCore/Data/
+ForeverCore/config.json

@@ -1,0 +1,93 @@
+name: ForeverCore Windows test package
+on:
+  push:
+    branches: [ForeverCore]
+    paths: ['ForeverCore/**', 'ForeverCoreBridge/**', 'ForeverSimBridge/**', '.github/workflows/forevercore-package.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: forevercore-test-package
+  cancel-in-progress: true
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.4'
+          cache-dependency-path: ForeverCore/go.sum
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq protobuf-compiler lua5.1
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Build and test actual MythicSim integration
+        run: |
+          python ForeverCore/checkout_engine.py
+          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/MythicSim-linux"
+          export FC_TEST_ENGINE="$RUNNER_TEMP/MythicSim-linux"
+          export FC_TEST_RUNTIME="$GITHUB_WORKSPACE"
+          export FC_TEST_LUA=/usr/bin/lua5.1
+          (cd ForeverCore && go test -v ./... && go vet ./...)
+          lua5.1 ForeverCore/tests/bridge_test.lua .
+          lua5.1 ForeverCore/tests/integration_test.lua .
+          lua5.1 ForeverCore/tests/offline_contract_test.lua .
+          lua5.1 ForeverCore/tests/hunter_capture_test.lua .
+      - name: Windows binaries
+        env:
+          GOOS: windows
+          GOARCH: amd64
+          CGO_ENABLED: '0'
+        run: |
+          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/MythicSim.exe"
+          (cd ForeverCore && go build -trimpath -o "$RUNNER_TEMP/ForeverCore.exe" .)
+      - name: Pinned Lua runtime
+        run: |
+          git init "$RUNNER_TEMP/questiedb"
+          git -C "$RUNNER_TEMP/questiedb" remote add origin https://github.com/Questie/QuestieDB.git
+          git -C "$RUNNER_TEMP/questiedb" fetch --depth=1 origin a376144778947060ce0e81c4b2232ecf671df529
+          git -C "$RUNNER_TEMP/questiedb" checkout --detach FETCH_HEAD
+          (cd "$RUNNER_TEMP/questiedb/tools/lua-binary" && sha256sum --check SHA256SUMS)
+      - name: Package
+        run: |
+          mkdir -p dist
+          python ForeverCore/package.py --core-exe "$RUNNER_TEMP/ForeverCore.exe" --engine-exe "$RUNNER_TEMP/MythicSim.exe" --lua "$RUNNER_TEMP/questiedb/tools/lua-binary/lua.exe" --engine-source deps/mythicsim --lua-license "$RUNNER_TEMP/questiedb/tools/lua-binary/THIRD_PARTY_NOTICES.txt" --output dist/ForeverCore_0.6.0_Windows_Test.zip
+      - name: One-click Windows setup executable
+        run: |
+          mkdir -p "$RUNNER_TEMP/forevercore-installer"
+          cp ForeverCore/setup/installer.go.txt "$RUNNER_TEMP/forevercore-installer/main.go"
+          cp dist/ForeverCore_0.6.0_Windows_Test.zip "$RUNNER_TEMP/forevercore-installer/installer_payload.zip"
+          cd "$RUNNER_TEMP/forevercore-installer"
+          go mod init forevercoreinstaller
+          GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o "$GITHUB_WORKSPACE/dist/ForeverCore_AllesInEinem_Setup.exe" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ForeverCore-Windows-Complete
+          path: |
+            dist/*.zip
+            dist/*.exe
+          retention-days: 7
+      - name: Publish standalone all-in-one setup EXE
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="forevercore-current"
+          exe="dist/ForeverCore_AllesInEinem_Setup.exe"
+          test -s "$exe"
+          notes="Aktueller Komplett-Installer fuer Windows mit ForeverCore, MythicSim und den Addons. Build: $GITHUB_SHA. Dies ist ein Test-Build; Ingame-Funktionen sind noch nicht bestaetigt."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$exe" --clobber
+            gh release edit "$tag" --title "ForeverCore - aktueller Windows-Installer" --notes "$notes"
+          else
+            gh release create "$tag" "$exe" --target "$GITHUB_SHA" --prerelease \
+              --title "ForeverCore - aktueller Windows-Installer" --notes "$notes"
+          fi

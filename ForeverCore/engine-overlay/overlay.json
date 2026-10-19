@@ -1,0 +1,245 @@
+{
+  "schema": 1,
+  "purpose": "Level 10-59 on top of an unmodified MythicSim checkout. Level 60 must stay byte-identical to upstream.",
+  "files": [
+    "sim/core/zz_forevercore_level.go",
+    "sim/core/zz_forevercore_level_test.go",
+    "sim/core/spelldata/zz_forevercore_ladder.go",
+    "sim/core/zz_forevercore_spellbook.go",
+    "sim/core/zz_forevercore_spellbook_test.go",
+    "sim/core/zz_forevercore_mana.go",
+    "sim/core/zz_forevercore_mana_test.go",
+    "sim/hunter/zz_forevercore_hunter.go",
+    "sim/hunter/zz_forevercore_hunter_test.go",
+    "sim/warlock/zz_forevercore_warlock.go",
+    "sim/warlock/zz_forevercore_warlock_test.go"
+  ],
+  "generated": {
+    "sim/core/zz_forevercore_leveldata.go": "leveling-data.json"
+  },
+  "rewrites": [
+    {
+      "id": "character-level-variable",
+      "file": "sim/core/constants.go",
+      "pattern": "const CharacterLevel = 60\\b",
+      "replace": "var CharacterLevel int32 = 60",
+      "count": 1,
+      "required": true,
+      "why": "The level becomes a runtime value; every upstream use of CharacterLevel then follows it."
+    },
+    {
+      "id": "mechanics-mirror-test-float",
+      "file": "sim/core/mechanics_mirror_test.go",
+      "pattern": ":(\\s+)CharacterLevel( \\+ 3)?,",
+      "replace": ":\\1float64(CharacterLevel\\2),",
+      "count": 2,
+      "required": false,
+      "why": "The test compares the constant inside a float64 map literal; a typed variable needs the conversion."
+    },
+    {
+      "id": "ladder-highest-known-rank",
+      "file": "sim/core/spelldata/ladder.go",
+      "pattern": "(func \\(l Ladder\\) Highest\\(\\) \\*Spell \\{)",
+      "replace": "\\1\n\tif s, ok := foreverCoreHighest(l.ranks); ok {\n\t\treturn s\n\t}",
+      "count": 1,
+      "required": true,
+      "why": "Below 60 a class uses the highest rank it has been taught, not the level-60 rank."
+    },
+    {
+      "id": "ladder-each-known-rank",
+      "file": "sim/core/spelldata/ladder.go",
+      "pattern": "(func \\(l Ladder\\) Each\\(fn func\\(rank int32, s \\*Spell\\)\\) \\{\\n\\tfor i, s := range l\\.ranks \\{)",
+      "replace": "\\1\n\t\tif !foreverCoreEachRank(l.ranks, s) {\n\t\t\tcontinue\n\t\t}",
+      "count": 1,
+      "required": true,
+      "why": "Rotations that downrank must not register ranks the character cannot know yet."
+    },
+    {
+      "id": "unit-level-below-character",
+      "file": "sim/core/utils.go",
+      "pattern": "(func UnitLevelFloat64\\(unitLevel int32, maxLevelMinus2Val float64, maxLevelPlus0Val float64[^{]*\\{)",
+      "replace": "\\1\n\tif v, ok := foreverCoreUnitLevel(unitLevel, maxLevelMinus2Val, maxLevelPlus0Val); ok {\n\t\treturn v\n\t}",
+      "count": 1,
+      "required": false,
+      "why": "Quest mobs below the player otherwise fall into upstream's +3 boss branch."
+    },
+    {
+      "id": "apl-rank-fallback",
+      "file": "sim/core/apl_helpers.go",
+      "pattern": "(if s\\.Flags\\.Matches\\(SpellFlagAPL\\) && slices\\.ContainsFunc\\(s\\.RankAliases, actionID\\.SameAction\\) \\{\\n\\t\\t\\t\\t\\tspell = s\\n\\t\\t\\t\\t\\tbreak\\n\\t\\t\\t\\t\\}\\n\\t\\t\\t\\}\\n)",
+      "replace": "\\1\\t\\t\\tif spell == nil {\\n\\t\\t\\t\\tspell = foreverCoreRankFallback(rot.unit, actionID)\\n\\t\\t\\t}\\n",
+      "count": 1,
+      "required": true,
+      "why": "Upstream rotations name level-60 ranks; below 60 the highest learnt rank answers for them."
+    },
+    {
+      "id": "cancast-unlearned",
+      "file": "sim/core/spell.go",
+      "pattern": "(func \\(spell \\*Spell\\) CanCast\\(sim \\*Simulation, target \\*Unit\\) bool \\{\\n\\tif spell == nil \\{\\n\\t\\treturn false\\n\\t\\})",
+      "replace": "\\1\\n\\tif foreverCoreUnlearned(spell) {\\n\\t\\treturn false\\n\\t}",
+      "count": 1,
+      "required": true,
+      "why": "A spell taught above the character's level is registered by upstream code but must never be cast."
+    },
+    {
+      "id": "cast-unlearned",
+      "file": "sim/core/spell.go",
+      "pattern": "(func \\(spell \\*Spell\\) Cast\\(sim \\*Simulation, target \\*Unit\\) bool \\{)",
+      "replace": "\\1\\n\\tif foreverCoreUnlearned(spell) {\\n\\t\\treturn false\\n\\t}",
+      "count": 1,
+      "required": true,
+      "why": "Every cast path refuses a rank taught above the character's level."
+    },
+    {
+      "id": "queue-unlearned",
+      "file": "sim/core/spell_queueing.go",
+      "pattern": "(func \\(spell \\*Spell\\) CanCastOrQueue\\(sim \\*Simulation, target \\*Unit\\) bool \\{)",
+      "replace": "\\1\\n\\tif foreverCoreUnlearned(spell) {\\n\\t\\treturn false\\n\\t}",
+      "count": 1,
+      "required": true,
+      "why": "Every cast path refuses a rank taught above the character's level."
+    },
+    {
+      "id": "aura-rank-fallback",
+      "file": "sim/core/aura.go",
+      "pattern": "(func \\(at \\*auraTracker\\) GetAuraByID\\(actionID ActionID\\) \\*Aura \\{)",
+      "replace": "\\1\\n\\tif a := foreverCoreAuraFallback(at, actionID); a != nil {\\n\\t\\treturn a\\n\\t}",
+      "count": 1,
+      "required": true,
+      "why": "Rotation conditions name level-60 rank auras; below 60 the learnt rank's aura answers."
+    },
+    {
+      "id": "apl-live-known-rank",
+      "file": "sim/core/apl_helpers.go",
+      "pattern": "(\\n\\tif spell == nil \\{\\n\\t\\trot.ValidationMessage\\(proto.LogLevel_Warning, \"%s does not know spell %s\", rot.unit.Label, actionID\\))",
+      "replace": "\\n\\tif spell != nil && foreverCoreUnlearned(spell) {\\n\\t\\tspell = foreverCoreRankFallback(rot.unit, actionID)\\n\\t}\\n\\1",
+      "count": 1,
+      "required": true,
+      "why": "A registered but untrained rank must resolve to a genuinely learned lower rank."
+    },
+    {
+      "id": "level-mana-affordability",
+      "file": "sim/core/mana.go",
+      "pattern": "meetsRequirement := spell.Unit.CurrentMana\\(\\) >= spell.CurCast.Cost",
+      "replace": "meetsRequirement := foreverCoreManaEnough(spell.Unit.CurrentMana(), spell.CurCast.Cost)",
+      "count": 1,
+      "required": true
+    },
+    {
+      "id": "level-mana-rounding-clamp",
+      "file": "sim/core/mana.go",
+      "pattern": "newMana := unit.CurrentMana\\(\\) - amount",
+      "replace": "newMana := foreverCoreManaRemainder(unit.CurrentMana() - amount)",
+      "count": 1,
+      "required": true
+    },
+    {
+      "id": "hunter-live-ammo",
+      "file": "sim/hunter/hunter.go",
+      "pattern": "(\\n\\thunter\\.applyAmmoDPS\\(\\)\\n)",
+      "replace": "\\1\\tforeverCoreAmmoDPS(hunter)\\n",
+      "count": 1,
+      "required": true,
+      "why": "Live ammunition DPS from the client; upstream's ammo enum starts at level 25 ammo."
+    },
+    {
+      "id": "hunter-live-pet-stats",
+      "file": "sim/hunter/pet.go",
+      "pattern": "(?s)BaseStats: (stats\\.Stats\\{\\n.*?\\n\\t\\t\\}),",
+      "replace": "BaseStats: foreverCorePetBaseStats(\\1),",
+      "count": 1,
+      "required": true,
+      "why": "Live pet base attributes at the pet's level instead of upstream's level 60 constants."
+    },
+    {
+      "id": "hunter-live-pet-damage-min",
+      "file": "sim/hunter/pet.go",
+      "pattern": "BaseDamageMin: ([0-9.]+ \\* attackSpeed),",
+      "replace": "BaseDamageMin: foreverCorePetDamage(\\1, false),",
+      "count": 1,
+      "required": true,
+      "why": "Live pet base weapon damage at the pet's level."
+    },
+    {
+      "id": "hunter-live-pet-damage-max",
+      "file": "sim/hunter/pet.go",
+      "pattern": "BaseDamageMax: ([0-9.]+ \\* attackSpeed),",
+      "replace": "BaseDamageMax: foreverCorePetDamage(\\1, true),",
+      "count": 1,
+      "required": true,
+      "why": "Live pet base weapon damage at the pet's level."
+    },
+    {
+      "id": "warlock-live-demon-stats",
+      "file": "sim/warlock/pets.go",
+      "pattern": "BaseStats:(\\s+)petBaseStats\\[summon\\],",
+      "replace": "BaseStats:\\1foreverCoreWarlockPetStats(summon, petBaseStats[summon]),",
+      "count": 1,
+      "required": true,
+      "why": "Live demon attributes at its level instead of level 60 constants."
+    },
+    {
+      "id": "warlock-live-demon-melee",
+      "file": "sim/warlock/pets.go",
+      "pattern": "damage := petAutoAttacks\\[summon\\]",
+      "replace": "damage := foreverCoreWarlockPetMelee(summon, petAutoAttacks[summon])",
+      "count": 1,
+      "required": true,
+      "why": "Live demon melee damage."
+    },
+    {
+      "id": "warlock-live-firebolt-damage",
+      "file": "sim/warlock/pets.go",
+      "pattern": "impFireboltEffect\\.Roll\\(sim, core\\.CharacterLevel\\)",
+      "replace": "foreverCorePetSpellDamage(sim, \"firebolt\", impFireboltEffect.Roll(sim, core.CharacterLevel))",
+      "count": 1,
+      "required": true,
+      "why": "Firebolt at the rank the imp knows, from the client's spell text."
+    },
+    {
+      "id": "warlock-live-firebolt-cost",
+      "file": "sim/warlock/pets.go",
+      "pattern": "(ClassSpellMask: WarlockSpellImpFireBolt,\\n\\n\\t\\tManaCost: core\\.ManaCostOptions\\{FlatCost: )(\\d+)\\}",
+      "replace": "\\1foreverCorePetSpellFlatCost(\"firebolt\", \\2)}",
+      "count": 1,
+      "required": true,
+      "why": "Firebolt mana cost of the known rank."
+    },
+    {
+      "id": "warlock-live-firebolt-minmana",
+      "file": "sim/warlock/pets.go",
+      "pattern": "(func \\(pet \\*WarlockPet\\) registerFireboltSpell\\(\\) \\{\\n\\tpet\\.MinMana = )(\\d+)",
+      "replace": "\\1foreverCorePetSpellCost(\"firebolt\", \\2)",
+      "count": 1,
+      "required": true,
+      "why": "The imp waits for the known rank's cost."
+    },
+    {
+      "id": "warlock-live-lash-damage",
+      "file": "sim/warlock/pets.go",
+      "pattern": "CalcAndDealDamage\\(sim, target, (\\d+), spell\\.OutcomeMagicHitAndCrit\\)",
+      "replace": "CalcAndDealDamage(sim, target, foreverCorePetSpellDamage(sim, \"lashOfPain\", \\1), spell.OutcomeMagicHitAndCrit)",
+      "count": 1,
+      "required": true,
+      "why": "Lash of Pain at the known rank."
+    },
+    {
+      "id": "warlock-live-lash-cost",
+      "file": "sim/warlock/pets.go",
+      "pattern": "(ClassSpellMask: WarlockSpellSuccubusLashOfPain,\\n\\n\\t\\tManaCost: core\\.ManaCostOptions\\{FlatCost: )(\\d+)\\}",
+      "replace": "\\1foreverCorePetSpellFlatCost(\"lashOfPain\", \\2)}",
+      "count": 1,
+      "required": true,
+      "why": "Lash of Pain mana cost of the known rank."
+    },
+    {
+      "id": "warlock-live-lash-minmana",
+      "file": "sim/warlock/pets.go",
+      "pattern": "(func \\(pet \\*WarlockPet\\) registerLashOfPainSpell\\(\\) \\{\\n\\tpet\\.MinMana = )(\\d+)",
+      "replace": "\\1foreverCorePetSpellCost(\"lashOfPain\", \\2)",
+      "count": 1,
+      "required": true,
+      "why": "The succubus waits for the known rank's cost."
+    }
+  ]
+}
