@@ -557,7 +557,6 @@ SlashCmdList['FOREVERSIMBRIDGE']=function(msg)
   return
  elseif msg=='safety on' or msg=='safe on' then
   db.passiveSafetyMode=true
-  if FUSLive.rotationHUD and FUSLive.rotationHUD.refreshDisplay then FUSLive.rotationHUD.refreshDisplay() end
   print('Forever SIM: Schutzmodus AKTIV. Automatische Live-Lesungen deaktiviert.')
   return
  elseif msg=='safety off' or msg=='safe off' then
@@ -565,17 +564,12 @@ SlashCmdList['FOREVERSIMBRIDGE']=function(msg)
   print('Forever SIM: Live-Erkennung aktiviert (nur zur Diagnose). /fus safety on setzt sie zurueck.')
   return
  end
- if FUSLive.encounterUI and FUSLive.encounterUI.Command and FUSLive.encounterUI.Command(msg) then return end
- if FUSLive.dashboardUI and FUSLive.dashboardUI.Command and FUSLive.dashboardUI.Command(msg) then return end
- for _,module in ipairs({FUSLive.leveling,FUSLive.combatAudit,FUSLive.analysisUI})do if module and module.Command and module.Command(msg)then return end end
- if FUSLive.rotationHUD and FUSLive.rotationHUD.command and FUSLive.rotationHUD.command(msg) then return end
  -- the dungeon loot list belongs to ForeverCore (/fc dungeon, /fc dungeon auto on|off)
  if msg=='dungeon' or msg:find('^dungeon ') then if SlashCmdList.FOREVERCORE then SlashCmdList.FOREVERCORE((msg:gsub(' rescan',''))) else print('Forever SIM: Dungeon-Liste braucht ForeverCoreBridge (/fc dungeon)') end;return end
- if msg=='optimize' then if InCombatLockdown and InCombatLockdown() then print('Forever SIM: Optimierung nur außerhalb des Kampfes.');return end db.rotationGoal='dps';FUSLive.optimizeNow();return end
  local boss=tonumber(msg:match('^boss%s+(%d+)$'));if boss then if FUSLive.encounters then FUSLive.encounters.Configure({mode='standard',offset=boss})end;print('Forever SIM: Standardziel +'..boss);return end
  if msg=='class' then local snap=snapshot(true);if not snap then print('Forever SIM: Charakterdaten fehlen.');return end;local profile=FUSLive.normalizeSnapshot(snap);local model=FUSLiveData[profile.class];if not model then print('Forever SIM: Klassenmodul fehlt.');return end;local issue=FUSLive.coverage(model,profile);print('Forever SIM · '..profile.class..': '..(issue or 'Klassenmodul aktiv · Einzelziel-DPS (Beta; Raid-Abgleich offen).'));return end
  local targetArmor=tonumber(msg:match('^armor%s+(%d+)$'));if targetArmor then if FUSLive.encounters then FUSLive.encounters.Configure({armor=targetArmor})end;print('Forever SIM: Zielrüstung '..targetArmor..' (Benutzereingabe)');return end
  if msg=='status' then print('Forever SIM: '..FUSLive.pendingJobs()..' Jobs, max Frame-Paket '..string.format('%.2f',FUSLive.metrics.maxSliceMs)..' ms');return end
  snapshot()
- print('|cff80ddffForever SIM:|r /fus optimize, /fus leveling, /fus audit, /fus recommend, /fus analysis, /fus dungeon, /fus dungeon rescan, /fus stats, /fus hud, /fus unlock, /fus lock, /fus reset, /fus status, /fus class, /fus armor <Wert>, /fus encounter, /fus target +1')
+ print('|cff80ddffForever SIM:|r /fus dungeon, /fus status, /fus class, /fus armor <Wert>, /fus boss <Stufen>, /fus safety')
 end

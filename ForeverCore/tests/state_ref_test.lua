@@ -25,7 +25,7 @@ C_AddOns={LoadAddOn=function()
  return true
 end}
 local function run(label)
- assert(C.Request('rotation',{},function()end),label..': request accepted')
+ assert(C.Request('sim',{},function()end),label..': request accepted')
  MOCK.Advance(.2,.05)
  assert(C.pending,label..': job pending')
  return C.pending
@@ -45,7 +45,7 @@ replyStatus,replyMessage='ok',nil
 assert(C.stateKnown==nil,'the state is no longer assumed to be known')
 MOCK.Advance(.3,.05)
 local again=C.pending
-assert(again and again.kind=='rotation' and again.message:find('"state":',1,true),'the job was queued again with the full state')
+assert(again and again.kind=='sim' and again.message:find('"state":',1,true),'the job was queued again with the full state')
 MOCK.Advance(6,.1)
 assert(C.stateKnown~=nil,'known again after the full state was accepted')
 -- a changed character state needs a new full state
@@ -82,7 +82,7 @@ do
  C.Capture=function()return{sim={class='hunter',level=20,equipped=worn,hunter={quiver={status='ok'}}}}end
  gotExport=nil;settle();C.stateRefOK=false
  local seq0=C.sequence
- assert(C.Request('rotation',{},function()end))
+ assert(C.Request('sim',{},function()end))
  MOCK.Advance(1,.1)
  assert(C.sequence==seq0,'no job is sent while a worn item is unreadable')
  worn[1].statsComplete=true;worn[1].weapon={min=3,max=5,speed=2}
@@ -98,10 +98,10 @@ do
  settle();C.needPing=true;C.stateRefOK=false
  MOCK.Advance(2,.1)
  assert(#kinds==0,'no ping without a job: '..table.concat(kinds,','))
- assert(C.Request('rotation',{},function()end));MOCK.Advance(8,.1)
- assert(kinds[1]=='ping' and kinds[2]=='rotation','a ping first, then the job: '..table.concat(kinds,','))
- assert(C.Request('rotation',{},function()end));MOCK.Advance(8,.1)
- assert(#kinds==3 and kinds[3]=='rotation','later jobs need no new ping: '..table.concat(kinds,','))
+ assert(C.Request('sim',{},function()end));MOCK.Advance(8,.1)
+ assert(kinds[1]=='ping' and kinds[2]=='sim','a ping first, then the job: '..table.concat(kinds,','))
+ assert(C.Request('sim',{},function()end));MOCK.Advance(8,.1)
+ assert(#kinds==3 and kinds[3]=='sim','later jobs need no new ping: '..table.concat(kinds,','))
  C.Say=keepSay
 end
 -- after /reload the addon remembers what the running ForeverCore.exe knows: no ping, no state transfer

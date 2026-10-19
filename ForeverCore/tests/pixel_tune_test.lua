@@ -1,7 +1,7 @@
 -- Automatic pixel strip tuning: least noticeable variant first, stop at the first one the PC reads.
 local root=assert(arg[1]);dofile(root..'/_dev/harness/wowmock.lua');dofile(root..'/_dev/harness/gameapi.lua')
 local function fresh()
- for _,file in ipairs({'Protocol.lua','Bridge.lua','Adapters.lua','AnalysisAdapters.lua'})do assert(loadfile(root..'/ForeverCoreBridge/'..file))('ForeverCoreBridge',{})end
+ for _,file in ipairs({'Protocol.lua','Bridge.lua','Adapters.lua'})do assert(loadfile(root..'/ForeverCoreBridge/'..file))('ForeverCoreBridge',{})end
  ForeverCoreBridgeDB=nil;MOCK.Fire('PLAYER_LOGIN')
  return ForeverCoreClient
 end

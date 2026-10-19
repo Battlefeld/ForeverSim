@@ -1,5 +1,5 @@
 local root=assert(arg[1]);dofile(root..'/_dev/harness/wowmock.lua');dofile(root..'/_dev/harness/gameapi.lua')
-for _,file in ipairs({'Protocol.lua','Bridge.lua','Adapters.lua','AnalysisAdapters.lua'})do assert(loadfile(root..'/ForeverCoreBridge/'..file))('ForeverCoreBridge',{})end
+for _,file in ipairs({'Protocol.lua','Bridge.lua','Adapters.lua'})do assert(loadfile(root..'/ForeverCoreBridge/'..file))('ForeverCoreBridge',{})end
 local C=ForeverCoreClient
 assert(C.crc('123456789')==3421780262,'CRC32 mismatch')
 assert(#C.frame(1,0,1,'ä中')==256,'frame length')
@@ -39,15 +39,9 @@ C_AddOns.LoadAddOn=function()ForeverCore_Reply={schema=3,session=C.session,seque
 MOCK.Advance(2.1,.05)
 assert(not invalidated,'outdated SIM result accepted after character change')
 
--- All everyday features must be reachable from one /fc command.
-local oldLive=FUSLive
-local opened={}
-FUSLive={app={Open=function(section)opened[#opened+1]=section end}}
-for _,case in ipairs({{'','overview'},{'gear','gear'},{'talents','talents'},
-                       {'rotation','rotation'},{'quests','quests'},{'dungeons','dungeons'}})do
- SlashCmdList.FOREVERCORE(case[1])
- assert(opened[#opened]==case[2],'/fc '..case[1]..' did not open '..case[2])
+-- The old ForeverSim window is gone: its former /fc commands must not raise an error.
+for _,cmd in ipairs({'','gear','talents','rotation','quests','dungeons','advanced','leveling'})do
+ SlashCmdList.FOREVERCORE(cmd)
 end
-FUSLive=oldLive
 assert(#MOCK.errors==0,MOCK.errors[1]and MOCK.errors[1].msg or'')
 print=io.write;print('bridge tests passed\n')

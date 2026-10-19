@@ -1,6 +1,6 @@
 -- Pixel strip contrast: both levels must stay on the correct side of the PC's R+G+B >= 384 threshold.
 local root=assert(arg[1]);dofile(root..'/_dev/harness/wowmock.lua');dofile(root..'/_dev/harness/gameapi.lua')
-for _,file in ipairs({'Protocol.lua','Bridge.lua','Adapters.lua','AnalysisAdapters.lua'})do assert(loadfile(root..'/ForeverCoreBridge/'..file))('ForeverCoreBridge',{})end
+for _,file in ipairs({'Protocol.lua','Bridge.lua','Adapters.lua'})do assert(loadfile(root..'/ForeverCoreBridge/'..file))('ForeverCoreBridge',{})end
 local C=ForeverCoreClient
 MOCK.Fire('PLAYER_LOGIN');C.queue={};C.pending=nil
 assert(C.PixelStyle()=='low','default must be the low contrast strip')

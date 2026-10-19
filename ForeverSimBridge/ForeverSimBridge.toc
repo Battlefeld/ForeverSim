@@ -1,7 +1,7 @@
 ## Interface: 16001
 ## X-Target-Build: 1.60.1.70338
 ## Title: Forever Universal SIM
-## Notes: Charakterdaten, Item-Bewertung, Dungeon-Katalog, Rotation und Talente fuer ForeverCore (MythicSim)
+## Notes: Charakterdaten, Item-Bewertung und Dungeon-Katalog fuer ForeverCore (MythicSim)
 ## Version: 1.16.0-offline-hardening-beta
 ## SavedVariables: ForeverSimBridgeDB
 Classes/warlock.lua
@@ -18,9 +18,6 @@ CombatEngine.lua
 EncounterProfiles.lua
 UniversalRules.lua
 Optimizers.lua
-XNBuildPresets.lua
-XNBuildAdapter.lua
-XNOptimizedSolo.lua
 Services/TalentSnapshotAdapter.lua
 ForeverSimBridge.lua
 HunterCapture.lua
@@ -28,18 +25,3 @@ LiveUI.lua
 ItemScore.lua
 DungeonCatalogData.lua
 DungeonCatalog.lua
-RotationHUD.lua
-Services/TargetHealthProvider.lua
-LevelingModel.lua
-CombatAudit.lua
-AnalysisUI.lua
-TalentTreeData.lua
-TalentBuild.lua
-TalentPlannerUI.lua
-SimTraceUI.lua
-EncounterUI.lua
-Core/Actions.lua
-UI/Dashboard.lua
-UI/Shell.lua
-Core/App.lua
-UI/Main.lua

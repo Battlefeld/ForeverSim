@@ -1,6 +1,6 @@
 ## Interface: 16001
 ## Title: ForeverCore Verbindung
-## Notes: Verbindung zum PC: MythicSim-Berechnung fuer Items, Talente und Rotation. /fc
+## Notes: Verbindung zum PC: MythicSim-Berechnung fuer Items, Dungeons und Auktionshaus. /fc
 ## Version: 0.6.0
 ## OptionalDeps: ForeverSimBridge
 ## SavedVariables: ForeverCoreBridgeDB
@@ -10,7 +10,6 @@ Adapters.lua
 AuctionExport.lua
 CopyLog.lua
 DungeonReport.lua
-AnalysisAdapters.lua
 Diagnose.lua
 UI.lua
 UIPanels.lua

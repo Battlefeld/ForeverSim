@@ -83,8 +83,8 @@ function C.Request(kind,payload,callback,opts)
  if kind=='item' and #C.queue>=5 then return false end
  if #C.queue>=24 then C.Say('Warteschlange voll; laufende Berechnungen abwarten');return false end
  if C.slot>P.slots then C.Say('Antwortslots verbraucht: /reload erforderlich');return false end
- for _,job in ipairs(C.queue)do if job.kind==kind and(kind=='route'or kind=='ping'or kind=='rotation')then return false end end
- if C.pending and C.pending.kind==kind and(kind=='route'or kind=='ping'or kind=='rotation')then return false end
+ for _,job in ipairs(C.queue)do if job.kind==kind and(kind=='route'or kind=='ping')then return false end end
+ if C.pending and C.pending.kind==kind and(kind=='route'or kind=='ping')then return false end
  C.queue[#C.queue+1]={kind=kind,payload=payload or{},callback=callback,timeout=opts and opts.timeout,tuning=opts and opts.tuning,export=opts and opts.export};return true
 end
 -- Data the client may not deliver yet (right after the login or /reload). The PC refuses a whole state when one
@@ -252,16 +252,6 @@ end)
 ticker:SetScript('OnUpdate',function(_,elapsed)
  if not C.pixelFrame then return end
  if C.dirty then C.debounce=(C.debounce or 0)-elapsed;if C.debounce<=0 and not C.pending and #C.queue==0 and now()-(C.lastAutoAt or -1e9)>=MIN_AUTO_GAP then C.dirty=false;C.lastAutoAt=now();if ForeverCoreBridgeDB and ForeverCoreBridgeDB.enabled~=false and C.RouteAvailable()then C.Request('route',nil,C.ApplyRoute)end end end
- -- Re-simulate meaningful character changes only when idle and outside combat.
- -- Results refresh the rotation silently; opening a menu is never required.
- if C.autoRotationDirty and not C.pending and #C.queue==0 and not C.dirty
-   and now()>=(C.autoRotationAt or 0) and now()-(C.lastAutoAt or -1e9)>=MIN_AUTO_GAP
-   and ForeverCoreBridgeDB and ForeverCoreBridgeDB.enabled~=false and not(InCombatLockdown and InCombatLockdown())then
-  C.autoRotationDirty=false;C.lastAutoAt=now()
-  C.Request('rotation',{autoRotations=true},function(result,issue)
-   if C.ApplySim then C.ApplySim(result,issue,true)end
-  end)
- end
  begin();local p=C.pending;if not p then return end
  p.elapsed=p.elapsed+elapsed;untilFrame=untilFrame-elapsed;untilInbox=untilInbox-elapsed
  if untilFrame<=0 and not p.noPaint and not(InCombatLockdown and InCombatLockdown())then
@@ -279,9 +269,8 @@ ticker:SetScript('OnUpdate',function(_,elapsed)
 end)
 -- One public entry point for ForeverCore, ForeverSim and ForeverDungeonQuest.
 -- Preserve /fus and /fdq as compatibility aliases; the player only needs /fc.
-local function openMain(section)
- local sim=_G.FUSLive
- if sim and sim.app and sim.app.Open then sim.app.Open(section or 'overview');return true end
+local function openOverview()
+ if C.UI and C.UI.ToggleMain then C.UI.ToggleMain();return true end
  return false
 end
 local function openQuests()
@@ -294,25 +283,14 @@ SLASH_FOREVERCORE1='/fc'
 SlashCmdList.FOREVERCORE=function(msg)
  msg=(msg or''):lower():gsub('^%s+',''):gsub('%s+$','')
  if msg=='' or msg=='ui' or msg=='home' then
-  if not openMain('overview') and C.window then C.window:Show();C.Say('ForeverSim nicht geladen')end
- elseif msg=='gear' or msg=='items' then
-  if not openMain('gear')then C.Say('ForeverSim nicht geladen')end
- elseif msg=='talents' or msg=='talente' then
-  if not openMain('talents')then C.Say('ForeverSim nicht geladen')end
- elseif msg=='rotation' or msg=='rota' then
-  if not openMain('rotation')then C.Say('ForeverSim nicht geladen')end
+  if not openOverview() and C.window then C.window:Show();C.Say(C.status)end
  elseif msg=='quests' or msg=='quest' or msg=='guide' then
-  if not openMain('quests') and not openQuests()then C.Say('Quests: ForeverDungeonQuest ist nicht installiert (wird neu gebaut)')end
- elseif msg=='dungeons' or msg=='dungeon' then
-  if not openMain('dungeons')then C.Say('ForeverSim nicht geladen')end
- elseif msg=='advanced' or msg=='erweitert' then
-  if not openMain('diagnostics')then C.Say('ForeverSim nicht geladen')end
+  if not openQuests()then C.Say('Quests: ForeverDungeonQuest ist nicht installiert (wird neu gebaut)')end
  elseif msg=='status' then
   if C.window then C.window:Show();C.Say(C.status)end
  elseif msg=='ping'then C.Request('ping',{},receivePing)
  elseif msg=='route'then C.RequestRoute()
  elseif msg=='sim'then C.Request('sim',{},C.ApplySim)
- elseif msg=='leveling'then if _G.FUSLive and FUSLive.actions then FUSLive.actions.RunLeveling()end
  elseif msg=='test'and C.Diagnose then C.Diagnose()
  elseif msg=='sources'then C.Request('sources',{},function(result)C.lastSources=result;if result and result.message then C.Say(result.message)end end)
  elseif msg:match('^pixel %a+ %d+$') and (msg:match('^pixel size')or msg:match('^pixel breite')or msg:match('^pixel groesse')) then
@@ -325,7 +303,7 @@ SlashCmdList.FOREVERCORE=function(msg)
  elseif msg=='pixel tempo schnell' or msg=='pixel tempo normal' then ForeverCoreBridgeDB.pixelFrame=(msg=='pixel tempo schnell') and .10 or .18;ForeverCoreBridgeDB.pixelTuned={manual=true};C.Say('Bilddauer: '..tostring(C.FrameSeconds())..' s')
  elseif msg=='pixel auto' then ForeverCoreBridgeDB.pixelTuned=nil;C.StartPixelTune(1)
  elseif msg=='pixel low' or msg=='pixel normal' then ForeverCoreBridgeDB.pixelTuned={manual=true};ForeverCoreBridgeDB.pixelStyle=msg:match('%a+$');C.Say('Pixelstreifen: '..C.PixelStyle())
- elseif msg=='off'then ForeverCoreBridgeDB.enabled=false;C.dirty=false;C.autoRotationDirty=false;C.queue={};C.Say('Externe Planung pausiert')
+ elseif msg=='off'then ForeverCoreBridgeDB.enabled=false;C.dirty=false;C.queue={};C.Say('Externe Planung pausiert')
  elseif msg=='on'then ForeverCoreBridgeDB.enabled=true;C.MarkChanged()
- else if C.window then C.window:Show();C.Say('Unbekannter Befehl; /fc startet das Hauptfenster')end end
+ else if C.window then C.window:Show();C.Say('Unbekannter Befehl; /fc oeffnet die Uebersicht')end end
 end

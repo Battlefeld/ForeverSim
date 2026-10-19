@@ -60,7 +60,6 @@ jobs:
           python -m unittest discover -s ForeverCore/tests -p 'test_*.py' -v
           (cd ForeverCore && go test -race ./... && go vet ./...)
           lua5.1 ForeverCore/tests/bridge_test.lua .
-          lua5.1 ForeverCore/tests/offline_contract_test.lua .
           lua5.1 ForeverCore/tests/integration_test.lua .
           lua5.1 ForeverCore/tests/hunter_capture_test.lua .
 

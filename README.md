@@ -11,11 +11,11 @@ Stand: 18.10.2026 · Zielclient: WoW: Forever 1.60.x · Sprache der Oberfläche:
 
 ## 1. Kurzfassung
 
-ForeverCore bewertet Ausrüstung, Rotationen und Talente für dein WoW-Forever-Spiel. Gerechnet
+ForeverCore bewertet Ausrüstung für dein WoW-Forever-Spiel. Gerechnet
 wird **nicht im Spiel**, sondern auf deinem PC. Die Addons im Spiel lesen deinen Charakter,
 schicken ihn per Pixelstreifen an ein Programm auf dem PC, das die Simulation rechnet, und
 bekommen das Ergebnis über winzige Addon-Module zurück. Im Spiel siehst du nur die Ergebnisse:
-Prozentwerte an Items, Drop-Chancen im Tooltip und die Rotationsanzeige.
+Prozentwerte an Items und Drop-Chancen im Tooltip.
 
 Was automatisch passiert (und sonst nichts):
 
@@ -24,7 +24,8 @@ Was automatisch passiert (und sonst nichts):
 | Du siehst ein Item (Tooltip, Quest-Belohnung, Würfelfenster) | Der Wert gegenüber deinem getragenen Item wird bewertet |
 | Du betrittst einen Dungeon | Alle Boss- und Trash-Drops werden vorberechnet |
 
-Alles andere (Rotation, Talente, Statgewichte, Leveling-Vergleich) startest **du** per Knopfdruck.
+Das Auktionshaus rechnest **du** per Knopfdruck. Rotation und Talente sind vorerst entfernt und werden neu gebaut
+(siehe 6.7).
 Buffs, Auren, Mana, Taschen und Zonenwechsel lösen **keine** Simulation aus. Im Kampf wird nichts
 berechnet.
 
@@ -35,7 +36,7 @@ berechnet.
 | Teil | Wo | Aufgabe |
 |---|---|---|
 | **ForeverCoreBridge** | WoW-Addon | Transport und Aufträge: Warteschlange, Pixelstreifen, Antwortmodule, Cache, `/fc` |
-| **ForeverSimBridge** | WoW-Addon | Liest den Charakter (Gear, Talente, Zauberbuch, Jäger-Daten), zeigt Item-Prozente, Rotations-HUD, Dashboard |
+| **ForeverSimBridge** | WoW-Addon | Liest den Charakter (Gear, Talente, Zauberbuch, Jäger-Daten), zeigt Item-Prozente |
 | **FC3_S0001 … FC3_S2048** | 2.048 winzige Addons | Antwortslots: der PC schreibt hier seine Antworten hinein |
 | **ForeverCore.exe** | PC | Liest den Pixelstreifen, nimmt Aufträge an, startet die Simulation, schreibt Antworten, pflegt Datenquellen |
 | **MythicSim.exe** | PC | Die Kampf-Simulation (WoWSims-Forever-Engine) plus ein Level-Layer für Level 10–60 |
@@ -112,7 +113,7 @@ Die Bridge führt zwei Zähler, damit Ereignisse nicht unnötig Ergebnisse verwe
 | Zähler | Steigt bei | Wirkt auf |
 |---|---|---|
 | `revision` (Route) | jedem „harten" Ereignis, auch Quests | Routenergebnisse (nur mit Routen-Addon) |
-| `simRevision` (Simulation) | Levelup, Ausrüstung, Talente, Talentbaum, Zauberbuch, Begleiter (`UNIT_PET`), Level | Item-, Talent-, Rotations-Ergebnisse |
+| `simRevision` (Simulation) | Levelup, Ausrüstung, Talente, Talentbaum, Zauberbuch, Begleiter (`UNIT_PET`), Level | Item-Ergebnisse |
 
 Quest-, Beutel- und Zonen-Ereignisse berühren nur die Route, nie laufende Simulationen.
 
@@ -130,15 +131,15 @@ Regeln, die alles zusammen begrenzen:
 - **Entprellung ohne Verlängerung:** Ein laufender Countdown wird nie verlängert, nur verkürzt.
   Dauerfeuer von Ereignissen kann die Aktualisierung also nicht aushungern oder endlos aufschieben.
 - **Mindestabstand:** zwischen automatischen Routenaufträgen mindestens 6 s.
-- **Keine Doppelaufträge:** `ping`, `route` und `rotation` stehen höchstens einmal in der Schlange.
+- **Keine Doppelaufträge:** `ping` und `route` stehen höchstens einmal in der Schlange.
 - **Item-Deckel:** höchstens 5 wartende Item-Aufträge; die Dungeon-Vorberechnung fragt alle 2 s
   nach (bis zu 45 Mal), bis jedes Item angefragt wurde.
 - `/fc off` leert Warteschlange und Automatik sofort.
 
 ### 4.3 Nur auf Knopfdruck
 
-Rotation berechnen, Talententwurf und nächster Talentpunkt, Statgewichte, Leveling-Vergleich,
-Szenarien. Ein Auto-Start der Rotation gibt es nicht mehr.
+Auktionshaus scannen und berechnen, `/fc sim` (Grund-DPS), Dungeon-Liste im Chat. Rotation und Talente gibt es
+im Addon vorerst nicht (siehe 6.7).
 
 ---
 
@@ -336,7 +337,7 @@ Bildschirmaufnahme der EXE verdächtigt.
 
 Talente lassen sich mit Legacy-Punkten schon ab Stufe 5 vergeben, deshalb rechnet das Programm **ab Stufe 5** (früher ab 10).
 Die Engine hat ihre Stufentabellen erst ab Stufe 10. Stufe 5 bis 9 werden deshalb **mit Stufe 10 genähert**. Items,
-Talente und Zauberbuch bleiben echt, und jedes Ergebnis trägt den Hinweis „Stufe N: … genähert". Die Talentrechnung
+Talente und Zauberbuch bleiben echt, und jedes Ergebnis trägt den Hinweis „Stufe N: … genähert". Das Talentbudget
 kennt den Fall (der erste Punkt kommt mit Legacy-Punkten bei Stufe 5). Unter Stufe 5 wird nichts gerechnet.
 Ist für einen Charakter das Sim-Addon (ForeverSimBridge) nicht geladen, sagt `FC Scan`/`FC Berechnen` das mit klarem
 Text statt eines Fehlers.
@@ -348,7 +349,7 @@ Scannen/Berechnen). Alles sind eigene Fenster, Blizzard-Fenster dienen nur als A
 
 - **Minimap-Knopf:** Ein Punkt zeigt den Zustand – grün bereit, gelb rechnet, rot letzter Auftrag fehlgeschlagen,
   grau ForeverCore.exe noch nicht gemeldet bzw. Pixelstreifen aus. Linksklick öffnet die Übersicht (Knöpfe für
-  Dungeon-Liste, Auktionshaus, Protokoll, ForeverSim und die Schalter unten), Rechtsklick das kopierbare Protokoll.
+  Dungeon-Liste, Auktionshaus, Protokoll, Verbindung und die Schalter unten), Rechtsklick das kopierbare Protokoll.
   Ziehen verschiebt ihn am Minimap-Rand. `/fc minimap aus|an`.
 - **Ruhiger Chat:** In den Chat kommen nur noch Probleme, die Aufforderung „/reload" (zusätzlich in der
   Bildschirmmitte) und Antworten auf getippte `/fc`-Befehle. Alles andere steht im Protokoll (`/fc log`). Wer alles
@@ -371,13 +372,23 @@ Scannen/Berechnen). Alles sind eigene Fenster, Blizzard-Fenster dienen nur als A
 
 ### 6.7 Aufgeräumt: was im Addon steckt
 
-Entfernt wurden alle Teile, die weder die Item-Berechnung noch Rotation und Talente brauchen: Szenario-Studio,
+Entfernt wurden zuerst alle Teile, die weder die Item-Berechnung noch Rotation und Talente brauchten: Szenario-Studio,
 Stat-Gewichte (Fenster und Tabellen), Insights-Fenster, Ausrüstungsplan, die alte Dungeon-Vorberechnung und die
-Routen-Brücke (ersetzt durch die Dungeon-Liste von ForeverCore), das Notiz-Protokoll, nie geladene Altdateien und
-eine ungenutzte Textur. Das ForeverSim-Fenster zeigt deshalb unter „Mehr" nur noch Gegner & Benchmark, Kampfverlauf,
-Kampfaudit, Dungeons & Bosse und Diagnose. Rotation und Talente (Engine, Optimierer, Talentplaner, Rotations-HUD,
-Leveltempo) bleiben, bis sie überarbeitet werden. Der Generator des Dungeon-Katalogs liegt in `_dev/tools`, die
-Entwicklerdateien der Klassenmodule in `_dev/ForeverSimBridge-Development` (nicht im Addon).
+Routen-Brücke (ersetzt durch die Dungeon-Liste von ForeverCore), das Notiz-Protokoll und nie geladene Altdateien.
+
+Danach wurden **das ForeverSim-Fenster, Rotation und Talente entfernt**, damit sie neu gestaltet werden können:
+das Fenster mit allen Seiten (Übersicht, Ausrüstung, Rotation Style, Talente, Quests, Erweitert/Mehr), der Talentplaner
+und der Talententwurf, das Rotations-HUD, der Rotations-Optimierer im Spiel (auch sein Start nach dem Login), die
+Talentempfehlung über ForeverCore, Leveling-Modell, Kampfverlauf, Kampfaudit, Gegnerauswahl, die XN-Vorlagen und die
+Bilder des Fensters. Der Minimap-Knopf öffnet die ForeverCore-Übersicht; statt „ForeverSim" steht dort „Verbindung".
+
+Was bleibt: Das Addon liest weiterhin deine Talente und dein Zauberbuch, denn jede Item-Rechnung schickt sie mit.
+Die Klassenmodule, die Lua-Rechnung (nur noch Rückfall für Items ohne ForeverCore) und die Job-Warteschlange bleiben
+aus demselben Grund. Auf dem PC kennt `ForeverCore.exe` die Aufträge `rotation`, `talents`, `talent-next`,
+`talent-build`, `weights`, `analysis` und `leveling` weiterhin; das Addon schickt sie nur nicht mehr.
+
+Der Generator des Dungeon-Katalogs liegt in `_dev/tools`, die Entwicklerdateien der Klassenmodule in
+`_dev/ForeverSimBridge-Development` (nicht im Addon).
 
 ---
 
@@ -409,13 +420,12 @@ Entwicklerdateien der Klassenmodule in `_dev/ForeverSimBridge-Development` (nich
 
 | Befehl | Wirkung |
 |---|---|
-| `/fc` | Hauptfenster (ForeverSim) bzw. Statusfenster |
+| `/fc` | Übersicht (wie Linksklick auf den Minimap-Knopf) |
 | `/fc ping` | Verbindung testen |
 | `/fc on` / `/fc off` | Externe Berechnung ein/aus (`off` leert die Warteschlange) |
 | `/fc route` | Route berechnen (nur mit einem Routen-Addon; sonst kommt ein Hinweis) |
-| `/fc sim` | Simulation starten |
-| `/fc rotation`, `/fc quests`, `/fc dungeons`, `/fc advanced` | Oberflächen öffnen |
-| `/fc leveling` | Leveling-Vergleich |
+| `/fc sim` | Grund-DPS deines Charakters rechnen (Ergebnis im Chat) |
+| `/fc quests` | Quest-Übersicht (nur mit einem Routen-Addon) |
 | `/fc test` | Diagnose speichern (Zauberbuch, Begleiter, Munition, Köcher …) |
 | `/fc sources` | Quellen prüfen |
 | `/fc status` | Statusfenster |
@@ -491,7 +501,6 @@ Lua-Suiten (ohne WoW, mit Mock-Client), aufrufbar mit `lua5.1 ForeverCore/tests/
 | Test | Prüft |
 |---|---|
 | `bridge_test` | Transport, Rahmen, Antwortslots, veraltete Antworten |
-| `offline_contract_test` | Keine geschützten Kampfdaten im Modell |
 | `integration_test` | Alle Addons zusammen, Routen, Analyse |
 | `hunter_capture_test` | Jäger-Erfassung, Begleiter, Munition |
 | `request_storm_test` | Ereignissturm führt nicht zu Dauer-Aufträgen |
@@ -532,6 +541,7 @@ Go-Tests, Vet und Windows-Build laufen im GitHub-Workflow *ForeverCore integrati
 
 ## 14. Änderungen dieser Version
 
+- **ForeverSim-Fenster, Rotation und Talente entfernt** (siehe 6.7). Sie werden neu gebaut.
 - **Dauer-Simulation behoben:** weiche/harte Ereignisse, Entprellung ohne Verlängerung,
   Mindestabstand, Doppelaufträge entfernt, getrennte Revisionen für Route und Simulation,
   Rebuild-Hook löst keine Revisionsänderung mehr aus.

@@ -171,10 +171,3 @@ function API.ChanceText(itemID)
   return "Drop-Chance: " .. table.concat(parts, "; ")
 end
 
--- Kept for callers written against the old FDQ API.
-function API.NotifyDungeon() end
-function API.Hide() return true end
-function API.OpenDungeon(key)
-  if P and P.app and P.app.Open then P.app.Open("dungeons", key); return true end
-  return false, "Simulationsfenster nicht verfuegbar"
-end

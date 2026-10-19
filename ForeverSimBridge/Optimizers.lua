@@ -237,14 +237,13 @@ function P.compareSlot(data,p,equipped,item,base)
  if not wins then new=same end
  local holdout=P.paired(data,p,before,base.choice,after,choice,32,7,candidateProfile)
  local result={item=item,eligible=true,evaluable=true,bewertbar=true,baseDps=old,newDps=new,percent=old>0 and 100*(new-old)/old or nil,delta=new-old,newChoice=choice,status=holdout.lower95>0 and 'upgrade'or(holdout.upper95<0 and 'downgrade'or 'uncertain'),confidence95={holdout.lower95,holdout.upper95},rotationChangedRequired=not legal,rotationRules=P.compile(data,candidateProfile,after,choice,90,1).rotationRules,preview=not data.validated}
- if P.leveling then local context=P.leveling.Context(p);if context.targetHealth then result.leveling=P.leveling.Compare(data,p,before,base.choice,after,choice,context,candidateProfile)end end
  return result
 end
 function P.compare(data,p,equipped,item,base)
  local a=P.compareSlot(data,p,equipped,item,base);local other=({finger1='finger2',finger2='finger1',trinket1='trinket2',trinket2='trinket1'})[item.slot]
  if not other then return a end local alternate=P.copy(item);alternate.slot=other;local b=P.compareSlot(data,p,equipped,alternate,base)if b.eligible and(not a.eligible or b.delta>a.delta)then return b end return a
 end
-function P.invalidate()P.revision=P.revision+1;P.stale=true;P.lastLeveling=nil end
+function P.invalidate()P.revision=P.revision+1;P.stale=true end
 -- Buffs, auras, pets, forms, zoning and bag changes do NOT change item comparisons.
 -- Only level, worn gear and talent ranks do; everything else must keep the caches.
 function P.stateSignature()
@@ -263,149 +262,5 @@ function P.stateChanged(owner)
  if owner.sig==sig then return false end
  owner.sig=sig
  return true
-end
-
--- Local, class-neutral priority tuner. Begins with a supplied, explicit policy
--- (e.g. a faithfully imported XN build) instead of substituting a generic preset.
--- Optimizes only with our Lua combat engine; XN results are never fed to scoring.
-function P.rotationNeighbors(choice)
- local out,seen={},{}
- local function add(c,reason)
-  if #c.policies==0 then return end
-  local id=P.canonical(c);if not seen[id]then seen[id]=true;out[#out+1]={choice=c,reason=reason}end
- end
- add(P.copy(choice),'original')
- for i,policy in ipairs(choice.policies or {})do
-  if i<#choice.policies-1 then
-   local c=P.copy(choice);c.policies[i],c.policies[i+1]=c.policies[i+1],c.policies[i]
-   add(c,'Priorität '..policy.key..' / '..choice.policies[i+1].key..' tauschen')
-  end
-  -- Final (non-maintained) filler cannot be removed.
-  if i<#choice.policies then local c=P.copy(choice);table.remove(c.policies,i);add(c,policy.key..' weglassen')end
-  if policy.maintain and i<#choice.policies then
-   local refresh=P.copy(choice);refresh.policies[i].refreshAtCastTime=not policy.refreshAtCastTime;add(refresh,'Erneuerung zum Ende der Wirkzeit: '..policy.key)
-   for _,threshold in ipairs({0,8,15,25,40,60})do
-    if (policy.minRemaining or 0)~=threshold then
-     local c=P.copy(choice);c.policies[i].minRemaining=threshold>0 and threshold or nil
-     add(c,policy.key..' nicht erneuern bei < '..threshold..' Sekunden')
-    end
-   end
-  end
- end
- for _,tap in ipairs({.2,.35,.5,.65,.8})do
-  if math.abs((choice.tapAtPct or 0)-tap)>.001 then local c=P.copy(choice);c.tapAtPct=tap;add(c,'Life Tap unter '..math.floor(tap*100)..'% Mana')end
- end
- if choice.channelClip~=nil then local c=P.copy(choice);c.channelClip=not c.channelClip;add(c,'Kanal abbrechen '..tostring(c.channelClip))end
- return out
-end
-function P.rotationTrial(data,p,gear,choice,durations,seeds)
- local dps=0
- for _,duration in ipairs(durations)do
-  for _,seed in ipairs(seeds)do
-   local spec=P.compile(data,p,gear,choice,duration,seed)
-   if p.rotationTrialOverrides then p.rotationTrialOverrides(spec) end
-   dps=dps+P.run(spec).dps
-  end
- end
- return dps/(#durations*#seeds)
-end
--- Paired samples, using identical durations and seeds for start and candidate.
--- Used only on unseen validation seeds, never on seeds used to tune a choice.
-function P.rotationPairTrial(data,p,gear,startChoice,otherChoice,durations,seeds,z)
- local changes,total={},0
- local startSum,candidateSum=0,0
- for _,duration in ipairs(durations)do
-  for _,seed in ipairs(seeds)do
-   local a=P.compile(data,p,gear,startChoice,duration,seed)
-   local b=P.compile(data,p,gear,otherChoice,duration,seed)
-   if p.rotationTrialOverrides then p.rotationTrialOverrides(a);p.rotationTrialOverrides(b)end
-   local aDps=P.run(a).dps;local bDps=P.run(b).dps
-   startSum=startSum+aDps;candidateSum=candidateSum+bDps
-   local delta=bDps-aDps;changes[#changes+1]=delta;total=total+delta
-  end
- end
- local n=#changes;local mean=total/n
- local variance=0
- for _,v in ipairs(changes)do variance=variance+(v-mean)^2 end
- variance=variance/math.max(1,n-1)
- local margin=(z or 2.58)*math.sqrt(variance/n)
- return {baselineDps=startSum/n,candidateDps=candidateSum/n,difference=mean,
-         margin=margin,lower=mean-margin,upper=mean+margin,samples=n,
-         relativePercent=startSum>0 and (100*candidateSum/startSum) or 100}
-end
-
--- Guaranteed starting rotation: 100%, always preserved on equal, negative or
--- unverified gains. Search only proposes alternatives; validation alone accepts.
--- No class module, learned rotation or live addon default is modified here.
-function P.tuneRotation(data,p,gear,base,opts)
- opts=opts or {}
- assert(base and base.policies and #base.policies>0,'Startrotation fehlt')
- local durations=opts.durations or {108,120,132}
- local seeds=opts.seeds or {31211,48817,81721}
- local validationSeeds=opts.validationSeeds or {178651,191789,205279,219103,232369,247301,260849,274073,289157,302147,316241,330431,344219,358633,370873,386017,399911,413921}
- assert(#durations>0 and #seeds>0 and #validationSeeds>=2,'Leere Seed- oder Kampfdauerliste')
- local used={}
- for _,seed in ipairs(seeds)do used[seed]=true end
- for _,seed in ipairs(validationSeeds)do assert(not used[seed],'Validierungs-Seeds müssen neu sein')end
- local startChoice=P.copy(base);local startId=P.canonical(startChoice)
- local current=P.copy(startChoice);local tested,history=0,{}
- local function trial(choice,ds,ss)
-  tested=tested+1;return P.rotationTrial(data,p,gear,choice,ds,ss)
- end
- local baseTraining=trial(startChoice,durations,seeds)
- local currentTraining=baseTraining
- local discovered={[startId]={choice=P.copy(startChoice),reason='Startrotation',score=baseTraining}}
- for round=1,(opts.rounds or 2)do
-  local neighbors=P.rotationNeighbors(current)
-  local shortlist={}
-  for _,neighbor in ipairs(neighbors)do
-   local id=P.canonical(neighbor.choice)
-   local quick=trial(neighbor.choice,{durations[math.min(2,#durations)]},{seeds[1]})
-   shortlist[#shortlist+1]={choice=neighbor.choice,reason=neighbor.reason,quick=quick,id=id}
-  end
-  table.sort(shortlist,function(a,b)if a.quick~=b.quick then return a.quick>b.quick end return a.id<b.id end)
-  local top=math.min(opts.finalists or 6,#shortlist)
-  local best={choice=current,score=currentTraining,reason='Beibehalten',id=P.canonical(current)}
-  for j=1,top do
-   local candidate=shortlist[j]
-   candidate.score=trial(candidate.choice,durations,seeds)
-   local old=discovered[candidate.id]
-   if not old or candidate.score>old.score then discovered[candidate.id]={choice=P.copy(candidate.choice),reason=candidate.reason,score=candidate.score}end
-   if candidate.score>best.score or (candidate.score==best.score and candidate.id<best.id)then best=candidate end
-  end
-  history[#history+1]={round=round,neighbors=#neighbors,leading=best.reason,leadingDps=best.score,baselineDps=baseTraining}
-  if best.score<=currentTraining+(opts.minGain or 0.05) or best.id==P.canonical(current) then break end
-  current=P.copy(best.choice);currentTraining=best.score
- end
- -- The holdout does not direct exploration. It only decides the recommendation.
- local candidates={}
- for id,entry in pairs(discovered)do if id~=startId then candidates[#candidates+1]={id=id,choice=entry.choice,reason=entry.reason,score=entry.score}end end
- table.sort(candidates,function(a,b)if a.score~=b.score then return a.score>b.score end return a.id<b.id end)
- local maxChecks=math.min(opts.validationFinalists or 5,#candidates)
- local winner=nil;local comparisons={}
- local referenceScore=trial(startChoice,durations,validationSeeds)
- local minPercent=opts.minGainPercent or 0
- local minDps=opts.minGainDps or 0
- for j=1,maxChecks do
-  local candidate=candidates[j]
-  local result=P.rotationPairTrial(data,p,gear,startChoice,candidate.choice,durations,validationSeeds,opts.validationZ or 2.58)
-  tested=tested+2
-  result.reason=candidate.reason;result.choiceId=candidate.id;result.trainingDps=candidate.score
-  result.confirmed=result.difference>0 and result.relativePercent>100
-  comparisons[#comparisons+1]=result
-  if result.confirmed and (not winner or result.candidateDps>winner.result.candidateDps)then winner={choice=candidate.choice,result=result,reason=candidate.reason}end
- end
- local accepted=winner~=nil
- local selected=accepted and P.copy(winner.choice) or P.copy(startChoice)
- local result=accepted and winner.result or nil
- return {baseline=referenceScore,optimized=accepted and result.candidateDps or referenceScore,
-         percentOfStart=accepted and result.relativePercent or 100,
-         improvementPercent=accepted and (result.relativePercent-100) or 0,
-         accepted=accepted,status=accepted and 'confirmed_improvement' or 'start_preserved',
-         choice=selected,startChoice=startChoice,history=history,comparisons=comparisons,
-         chosenReason=accepted and winner.reason or 'Startrotation beibehalten',
-         tested=tested,validationSamples=#durations*#validationSeeds,
-         confidenceLowerDps=accepted and result.lower or 0,
-         searchedCandidates=#candidates}
 end
 

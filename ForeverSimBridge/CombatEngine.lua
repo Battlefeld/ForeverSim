@@ -2,13 +2,10 @@
 FUSLive=FUSLive or {};local P=FUSLive
 P.version='1.16.0'
 -- Forever Legacy perk "Talented" (0-5 ranks) moves the first talent point from level
--- 10 down to level 10-rank. Read it from the client's spent+unspent points; fall back
--- to the rank chosen in the dashboard when the client does not expose talent points.
+-- 10 down to level 10-rank. Read it from the client's spent+unspent points.
 function P.talentBonus()
  local function n(v)if type(v)=='number' and v==v and not(type(issecretvalue)=='function' and issecretvalue(v))then return v end end
  local ok,level=pcall(UnitLevel,'player');level=ok and n(level)
- local manual=ForeverSimBridgeDB and ForeverSimBridgeDB.talentedRank
- if type(manual)=='number' then return math.max(0,math.min(5,manual)),'manual' end
  if not level then return 0,'unknown' end
  local unspent=nil
  if type(GetUnspentTalentPoints)=='function' then local okU,v=pcall(GetUnspentTalentPoints);unspent=okU and n(v) end

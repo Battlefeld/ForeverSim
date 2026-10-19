@@ -2,7 +2,7 @@
 local P=FUSLive;local queue={};local active=nil;local frame=CreateFrame('Frame');local spent,maxSlice=0,0
 local clock=debugprofilestop or function()return GetTime()*1000 end
 local sliceStart=0;local budget=1.0;local sliceActions=0
--- P.jobBudgetMs lets an open, out-of-combat dashboard use more time per frame.
+-- P.jobBudgetMs lets a caller use more time per frame.
 P.checkpoint=function()sliceActions=sliceActions+1;if active and ((debugprofilestop and clock()-sliceStart>=(P.jobBudgetMs or budget))or(not debugprofilestop and sliceActions>=3))then coroutine.yield()end end
 P.metrics={jobs=0,frames=0,maxSliceMs=0,cancelled=0}
 local function valid(job)return job.revision==P.revision and(not job.valid or job.valid())end
@@ -53,12 +53,10 @@ local function panel(rollID)
  nextPanelIndex=nextPanelIndex+1
  local f=CreateFrame('Frame',nil,UIParent)
  f.slot=slot
- f:SetSize(255,59)
+ f:SetSize(255,22)
  f:SetFrameStrata('DIALOG')
  local bg=f:CreateTexture(nil,'BACKGROUND');bg:SetAllPoints();bg:SetColorTexture(.03,.03,.04,.94)
  f.label=f:CreateFontString(nil,'OVERLAY','GameFontNormalSmall');f.label:SetPoint('TOPLEFT',7,-5);f.label:SetWidth(243);f.label:SetHeight(13);f.label:SetWordWrap(false);f.label:SetJustifyH('LEFT')
- f.icons={};f.rules=f:CreateFontString(nil,'OVERLAY','GameFontNormalSmall');f.rules:SetPoint('BOTTOMLEFT',7,4);f.rules:SetWidth(243);f.rules:SetHeight(12);f.rules:SetWordWrap(false);f.rules:SetJustifyH('LEFT')
- for i=1,7 do local icon=f:CreateTexture(nil,'ARTWORK');icon:SetSize(20,20);icon:SetPoint('TOPLEFT',7+(i-1)*24,-21);f.icons[i]=icon end
  f:EnableMouse(false) -- never swallow clicks meant for Blizzard's roll buttons
  f:Hide()
  panels[rollID]=f
@@ -69,33 +67,16 @@ local function place(f,rollID)
  local gl=P.itemScore and P.itemScore.RollFrame(rollID)
  f:ClearAllPoints()
  if gl then f:SetPoint('TOPLEFT',gl,'BOTTOMLEFT',0,-2);f:SetWidth(math.max(255,gl:GetWidth()or 255))
- else f:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT',-25,-190-(f.slot or 0)*66);f:SetWidth(255) end
+ else f:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT',-25,-190-(f.slot or 0)*28);f:SetWidth(255) end
 end
-local function safeSpellIcon(ref)
- if P.spellDisplay then local _,icon=P.spellDisplay(ref);return icon end
- local f=GetSpellTexture
- if type(f)=='function' then local ok,icon=pcall(f,ref);if ok then return icon end end
- if type(GetSpellInfo)=='function' then
-  local ok,_,_,icon=pcall(GetSpellInfo,ref)
-  if ok then return icon end
- end
- return nil
-end
-local function display(rollID,result,err,profile)
+local function display(rollID,result,err)
  if P.itemScore then P.itemScore.ClearMarks('roll'..rollID) end
- local f=panel(rollID);place(f,rollID);f:SetScript('OnEnter',nil);f:SetScript('OnLeave',nil);f:Show();for _,i in ipairs(f.icons)do i:Hide()end f.rules:SetText('')
+ local f=panel(rollID);place(f,rollID);f:Show()
  if err then f.label:SetText('|cffffaa66'..uiProblem(err)..'|r');return end
  if not result.eligible then f.label:SetText('|cffffaa66'..(result.reason or 'Nicht bewertbar')..'|r');return end
  local pct=result.percent and (string.format('%+.1f %% DPS',result.percent):gsub('%.',',',1))or 'Kein Vergleich';local color=result.status=='upgrade'and '80ff80'or(result.status=='downgrade'and 'ff8080'or 'ddddaa')
  f.label:SetText('ForeverSim: |cff'..color..pct..'|r')
  if result.status=='upgrade' and P.itemScore then local gl,i=P.itemScore.RollFrame(rollID);local need=P.itemScore.RollNeedButton(gl,i);if need then P.itemScore.ClearMarks('roll'..rollID);P.itemScore.GoldBorder('roll'..rollID,need,3) end end
- for i,policy in ipairs(result.newChoice.policies)do if i>7 then break end local names=((FUSLiveData[profile.class]or {}).spellAliases or P.spellAliases)[policy.key]or {policy.key};local icon
-  for _,s in ipairs(profile.spells or {})do for _,name in ipairs(names)do if s.name and string.lower(s.name)==name then icon=safeSpellIcon(s.id or s.name);break end end if icon then break end end
-  if icon then f.icons[i]:SetTexture(icon);f.icons[i]:Show()end
- end
- f:SetScript('OnEnter',function(self)if P.explainItem and GameTooltip then GameTooltip:SetOwner(self,'ANCHOR_RIGHT');GameTooltip:SetText('SIM-Entscheidung');for _,line in ipairs(P.explainItem(result))do GameTooltip:AddLine(line,.8,.8,.7,true)end;GameTooltip:Show()end end)
- f:SetScript('OnLeave',function()if GameTooltip then GameTooltip:Hide()end end)
- if #result.rotationRules>0 then local r=result.rotationRules[1];f.rules:SetText(r.text or r.buff)else f.rules:SetText('Prioritäten · Boss 60 / 90 / 120 s')end
 end
 local function current()
  local snap=P.capture and P.capture(true)if not snap then error('Charakterdaten fehlen')end local profile=P.normalizeSnapshot(snap);profile.spells=snap.spells
@@ -104,7 +85,7 @@ local function current()
 end
 local function evaluate(item,done,stillValid)
  local data,profile;local ok,err=pcall(function()data,profile=current()end)if not ok then done(nil,err);return end
- P.enqueue(function()local stats=P.combine(profile.equipped);local chosen=(not P.stale and P.lastRotation and P.lastRotation.choice) or nil;local base=P.best(data,profile,stats,chosen);local result=P.compare(data,profile,profile.equipped,item,base);result.profile=profile;return result end,done,stillValid,true)
+ P.enqueue(function()local stats=P.combine(profile.equipped);local base=P.best(data,profile,stats,nil);local result=P.compare(data,profile,profile.equipped,item,base);result.profile=profile;return result end,done,stillValid,true)
 end
 local rolls={}
 local function requestRoll(id)
@@ -128,11 +109,9 @@ local function requestRoll(id)
  if not item then return false end
  local token={};rolls[id]=token
  local f=panel(id);place(f,id);f:Show();f.label:SetText('ForeverSim: wird berechnet …')
- f:SetScript('OnEnter',nil);f:SetScript('OnLeave',nil)
- f.rules:SetText('');for _,icon in ipairs(f.icons)do icon:Hide()end
  evaluate(item,function(result,err)
   if rolls[id]~=token then return end
-  display(id,result,err,result and result.profile or {})
+  display(id,result,err)
  end,function()
   -- Do not inspect or mutate Blizzard roll frames. Only use public roll API.
   if rolls[id]~=token or inCombat() then return false end
@@ -155,7 +134,7 @@ local function clearLabels()
  clearQuestLabels()
 end
 local function invalidate()
- P.invalidate();if P.rotationHUD then P.rotationHUD.invalidate()end;clearLabels();for id in pairs(rolls)do pendingRolls[id]=true end;rolls={}
+ P.invalidate();clearLabels();for id in pairs(rolls)do pendingRolls[id]=true end;rolls={}
  later(function()for id in pairs(pendingRolls)do if requestRoll(id)then pendingRolls[id]=nil end end end)
  if P.itemScore then P.itemScore.Changed()end
 end
@@ -176,52 +155,6 @@ events:SetScript('OnEvent',function(_,e,id)
  elseif e=='GET_ITEM_INFO_RECEIVED'then if not inCombat() then for roll in pairs(pendingRolls)do if requestRoll(roll)then pendingRolls[roll]=nil end end end
  elseif P.stateChanged(events) then invalidate()end
 end)
-P.optimizeNow=function()
- if ForeverSimBridgeDB and ForeverSimBridgeDB.rotationGoal=='leveling' and P.leveling then P.leveling.Optimize(true);return end
- local level=UnitLevel and UnitLevel('player')
- if level and level<P.minSimLevel() then print('Forever SIM: '..P.levelMessage(level));return end
- local ok,data,p=pcall(current)if not ok then print('Forever SIM: '..tostring(data));return end
- P.enqueue(function()
-  local stats=P.combine(p.equipped)
-  local start=P.candidates(data,p)[1]
-  if not start then error('Keine gelernte Startrotation') end
-  local searched=P.best(data,p,stats,start)
-  local candidates={searched.choice}
-  if p.level>=30 and P.tuneRotation then
-   local tuned=P.tuneRotation(data,p,stats,searched.choice,{rounds=1,finalists=4,
-     seeds={31211,48817,81721},validationSeeds={178651,191789,205279,219103,232369,247301,260849,274073}})
-   if tuned.accepted then candidates[#candidates+1]=tuned.choice end
-  end
-  local bestDiff,selected=0,P.copy(start)
-  local baseDps=0
-  local seen={}
-  for _,choice in ipairs(candidates)do
-   local id=P.canonical(choice)
-   if not seen[id]then
-    seen[id]=true
-    local comparison=P.paired(data,p,stats,start,stats,choice,12,13)
-    baseDps=comparison.baselineDps
-    if comparison.difference>bestDiff then bestDiff=comparison.difference;selected=P.copy(choice)end
-   end
-  end
-  -- Scoring every finalist with the same comparison seeds: original is always 100%.
-  if baseDps==0 then baseDps=P.score(data,p,stats,start,12,13)end
-  local accepted=bestDiff>0
-  return {choice=selected,dps=baseDps+bestDiff,baselineDps=baseDps,
-    percentOfStart=baseDps>0 and(100*(baseDps+bestDiff)/baseDps)or 100,
-    improvementPercent=baseDps>0 and(100*bestDiff/baseDps)or 0,
-    accepted=accepted,status=accepted and 'improvement' or 'start_preserved',
-    candidatesTested=searched.candidatesTested,rotationRules=searched.rotationRules}
- end,function(r,err)
-  if err then print('Forever SIM: '..err);return end
-  if not r or not r.choice then print('Forever SIM: Keine gültige Rotation.');return end
-  P.stale=false;P.lastRotation=r
-  -- Only serialize small optimizer output, never the entire simulation/character snapshot.
-  ForeverSimBridgeDB.rotationResult={choice=P.copy(r.choice),dps=r.dps,baselineDps=r.baselineDps,percentOfStart=r.percentOfStart,accepted=r.accepted}
-  if P.rotationHUD then P.rotationHUD.configure(data,p,r) end
-  print(string.format('Forever SIM: %.1f DPS · %.2f%% der Startrotation · %d Kandidaten (Teilmodell)',r.dps,r.percentOfStart or 100,r.candidatesTested))
- end)
-end
 P.pendingJobs=function()return #queue+(active and 1 or 0)end
 -- Cancel cooperative jobs between slices. Notify owners so their busy flags clear.
 P.cancelJobs=function(reason)
@@ -229,23 +162,4 @@ P.cancelJobs=function(reason)
  if active then table.insert(cancelled,1,active);active=nil end
  for _,job in ipairs(cancelled)do discard(job,reason or 'Berechnung abgebrochen.')end
 end
-
--- Schedule first live optimization after login, never while fighting.
-local login=CreateFrame('Frame');login:RegisterEvent('PLAYER_ENTERING_WORLD');login:RegisterEvent('PLAYER_REGEN_ENABLED');login:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
-local awaiting=false;local refreshToken=0
-login:SetScript('OnEvent',function(_,event)
- if P.passiveSafetyMode and P.passiveSafetyMode() then return end
- if event=='PLAYER_ENTERING_WORLD' or event=='PLAYER_EQUIPMENT_CHANGED' then awaiting=true end
- if not awaiting then return end
- refreshToken=refreshToken+1;local token=refreshToken
- local function submit()
-  if token~=refreshToken then return end
-  if P.passiveSafetyMode and P.passiveSafetyMode()then return end
-  if InCombatLockdown and InCombatLockdown() then return end
-  awaiting=false
-  local ok,data,p=pcall(current)
-  if ok and data and p and p.level>=10 then P.optimizeNow() end
- end
- if C_Timer and C_Timer.After then C_Timer.After(2,submit)else submit()end
-end)
 

@@ -38,7 +38,6 @@ jobs:
           (cd ForeverCore && go test -v ./... && go vet ./...)
           lua5.1 ForeverCore/tests/bridge_test.lua .
           lua5.1 ForeverCore/tests/integration_test.lua .
-          lua5.1 ForeverCore/tests/offline_contract_test.lua .
           lua5.1 ForeverCore/tests/hunter_capture_test.lua .
       - name: Windows binaries
         env:

@@ -1,6 +1,6 @@
 -- Regression: noisy events must not cause an endless request/discard loop.
 local root=assert(arg[1]);dofile(root..'/_dev/harness/wowmock.lua');dofile(root..'/_dev/harness/gameapi.lua')
-for _,file in ipairs({'Protocol.lua','Bridge.lua','Adapters.lua','AnalysisAdapters.lua'})do assert(loadfile(root..'/ForeverCoreBridge/'..file))('ForeverCoreBridge',{})end
+for _,file in ipairs({'Protocol.lua','Bridge.lua','Adapters.lua'})do assert(loadfile(root..'/ForeverCoreBridge/'..file))('ForeverCoreBridge',{})end
 local C=ForeverCoreClient
 MOCK.Fire('PLAYER_LOGIN')
 C.queue={};C.pending=nil

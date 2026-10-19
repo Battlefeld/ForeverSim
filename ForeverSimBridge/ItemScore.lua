@@ -102,8 +102,7 @@ function M.Get(link)
     P.enqueue(function()
         local stats = P.combine(c.profile.equipped)
         if not base or base.revision ~= revision then
-            local chosen = (not P.stale and P.lastRotation and P.lastRotation.choice) or nil
-            base = {revision = revision, value = P.best(c.data, c.profile, stats, chosen)}
+            base = {revision = revision, value = P.best(c.data, c.profile, stats, nil)}
         end
         local issue = P.checkEligibility(c.data, c.profile, item, c.profile.equipped)
         if issue then return {item = item, eligible = false, reason = issue} end

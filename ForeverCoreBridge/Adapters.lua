@@ -38,7 +38,7 @@ function C.Capture(kind)
   s.mode=M.db.settings and M.db.settings.mode or'balanced'
   s.routeDB={settings=C.clean(M.db.settings),done=C.clean(M.db.done),phases=C.clean(M.db.phases),routeProgress=C.clean(M.db.routeProgress),completedPlans=C.clean(M.db.completedPlans),routeSkips=C.clean(M.db.routeSkips),skipHistory=C.clean(M.db.skipHistory),skipContexts=C.clean(M.db.skipContexts),deferred=C.clean(M.db.deferred),routeRecovery=C.clean(M.db.routeRecovery),routeTravel=C.clean(M.db.routeTravel),routeTravelVisits=C.clean(M.db.routeTravelVisits),buffs=C.clean(M.db.buffs),observedXP=C.clean(M.db.observedXP),dungeonRuns=C.clean(M.db.dungeonRuns)}
  end
- if kind=='sim'or kind=='item'or kind=='rotation'or kind=='talents'or kind=='talent-build'or kind=='talent-next'or kind=='weights'or kind=='analysis'or kind=='leveling'then
+ if kind=='sim'or kind=='item'then
   local P=FUSLive;if not P or not P.capture then error('ForeverSim fehlt')end
   s.sim=C.clean(P.capture(true));if not s.sim then error('SIM-Snapshot nicht lesbar')end
   local actualFree=read(GetUnspentTalentPoints)
@@ -102,28 +102,10 @@ function C.ApplyRoute(result,issue)
   M.coreRevision=C.revision
  end
 end
-function C.ApplySim(result,issue,silent)
+-- A plain baseline simulation (/fc sim): report the number, nothing else depends on it.
+function C.ApplySim(result,issue)
  C.lastSim=result
- if issue then C.Say(issue)end
- local P=FUSLive;if not P or not P.app then return end
- if not issue and result and not result.candidateDps and result.priority and result.dps and result.dps>0 then
-  local liveSpells=C.latestState and C.latestState.sim and C.latestState.sim.spells
-  local choice=P.rotationHUD and P.rotationHUD.SetExternalPriority and P.rotationHUD.SetExternalPriority(result.priority,liveSpells)or{policies={}}
-  local view={engine='MythicSim Go',dps=result.dps,baselineDps=result.baselineDps or result.dps,percentOfStart=result.pct or 100,improvementPercent=(result.pct or 100)-100,accepted=(result.pct or 100)>100,choice=choice,candidatesTested=#(result.candidates or{}),warnings=result.warnings}
-  P.lastRotation=view;P.stale=false;ForeverSimBridgeDB.rotationResult=view
-  P.app.state.rotation={revision=P.revision,result=view}
- end
- if silent then return end
- local run=C.simRun
- if not run then C.ShowResult(result,issue);return end
- if issue then run.status='error';run.error={code='FOREVERCORE',message=issue}
- else run.status='complete';run.result=result;run.phase='MythicSim fertig';run.completed=date and date('%H:%M')or'' end
- if P.app.state.simulation==run then P.app.Refresh()end;C.ShowResult(result,issue)
-end
-local function startSim(kind,payload,route)
- local P=FUSLive
- if P and P.app then P.app.Open(route or'rotation');C.simRun={status='running',kind=kind,phase='ForeverCore / MythicSim',revision=P.revision};P.app.state.simulation=C.simRun;P.app.Refresh()end
- local run=C.simRun;if not C.Request(kind,payload,function(result,issue)if run==C.simRun then C.ApplySim(result,issue)end end)then C.ApplySim(nil,'Auftrag konnte nicht gestartet werden')end
+ C.Say(issue or(result and string.format('MythicSim: %.2f DPS',result.dps or 0))or'Kein Ergebnis')
 end
 function C.InstallAdapters()
  local ns=nsFDQ();local M=ns and ns.Model
@@ -140,68 +122,6 @@ function C.InstallAdapters()
    if not C.lastRoute and not C.pending and #C.queue==0 then C.MarkChanged(true,2) end
   end
  end
- local P=FUSLive
- if P and P.actions and not C.originalActions then
-  C.originalActions={RunRotation=P.actions.RunRotation,CompareItem=P.actions.CompareItem,RunLeveling=P.actions.RunLeveling}
-  P.actions.RunRotation=function()
-   if not enabled()then return C.originalActions.RunRotation()end
-   -- Candidate APLs are selected from the pinned MythicSim data in ForeverCore.
-   startSim('rotation',{autoRotations=true},'rotation')
-  end
-  P.actions.CompareItem=function(reference)
-   if not enabled()then return C.originalActions.CompareItem(reference)end
-   local ok,item=pcall(P.readItem,tonumber(reference)or reference,'ForeverCore')
-   if not ok or not item then C.Say('Itemdaten noch nicht geladen');return end
-   local candidate=C.ItemCandidate(item,reference);if candidate.slot==nil then C.Say('Itemslot nicht unterstuetzt');return end
-   startSim('item',{items={candidate}},'gear')
-  end
-  P.actions.RunLeveling=function()
-   if not enabled()then return C.originalActions.RunLeveling()end
-   local settings=ForeverSimBridgeDB and ForeverSimBridgeDB.leveling or{}
-   startSim('leveling',{benchmark=true,targetHealth=settings.targetHealth,targetLevel=settings.targetLevel,downtime=settings.moveSeconds},'rotation')
-  end
-  if P.leveling and not C.originalLevelingOptimize then C.originalLevelingOptimize=P.leveling.Optimize;P.leveling.Optimize=function(...)if not enabled()then return C.originalLevelingOptimize(...)end;return P.actions.RunLeveling()end end
-  -- Legacy entry points must not silently start the previous Lua combat engine.
-  C.originalOptimize=P.optimizeNow
-  P.optimizeNow=function(...)if not enabled()then return C.originalOptimize(...)end;return P.actions.RunRotation()end
- end
-end
-
-function C.ApplyLeveling(result,issue)C.ApplySim(result,issue)end
-function C.ShowResult(result,issue)
- local P=FUSLive;if P and P.dashboard and P.dashboard.Show then P.dashboard.Show('more')end;local host=P and P.dashboard and P.dashboard.MoreHost and P.dashboard.MoreHost()
- if not host then C.Say(issue or(result and string.format('MythicSim: %.2f DPS',result.dps or 0))or'Kein Ergebnis');return end
- if not C.resultView then
-  local f=CreateFrame('Frame',nil,host,'BackdropTemplate');f:SetAllPoints(host);f:SetFrameLevel(host:GetFrameLevel()+20)
-  if f.SetBackdrop then f:SetBackdrop({bgFile='Interface\\Tooltips\\UI-Tooltip-Background'});f:SetBackdropColor(.025,.035,.065,1)end
-  f.title=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');f.title:SetPoint('TOPLEFT',24,-24);f.title:SetText('ForeverCore · MythicSim')
-  f.body=f:CreateFontString(nil,'OVERLAY','GameFontHighlight');f.body:SetPoint('TOPLEFT',24,-65);f.body:SetWidth(680);f.body:SetJustifyH('LEFT');f.body:SetJustifyV('TOP')
-  local close=CreateFrame('Button',nil,f,'UIPanelButtonTemplate');close:SetSize(160,26);close:SetPoint('BOTTOMLEFT',24,20);close:SetText('Zurueck');close:SetScript('OnClick',function()f:Hide()end)
-  C.resultView=f
- end
- local text
- if not issue and result and type(result.candidateDps)=='number' then
-  local delta=tonumber(result.delta)or 0
-  local pct=tonumber(result.percent)or 0
-  if delta>0 then text=string.format('Besser als aktuell: %+.2f DPS (%+.2f %%)',delta,pct)
-  elseif delta<0 then text=string.format('Aktuelles Item behalten: %.2f DPS weniger (%.2f %%)',math.abs(delta),pct)
-  else text='Kein gemessener DPS-Unterschied. Aktuelle Ausrüstung behalten.'end
- elseif not issue and result and result.rows then
-  local lines={'MythicSim · Level-Benchmark',result.source or'Explizite Gegnerdaten',''}
-  for _,row in ipairs(result.rows)do lines[#lines+1]=string.format('%s: %.2f DPS · %.1f s rechnerische Kampfzeit · %.1f Gegner/Stunde',row.name or'Ziel',row.dps or 0,row.timeToKill or 0,row.killsPerHour or 0)end
-  lines[#lines+1]='EP/Stunde ohne passende NPC-Daten nicht bekannt.';text=table.concat(lines,'\n')
- elseif not issue and result and result.actions then
-  local lines={string.format('MythicSim: %.2f DPS',result.dps or 0),'Schaden und Einsaetze pro simuliertem Kampf:',''}
-  for _,row in ipairs(result.actions)do local id=row.id or{};local spell=read(C_Spell and C_Spell.GetSpellInfo,id.spellId);lines[#lines+1]=string.format('%s · %s: %.1f Schaden · %.2f Einsaetze',row.actor or'?',spell and spell.name or tostring(id.spellId or id.otherId or'?'),row.damage or 0,row.casts or 0)end
-  lines[#lines+1]='';lines[#lines+1]=result.comparison or'';text=table.concat(lines,'\n')
- elseif issue then text='Berechnung nicht verfuegbar\n\n'..tostring(issue)
- else
-  local lines={string.format('Start: %.2f DPS · 100 %%',result.baselineDps or 0),string.format('Auswahl: %s · %.2f DPS · %.2f %%',result.selected or'baseline',result.dps or 0,result.pct or 100),'','Verglichene Kandidaten:'}
-  for _,row in ipairs(result.candidates or{})do lines[#lines+1]=string.format('%s: %.2f DPS · %.2f %%',row.name or'Kandidat',row.dps or 0,row.pct or 0)end
-  lines[#lines+1]='';lines[#lines+1]=result.scenario or'';lines[#lines+1]='Engine: '..tostring(result.engineRevision or'');text=table.concat(lines,'\n')
- end
- if result and result.warnings and #result.warnings>0 then text=text..'\n\n'..table.concat(result.warnings,'\n')end
- C.resultView.body:SetText(text);C.resultView:Show()
 end
 
 -- Reuse finished calculations across quest-log opens, /reload and restarts.
@@ -258,80 +178,6 @@ local function storeItem(context,key,record)
  if db.entries[full]==nil then db.order[#db.order+1]=full end
  db.entries[full]=record
  while #db.order>1200 do db.entries[table.remove(db.order,1)]=nil end
-end
-
--- Automatically recommend the best LEGAL next point, using one MythicSim batch job.
--- Only outside combat; the normal talent tree remains the sole point-allocation UI.
--- Search the best complete distribution of available TOTAL talent points.
--- The server uses MythicSim to compare mixed trees; no per-point winner is shown.
-function C.RecommendTalents(force)
- local function fail(reason)
-  C.lastTalentAdvice={state='unsupported',reason=reason}
-  if force then C.Say('Talente: '..reason)end
-  return false
- end
- if not enabled()then return fail('ForeverCore-Verbindung deaktiviert: /fc on')end
- if InCombatLockdown and InCombatLockdown()then return fail('Nur ausserhalb des Kampfes berechnen')end
- local P=_G.FUSLive
- if not P or type(P.capture)~='function'then return fail('ForeverSim / Charakterdaten fehlen')end
- local ok,snap=pcall(P.capture,true)
- if not ok or not snap or type(snap.talents)~='table'then return fail('Talentprofil nicht lesbar; /reload versuchen')end
- local level=tonumber(snap.level)
- if not level or level<10 or level>60 then return fail('Talentvergleich nur Level 10-60')end
- local ranks,spent={},0
- for _,tree in ipairs(snap.talents)do
-  for _,entry in ipairs(tree.entries or{})do
-   if type(entry.classKey)=='string' and type(entry.rank)=='number' and entry.rank>0 then
-    ranks[#ranks+1]=entry.classKey..'='..entry.rank
-    spent=spent+entry.rank
-   end
-  end
- end
- table.sort(ranks)
- local free=tonumber(snap.unspentTalentPoints)
- if not free then free=tonumber(read(GetUnspentTalentPoints))end
- if not free then
-  -- No fictitious points: only use visible level/real spent count.
-  local budget=math.max(0,math.min(51,level-9+(P.talentBonus and P.talentBonus()or 0)))
-  free=math.max(0,budget-spent)
- end
- local total=spent+free
- if total<1 then C.lastTalentAdvice={state='no-points',reason='Noch keine Talentpunkte verfuegbar'};return false end
- local items={}
- for _,entry in ipairs(snap.equipped or{})do items[#items+1]=tostring(entry.slot or'')..'='..tostring(entry.link or entry.id or'')end
- table.sort(items)
- local token=table.concat({tostring(snap.class),tostring(level),tostring(total),
-    table.concat(ranks,','),table.concat(items,','),tostring(C.SimCacheContext() or P.revision)},':')
- if C.lastTalentAdvice and C.lastTalentAdvice.state=='busy' and C.talentAdviceToken==token then return true end
- if not force and C.talentAdviceToken==token and C.lastTalentAdvice and C.lastTalentAdvice.state=='ok' then return true end
- local persisted=ForeverCoreBridgeDB and ForeverCoreBridgeDB.talentAdviceCache
- if not force and C.engineRevision and persisted and persisted.token==token
-    and persisted.advice and persisted.advice.state=='ok' then
-  C.talentAdviceToken=token;C.lastTalentAdvice=C.clean(persisted.advice)
-  return true
- end
- C.talentAdviceToken=token
- C.lastTalentAdvice={state='busy',points=total}
- -- Do not separately optimize each talent tree. The full combined build is searched.
- if not C.Request('talent-build',{},function(result,issue)
-  if C.talentAdviceToken~=token then return end
-  if issue or not result or result.status~='ok' or type(result.build)~='table' then
-   C.lastTalentAdvice={state='unsupported',reason=issue or 'Kombinierte Skillung nicht berechenbar',points=total}
-  else
-   C.lastTalentAdvice={state='ok',build=result.build,points=result.points,
-    dps=result.dps,delta=result.delta,percent=result.percent,
-    baselineDps=result.base,requiresRespec=result.requiresRespec==true,
-    exhaustive=result.exhaustive==true,tested=result.tested,cached=result.cached==true}
-   if C.engineRevision then
-    ForeverCoreBridgeDB.talentAdviceCache={token=token,advice=C.clean(C.lastTalentAdvice)}
-   end
-  end
-  -- App.Refresh only refreshes the advanced shell. Repaint the actual
-  -- shared talent page so the player immediately sees the returned build.
-  if P.dashboard and P.dashboard.Refresh then P.dashboard.Refresh()
-  elseif P.app and P.app.Refresh then P.app.Refresh()end
- end)then C.talentAdviceToken=nil;return fail(tostring(C.status or 'MythicSim-Warteschlange voll'))end
- return true
 end
 
 -- Shared external item cache for tooltip, quest rewards and gear comparison.
@@ -700,9 +546,5 @@ C.InstallAdapters=function()
  P.enqueue=function(fn,done,valid,priority)
   if not enabled()then return enqueue(fn,done,valid,priority)end
   if done then done(nil,'Diese Berechnung ist noch nicht an MythicSim angebunden.')end
- end
- if P.app and P.app.Open then
-  local open=P.app.Open
-  P.app.Open=function(...)if C.resultView then C.resultView:Hide()end;return open(...)end
  end
 end

@@ -11,53 +11,32 @@ loadAddon('ForeverSimBridge');loadAddon('ForeverCoreBridge')
 MOCK.Fire('PLAYER_LOGIN');MOCK.Advance(.2,.05)
 local C=ForeverCoreClient;ForeverCoreBridgeDB.enabled=true;C.InstallAdapters();C.revision=1
 local s=C.Capture('route');assert(s.level==20 and s.class=='WARLOCK','snapshot mismatch')
-local talentSnapshot=C.Capture('talent-build')
-assert(talentSnapshot.sim and talentSnapshot.sim.level==20,'talent-build must capture live simulation data')
-assert(type(talentSnapshot.sim.spellRankFamilies)=='table','spell rank families must accompany the HUD request')
-assert(type(talentSnapshot.sim.unspentTalentPoints)=='number','talent point budget must be available to MythicSim')
+-- Item jobs still carry the live character, talents included: every item comparison depends on them.
+local itemSnapshot=C.Capture('item')
+assert(itemSnapshot.sim and itemSnapshot.sim.level==20,'item jobs must capture live simulation data')
+assert(type(itemSnapshot.sim.talents)=='table','talents must still be read for item comparisons')
+assert(type(itemSnapshot.sim.unspentTalentPoints)=='number','talent point budget must be available to MythicSim')
 assert(C.ItemCandidate({id=9001,slot='mainhand'},'item:9001').slot==14,'item slot alias broken')
--- Native Core results update the normal dashboard/HUD without calling the Lua SIM.
-local compile=FUSLive.compile;FUSLive.compile=function()error('local compiler used for Core result')end
--- The synthetic rotation must name a spell actually learned in the mock spellbook.
-local knownSpell=talentSnapshot.sim.spells and talentSnapshot.sim.spells[1]
-assert(knownSpell and knownSpell.id,'mock spellbook required for external HUD mapping')
-C.ApplySim({engine='MythicSim Go',baselineDps=100,dps=101,pct=101,priority={{spellId=knownSpell.id}},candidates={}})
-assert(FUSLive.app.state.rotation.result.dps==101,'Core DPS not in dashboard')
-assert(FUSLive.lastRotation.engine=='MythicSim Go'and #FUSLive.lastRotation.choice.policies==1,'Core priority not in HUD')
-FUSLive.compile=compile
-
 assert(C.ItemCandidate({id=9001,slot='HeadSlot'}).slot==0,'equipped slot alias broken')
 local called=false;FUSLive.enqueue(function()called=true end,function()end);assert(not called,'legacy combat engine executed')
 local item=FUSLive.itemScore.Get(MOCK.link(9001));assert(not item or item.state=='busy' or item.state=='unmodeled','low-level item must dispatch or explain unavailability')
+-- /fc sim reports a plain baseline number.
+C.ApplySim({engine='MythicSim Go',baselineDps=100,dps=101,pct=101,candidates={}})
+assert(C.lastSim and C.lastSim.dps==101,'baseline result not kept')
 
--- New UI entry points must dispatch to external jobs and consume their results.
-local request=C.Request;local shown=C.ShowResult;local dispatched={}
-C.Request=function(kind,payload,done)
- dispatched[kind]=payload
- if kind=='weights'then local rows={};for _,key in ipairs({'StatSpellDamage','StatSpellHitRating','StatSpellCritRating','StatSpellHasteRating','StatIntellect','StatAgility','StatStrength','StatAttackPower'})do rows[#rows+1]={key=key,perPoint=1}end;done({base=500,rows=rows,class='warlock',level=60})
- elseif kind=='item'then assert(payload.items[1].metadata,'item requirements missing');done({baselineDps=500,candidateDps=510,delta=10,percent=2})
- elseif kind=='talents'then done({base=500,cand=500,pct=0,comparison='MythicSim'})
- elseif kind=='analysis'then done({dps=500,actions={{actor='Test',damage=60000,casts=80,id={spellId=133}}}})
- else error('unexpected analysis job '..tostring(kind))end;return true
+-- The old ForeverSim window, rotation and talent features are gone, and so are their entry points.
+local P=FUSLive
+for _,gone in ipairs({'app','dashboard','dashboardUI','shell','actions','rotationHUD','talentBuild','talentPlanner','leveling',
+                      'analysisUI','traceUI','encounterUI','combatAudit','targetHealth','optimizeNow','tuneRotation','talentTreeLayouts','XNPresets'})do
+ assert(P[gone]==nil,'removed module is still there: '..gone)
 end
-C.ShowResult=function(r)assert(r.actions,'analysis result missing')end
-FUSLive.dashboard.RunWeights();assert(FUSLive.dashboard.state.weights.base==500,'dashboard weights not connected')
-FUSLive.dashboard.CompareTalents();assert(dispatched.talents and FUSLive.dashboard.state.talentCompare.pct==0,'talents UI not connected')
-FUSLive.dashboard.CheckGear();assert(not FUSLive.dashboard.state.gear.busy and FUSLive.dashboard.state.gear.done==FUSLive.dashboard.state.gear.total,'gear search did not finish')
-FUSLive.dashboard.RunTrace();assert(dispatched.analysis and not FUSLive.dashboard.state.traceBusy,'analysis UI not connected')
-C.Request=request;C.ShowResult=shown
-
--- One actual window and one talent planner, irrespective of the legacy command used.
+assert(C.RecommendTalents==nil and C.ShowResult==nil,'removed ForeverCore talent/result helpers are still there')
+for _,cmd in ipairs({'FOREVERSIMDASH','FOREVERSIMTALENTPLAN'})do assert(SlashCmdList[cmd]==nil,'removed command still registered: '..cmd)end
+-- /fc opens the ForeverCore overview; the former window commands answer without errors.
 SlashCmdList.FOREVERCORE('')
-assert(FUSLive.dashboard.state.page=='overview','/fc did not open unified overview')
-SlashCmdList.FOREVERCORE('gear')
-assert(FUSLive.dashboard.state.page=='more' and FUSLive.app.state.ui.tab=='gear','/fc gear did not show real item comparison')
-SlashCmdList.FOREVERCORE('talents')
-assert(FUSLive.dashboard.state.page=='talents','/fc talents did not open shared talent tree')
-SlashCmdList.FOREVERSIMTALENTPLAN()
-assert(FUSLive.dashboard.state.page=='talents','legacy talents opened duplicate planner')
-SlashCmdList.FOREVERCORE('quests')
-assert(FUSLive.dashboard.state.page=='quests','/fc quests did not open unified quest tab')
+assert(_G.ForeverCoreMainWindow and _G.ForeverCoreMainWindow:IsShown(),'/fc did not open the overview')
+for _,cmd in ipairs({'gear','talents','rotation','quests','dungeons','advanced','leveling'})do SlashCmdList.FOREVERCORE(cmd)end
+for _,cmd in ipairs({'','optimize','hud','leveling','audit','analysis','encounter','status','class'})do SlashCmdList.FOREVERSIMBRIDGE(cmd)end
 -- /fc test runs against the mocked client without errors and stores its result.
 SlashCmdList.FOREVERCORE('test');assert(ForeverCoreBridgeDB.diagnose and #ForeverCoreBridgeDB.diagnose.lines>3,'diagnose')
 for _,e in ipairs(MOCK.errors)do io.stderr:write(e.msg..'\n')end
