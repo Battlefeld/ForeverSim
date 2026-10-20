@@ -174,8 +174,9 @@ local function minimapTooltip(b)
   end
  end
  GameTooltip:AddLine(' ')
- GameTooltip:AddLine('Linksklick: Uebersicht',.6,.8,1)
- GameTooltip:AddLine('Rechtsklick: Protokoll (kopierbar)',.6,.8,1)
+ GameTooltip:AddLine(ForeverSimUI and'Linksklick: ForeverSim-Fenster'or'Linksklick: Uebersicht',.6,.8,1)
+ GameTooltip:AddLine('Rechtsklick: Uebersicht und Einstellungen',.6,.8,1)
+ GameTooltip:AddLine('Umschalt + Rechtsklick: Protokoll (kopierbar)',.6,.8,1)
  GameTooltip:AddLine('Ziehen: verschieben',.6,.8,1)
  GameTooltip:Show()
 end
@@ -188,10 +189,15 @@ function UI.BuildMinimap()
  local overlay=b:CreateTexture(nil,'OVERLAY');overlay:SetSize(53,53);overlay:SetTexture('Interface\\Minimap\\MiniMap-TrackingBorder');overlay:SetPoint('TOPLEFT')
  local bg=b:CreateTexture(nil,'BACKGROUND');bg:SetSize(20,20);bg:SetTexture('Interface\\Minimap\\UI-Minimap-Background');bg:SetPoint('TOPLEFT',7,-5)
  local icon=b:CreateTexture(nil,'ARTWORK');icon:SetSize(17,17);icon:SetTexture(UI.ICON);icon:SetPoint('TOPLEFT',7,-6);icon:SetTexCoord(.08,.92,.08,.92)
+ -- the ForeverCore crystal (blue: connected, grey: not) when the ForeverSim art is installed
+ if ForeverSimArt and ForeverSimArt.crystal_on then icon:SetSize(22,22);icon:SetPoint('TOPLEFT',5,-4);icon:SetTexCoord(0,1,0,1);b.crystal=icon end
  b.dot=b:CreateTexture(nil,'OVERLAY');b.dot:SetSize(10,10);b.dot:SetTexture(UI.MEDIA..'FCDot');b.dot:SetPoint('BOTTOMRIGHT',-5,6)
  b:SetScript('OnClick',function(_,button)
-  if button=='RightButton' then if C.ShowLog then C.ShowLog()end;return end
-  UI.ToggleMain()
+  if button=='RightButton' then
+   if IsShiftKeyDown and IsShiftKeyDown() then if C.ShowLog then C.ShowLog()end else UI.ToggleMain()end
+   return
+  end
+  if ForeverSimUI and ForeverSimUI.Toggle then ForeverSimUI.Toggle() else UI.ToggleMain() end
  end)
  b:SetScript('OnEnter',minimapTooltip)
  b:SetScript('OnLeave',function()if GameTooltip then GameTooltip:Hide()end end)
@@ -212,6 +218,10 @@ end
 function UI.Refresh()
  local state,text=UI.State();local c=UI.StateColor(state)
  if UI.minimap and UI.minimap.dot then UI.minimap.dot:SetVertexColor(c[1],c[2],c[3])end
+ if UI.minimap and UI.minimap.crystal and ForeverSimArt then
+  local e=ForeverSimArt[(state=='ok'or state=='busy')and UI.lastOk and'crystal_on'or'crystal_off']
+  if e and UI.minimap.crystalKey~=e.file then UI.minimap.crystalKey=e.file;UI.minimap.crystal:SetTexture(ForeverSimArt.dir..e.file)end
+ end
  local m=UI.main
  if m and m.IsShown and m:IsShown() then
   m.dot:SetVertexColor(c[1],c[2],c[3]);m.state:SetText(text)

@@ -570,6 +570,8 @@ SlashCmdList['FOREVERSIMBRIDGE']=function(msg)
  if msg=='class' then local snap=snapshot(true);if not snap then print('Forever SIM: Charakterdaten fehlen.');return end;local profile=FUSLive.normalizeSnapshot(snap);local model=FUSLiveData[profile.class];if not model then print('Forever SIM: Klassenmodul fehlt.');return end;local issue=FUSLive.coverage(model,profile);print('Forever SIM · '..profile.class..': '..(issue or 'Klassenmodul aktiv · Einzelziel-DPS (Beta; Raid-Abgleich offen).'));return end
  local targetArmor=tonumber(msg:match('^armor%s+(%d+)$'));if targetArmor then if FUSLive.encounters then FUSLive.encounters.Configure({armor=targetArmor})end;print('Forever SIM: Zielrüstung '..targetArmor..' (Benutzereingabe)');return end
  if msg=='status' then print('Forever SIM: '..FUSLive.pendingJobs()..' Jobs, max Frame-Paket '..string.format('%.2f',FUSLive.metrics.maxSliceMs)..' ms');return end
+ -- the window: /fus (or /fus fenster) opens or closes it
+ if(msg==''or msg=='fenster'or msg=='window'or msg=='open')and ForeverSimUI and ForeverSimUI.Toggle then ForeverSimUI.Toggle();return end
  snapshot()
- print('|cff80ddffForever SIM:|r /fus dungeon, /fus status, /fus class, /fus armor <Wert>, /fus boss <Stufen>, /fus safety')
+ print('|cff80ddffForever SIM:|r /fus (Fenster), /fus dungeon, /fus status, /fus class, /fus armor <Wert>, /fus boss <Stufen>, /fus safety')
 end
