@@ -442,6 +442,14 @@ noch nicht hat. Der „Pre-BiS gesamt“-Wert ist die Summe der Einzelwerte (ein
 - Vor der Verwendung in Simulationen müssen Item-ID, Buff/Zauber-ID, Mindestlevel, Dauer und Werte mit aktuellen Item-/Zauberdaten abgeglichen werden. Doppelte beziehungsweise widersprüchliche Einträge (z. B. Briny Seafood Stew) bleiben bis dahin ungeprüft.
 - Die Quelle ist zunächst nur dokumentiert; ihre Angaben werden noch nicht automatisch als bestätigte Simulationswerte verwendet.
 
+
+### Vorläufige Datenquelle: Verzauberungen (VZ)
+
+- [Wowhead Forever: Verzauberkunst-Rezepte (deutsch)](https://www.wowhead.com/forever/de/items/recipes/enchanting#0-4+20) – aufgenommen am 20.10.2026, vom Nutzer als vorläufige Quelle bereitgestellt.
+- Dient als Ausgangsliste für Verzauberkunst-Rezepte. Vollständigkeit und aktuelle Werte sind noch nicht bestätigt; beim Abruf war die Liste durch eine JavaScript-/Bot-Prüfung nicht auslesbar.
+- Vor der Verwendung in Simulationen müssen Rezept-Item-ID, Zauber-/Verzauberungs-ID, Effekt beziehungsweise Werte, zulässiger Ausrüstungsplatz und Waffenart sowie Fertigkeits- und Levelvoraussetzungen mit aktuellen Daten abgeglichen werden. Eine Rezept-Item-ID ist keine Verzauberungs-ID.
+- Die Quelle ist zunächst nur dokumentiert; ungeprüfte Angaben werden noch nicht als bestätigte Simulationswerte verwendet.
+
 ---
 
 ## 7. Der Pixelstreifen: Aussehen, Größe, Anpassung
