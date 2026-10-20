@@ -30,3 +30,5 @@ UI/Art.lua
 UI/Widgets.lua
 UI/Window.lua
 UI/TalentsTab.lua
+HUDLogic.lua
+HUDView.lua
