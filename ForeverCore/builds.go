@@ -166,7 +166,8 @@ func gearItems(gear map[string]any) ([]any, error) {
 // compareBuilds answers the "talent-compare" job: every build of payload.builds is simulated with the live
 // character's gear and options and with its best rotation. A build is {id, name, talentsString, spec?, rotation?,
 // gear?, gearPreset?}. Without a rotation every rotation of the build's engine spec is tried at a low iteration
-// count and the best one is measured again at the full count, so the numbers of different builds are comparable.
+// count and the best one is measured again at the full count, so the numbers of different builds are comparable
+// (payload.screenOnly keeps the quick measurement: used by the search for the best talents, which tries many builds).
 func (s *SimService) compareBuilds(ctx context.Context, j Job) (any, error) {
 	builds := array(j.Payload, "builds")
 	if len(builds) < 1 || len(builds) > 12 {
@@ -184,6 +185,7 @@ func (s *SimService) compareBuilds(ctx context.Context, j Job) (any, error) {
 	if full < 50 || full > 20000 {
 		full = 1000
 	}
+	screenOnly := j.Payload["screenOnly"] == true
 	type prepared struct {
 		req   map[string]any
 		spec  string
@@ -306,19 +308,31 @@ func (s *SimService) compareBuilds(ctx context.Context, j Job) (any, error) {
 		if len(p.dps) == 0 {
 			continue
 		}
-		r, _ := rotationReq(p, p.best, full)
-		finals = append(finals, task{p: p, name: p.best, req: r, iter: full})
+		iter := full
+		if screenOnly {
+			iter = screen
+		}
+		r, _ := rotationReq(p, p.best, iter)
+		finals = append(finals, task{p: p, name: p.best, req: r, iter: iter})
 	}
 	final := map[*prepared]float64{}
 	finalReq := map[*prepared]map[string]any{}
-	run(finals, func(t task, dps float64, e error) {
-		if e != nil {
-			t.p.errs[t.name] = e
-			return
+	if screenOnly {
+		// A search that tries many builds only needs the quick measurement of each.
+		for _, t := range finals {
+			final[t.p] = t.p.dps[t.name]
+			finalReq[t.p] = t.req
 		}
-		final[t.p] = dps
-		finalReq[t.p] = t.req
-	})
+	} else {
+		run(finals, func(t task, dps float64, e error) {
+			if e != nil {
+				t.p.errs[t.name] = e
+				return
+			}
+			final[t.p] = dps
+			finalReq[t.p] = t.req
+		})
+	}
 	var resultReq map[string]any
 	for i, p := range prep {
 		if p == nil {

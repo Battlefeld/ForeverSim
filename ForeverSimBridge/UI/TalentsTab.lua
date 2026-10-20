@@ -342,12 +342,17 @@ local function refreshStatus()
   state.simulate:SetLabel('Rechnet … '..S.progress.step..'/'..S.progress.total);state.simulate:SetEnabledLook(false)
   state.progress:SetText(tostring(S.progress.label or''))
  else
-  state.simulate:SetLabel('Simulieren');state.simulate:SetEnabledLook(true);state.progress:SetText('')
+  state.simulate:SetLabel('Simulieren');state.simulate:SetEnabledLook(not S.Searching());state.progress:SetText('')
  end
  -- results of another state: say so once
  local stale=false;for _,id in ipairs({'live'})do local r=resultOf(id);if r and S.IsStale(r)then stale=true end end
  state.stale:SetText(stale and'veraltet · Simulieren drücken'or'');
- local canBis=UI.talentsBis~=nil;state.bis:SetEnabledLook(canBis)
+ if S.Searching()then
+  local sr=S.search;state.bis:SetLabel('Abbrechen · '..tostring(sr.label or''));state.bis:SetEnabledLook(true)
+  state.progress:SetText(sr.sims..' Skillungen gemessen')
+ else
+  state.bis:SetLabel('Beste Skillung finden');state.bis:SetEnabledLook(#S.TopBuilds()>0 and not S.running)
+ end
 end
 
 function UI.talentsRefresh()
@@ -424,11 +429,24 @@ local function build(page)
  end)
  -- middle: toolbar and trees
  state.dd=UI.Dropdown(state.mid,200,{onSelect=function(key)state.target=key;UI.talentsRefresh()end});state.dd:SetPoint('TOPLEFT',state.mid,'TOPLEFT',0,0)
- state.bis=UI.Button(state.mid,'Beste Skillung finden',{w=220,h=40,style='buttonActive',color=COLOR.gold,icon='Interface\\Icons\\INV_Misc_Spyglass_03',iconSize=16,tooltip=function()
-  return UI.talentsBis and{'Beste Skillung finden','MythicSim verteilt alle 51 Punkte für das Ziel so, dass am meisten Schaden herauskommt. Läuft im Hintergrund auf dem PC.'}or{'Beste Skillung finden','Kommt in einem späteren Schritt.'}
+ state.bis=UI.Button(state.mid,'Beste Skillung finden',{w=250,h=40,style='buttonActive',color=COLOR.gold,icon='Interface\\Icons\\INV_Misc_Spyglass_03',iconSize=16,tooltip=function()
+  return{'Beste Skillung finden','MythicSim startet bei der besten Vorlage des gewählten Baums und verschiebt Punkte, solange der Schaden steigt. Läuft im Hintergrund auf dem PC; ein Klick bricht ab.'}
  end})
  state.bis:SetPoint('LEFT',state.dd,'RIGHT',12,0)
- state.bis:SetScript('OnClick',function()if UI.talentsBis then UI.talentsBis(state.target)end end)
+ state.bis:SetScript('OnClick',function()
+  if S.Searching()then S.CancelSearch();return end
+  say('')
+  local ok,why=S.FindBest({tree=state.target},function()UI.talentsRefresh()end,function(build,info)
+   if build then
+    state.sel=build.id
+    if type(info)=='number'then say('Gefunden: '..UI.FormatPct(info)..' gegenüber deinen Talenten. Gespeichert als „'..build.name..'“.',info>0 and COLOR.good or COLOR.muted)
+    else say('Gefunden und gespeichert als „'..build.name..'“. '..tostring(info or''),COLOR.good)end
+   else say(tostring(info or'Keine bessere Skillung gefunden.'),COLOR.muted)end
+   UI.talentsRefresh()
+  end)
+  if not ok then say(tostring(why or'Die Suche startet gerade nicht.'),COLOR.bad)end
+  UI.talentsRefresh()
+ end)
  state.points=UI.Text(state.mid,12,COLOR.muted,'body','RIGHT');state.points:SetPoint('TOPRIGHT',state.mid,'TOPRIGHT',0,-14)
  state.stale=UI.Text(state.mid,11,COLOR.gold,'body','RIGHT');state.stale:SetPoint('TOPRIGHT',state.mid,'TOPRIGHT',0,-32)
  -- charts under the trees

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
@@ -164,6 +166,34 @@ func TestCompareBuildsPicksTheBestRotationPerBuild(t *testing.T) {
 	}
 	if str(got.(map[string]any), "best") == "" || str(got.(map[string]any), "best") == "bad" {
 		t.Fatalf("best %v", got.(map[string]any)["best"])
+	}
+}
+
+func TestCompareBuildsScreenOnlyMeasuresOnce(t *testing.T) {
+	count := func(screenOnly bool) (int, float64) {
+		s, m := fakeService(t)
+		snap := mageSnapshot(t, m, fireTalents)
+		payload := map[string]any{"builds": []any{
+			map[string]any{"id": "a", "talentsString": fireTalents, "rotation": "fire"},
+			map[string]any{"id": "b", "talentsString": legalBuild(t, m, 0), "rotation": "fire"},
+		}}
+		if screenOnly {
+			payload["screenOnly"] = true
+		}
+		got, e := s.Run(t.Context(), Job{Kind: "talent-compare", State: map[string]any{"sim": snap}, Payload: payload})
+		if e != nil {
+			t.Fatal(e)
+		}
+		files, _ := os.ReadDir(filepath.Join(s.Config.Data, "Sims"))
+		return len(files), num(array(got.(map[string]any), "builds")[0].(map[string]any), "dps")
+	}
+	quick, dpsQuick := count(true)
+	full, dpsFull := count(false)
+	if quick != 2 || full != 4 {
+		t.Fatalf("engine runs: quick %d (want 2), full %d (want 4)", quick, full)
+	}
+	if dpsQuick < 1000 || dpsFull < 1000 {
+		t.Fatalf("dps %v %v", dpsQuick, dpsFull)
 	}
 }
 

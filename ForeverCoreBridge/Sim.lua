@@ -313,7 +313,7 @@ local function gameBuild()
 end
 function Sim.RunAll(opts,progress,done)
  opts=opts or{}
- if Sim.running then return false end
+ if Sim.running or Sim.search then return false end
  local steps={}
  if Sim.Available('talents')then
   steps={

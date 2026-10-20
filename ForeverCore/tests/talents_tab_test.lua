@@ -124,6 +124,29 @@ assert(S.simulate and S.dps:GetText()=='1.500,5','result card: '..tostring(S.dps
 assert(S.breakRows[1].frame:IsShown() and S.breakRows[3].name:GetText()=='Sonstiges','damage shares listed incl. rest: '..tostring(S.breakRows[3].name:GetText()))
 assert(#MOCK.errors==0,'no errors: '..tostring(MOCK.errors[1]))
 
+-- the best build search from the button ------------------------------------------------------------------------------------
+do
+ Sim.Store().presets={engine=C.engineRevision,class='mage',talents={{name='Fire DPS',valid=true,tree=2,talentsString='x',entries={{tree=2,row=fire[1].row,col=fire[1].column,rank=1}}}},gear={},builds={},layout={}}
+ local fireTop=Sim.TopBuilds();assert(#fireTop>=1,'top builds present')
+ -- the presets answered earlier had one top build per tree; press the button for the fire tree
+ S.target=2;UI.talentsRefresh()
+ assert(S.bis.label:GetText()=='Beste Skillung finden')
+ jobs={}
+ S.bis.__scripts.OnClick(S.bis)
+ assert(Sim.Searching() and #jobs==1 and jobs[1].kind=='talent-compare' and jobs[1].payload.screenOnly,'the search starts with a quick measurement')
+ assert(S.bis.label:GetText():find('Abbrechen',1,true),'the button offers to cancel: '..S.bis.label:GetText())
+ local function stub(j)local rows={};for i,b in ipairs(j.payload.builds)do rows[i]={id=b.id,dps=1000+#b.talents,rotation='fire'}end;j.cb({builds=rows})end
+ local guard=0
+ while Sim.Searching() and guard<200 do guard=guard+1;local j=table.remove(jobs,1);if not j then break end;if j.kind=='build-detail'then answer(j)elseif j.kind=='talent-compare'then
+   if j.payload.screenOnly then stub(j)else answer(j)end end end
+ assert(not Sim.Searching(),'search finished: '..guard)
+ assert(S.message:GetText()~=nil,'a message about the result')
+ S.bis.__scripts.OnClick(S.bis);assert(Sim.Searching(),'second search runs');S.bis.__scripts.OnClick(S.bis);assert(S.search==nil)
+ Sim.CancelSearch()
+ local j=table.remove(jobs,1);if j then stub(j)end
+ assert(not Sim.Searching(),'cancelled')
+end
+
 -- unreadable character --------------------------------------------------------------------------------------------------
 FUSLive.capture=function()error('boom')end
 UI.talentsRefresh();assert(#MOCK.errors==0,'an unreadable character does not break the tab: '..tostring(MOCK.errors[1]))
