@@ -139,11 +139,23 @@ func mageSnapshot(t *testing.T, m map[string]any, talentText string) map[string]
 func fakeService(t *testing.T) (*SimService, map[string]any) {
 	t.Helper()
 	m := manifestForTest(t)
+	delete(m, "engineSHA256") // the returned manifest also belongs to the stand-in
 	exe, e := os.Executable()
 	if e != nil {
 		t.Fatal(e)
 	}
 	runtime := runtimeForTest(t)
+	// This fixture runs the test binary as an engine. The production manifest may
+	// be bound to the freshly built real engine; do not bind the stand-in to it.
+	var fixture map[string]any
+	path := filepath.Join(runtime, "ForeverCore", "engine-data.json")
+	if e := loadJSON(path, &fixture); e != nil {
+		t.Fatal(e)
+	}
+	delete(fixture, "engineSHA256")
+	if e := os.WriteFile(path, jsonBytes(fixture), 0o600); e != nil {
+		t.Fatal(e)
+	}
 	return &SimService{Config: Config{Engine: exe, EngineRevision: str(m, "engineRevision"), Runtime: runtime, Data: t.TempDir()}}, m
 }
 

@@ -77,6 +77,10 @@ assert(not panel:IsShown(),'switched off: no panel');HUD.Config().fightCheck=tru
 C_DamageMeter={GetCombatSessionFromType=function()return{combatSources={{isLocalPlayer=false,amountPerSecond=9999},{isLocalPlayer=true,amountPerSecond=1712}}}end}
 Enum=Enum or{};Enum.DamageMeterSessionType={Current=1};Enum.DamageMeterType={Dps=1}
 assert(FC.ReadDps()==1712,'dps of the local player from the damage meter')
+local originalNumber=FUSLive.publicNumber
+FUSLive.publicNumber=function(v)if v==1712 then return nil end;return originalNumber(v)end
+assert(FC.ReadDps()==nil,'a nonpublic meter number has no numeric fallback')
+FUSLive.publicNumber=originalNumber
 C.Sim.Store().results.live={dps=1842}
 MOCK.Fire('ENCOUNTER_START',3,'Mit Meter');HUD.lastItems={{id=A,state='ready'}}
 for i=1,5 do MOCK.Advance(3,.5);MOCK.Fire('UNIT_SPELLCAST_SUCCEEDED','player','guid',A)end

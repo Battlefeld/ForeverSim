@@ -424,8 +424,8 @@ wird nicht gelesen.
 
 Neue Aufträge von `ForeverCore.exe`: `presets` (Vorlagen der Engine), `talent-compare` (mehrere Skillungen, gleiche Ausrüstung,
 gleicher Seed, jede mit ihrer besten Rotation; `screenOnly` für die Suche), `build-detail` (Zauberanteile, DPS- und Mana-Verlauf),
-`rota-tune` (ein Schritt der Rotationsverfeinerung). Die Tests dazu laufen ohne echte Engine gegen eine Stand-in-Engine
-(`fake_engine_test.go`); die Lua-Tests sind `sim_service`, `window`, `talents_tab`, `rotation_tab`, `loot_tab`, `hud`, `fight`,
+`rota-tune` (ein Schritt der Rotationsverfeinerung). Die Orchestrierungsprüfungen nutzen eine Stand-in-Engine (`fake_engine_test.go`);
+zusätzlich prüfen `builds_live_test.go` und die Integrations-CI diese Aufträge mit der echten gepinnten Engine. die Lua-Tests sind `sim_service`, `window`, `talents_tab`, `rotation_tab`, `loot_tab`, `hud`, `fight`,
 `talent_search`, `login_check`, `loot`.
 
 **Noch nicht im Spiel bestätigt:** das ganze Fenster und vor allem das HUD (Procs über die Aktivierungs-Ereignisse,

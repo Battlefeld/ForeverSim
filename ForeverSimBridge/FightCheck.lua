@@ -35,12 +35,23 @@ function FC.ReadDps()
  local dm=C_DamageMeter;if not dm or not dm.GetCombatSessionFromType or not Enum or not Enum.DamageMeterSessionType or not Enum.DamageMeterType then return nil end
  local ok,session=pcall(dm.GetCombatSessionFromType,Enum.DamageMeterSessionType.Current,Enum.DamageMeterType.Dps)
  if not ok or type(session)~='table'or(FUSLive and FUSLive.isProtected and FUSLive.isProtected(session))then return nil end
- for _,src in ipairs(session.combatSources or{})do
-  if src.isLocalPlayer==true then
-   local v=FUSLive and FUSLive.publicNumber and FUSLive.publicNumber(src.amountPerSecond)or(type(src.amountPerSecond)=='number'and src.amountPerSecond or nil)
-   if v and v>0 then return v end
+ local function protected(v)return FUSLive and FUSLive.isProtected and FUSLive.isProtected(v)or false end
+ local function read()
+  local sources=session.combatSources
+  if protected(sources)or type(sources)~='table'then return nil end
+  for _,src in ipairs(sources)do
+   if not protected(src)and type(src)=='table'then
+    local mine=src.isLocalPlayer
+    if not protected(mine)and mine==true then
+     local raw=src.amountPerSecond;local v
+     if FUSLive and FUSLive.publicNumber then v=FUSLive.publicNumber(raw)
+     elseif not protected(raw)and type(raw)=='number'then v=raw end
+     if v and v>0 then return v end
+    end
+   end
   end
  end
+ local readable,value=pcall(read);return readable and value or nil
 end
 
 -- Collecting ------------------------------------------------------------------------------------------------------------------
