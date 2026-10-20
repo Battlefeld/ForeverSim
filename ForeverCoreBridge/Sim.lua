@@ -103,6 +103,60 @@ function Sim.UpdateBuild(id,entries)
  b.entries=Sim.CopyEntries(entries);Sim.Store().results[id]=nil;changed();return true
 end
 
+-- Rules of the talent editor ---------------------------------------------------------------------------------------
+-- The same rules the engine applies (tier points, prerequisites, budget); the engine's tree layout comes with the presets.
+function Sim.Layout()
+ local p=Sim.Presets();local map={}
+ for _,n in ipairs(p and p.layout or{})do map[n.tree*1000+n.row*10+n.col]=n end
+ return map
+end
+local function rankMap(entries)local m={};for _,e in ipairs(entries or{})do m[e.t*1000+e.r*10+e.c]=e.n end;return m end
+-- true, or false and the reason (German text for the tooltip). budget defaults to the 51 points of level 60.
+function Sim.Valid(entries,budget)
+ budget=budget or 51
+ local _,byPlace=places();local layout=Sim.Layout();local ranks=rankMap(entries);local total=0
+ for _,e in ipairs(entries or{})do
+  local info=byPlace[e.t]and byPlace[e.t][e.r*10+e.c]
+  if not info then return false,'Unbekanntes Talent'end
+  if e.n<0 or e.n>info.max then return false,'Maximaler Rang erreicht'end
+  total=total+e.n
+  local above=0
+  for _,o in ipairs(entries)do if o.t==e.t and o.r<e.r then above=above+o.n end end
+  if e.n>0 and above<5*e.r then return false,'Es fehlen Punkte in den Reihen darueber ('..above..' von '..(5*e.r)..')'end
+  local l=layout[e.t*1000+e.r*10+e.c]
+  if e.n>0 and l and l.preRow then
+   local need=byPlace[e.t][l.preRow*10+l.preCol]
+   if not need or(ranks[e.t*1000+l.preRow*10+l.preCol]or 0)<need.max then return false,'Benoetigt zuerst '..tostring(need and need.name or'das Talent darueber')end
+  end
+ end
+ if total>budget then return false,'Alle '..budget..' Talentpunkte sind verteilt'end
+ return true
+end
+function Sim.Rank(entries,t,r,c)for _,e in ipairs(entries or{})do if e.t==t and e.r==r and e.c==c then return e.n end end;return 0 end
+-- A copy of the build with one talent changed by delta (+1 or -1); nil and the reason when the result would be illegal.
+function Sim.Change(entries,t,r,c,delta,budget)
+ local out,found={}, false
+ for _,e in ipairs(entries or{})do
+  if e.t==t and e.r==r and e.c==c then found=true;if e.n+delta>0 then out[#out+1]={t=t,r=r,c=c,n=e.n+delta}end
+  else out[#out+1]={t=e.t,r=e.r,c=e.c,n=e.n}end
+ end
+ if not found then if delta>0 then out[#out+1]={t=t,r=r,c=c,n=delta}else return nil,'Kein Punkt vergeben'end end
+ local ok,why=Sim.Valid(out,budget);if not ok then return nil,why end
+ return out
+end
+-- Text for sharing a build and the way back: "FSB1:mage:2.0.1=5;2.1.0=2".
+function Sim.Export(entries)return'FSB1:'..tostring(classKey())..':'..Sim.Signature(entries)end
+function Sim.Import(text)
+ local class,body=tostring(text or''):match('^%s*FSB1:(%a+):([%d%.=;]*)%s*$')
+ if not class then return nil,'Das ist keine ForeverSim-Skillung'end
+ if class~=classKey()then return nil,'Diese Skillung gehoert zur Klasse '..class end
+ local out={}
+ for t,r,c,n in body:gmatch('(%d+)%.(%d+)%.(%d+)=(%d+)')do out[#out+1]={t=tonumber(t),r=tonumber(r),c=tonumber(c),n=tonumber(n)}end
+ if #out==0 then return nil,'Die Skillung ist leer'end
+ local ok,why=Sim.Valid(out);if not ok then return nil,why end
+ return out
+end
+
 -- Engine presets ("MythicSim Top") ---------------------------------------------------------------------------------
 function Sim.Presets()return Sim.Store().presets end
 local function presetBuildEntries(p)
@@ -208,6 +262,86 @@ function Sim.CompareSpecs(cb)
  local list={{id='live',name='Im Spiel'}}
  for _,b in ipairs(Sim.TopBuilds())do list[#list+1]={id='spec:'..b.tree,name=b.name,talentsString=b.talentsString,spec=b.spec}end
  return Sim.Compare(list,cb,{priority=false})
+end
+
+-- One build in full: its DPS, the share of every spell and the DPS/mana curve over the fight. b = {id,name,entries|
+-- talentsString,gearPreset} (id "live" and no entries: the character as it is). cb(detail) or cb(nil,issue).
+function Sim.Detail(b,cb)
+ local build={}
+ if b.entries then build.talents=Sim.Payload(b.entries)end
+ if b.talentsString and not b.entries then build.talentsString=b.talentsString end
+ build.gearPreset=b.gearPreset;build.spec=b.spec;build.rotation=b.rotation
+ local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ok=C.Request('build-detail',{build=build,curve=true},function(result,issue)
+  if type(result)~='table'or not tonumber(result.dps)then if cb then cb(nil,issue or'Keine Antwort')end;return end
+  local rec=Sim.Store().results[b.id]or{}
+  rec.dps=tonumber(result.dps);rec.rotation=result.rotation;rec.rotations=C.clean(result.rotations);rec.spec=result.spec;rec.error=nil
+  rec.context=ctx;rec.engine=C.engineRevision;rec.at=stamp()
+  rec.detail=C.clean({breakdown=result.breakdown,curve=result.curve,duration=result.duration,context=ctx,at=stamp()})
+  if b.id=='live'then rec.priority=C.clean(result.priority)end
+  Sim.Store().results[b.id]=rec
+  if b.id=='live'then Sim.SetRotation(rec)end
+  changed();if cb then cb(rec.detail,nil,rec)end
+ end,{timeout=300})
+ if not ok and cb then cb(nil,'Anfrage nicht moeglich')end
+ return ok
+end
+
+-- The build behind an id of the window's lists: "live", a saved build ("b3"), the engine's top build of a tree
+-- ("top:2", with its gear) or that build's talents alone ("spec:2").
+function Sim.BuildSpec(id)
+ if id==nil or id=='live'then return{id='live',name='Im Spiel'}end
+ local b=Sim.Build(id);if b then return{id=b.id,name=b.name,entries=b.entries}end
+ local kind,tree=tostring(id):match('^(%a+):(%d+)$')
+ if kind=='top'or kind=='spec'then
+  for _,t in ipairs(Sim.TopBuilds())do
+   if t.tree==tonumber(tree)then return{id=id,name=t.name,talentsString=t.talentsString,gearPreset=kind=='top'and t.gearPreset or nil,spec=t.spec}end
+  end
+ end
+end
+
+-- Everything for the window in one go: presets, the character's builds, the selected build in detail, the best spec for
+-- the gear and the engine's top builds. Below level 60 only the live build's rotation is worked out (from level 50).
+-- progress(step,total,label) is called before each step; done(true) or done(false,issue) at the end.
+Sim.running=false
+local function gameBuild()
+ if not GetBuildInfo then return nil end
+ local ok,version,build=pcall(GetBuildInfo);return ok and(tostring(version)..'.'..tostring(build))or nil
+end
+function Sim.RunAll(opts,progress,done)
+ opts=opts or{}
+ if Sim.running then return false end
+ local steps={}
+ if Sim.Available('talents')then
+  steps={
+   {'Vorlagen laden',function(n)Sim.LoadPresets(n)end},
+   {'Skillungen vergleichen',function(n)Sim.CompareOwn(n)end},
+   {'Ergebnis berechnen',function(n)local spec=Sim.BuildSpec(opts.selected)or Sim.BuildSpec('live');Sim.Detail(spec,n)end},
+   {'Bester Spec fuer dein Gear',function(n)Sim.CompareSpecs(n)end},
+   {'MythicSim-Top-Skillungen',function(n)Sim.CompareTop(n)end},
+  }
+ elseif Sim.Available('rotation')then
+  steps={{'Rotationen vergleichen',function(n)Sim.Detail({id='live',name='Im Spiel'},n)end}}
+ else return false end
+ Sim.running=true;Sim.progress={step=0,total=#steps}
+ local function finish(ok,issue)
+  Sim.running=false;Sim.progress=nil
+  if ok then Sim.Store().lastRun={context=C.SimCacheContext and C.SimCacheContext(),engine=C.engineRevision,build=gameBuild(),level=Sim.Level(),at=stamp()}end
+  changed();if done then done(ok,issue)end
+ end
+ local function run(i)
+  if i>#steps then return finish(true)end
+  Sim.progress={step=i,total=#steps,label=steps[i][1]};if progress then progress(i,#steps,steps[i][1])end
+  changed()
+  local called=false
+  steps[i][2](function(result,issue)
+   if called then return end;called=true
+   if result==nil and issue then return finish(false,issue)end
+   run(i+1)
+  end)
+ end
+ run(1)
+ return true
 end
 
 -- The active rotation --------------------------------------------------------------------------------------------

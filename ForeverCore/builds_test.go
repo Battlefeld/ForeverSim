@@ -259,6 +259,23 @@ func TestPresetsAreDecodedAndChecked(t *testing.T) {
 	if len(array(r, "builds")) != 1 {
 		t.Fatal("builds lost")
 	}
+	layout := array(r, "layout")
+	if len(layout) != 19+17+19 {
+		t.Fatalf("the mage tree has 55 talents, layout has %d", len(layout))
+	}
+	prereqs := 0
+	for _, raw := range layout {
+		n := raw.(map[string]any)
+		if n["preRow"] != nil {
+			prereqs++
+			if n["preCol"] == nil || num(n, "preRow") >= num(n, "row") && num(n, "preCol") == num(n, "col") {
+				t.Fatalf("prerequisite must lie above: %v", n)
+			}
+		}
+	}
+	if prereqs != 7 {
+		t.Fatalf("seven mage talents have a prerequisite, got %d", prereqs)
+	}
 	if _, e = s.Run(t.Context(), Job{Kind: "presets", State: map[string]any{"sim": map[string]any{"class": "NOPE"}}}); e == nil {
 		t.Fatal("unknown class accepted")
 	}

@@ -133,7 +133,8 @@ func (s *SimService) presetsFor(ctx context.Context, j Job) (any, error) {
 			builds = append(builds, b)
 		}
 	}
-	return map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "class": class, "talents": talents, "gear": gear, "builds": builds}, nil
+	return map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "class": class, "talents": talents, "gear": gear,
+		"builds": builds, "layout": treeLayout(trees)}, nil
 }
 
 // presetGear finds a gear set of the class by name (case does not matter) and returns it as an engine equipment spec.
@@ -155,4 +156,22 @@ func rotationNames(manifest map[string]any, spec string) []string {
 	}
 	sort.Strings(names)
 	return names
+}
+
+// treeLayout lists every talent of the engine's tree with its place, its maximum rank and the talent it needs
+// (preRow/preCol), so the addon's talent editor can apply the same rules as the engine.
+func treeLayout(trees []any) []any {
+	out := []any{}
+	for ti, raw := range trees {
+		for _, n := range array(raw.(map[string]any), "talents") {
+			node := n.(map[string]any)
+			loc := child(node, "location")
+			e := map[string]any{"tree": float64(ti + 1), "row": num(loc, "rowIdx"), "col": num(loc, "colIdx"), "max": node["maxPoints"], "spellId": node["spellId"]}
+			if p := child(node, "prereqLocation"); p != nil {
+				e["preRow"], e["preCol"] = num(p, "rowIdx"), num(p, "colIdx")
+			}
+			out = append(out, e)
+		}
+	}
+	return out
 }
