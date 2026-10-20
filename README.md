@@ -24,8 +24,8 @@ Was automatisch passiert (und sonst nichts):
 | Du siehst ein Item (Tooltip, Quest-Belohnung, Würfelfenster) | Der Wert gegenüber deinem getragenen Item wird bewertet |
 | Du betrittst einen Dungeon | Alle Boss- und Trash-Drops werden vorberechnet |
 
-Das Auktionshaus rechnest **du** per Knopfdruck. Rotation und Talente sind vorerst entfernt und werden neu gebaut
-(siehe 6.7).
+Das Auktionshaus rechnest **du** per Knopfdruck. Das ForeverSim-Fenster (`/fus`, siehe 6.8) rechnet Skillungen und
+Rotationen nur auf deinen Knopfdruck und einmal nach dem Anmelden, wenn sich etwas geändert hat.
 Buffs, Auren, Mana, Taschen und Zonenwechsel lösen **keine** Simulation aus. Im Kampf wird nichts
 berechnet.
 
@@ -138,8 +138,8 @@ Regeln, die alles zusammen begrenzen:
 
 ### 4.3 Nur auf Knopfdruck
 
-Auktionshaus scannen und berechnen, `/fc sim` (Grund-DPS), Dungeon-Liste im Chat. Rotation und Talente gibt es
-im Addon vorerst nicht (siehe 6.7).
+Auktionshaus scannen und berechnen, `/fc sim` (Grund-DPS), Dungeon-Liste im Chat, im ForeverSim-Fenster (6.8)
+„Simulieren“, „Beste Skillung finden“, „Beste Rota simmen“ und „Alle Items simmen“.
 
 ---
 
@@ -376,7 +376,7 @@ Entfernt wurden zuerst alle Teile, die weder die Item-Berechnung noch Rotation u
 Stat-Gewichte (Fenster und Tabellen), Insights-Fenster, Ausrüstungsplan, die alte Dungeon-Vorberechnung und die
 Routen-Brücke (ersetzt durch die Dungeon-Liste von ForeverCore), das Notiz-Protokoll und nie geladene Altdateien.
 
-Danach wurden **das ForeverSim-Fenster, Rotation und Talente entfernt**, damit sie neu gestaltet werden können:
+Danach wurden **das ForeverSim-Fenster, Rotation und Talente entfernt**, damit sie neu gestaltet werden können (neu gebaut: 6.8):
 das Fenster mit allen Seiten (Übersicht, Ausrüstung, Rotation Style, Talente, Quests, Erweitert/Mehr), der Talentplaner
 und der Talententwurf, das Rotations-HUD, der Rotations-Optimierer im Spiel (auch sein Start nach dem Login), die
 Talentempfehlung über ForeverCore, Leveling-Modell, Kampfverlauf, Kampfaudit, Gegnerauswahl, die XN-Vorlagen und die
@@ -389,6 +389,47 @@ aus demselben Grund. Auf dem PC kennt `ForeverCore.exe` die Aufträge `rotation`
 
 Der Generator des Dungeon-Katalogs liegt in `_dev/tools`, die Entwicklerdateien der Klassenmodule in
 `_dev/ForeverSimBridge-Development` (nicht im Addon).
+
+### 6.8 Das neue ForeverSim-Fenster (`/fus`)
+
+Ein Fenster, drei Reiter, gebaut aus den Bildern in `ForeverSimBridge/Media/UI` (erzeugt von `_dev/tools/build_media.py`):
+geschwungener Rahmen, Banner je nach Volk (Orc/Troll, Untote, Taure, Mensch, Zwerg/Gnom, Nachtelf, Skyborn), Klassen-Medaillon
+links, ForeverCore-Kristall rechts (blau = `ForeverCore.exe` antwortet, grau = nicht; ein Klick schließt das Fenster).
+
+| Reiter | Ab Stufe | Inhalt |
+|---|---|---|
+| **Talente** | 60 | bis zu 10 eigene Skillungen speichern, kopieren, umbenennen, teilen (`FSB1:`-Text), Talentbäume mit denselben Regeln wie die Engine, „Simulieren“ (DPS-Vergleich, DPS über Zeit, Mana, Schaden je Zauber, bester Spec für dein Gear), MythicSim-Top-Skillungen mit eigenem Gear, „Beste Skillung finden“ (Suche im Hintergrund: einzelne Punkte verschieben, solange der Schaden steigt) |
+| **Rotation** | 50 (HUD-Einstellungen immer) | alle Rotationen der Engine für die gewählte Skillung im Vergleich, „Beste Rota simmen“, „Eigene Rota verfeinern“ (MythicSim probiert Zeilen an anderer Stelle, behält nur Bestätigtes), Prioritätenliste, Einstellungen des Kampf-HUDs, Schalter „Beim Anmelden neu rechnen“ |
+| **Beute** | 50 | Pre-BiS auf einer Charakterpuppe (bester Drop je Platz mit Quelle und Gewinn), Quellen-Filter, Stat-Gewichte, Alternativen und „Wo farmen?“ (Gewinn je Lauf), zweite Ansicht „Verzauberungen & Buffs“ |
+
+**Eine Rotation für alles:** Die beste Rotation der aktuell gespielten Skillung (`Sim.Rotation()`) geht in jeden Auftrag, auch
+in Item-Werte, Dungeon-Liste und Cache-Schlüssel. Eine verfeinerte Rotation reist als Name (`eigen:<Rotation>:<Reihenfolge>`)
+und läuft deshalb durch alle Aufträge wie jede andere.
+
+**Neu rechnen:** nur auf Knopfdruck und einmal nach dem Anmelden, wenn sich Engine, Spielpatch, Ausrüstung, Stufe oder die
+tragbaren Items in den Taschen seit der letzten Berechnung geändert haben (kleine Meldung mit den Gründen, läuft im
+Hintergrund). Sonst bleibt alles, wie es ist.
+
+**Kampf-HUD (ab Stufe 1):** die nächsten Zauber laufen von rechts nach links, der jetzt dran ist, ist am größten, der gerade
+gewirkte gleitet links hinaus; kein Hintergrund. Leuchtet ein Zauber auf (`SPELL_ACTIVATION_OVERLAY_GLOW_SHOW/HIDE`, wie bei
+anderen Proc-Addons), wird er groß und leuchtet, alles andere schrumpft. Zauber, die gleich bereit sind, zeigen die Sekunden.
+Unter Stufe 50 (noch keine Simulation) folgt das HUD einer einfachen Rotation der Klasse. Befehle: `/fus hud` (an/aus),
+`/fus hud verschieben` / `fixieren`, `/fus hud reset`, `/fus hud test`, `/fus hud procc`.
+
+**Kampf-Auswertung:** nach Bosskämpfen ein kleines Fenster mit „Rotation gefolgt“, „Procc genutzt“ und „Ohne Zauber“.
+Schaden und „Erreicht x %“ erscheinen nur, wenn der Schadensmesser des Spiels (`C_DamageMeter`) sie herausgibt; das Kampflog
+wird nicht gelesen.
+
+Neue Aufträge von `ForeverCore.exe`: `presets` (Vorlagen der Engine), `talent-compare` (mehrere Skillungen, gleiche Ausrüstung,
+gleicher Seed, jede mit ihrer besten Rotation; `screenOnly` für die Suche), `build-detail` (Zauberanteile, DPS- und Mana-Verlauf),
+`rota-tune` (ein Schritt der Rotationsverfeinerung). Die Tests dazu laufen ohne echte Engine gegen eine Stand-in-Engine
+(`fake_engine_test.go`); die Lua-Tests sind `sim_service`, `window`, `talents_tab`, `rotation_tab`, `loot_tab`, `hud`, `fight`,
+`talent_search`, `login_check`, `loot`.
+
+**Noch nicht im Spiel bestätigt:** das ganze Fenster und vor allem das HUD (Procs über die Aktivierungs-Ereignisse,
+Tastenanzeige, Aktionsleisten-Rahmen). Die Beute-Quellen sind der Dungeon-Katalog, deine Taschen und die MythicSim-Liste;
+Quest-, Handwerks-, Ruf-, Auktions- und Raid-Quellen sowie Werte für Verzauberungen und Buffs brauchen Daten, die das Addon
+noch nicht hat. Der „Pre-BiS gesamt“-Wert ist die Summe der Einzelwerte (eine Näherung).
 
 ---
 
@@ -438,7 +479,8 @@ Der Generator des Dungeon-Katalogs liegt in `_dev/tools`, die Entwicklerdateien 
 | `/fc chat alles` / `ruhig` | Alle Meldungen im Chat / nur Probleme und Antworten (Standard) |
 | `/fc minimap aus` / `an` | Minimap-Knopf aus- bzw. einblenden |
 | `/fc log` | Kopierbares Protokoll aller Meldungen |
-| `/fus` | Alter Kurzbefehl (weiterhin gültig) |
+| `/fus` | Öffnet/schließt das ForeverSim-Fenster (6.8) |
+| `/fus hud` … | Kampf-HUD: an/aus, `verschieben`, `fixieren`, `reset`, `test`, `procc` |
 
 ---
 

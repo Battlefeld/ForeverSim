@@ -170,6 +170,13 @@ HUD.ResetPosition()
 GetActionInfo=function(slot)if slot==1 then return'spell',A end end
 GetBindingKey=function(name)if name=='ACTIONBUTTON1'then return'SHIFT-2'end end
 HUD.RebuildKeys();assert(HUD.KeyFor({id=A})=='S2','key text of the button')
+-- slash commands
+local say={};local oldPrint=print;print=function(...)say[#say+1]=table.concat({...},' ')end
+SlashCmdList.FOREVERSIMBRIDGE('hud');assert(HUD.Config().enabled==false,'/fus hud switches off');SlashCmdList.FOREVERSIMBRIDGE('hud');assert(HUD.Config().enabled==true)
+SlashCmdList.FOREVERSIMBRIDGE('hud verschieben');assert(HUD.Config().locked==false);SlashCmdList.FOREVERSIMBRIDGE('hud fixieren');assert(HUD.Config().locked==true)
+SlashCmdList.FOREVERSIMBRIDGE('hud procc');MOCK.Advance(.7,.05);assert(HUD.frame:IsShown(),'/fus hud procc shows a demo');MOCK.Advance(8,.1)
+SlashCmdList.FOREVERSIMBRIDGE('hud reset');print=oldPrint
+assert(#say>=3,'the commands answer in the chat')
 assert(#MOCK.errors==0,'no errors: '..tostring(MOCK.errors[1]))
 for tag,n in pairs(MOCK.unknownMethods)do error('unknown widget method '..tag..' x'..n)end
 io.write('hud ok\n')

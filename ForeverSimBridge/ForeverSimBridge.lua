@@ -570,8 +570,22 @@ SlashCmdList['FOREVERSIMBRIDGE']=function(msg)
  if msg=='class' then local snap=snapshot(true);if not snap then print('Forever SIM: Charakterdaten fehlen.');return end;local profile=FUSLive.normalizeSnapshot(snap);local model=FUSLiveData[profile.class];if not model then print('Forever SIM: Klassenmodul fehlt.');return end;local issue=FUSLive.coverage(model,profile);print('Forever SIM · '..profile.class..': '..(issue or 'Klassenmodul aktiv · Einzelziel-DPS (Beta; Raid-Abgleich offen).'));return end
  local targetArmor=tonumber(msg:match('^armor%s+(%d+)$'));if targetArmor then if FUSLive.encounters then FUSLive.encounters.Configure({armor=targetArmor})end;print('Forever SIM: Zielrüstung '..targetArmor..' (Benutzereingabe)');return end
  if msg=='status' then print('Forever SIM: '..FUSLive.pendingJobs()..' Jobs, max Frame-Paket '..string.format('%.2f',FUSLive.metrics.maxSliceMs)..' ms');return end
+ -- the combat HUD: /fus hud (on/off), /fus hud verschieben (unlock), /fus hud fixieren (lock), /fus hud reset, /fus hud test|procc
+ do
+  local sub=msg:match('^hud%s*(.*)$')
+  if sub and ForeverSimHUD then
+   local H=ForeverSimHUD
+   if sub=='verschieben' or sub=='unlock' then print(H.SetLocked(false) and 'Forever SIM: HUD entsperrt, mit der linken Maustaste ziehen. /fus hud fixieren sperrt es wieder.' or 'Forever SIM: im Kampf nicht möglich.')
+   elseif sub=='fixieren' or sub=='lock' then print(H.SetLocked(true) and 'Forever SIM: HUD fixiert.' or 'Forever SIM: im Kampf nicht möglich.')
+   elseif sub=='reset' then print(H.ResetPosition() and 'Forever SIM: HUD-Position zurückgesetzt.' or 'Forever SIM: im Kampf nicht möglich.')
+   elseif sub=='test' then H.Demo('normal',6)
+   elseif sub=='procc' or sub=='proc' then H.Demo('proc',6)
+   else local cfg=H.Config();cfg.enabled=not cfg.enabled;H.Apply();print('Forever SIM: Kampf-HUD '..(cfg.enabled and 'an' or 'aus'))end
+   return
+  end
+ end
  -- the window: /fus (or /fus fenster) opens or closes it
  if(msg==''or msg=='fenster'or msg=='window'or msg=='open')and ForeverSimUI and ForeverSimUI.Toggle then ForeverSimUI.Toggle();return end
  snapshot()
- print('|cff80ddffForever SIM:|r /fus (Fenster), /fus dungeon, /fus status, /fus class, /fus armor <Wert>, /fus boss <Stufen>, /fus safety')
+ print('|cff80ddffForever SIM:|r /fus (Fenster), /fus hud, /fus dungeon, /fus status, /fus class, /fus armor <Wert>, /fus boss <Stufen>, /fus safety')
 end
