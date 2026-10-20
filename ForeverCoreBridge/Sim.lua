@@ -215,10 +215,11 @@ local function storeRows(rows,ctx)
    local rec={dps=tonumber(row.dps),rotation=row.rotation,rotations=row.rotations,points=row.points,spec=row.spec,error=row.error,
     context=ctx,engine=engine,at=stamp()}
    -- the priority list is only needed for the build the character plays now (the combat HUD follows it)
-   if id=='live'then rec.priority=row.priority end
-   -- a later comparison of the same state must not throw away the detail of the build
+   -- a later comparison of the same state must not throw away the detail of the build or its priority list
    local old=s.results[id]
-   if old and old.detail and old.context==ctx and old.engine==engine then rec.detail=old.detail;rec.priority=rec.priority or old.priority end
+   local same=old and old.context==ctx and old.engine==engine
+   if id=='live'then rec.priority=row.priority or(same and old.priority or nil)end
+   if same and old.detail then rec.detail=old.detail end
    s.results[id]=C.clean(rec)
   end
  end
@@ -242,7 +243,7 @@ function Sim.Compare(list,cb,opts)
   if type(result)~='table'or type(result.builds)~='table'then if cb then cb(nil,issue or'Keine Antwort')end;return end
   storeRows(result.builds,ctx)
   for _,row in ipairs(result.builds)do
-   if row.id=='live'and row.rotation then Sim.SetRotation(Sim.Result('live'))end
+   if row.id=='live'and row.rotation and Sim.Result('live')and Sim.Result('live').priority then Sim.SetRotation(Sim.Result('live'))end
   end
   changed();if cb then cb(result.builds)end
  end,{timeout=300})
@@ -307,6 +308,10 @@ end
 -- the gear and the engine's top builds. Below level 60 only the live build's rotation is worked out (from level 50).
 -- progress(step,total,label) is called before each step; done(true) or done(false,issue) at the end.
 Sim.running=false
+-- the refinement as a step of the full run; a refinement that cannot start must not stop the run
+local function tuneStep(n)
+ if Sim.Tune({id='live',name='Im Spiel'},nil,function()n(true)end,true)==false then n(true)end
+end
 local function gameBuild()
  if not GetBuildInfo then return nil end
  local ok,version,build=pcall(GetBuildInfo);return ok and(tostring(version)..'.'..tostring(build))or nil
@@ -323,8 +328,15 @@ function Sim.RunAll(opts,progress,done)
    {'Bester Spec fuer dein Gear',function(n)Sim.CompareSpecs(n)end},
    {'MythicSim-Top-Skillungen',function(n)Sim.CompareTop(n)end},
   }
+  -- last, because every comparison above sets the engine's own best rotation again
+  if Sim.Store().refine and Sim.Tune then
+   steps[#steps+1]={'Eigene Rota verfeinern',tuneStep}
+  end
  elseif Sim.Available('rotation')then
   steps={{'Rotationen vergleichen',function(n)Sim.Detail({id='live',name='Im Spiel'},n)end}}
+  if Sim.Store().refine and Sim.Tune then
+   steps[#steps+1]={'Eigene Rota verfeinern',tuneStep}
+  end
  else return false end
  Sim.running=true;Sim.progress={step=0,total=#steps}
  local function finish(ok,issue)

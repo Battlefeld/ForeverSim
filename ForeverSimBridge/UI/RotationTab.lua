@@ -13,6 +13,12 @@ local function hud()return ForeverSimHUD end
 local function say(text,color)
  if state.message then state.message:SetText(text or'');local c=color or COLOR.muted;state.message:SetTextColor(c[1],c[2],c[3],1)end
 end
+-- 'eigen:fire:1,0,2' -> 'Eigene Rota (fire)'
+function UI.RotationLabel(name)
+ local base=type(name)=='string'and name:match('^eigen:([^:]+):')
+ if base then return'Eigene Rota ('..base..')'end
+ return tostring(name or'?')
+end
 local function resultOf(id)local S=Sim();return S and S.Result(id)end
 local function nameOf(id)
  local S=Sim();if id=='live'then return'Im Spiel'end
@@ -57,7 +63,7 @@ local function layoutRows()
   if h>=34 then
    r.name:SetPoint('TOPLEFT',r.icon,'TOPRIGHT',9,1);r.name:SetPoint('RIGHT',r.value,'LEFT',-4,0)
    r.sub:SetPoint('TOPLEFT',r.name,'BOTTOMLEFT',0,-1);r.sub:SetPoint('RIGHT',r.value,'LEFT',-4,0);r.sub:Show()
-   r.sub:SetText(res and res.rotation and('Rota: '..res.rotation)or'noch nicht berechnet')
+   r.sub:SetText(res and res.rotation and('Rota: '..UI.RotationLabel(res.rotation))or'noch nicht berechnet')
   else
    r.name:SetPoint('LEFT',r.icon,'RIGHT',9,0);r.name:SetPoint('RIGHT',r.value,'LEFT',-4,0);r.sub:Hide()
   end
@@ -92,8 +98,8 @@ local function refreshRotations()
  for i=1,shown do
   local item=list[i];local r=rotRow(i)
   r:ClearAllPoints();r:SetPoint('TOPLEFT',state.mid,'TOPLEFT',0,-112-(i-1)*34);r:SetPoint('TOPRIGHT',state.mid,'TOPRIGHT',0,-112-(i-1)*34)
-  r.name:SetText(item.name or'?')
-  r.tag:ClearAllPoints();r.tag:SetPoint('LEFT',r.name,'RIGHT',8,0);r.tag:SetText(item.custom and'EIGEN'or'MYTHICSIM')
+  r.name:SetText(UI.RotationLabel(item.name))
+  r.tag:ClearAllPoints();r.tag:SetPoint('LEFT',r.name,'RIGHT',8,0);r.tag:SetText((item.custom or tostring(item.name):find('^eigen:'))and'EIGEN'or'MYTHICSIM')
   local top=item.name==(res.rotation)
   UI.Show(r.star,top);r.name:SetTextColor((top and COLOR.gold or COLOR.text)[1],(top and COLOR.gold or COLOR.text)[2],(top and COLOR.gold or COLOR.text)[3],1)
   r.bar:SetFraction(best>0 and(item.dps/best)or 0,top and COLOR.gold or{1,.54,.24})
@@ -111,7 +117,7 @@ end
 local function refreshResult()
  local res=resultOf(state.sel)
  if res and res.dps then
-  state.dps:SetText(UI.FormatDps(res.dps,1));state.unit:SetText('DPS · '..tostring(res.rotation or'?'))
+  state.dps:SetText(UI.FormatDps(res.dps,1));state.unit:SetText('DPS · '..UI.RotationLabel(res.rotation))
   local list=res.rotations or{};local custom=nil
   for _,r in ipairs(list)do if r.custom then custom=r end end
   local mythic;for _,r in ipairs(list)do if not r.custom then mythic=mythic or r end end
@@ -164,7 +170,8 @@ function UI.rotationRefresh()
  UI.Show(state.rotBox,can);UI.Show(state.card,can)
  if can then
   layoutRows();refreshRotations();refreshResult()
-  if S.running or state.busy then state.simulate:SetLabel('Rechnet …');state.simulate:SetEnabledLook(false)
+  if S.Searching and S.Searching()and S.search then state.simulate:SetLabel('Verfeinern · '..tostring(S.search.label or''));state.simulate:SetEnabledLook(false)
+  elseif S.running or state.busy then state.simulate:SetLabel('Rechnet …');state.simulate:SetEnabledLook(false)
   else state.simulate:SetLabel('Beste Rota simmen');state.simulate:SetEnabledLook(true)end
   state.refine:Refresh()
  end
@@ -267,6 +274,19 @@ local function build(page)
  state.prioTitle=UI.Text(state.right,10.5,COLOR.gold,'body','LEFT');state.prioTitle:SetPoint('TOPLEFT',state.right,'TOPLEFT',2,-188)
  state.prioEmpty=UI.Text(state.right,11,COLOR.muted,'body','LEFT');state.prioEmpty:SetPoint('BOTTOMLEFT',state.right,'BOTTOMLEFT',2,2);state.prioEmpty:SetWidth(rw)
  S.OnChange(function()if page:IsVisible()then UI.rotationRefresh()end end)
+end
+
+-- "Eigene Rota verfeinern": started after the comparison when the box is ticked
+function UI.rotaTune(spec)
+ local S=Sim();if not S or not S.Tune then return end
+ state.busy=true
+ local ok,why=S.Tune(spec,function()UI.rotationRefresh()end,function(rec,info)
+  state.busy=false
+  if rec then say('Verfeinert: '..UI.FormatPct(info)..' gegenüber der MythicSim-Rota.',COLOR.good)
+  else say(tostring(info or'Keine Verbesserung gefunden.'),COLOR.muted)end
+  UI.rotationRefresh()
+ end)
+ if not ok then state.busy=false;say(tostring(why or'Verfeinern startet gerade nicht.'),COLOR.bad)end
 end
 
 UI.RegisterTab({key='rotation',label='Rotation',order=2,icon='Interface\\Icons\\Spell_Nature_WispSplode',build=build,

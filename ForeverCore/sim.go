@@ -191,14 +191,14 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 			selected = names[0]
 		}
 	}
-	rotation, ok := rotations[selected]
+	rotation, ok := lookupRotation(rotations, selected)
 	if !ok && j.Payload["rotationSoft"] == true {
 		// The addon's remembered rotation belongs to another spec (talents changed): use this spec's default.
 		selected = "default"
 		if rotations["default"] == nil {
 			selected = names[0]
 		}
-		rotation, ok = rotations[selected]
+		rotation, ok = lookupRotation(rotations, selected)
 	}
 	if !ok {
 		return nil, fmt.Errorf("Rotation fehlt: %s", selected)
@@ -441,7 +441,7 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 	if j.Kind == "item" && j.Payload["partial"] == true {
 		timeout = 20 * time.Minute
 	}
-	if j.Kind == "talent-compare" || j.Kind == "build-detail" {
+	if j.Kind == "talent-compare" || j.Kind == "build-detail" || j.Kind == "rota-tune" {
 		timeout = 5 * time.Minute
 	}
 	ctx, cancel := context.WithTimeout(ctx, timeout)
@@ -453,6 +453,8 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 		return s.compareBuilds(ctx, j)
 	case "build-detail":
 		return s.buildDetail(ctx, j)
+	case "rota-tune":
+		return s.rotaTune(ctx, j)
 	}
 	req := child(j.Payload, "request")
 	var e error

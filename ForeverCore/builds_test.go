@@ -456,3 +456,100 @@ func TestDamageSharesAndManaChange(t *testing.T) {
 		t.Fatal("no resources, no mana data")
 	}
 }
+
+func TestTunedRotationNamesAndLookup(t *testing.T) {
+	rotations := map[string]any{"fire": map[string]any{"name": "fire", "priorityList": []any{"a", "b", "c", "d"}}}
+	name := tunedRotationName("fire", []int{2, 0, 1, 3})
+	if name != "eigen:fire:2,0,1,3" {
+		t.Fatal(name)
+	}
+	base, order, ok := parseTunedName(name)
+	if !ok || base != "fire" || len(order) != 4 || order[0] != 2 {
+		t.Fatalf("%v %v %v", base, order, ok)
+	}
+	got, ok := lookupRotation(rotations, name)
+	if !ok {
+		t.Fatal("tuned rotation not found")
+	}
+	rows := array(got.(map[string]any), "priorityList")
+	if rows[0] != "c" || rows[1] != "a" || len(rows) != 4 {
+		t.Fatalf("rows %v", rows)
+	}
+	if _, ok := lookupRotation(rotations, "fire"); !ok {
+		t.Fatal("plain name")
+	}
+	for _, bad := range []string{"eigen:fire", "eigen:fire:", "eigen:fire:0,0,1,2", "eigen:fire:0,1,2,9", "eigen:nope:0,1", "eigen:fire:a,b", "fire:0,1"} {
+		if _, ok := lookupRotation(rotations, bad); ok {
+			t.Fatalf("%q must not resolve", bad)
+		}
+	}
+	if len(array(rotations["fire"].(map[string]any), "priorityList")) != 4 || array(rotations["fire"].(map[string]any), "priorityList")[0] != "a" {
+		t.Fatal("the original rotation was changed")
+	}
+	moves := tuneNeighbours([]int{0, 1, 2, 3, 4}, 1)
+	if len(moves) != 4 {
+		t.Fatalf("one-place moves of five rows: %d (want the 4 adjacent swaps)", len(moves))
+	}
+}
+
+func TestRotaTuneFindsABetterOrder(t *testing.T) {
+	s, m := fakeService(t)
+	snap := mageSnapshot(t, m, fireTalents)
+	names := rotationNames(m, "mage")
+	var base string
+	for _, n := range names {
+		if rows := array(child(child(child(child(m, "specs"), "mage"), "rotations"), n), "priorityList"); len(rows) >= 4 {
+			base = n
+			break
+		}
+	}
+	if base == "" {
+		t.Skip("no rotation with four rows in the manifest")
+	}
+	step := func(order []any) map[string]any {
+		payload := map[string]any{"rotation": base, "build": map[string]any{"talentsString": fireTalents}, "iterations": 100.0}
+		if order != nil {
+			payload["order"] = order
+		}
+		got, e := s.Run(t.Context(), Job{Kind: "rota-tune", State: map[string]any{"sim": snap}, Payload: payload})
+		if e != nil {
+			t.Fatal(e)
+		}
+		return got.(map[string]any)
+	}
+	first := step(nil)
+	if num(first, "rows") < 4 || num(first, "dps") < 1000 || num(first, "tried") < 3 {
+		t.Fatalf("first step %v", first)
+	}
+	// the stand-in pays for ascending spell order; follow the steps until nothing better is found
+	cur, gained := first, false
+	for i := 0; i < 40 && cur["bestOrder"] != nil; i++ {
+		gained = true
+		if num(cur, "bestDps") <= num(cur, "dps") {
+			t.Fatalf("the best neighbour is not better: %v", cur)
+		}
+		cur = step(cur["bestOrder"].([]any))
+	}
+	t.Logf("tuned: improved=%v rows=%v tried=%v", gained, num(first, "rows"), num(first, "tried"))
+	// whatever the order, the tuned name works as a rotation everywhere
+	order := make([]int, 0)
+	for _, v := range array(cur, "order") {
+		order = append(order, int(v.(float64)))
+	}
+	name := tunedRotationName(base, order)
+	got, e := s.Run(t.Context(), Job{Kind: "talent-compare", State: map[string]any{"sim": snap}, Payload: map[string]any{"builds": []any{
+		map[string]any{"id": "tuned", "talentsString": fireTalents, "rotation": name}}}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	row := array(got.(map[string]any), "builds")[0].(map[string]any)
+	if str(row, "rotation") != name || num(row, "dps") < 1000 {
+		t.Fatalf("tuned rotation in a comparison: %v", row)
+	}
+	if _, e := s.Run(t.Context(), Job{Kind: "rota-tune", State: map[string]any{"sim": snap}, Payload: map[string]any{"rotation": base, "order": []any{0.0, 0.0}}}); e == nil {
+		t.Fatal("an order that does not fit must be refused")
+	}
+	if _, e := s.Run(t.Context(), Job{Kind: "rota-tune", State: map[string]any{"sim": snap}, Payload: map[string]any{}}); e == nil {
+		t.Fatal("a missing rotation must be refused")
+	}
+}

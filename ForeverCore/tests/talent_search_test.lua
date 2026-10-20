@@ -83,5 +83,59 @@ want=row0[2];for i=#Sim.Builds(),1,-1 do Sim.DeleteBuild(Sim.Builds()[i].id)end
 for i=1,10 do Sim.AddBuild('B'..i,startE,'own')end
 Sim.FindBest({tree=2},nil,function(b,i)built=b;note=i end)
 assert(built==nil and tostring(note):find('belegt',1,true),'full: '..tostring(note))
+
+-- refining the rotation -------------------------------------------------------------------------------------------------------
+Sim.Store().results.live={dps=1500,rotation='fire',rotations={{name='fire',dps=1500}},priority={{spellId=1}},context=C.SimCacheContext and C.SimCacheContext(),engine=C.engineRevision}
+local tuneJobs={};local order0
+C.Request=function(kind,payload,cb)
+ tuneJobs[#tuneJobs+1]={kind=kind,payload=payload}
+ if kind=='rota-tune'then
+  assert(payload.rotation=='fire' and payload.iterations,'the engine rotation is the start')
+  if not payload.order then cb({dps=1500,order={0,1,2},bestOrder={1,0,2},bestDps=1520,tried=5,rotation='fire'})
+  elseif payload.order[1]==1 and payload.order[2]==0 then cb({dps=1520,order=payload.order,bestOrder={1,2,0},bestDps=1530,tried=5})
+  else cb({dps=1530,order=payload.order,tried=5})end
+ elseif kind=='talent-compare'then
+  local rows={};for i,b in ipairs(payload.builds)do rows[i]={id=b.id,dps=b.id=='tuned'and 1531 or 1500,rotation=b.rotation,priority={{spellId=2},{spellId=1}}}end
+  cb({builds=rows})
+ end
+ return true
+end
+local rec,gain;local started,why=Sim.Tune({id='live',name='Im Spiel'},nil,function(r,g)rec,gain=r,g end)
+assert(started~=false,'tune started: '..tostring(why))
+assert(rec and rec.rotation=='eigen:fire:1,2,0','the tuned rotation is a name: '..tostring(rec and rec.rotation))
+assert(math.abs(gain-100*(1531/1500-1))<1e-9,'gain over the engine rotation')
+assert(C.ActiveRotation()=='eigen:fire:1,2,0','the tuned rotation becomes the active one for the live build')
+assert(Sim.Rotation().priority[1].spellId==2,'the HUD follows the tuned priority list')
+assert(Sim.Result('live').rotations[1].custom and Sim.Result('live').rotations[2].name=='fire','the list shows the tuned rotation first')
+assert(tuneJobs[#tuneJobs].kind=='talent-compare' and #tuneJobs[#tuneJobs].payload.builds==2,'confirmed with the full count against the engine rotation')
+assert(Sim.TunedBase('eigen:fire:1,2,0')=='fire' and Sim.TunedBase('fire')=='fire')
+-- tuning again starts from the engine rotation, not from the tuned name
+tuneJobs={};Sim.Tune({id='live'},nil,function()end);assert(tuneJobs[1].payload.rotation=='fire','the base of a tuned name is used')
+-- nothing to gain
+C.Request=function(kind,payload,cb)if kind=='rota-tune'then cb({dps=1500,order={0,1,2},tried=3})end;return true end
+Sim.Store().results.live.rotation='fire';rec=nil;local text
+Sim.Tune({id='live'},nil,function(r,g)rec,text=r,g end);assert(rec==nil and tostring(text):find('nicht verbessern',1,true),'no gain: '..tostring(text))
+-- a gain that the full count does not confirm
+C.Request=function(kind,payload,cb)
+ if kind=='rota-tune'then cb({dps=1500,order={0,1,2},bestOrder={1,0,2},bestDps=1520,tried=3})
+ else local rows={};for i,b in ipairs(payload.builds)do rows[i]={id=b.id,dps=1500}end;cb({builds=rows})end
+ return true
+end
+Sim.Tune({id='live'},nil,function(r,g)rec,text=r,g end);assert(rec==nil and tostring(text):find('nicht bestätigt',1,true),'not confirmed: '..tostring(text))
+-- before the first comparison there is nothing to tune
+Sim.Store().results.live=nil;local a,b=Sim.Tune({id='live'});assert(a==false and b,'needs a result first')
+-- refine is a step of the full run, and the last one
+Sim.Store().refine=true;Sim.Store().presets=nil
+local labels={}
+C.Request=function(kind,payload,cb)
+ if kind=='presets'then cb({engineRevision='e',class='mage',talents={},gear={},builds={},layout={}})
+ elseif kind=='talent-compare'then local rows={};for i,bb in ipairs(payload.builds)do rows[i]={id=bb.id,dps=1500,rotation='fire',priority={{spellId=1}}}end;cb({builds=rows})
+ elseif kind=='build-detail'then cb({dps=1500,rotation='fire',rotations={{name='fire',dps=1500}},priority={{spellId=1}},breakdown={},curve={}})
+ elseif kind=='rota-tune'then labels[#labels+1]='tune';cb({dps=1500,order={0},tried=1})end
+ return true
+end
+local sawStep;Sim.RunAll({},function(i,n,label)sawStep=label end,function()end)
+assert(sawStep=='Eigene Rota verfeinern' and labels[1]=='tune','the refinement is the last step of the full run: '..tostring(sawStep))
+Sim.Store().refine=false
 assert(#MOCK.errors==0,'no errors: '..tostring(MOCK.errors[1]))
 io.write('talent search ok\n')

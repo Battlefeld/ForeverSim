@@ -235,7 +235,7 @@ func (s *SimService) compareBuilds(ctx context.Context, j Job) (any, error) {
 		child(r, "simOptions")["iterations"] = float64(iterations)
 		if name != "" {
 			rotations := child(child(child(manifest, "specs"), p.spec), "rotations")
-			chosen, found := rotations[name]
+			chosen, found := lookupRotation(rotations, name)
 			if !found {
 				return nil, fmt.Errorf("Rotation fehlt: %s", name)
 			}

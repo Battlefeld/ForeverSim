@@ -272,7 +272,7 @@ local function refreshResult()
  if res and res.dps then
   state.dps:SetText(UI.FormatDps(res.dps,1));state.dps:SetAlpha(stale and .55 or 1)
   local name=treeInfo(select(1,(function()local e=selectedEntries();return mainTree(e or{})end)()))
-  state.unit:SetText('DPS · '..tostring(name)..(res.rotation and(' · '..res.rotation)or''))
+  state.unit:SetText('DPS · '..tostring(name)..(res.rotation and(' · '..UI.RotationLabel(res.rotation))or''))
   if state.sel~='live'and live and live.dps and live.dps>0 and not tostring(state.sel):find('^top:')then
    local p=100*(res.dps/live.dps-1);local c=p>0.05 and COLOR.good or(p<-0.05 and COLOR.bad or COLOR.muted)
    state.delta:SetText((p>=0 and'▲ 'or'▼ ')..UI.FormatPct(p));state.delta:SetTextColor(c[1],c[2],c[3],1)

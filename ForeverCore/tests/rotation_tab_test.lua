@@ -54,6 +54,7 @@ local row;for _,r in ipairs(S.rows)do if r:IsShown() and r.id==b.id then row=r e
 assert(row,'saved build listed');row.__scripts.OnClick(row);assert(S.sel==b.id and S.rotTitle:GetText():find('FEUER PVE',1,true),'selection: '..tostring(S.rotTitle:GetText()))
 assert(S.rotEmpty:GetText()~='','no rotations yet for this build')
 
+assert(UI.RotationLabel('eigen:fire:1,0')=='Eigene Rota (fire)' and UI.RotationLabel('fire')=='fire','tuned names are shown nicely')
 -- HUD settings -------------------------------------------------------------------------------------------------------
 local cfg=HUD.Config()
 local function check(label)for _,c in ipairs(S.checks)do if c.text:GetText()==label then return c end end;error('no check '..label)end

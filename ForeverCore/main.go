@@ -90,7 +90,7 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 		service := &RouteService{Root: activeRuntime(s.cfg), Lua: s.cfg.Lua, ScriptRoot: s.cfg.Runtime}
 		r.Result, e = service.Build(ctx, j.State)
 		sourceMu.RUnlock()
-	case "sim", "item", "rotation", "talents", "talent-next", "talent-build", "weights", "analysis", "leveling", "presets", "talent-compare", "build-detail":
+	case "sim", "item", "rotation", "talents", "talent-next", "talent-build", "weights", "analysis", "leveling", "presets", "talent-compare", "build-detail", "rota-tune":
 		r.Result, e = s.sim.Run(ctx, j)
 	case "sources":
 		go func() { result, issue := syncSources(ctx, s.cfg); log.Printf("Quellen: %v %v", result, issue) }()

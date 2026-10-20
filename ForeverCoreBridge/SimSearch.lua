@@ -128,3 +128,79 @@ function Sim.FindBest(opts,progress,done)
  end)
  return true
 end
+
+-- Refining the rotation ("Eigene Rota verfeinern") -------------------------------------------------------------------
+-- ForeverCore.exe tries one row of the best rotation at a new place (rota-tune) and answers with the best neighbour; this
+-- repeats while the damage rises, then the result is measured next to the engine's rotation with the full count. A tuned
+-- rotation is a name ("eigen:fire:1,0,2,3"), so it goes through every job like any other rotation.
+local TUNE_ROUNDS=6
+local TUNE_GAIN=0.003      -- a step has to bring 0.3 % in the quick measurement
+local TUNE_CONFIRM=0.002   -- and 0.2 % in the full one
+function Sim.TunedBase(name)return type(name)=='string'and(name:match('^eigen:([^:]+):'))or name end
+local function buildFields(spec)
+ local b={}
+ if spec.entries then b.talents=Sim.Payload(spec.entries)end
+ if spec.talentsString and not spec.entries then b.talentsString=spec.talentsString end
+ b.gearPreset=spec.gearPreset;b.spec=spec.spec
+ return b
+end
+-- spec = Sim.BuildSpec(id). done(record, gainPct) or done(nil, text). insideRun: called as a step of Sim.RunAll.
+function Sim.Tune(spec,progress,done,insideRun)
+ if Sim.search or(Sim.running and not insideRun)then return false,'Es läuft schon eine Berechnung'end
+ if not Sim.Available('rotation')then return false,'Erst ab Stufe 50'end
+ local res=Sim.Result(spec.id)
+ local base=res and Sim.TunedBase(res.rotation)
+ if not base then return false,'Erst „Beste Rota simmen“ drücken'end
+ local s={tune=true,round=0,rounds=TUNE_ROUNDS,sims=0,label='Rotation verfeinern',progress=progress}
+ Sim.search=s
+ local fields=buildFields(spec)
+ local function finish(rec,info)
+  Sim.search=nil;Sim.Changed()
+  if done then done(rec,info)end
+ end
+ local order
+ local function confirm()
+  local name='eigen:'..base..':'..table.concat(order,',')
+  s.label='Ergebnis prüfen';report()
+  local function with(rotation)local t={id=rotation==name and'tuned'or'base',rotation=rotation};for k,v in pairs(fields)do t[k]=v end;return t end
+  local ctx=C.SimCacheContext and C.SimCacheContext()
+  local ok=C.Request('talent-compare',{builds={with(name),with(base)},priority=true},function(result,issue)
+   if s.cancel then return finish(nil,'abgebrochen')end
+   if type(result)~='table'or type(result.builds)~='table'then return finish(nil,issue or'Keine Antwort')end
+   local tuned,plain
+   for _,row in ipairs(result.builds)do if row.id=='tuned'then tuned=row elseif row.id=='base'then plain=row end end
+   if not(tuned and plain and tonumber(tuned.dps)and tonumber(plain.dps))then return finish(nil,'Die verfeinerte Rotation konnte nicht berechnet werden')end
+   local gain=100*(tuned.dps/plain.dps-1)
+   if tuned.dps<plain.dps*(1+TUNE_CONFIRM)then return finish(nil,'Die Änderungen haben sich im genauen Durchlauf nicht bestätigt.')end
+   local rec=Sim.Store().results[spec.id]or{}
+   local list={{name=name,dps=tonumber(tuned.dps),custom=true}}
+   for _,r in ipairs(rec.rotations or{})do if not r.custom then list[#list+1]=r end end
+   rec.dps=tonumber(tuned.dps);rec.rotation=name;rec.rotations=C.clean(list);rec.error=nil
+   rec.context=ctx;rec.engine=C.engineRevision;rec.at=os and os.time and os.time()or 0
+   if spec.id=='live'then rec.priority=C.clean(tuned.priority)end
+   Sim.Store().results[spec.id]=rec
+   if spec.id=='live'then Sim.SetRotation(rec)end
+   finish(rec,gain)
+  end,{timeout=300})
+  if not ok then finish(nil,'Anfrage nicht moeglich')end
+ end
+ local function step()
+  if s.cancel then return finish(nil,'abgebrochen')end
+  s.round=s.round+1
+  if s.round>TUNE_ROUNDS then if order then return confirm()end;return finish(nil,'Keine Verbesserung gefunden.')end
+  s.label='Runde '..s.round..' von '..TUNE_ROUNDS..': Reihenfolge prüfen';report()
+  local ok=C.Request('rota-tune',{build=fields,rotation=base,order=order,iterations=300},function(r,issue)
+   if type(r)~='table'or not tonumber(r.dps)then return finish(nil,issue or'Keine Antwort')end
+   s.sims=s.sims+(tonumber(r.tried)or 0)+1;report()
+   if type(r.bestOrder)=='table'and tonumber(r.bestDps)and r.bestDps>r.dps*(1+TUNE_GAIN)then
+    order={};for i,v in ipairs(r.bestOrder)do order[i]=math.floor(v)end
+    step()
+   else
+    if order then confirm()else finish(nil,'Die beste Rotation der Engine lässt sich nicht verbessern.')end
+   end
+  end,{timeout=300})
+  if not ok then finish(nil,'Anfrage nicht moeglich')end
+ end
+ step()
+ return true
+end

@@ -78,6 +78,15 @@ func fakeDPS(req map[string]any) float64 {
 		}
 	}
 	dps += 7 * float64(len(array(child(player, "rotation"), "priorityList")))
+	// rows in ascending spell order pay a little: a tuned rotation has something to find
+	prev := -1
+	for _, raw := range array(child(player, "rotation"), "priorityList") {
+		id := int(num(child(child(child(raw.(map[string]any), "action"), "castSpell"), "spellId"), "spellId"))
+		if prev >= 0 && id >= prev {
+			dps += 0.1
+		}
+		prev = id
+	}
 	dps += 0.5 * num(child(req, "encounter"), "duration") / 10 // longer fights pay more: the curve rises
 	dps += 0.01 * float64(len(array(req, engineSpellsKey)))
 	return dps
