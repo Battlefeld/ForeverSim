@@ -145,4 +145,11 @@ def class_live_options(engine):
 out['liveOptions']=class_live_options(a.engine)
 db=json.loads((a.engine/'assets/database/db.json').read_text())
 out['items']={str(item['id']):True for item in db['items']}
+# Talent builds and gear sets the engine ships for each spec ("MythicSim Top" in the addon). Never fails the build.
+try:
+ from engine_presets import collect_presets
+ out['presets'],_report=collect_presets(a.engine,extra,out['items'])
+ for _line in _report:print('Vorlagen:',_line)
+except Exception as _issue:
+ out['presets']={};print('Vorlagen: nicht gelesen:',_issue)
 a.output.write_text(json.dumps(out,separators=(',',':')))
