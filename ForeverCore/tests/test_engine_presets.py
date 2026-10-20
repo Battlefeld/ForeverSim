@@ -54,6 +54,11 @@ def make_engine(root, presets=PRESETS_TS, gear=None):
 
 
 class Presets(unittest.TestCase):
+    def test_shipped_talent_geometry_matches_engine(self):
+        from talent_layout import render
+        manifest = json.loads((CORE/'engine-data.json').read_text())
+        self.assertEqual((CORE.parent/'ForeverSimBridge/TalentLayoutData.lua').read_text(), render(manifest))
+
     def test_talent_and_gear_names_and_builds(self):
         with tempfile.TemporaryDirectory() as d:
             got = engine_presets.read_spec_presets(make_engine(d), 'mage/dps')

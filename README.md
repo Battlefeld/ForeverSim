@@ -406,7 +406,9 @@ und läuft deshalb durch alle Aufträge wie jede andere.
 Build-Ergebnisse werden nach Charakterzustand gespeichert; Item-Ergebnisse zusätzlich nach der aktiven Rotation.
 Ein Rotationswechsel entwertet die Itemvergleiche, aber nicht das gerade berechnete Build-Ergebnis.
 Nach einer Änderung von Ausrüstung, Talenten oder Engine benutzt das HUD bis zur Neuberechnung die einfache
-Klassenrotation. Talentimporte prüfen ganze Ränge, eindeutige Plätze und den vollständigen Text.
+Klassenrotation. Talentimporte prüfen ganze Ränge, eindeutige Plätze und den vollständigen Text. Ansicht, Live-Erfassung und
+Editor verwenden die aus dem Engine-Manifest erzeugte `TalentLayoutData.lua`; Builds und erfolgreiche
+Engine-Updates erneuern diese Daten gemeinsam mit dem Manifest.
 
 **Neu rechnen:** nur auf Knopfdruck und einmal nach dem Anmelden, wenn sich Engine, Spielpatch, Ausrüstung, Stufe oder die
 tragbaren Items in den Taschen seit der letzten Berechnung geändert haben (kleine Meldung mit den Gründen, läuft im

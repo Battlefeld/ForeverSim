@@ -7,6 +7,7 @@ import tempfile
 from engine_source import CORE, overlay, read_lock, verify_source
 import json
 import hashlib
+from talent_layout import write as write_talent_layout
 sys.path.insert(0, str(CORE / 'engine-overlay'))
 from apply_overlay import apply as apply_level_overlay  # noqa: E402
 
@@ -44,4 +45,5 @@ with tempfile.TemporaryDirectory(prefix='forevercore-engine-') as temp:
     subprocess.run(['go', 'build', '-tags=with_db', '-trimpath', '-o', str(output), './cmd/wowsimcli'], cwd=stage, check=True)
     manifest['engineSHA256'] = hashlib.sha256(output.read_bytes()).hexdigest()
     args.manifest.write_text(json.dumps(manifest, separators=(',', ':')))
+write_talent_layout(manifest, CORE.parent / 'ForeverSimBridge/TalentLayoutData.lua')
 print(read_lock()['buildIdentity'])

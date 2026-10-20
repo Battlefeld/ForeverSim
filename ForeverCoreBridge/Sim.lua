@@ -19,7 +19,27 @@ function Sim.Context()
  return f and f()or nil
 end
 function Sim.Class()return classKey()end
-function Sim.Model()local k=classKey();return k and FUSLiveData and FUSLiveData[k]or nil end
+local editorModels={}
+function Sim.Model()
+ local k=classKey();local model=k and FUSLiveData and FUSLiveData[k]
+ local canonical=k and ForeverSimTalentData and ForeverSimTalentData[k]
+ if not model or not canonical then return model end
+ if editorModels[k]then return editorModels[k]end
+ local out={};for key,value in pairs(model)do out[key]=value end
+ local bySpell={}
+ for _,tree in ipairs(model.talentTrees or{})do for _,node in ipairs(tree.talents or{})do if node.spellId then bySpell[node.spellId]=node end end end
+ out.talentTrees={}
+ for ti,tree in ipairs(canonical.talentTrees)do
+  local t={name=tree.name,talents={}};out.talentTrees[ti]=t
+  for _,node in ipairs(tree.talents)do
+   local n={};for key,value in pairs(node)do n[key]=value end
+   local original=bySpell[n.spellId]
+   if original then n.key=original.key;n.name=original.name else n.name=n.fieldName:gsub('(%u)',' %1'):gsub('^%l',string.upper)end
+   t.talents[#t.talents+1]=n
+  end
+ end
+ editorModels[k]=out;return out
+end
 function Sim.Level()local ok,l=pcall(UnitLevel,'player');return ok and tonumber(l)or 0 end
 function Sim.Available(feature)return Sim.Level()>=(Sim.MIN[feature]or 1)end
 
@@ -43,25 +63,25 @@ Sim.Changed=changed
 -- A build is a list of {t=tree 1..3, r=row, c=column, n=rank}, the same coordinates the talent tree window draws and
 -- ForeverCore.exe resolves against the engine's own tree (so the addon's spell ids never matter).
 local function places()
- local model=Sim.Model();local byKey,byPlace={}, {}
+ local model=Sim.Model();local byKey,byPlace,bySpell={}, {}, {}
  for ti,tree in ipairs(model and model.talentTrees or{})do
   byPlace[ti]={}
   for _,node in ipairs(tree.talents or{})do
    local info={t=ti,r=tonumber(node.row)or 0,c=tonumber(node.column)or 0,max=tonumber(node.maxRank)or 1,key=node.key,name=node.name,spellId=node.spellId,node=node}
-   byKey[node.key]=info;byPlace[ti][info.r*10+info.c]=info
+   byKey[node.key]=info;byKey[node.fieldName or node.key]=info;bySpell[node.spellId]=info;byPlace[ti][info.r*10+info.c]=info
   end
  end
- return byKey,byPlace
+ return byKey,byPlace,bySpell
 end
 Sim.Places=places
 -- The talents the character has right now, from the same capture the item values use.
 function Sim.LiveEntries()
  local P=FUSLive;if not P or not P.capture then return nil,'ForeverSim fehlt'end
  local ok,snap=pcall(P.capture,true);if not ok or type(snap)~='table'then return nil,'Charakter nicht lesbar'end
- local byKey=places();local out={}
+ local byKey,_,bySpell=places();local out={}
  for _,tree in ipairs(snap.talents or{})do
   for _,e in ipairs(tree.entries or{})do
-   local info=byKey[e.classKey];local n=tonumber(e.rank)or 0
+   local info=bySpell[e.spellID or e.spellId]or byKey[e.classKey];local n=tonumber(e.rank)or 0
    if info and n>0 then out[#out+1]={t=info.t,r=info.r,c=info.c,n=n}end
   end
  end
@@ -111,6 +131,10 @@ end
 -- The same rules the engine applies (tier points, prerequisites, budget); the engine's tree layout comes with the presets.
 function Sim.Layout()
  local p=Sim.Presets();local map={}
+ local m=Sim.Model()
+ for ti,t in ipairs(m and m.talentTrees or{})do for _,n in ipairs(t.talents or{})do
+  map[ti*1000+n.row*10+n.column]={tree=ti,row=n.row,col=n.column,max=n.maxRank,preRow=n.preRow,preCol=n.preCol}
+ end end
  for _,n in ipairs(p and p.layout or{})do map[n.tree*1000+n.row*10+n.col]=n end
  return map
 end

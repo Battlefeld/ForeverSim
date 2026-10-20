@@ -9,6 +9,17 @@ for _,addon in ipairs({'ForeverSimBridge','ForeverCoreBridge'})do
  end
 end
 MOCK.Fire('PLAYER_LOGIN');MOCK.Advance(.5,.05)
+local editor=ForeverCoreClient.Sim.Model()
+local canonical=assert(ForeverSimTalentData[class:lower()])
+for ti,tree in ipairs(canonical.talentTrees)do
+ local byPlace={}
+ for _,node in ipairs(editor.talentTrees[ti].talents)do byPlace[node.row*10+node.column]=node end
+ assert(#editor.talentTrees[ti].talents==#tree.talents,'editor talent count')
+ for _,node in ipairs(tree.talents)do
+  local actual=assert(byPlace[node.row*10+node.column],'missing editor talent')
+  assert(actual.maxRank==node.maxRank and actual.spellId==node.spellId,'editor differs from engine talent')
+ end
+end
 local UI=ForeverSimUI;UI.Window()
 for _,tab in ipairs(UI.Tabs())do
  UI.Open(tab.key);MOCK.Advance(.1,.05)

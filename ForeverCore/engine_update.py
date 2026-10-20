@@ -37,6 +37,7 @@ sys.path.insert(0, str(OVERLAY))
 from apply_overlay import apply as apply_overlay, overlay_digest, OverlayError  # noqa: E402
 from golden_dps import suite_dps  # noqa: E402
 from engine_identity import build_identity, leveling_digest
+from talent_layout import write as write_talent_layout
 from compare_results import canon, differences  # noqa: E402
 
 SMOKE_LEVELS = [10, 20, 30, 45, 59]
@@ -442,6 +443,7 @@ def main():
             if leveling != CORE / 'leveling-data.json':
                 shutil.copyfile(leveling, CORE / 'leveling-data.json')
             shutil.copyfile(engine_data, CORE / 'engine-data.json')
+            write_talent_layout(manifest, CORE.parent / 'ForeverSimBridge/TalentLayoutData.lua')
             if families:
                 shutil.copyfile(families, CORE / 'creature-families.json')
         print(f"engine {new_lock['buildIdentity']} + overlay {new_lock['overlay']}: all checks passed")

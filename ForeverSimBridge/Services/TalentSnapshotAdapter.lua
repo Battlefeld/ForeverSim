@@ -35,12 +35,33 @@ local function fail(s,message)
 end
 local function indexModel(classKey)
  local data=FUSLiveData and FUSLiveData[classKey]
+ local canonical=ForeverSimTalentData and ForeverSimTalentData[classKey]
+ if data and canonical then
+  local originalBySpell={}
+  for _,tree in ipairs(data.talentTrees or{})do for _,node in ipairs(tree.talents or{})do if node.spellId then originalBySpell[node.spellId]=node end end end
+  local copy={};for key,value in pairs(data)do copy[key]=value end;copy.talentTrees={}
+  for ti,tree in ipairs(canonical.talentTrees)do
+   local t={name=tree.name,talents={}};copy.talentTrees[ti]=t
+   for _,node in ipairs(tree.talents)do
+    local n={};for key,value in pairs(node)do n[key]=value end
+    local old=originalBySpell[n.spellId]
+    n.key=old and old.key or n.fieldName;n.name=old and old.name or n.fieldName
+    t.talents[#t.talents+1]=n
+   end
+  end
+  data=copy
+ end
  local trees,keys,ids,names={},{},{},{}
  for i,tree in ipairs(data and data.talentTrees or {})do
   trees[i]={name=tree.name or ('Baum '..i),points=0,entries={}}
   for _,node in ipairs(tree.talents or {})do
    keys[node.key]={key=node.key,name=node.name,index=i,maxRank=node.maxRank,tier=(node.row or 0)+1,column=(node.column or 0)+1}
-   if type(node.spellId)=='number' then ids[node.spellId]=keys[node.key]end
+   if type(node.spellId)=='number' then
+    ids[node.spellId]=keys[node.key]
+    local info=tableValue(call(C_Spell and C_Spell.GetSpellInfo,node.spellId))
+    local name=info and stringValue(read(info,'name'))or stringValue(call(GetSpellInfo,node.spellId))
+    if name then names[string.lower(name)]=keys[node.key]end
+   end
    if type(node.name)=='string' then names[string.lower(node.name)]=keys[node.key]end
   end
  end
