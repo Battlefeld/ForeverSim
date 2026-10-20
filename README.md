@@ -435,6 +435,13 @@ Tastenanzeige, Aktionsleisten-Rahmen). Die Beute-Quellen sind der Dungeon-Katalo
 Quest-, Handwerks-, Ruf-, Auktions- und Raid-Quellen sowie Werte für Verzauberungen und Buffs brauchen Daten, die das Addon
 noch nicht hat. Der „Pre-BiS gesamt“-Wert ist die Summe der Einzelwerte (eine Näherung).
 
+### Vorläufige Datenquelle: Buff-Food
+
+- [Wowhead: All Cooking Food that Currently Gives XP Buffs in WoW: Forever](https://www.wowhead.com/forever/news/all-cooking-food-that-currently-gives-xp-buffs-in-wow-forever-382928) – aufgenommen am 20.10.2026.
+- Dient als vorläufige Sammlung von Lebensmitteln, Kochfertigkeiten und angegebenen Buff-Werten. Der Artikel behandelt XP-Buff-Food im Beta-Stand; eine vollständige Liste sämtlicher Buff-Foods ist damit nicht bestätigt.
+- Vor der Verwendung in Simulationen müssen Item-ID, Buff/Zauber-ID, Mindestlevel, Dauer und Werte mit aktuellen Item-/Zauberdaten abgeglichen werden. Doppelte beziehungsweise widersprüchliche Einträge (z. B. Briny Seafood Stew) bleiben bis dahin ungeprüft.
+- Die Quelle ist zunächst nur dokumentiert; ihre Angaben werden noch nicht automatisch als bestätigte Simulationswerte verwendet.
+
 ---
 
 ## 7. Der Pixelstreifen: Aussehen, Größe, Anpassung
