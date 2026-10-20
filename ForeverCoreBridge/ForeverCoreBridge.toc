@@ -9,6 +9,7 @@ Bridge.lua
 Adapters.lua
 Sim.lua
 SimSearch.lua
+Loot.lua
 AuctionExport.lua
 CopyLog.lua
 DungeonReport.lua
