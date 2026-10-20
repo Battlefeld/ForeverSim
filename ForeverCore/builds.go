@@ -201,7 +201,7 @@ func (s *SimService) compareBuilds(ctx context.Context, j Job) (any, error) {
 		}
 		rows[i] = map[string]any{"id": str(b, "id"), "name": str(b, "name")}
 		payload := map[string]any{}
-		for _, key := range []string{"talentsString", "spec", "gear"} {
+		for _, key := range []string{"talentsString", "talents", "spec", "gear"} {
 			if v, ok := b[key]; ok {
 				payload[key] = v
 			}

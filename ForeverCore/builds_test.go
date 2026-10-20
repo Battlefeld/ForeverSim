@@ -263,3 +263,33 @@ func TestPresetsAreDecodedAndChecked(t *testing.T) {
 		t.Fatal("unknown class accepted")
 	}
 }
+
+func TestTalentEntriesByPlaceInTheTree(t *testing.T) {
+	s, m := fakeService(t)
+	tr := trees(m)
+	snap := mageSnapshot(t, m, fireTalents)
+	ranks, _ := decodeTalentString(tr, fireTalents)
+	var entries []any
+	for ti, raw := range tr {
+		for _, n := range array(raw.(map[string]any), "talents") {
+			node := n.(map[string]any)
+			if r := ranks[str(node, "fieldName")]; r > 0 {
+				loc := child(node, "location")
+				// spellID deliberately wrong: the place in the tree decides
+				entries = append(entries, map[string]any{"treeIndex": float64(ti + 1), "rowIdx": loc["rowIdx"], "colIdx": loc["colIdx"], "spellID": float64(1), "rank": float64(r)})
+			}
+		}
+	}
+	req, e := s.liveRequest(Job{State: map[string]any{"sim": snap}, Payload: map[string]any{"talents": entries}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	if str(player(req), "talentsString") != fireTalents {
+		t.Fatalf("got %q", str(player(req), "talentsString"))
+	}
+	// an entry for a place that does not exist is refused, not guessed
+	bad := []any{map[string]any{"treeIndex": float64(1), "rowIdx": float64(6), "colIdx": float64(3), "rank": float64(1)}}
+	if _, e = s.liveRequest(Job{State: map[string]any{"sim": snap}, Payload: map[string]any{"talents": bad}}); e == nil {
+		t.Fatal("an unknown place was accepted")
+	}
+}

@@ -55,7 +55,22 @@ func encodeTalentEntries(trees, entries []any, validate bool, budget int) (strin
 		if rank == 0 {
 			continue
 		}
-		key := byID[int(num(e, "spellID"))]
+		// An entry from the addon's talent editor or from a preset names its place in the tree: treeIndex (1-based),
+		// rowIdx, colIdx. That is the most reliable identity, the addon's own spell ids can differ from the engine's.
+		key := ""
+		if ti := int(num(e, "treeIndex")); ti >= 1 && ti <= len(trees) && e["rowIdx"] != nil && e["colIdx"] != nil {
+			for _, raw := range array(trees[ti-1].(map[string]any), "talents") {
+				n := raw.(map[string]any)
+				loc := child(n, "location")
+				if num(loc, "rowIdx") == num(e, "rowIdx") && num(loc, "colIdx") == num(e, "colIdx") {
+					key = str(n, "fieldName")
+					break
+				}
+			}
+		}
+		if key == "" {
+			key = byID[int(num(e, "spellID"))]
+		}
 		if key == "" {
 			key = byID[int(num(e, "spellId"))]
 		}

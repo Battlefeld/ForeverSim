@@ -124,6 +124,12 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 			return nil, e
 		}
 		overridden = true
+	} else if entries := array(j.Payload, "talents"); len(entries) > 0 {
+		// the same, as entries {treeIndex,rowIdx,colIdx,rank} (the addon's editor) instead of the engine's text
+		if encoded, buildRanks, e = encodeTalentEntries(trees, entries, true, 51); e != nil {
+			return nil, e
+		}
+		overridden = true
 	}
 	items := make([]any, 17)
 	for i := range items {
