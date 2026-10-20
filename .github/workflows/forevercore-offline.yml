@@ -49,6 +49,7 @@ jobs:
           lua5.1 ForeverCore/tests/state_ref_test.lua .
           lua5.1 ForeverCore/tests/sim_service_test.lua .
           lua5.1 ForeverCore/tests/window_test.lua .
+          lua5.1 ForeverCore/tests/talents_tab_test.lua .
           lua5.1 ForeverCore/tests/suffix_stats_test.lua .
           lua5.1 ForeverCore/tests/class_filter_test.lua .
           lua5.1 ForeverCore/tests/requirements_test.lua .

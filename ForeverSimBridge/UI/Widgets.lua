@@ -203,3 +203,32 @@ function UI.Dropdown(parent,w,opts)
  d:SetValue(nil,'')
  return d
 end
+
+-- A small window with one line of text to edit: renaming a build, importing or copying a shared build text.
+-- UI.Prompt(title, text, onOk, {readOnly=bool, okText=str}). onOk(text) returns nothing; a nil onOk makes it a viewer.
+local prompt
+function UI.Prompt(title,text,onOk,opts)
+ opts=opts or{}
+ if not prompt then
+  local f=UI.Box(UIParent,{.02,.05,.1,.98},{.79,.6,.24,1});f:SetSize(460,150);f:SetPoint('CENTER',UIParent,'CENTER',0,120)
+  f:SetFrameStrata('FULLSCREEN_DIALOG');f:EnableMouse(true);f:Hide()
+  f.title=UI.Text(f,14,COLOR.gold,'title','LEFT');f.title:SetPoint('TOPLEFT',f,'TOPLEFT',16,-14)
+  local box=UI.Box(f,{.01,.03,.06,1},{.47,.63,.9,.4});box:SetPoint('TOPLEFT',f,'TOPLEFT',16,-44);box:SetPoint('TOPRIGHT',f,'TOPRIGHT',-16,-44);box:SetHeight(30)
+  f.edit=CreateFrame('EditBox',nil,box);f.edit:SetPoint('TOPLEFT',box,'TOPLEFT',8,-4);f.edit:SetPoint('BOTTOMRIGHT',box,'BOTTOMRIGHT',-8,4)
+  f.edit:SetAutoFocus(false);f.edit:SetMaxLetters(2000);pcall(f.edit.SetFont,f.edit,UI.FONT.body,13,'');f.edit:SetTextColor(1,1,1)
+  f.ok=UI.Button(f,'OK',{w=120,h=40,style='buttonActive',color=COLOR.gold});f.ok:SetPoint('BOTTOMRIGHT',f,'BOTTOMRIGHT',-146,12)
+  f.cancel=UI.Button(f,'Abbrechen',{w=120,h=40});f.cancel:SetPoint('BOTTOMRIGHT',f,'BOTTOMRIGHT',-16,12)
+  f.note=UI.Text(f,11,COLOR.muted,'body','LEFT');f.note:SetPoint('TOPLEFT',box,'BOTTOMLEFT',2,-6);f.note:SetPoint('RIGHT',f,'RIGHT',-16,0)
+  local function close()f:Hide();f.edit:ClearFocus()end
+  f.cancel:SetScript('OnClick',close)
+  f.edit:SetScript('OnEscapePressed',close)
+  f.ok:SetScript('OnClick',function()local cb=f.onOk;local t=f.edit:GetText();close();if cb then cb(t)end end)
+  f.edit:SetScript('OnEnterPressed',function()if f.onOk then f.ok:Click()else close()end end)
+  prompt=f
+ end
+ local f=prompt
+ f.title:SetText(title or'');f.edit:SetText(text or'');f.onOk=onOk;f.note:SetText(opts.note or'')
+ f.ok:SetLabel(opts.okText or'OK');UI.Show(f.ok,onOk~=nil)
+ f:Show();f.edit:SetFocus();if opts.readOnly then f.edit:HighlightText()end
+ return f
+end

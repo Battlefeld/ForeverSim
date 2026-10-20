@@ -216,6 +216,9 @@ local function storeRows(rows,ctx)
     context=ctx,engine=engine,at=stamp()}
    -- the priority list is only needed for the build the character plays now (the combat HUD follows it)
    if id=='live'then rec.priority=row.priority end
+   -- a later comparison of the same state must not throw away the detail of the build
+   local old=s.results[id]
+   if old and old.detail and old.context==ctx and old.engine==engine then rec.detail=old.detail;rec.priority=rec.priority or old.priority end
    s.results[id]=C.clean(rec)
   end
  end

@@ -45,9 +45,9 @@ class='MAGE'
 
 -- the window with one stub tab ------------------------------------------------------------------------------------
 local shown={}
-UI.RegisterTab({key='one',label='Eins',order=1,build=function(page)local t=page:CreateTexture();t:SetAllPoints();shown.one=page end,show=function()shown.oneShown=true end})
-UI.RegisterTab({key='two',label='Zwei',order=2,build=function(page)error('broken tab')end})
-UI.RegisterTab({key='three',label='Drei',order=3,build=function(page)shown.three=page end})
+UI.RegisterTab({key='one',label='Eins',order=-3,build=function(page)local t=page:CreateTexture();t:SetAllPoints();shown.one=page end,show=function()shown.oneShown=true end})
+UI.RegisterTab({key='two',label='Zwei',order=-2,build=function(page)error('broken tab')end})
+UI.RegisterTab({key='three',label='Drei',order=-1,build=function(page)shown.three=page end})
 local f=UI.Window();assert(f and f==UI.Window(),'one window')
 assert(f:GetWidth()==1290 and f:GetHeight()==800)
 assert(not f:IsShown(),'closed at the start')
