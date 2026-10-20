@@ -192,6 +192,14 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 		}
 	}
 	rotation, ok := rotations[selected]
+	if !ok && j.Payload["rotationSoft"] == true {
+		// The addon's remembered rotation belongs to another spec (talents changed): use this spec's default.
+		selected = "default"
+		if rotations["default"] == nil {
+			selected = names[0]
+		}
+		rotation, ok = rotations[selected]
+	}
 	if !ok {
 		return nil, fmt.Errorf("Rotation fehlt: %s", selected)
 	}

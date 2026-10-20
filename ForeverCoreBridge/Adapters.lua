@@ -38,7 +38,7 @@ function C.Capture(kind)
   s.mode=M.db.settings and M.db.settings.mode or'balanced'
   s.routeDB={settings=C.clean(M.db.settings),done=C.clean(M.db.done),phases=C.clean(M.db.phases),routeProgress=C.clean(M.db.routeProgress),completedPlans=C.clean(M.db.completedPlans),routeSkips=C.clean(M.db.routeSkips),skipHistory=C.clean(M.db.skipHistory),skipContexts=C.clean(M.db.skipContexts),deferred=C.clean(M.db.deferred),routeRecovery=C.clean(M.db.routeRecovery),routeTravel=C.clean(M.db.routeTravel),routeTravelVisits=C.clean(M.db.routeTravelVisits),buffs=C.clean(M.db.buffs),observedXP=C.clean(M.db.observedXP),dungeonRuns=C.clean(M.db.dungeonRuns)}
  end
- if kind=='sim'or kind=='item'then
+ if kind=='sim'or kind=='item'or kind=='talent-compare'or kind=='presets'then
   local P=FUSLive;if not P or not P.capture then error('ForeverSim fehlt')end
   s.sim=C.clean(P.capture(true));if not s.sim then error('SIM-Snapshot nicht lesbar')end
   local actualFree=read(GetUnspentTalentPoints)
@@ -145,7 +145,8 @@ function C.SimCacheContext()
  if not C.engineRevision or C.engineRevision=='' then return nil end
  local P=FUSLive
  if not P or not P.capture then return nil end
- local revision=tostring(C.simRevision)..'/'..tostring(P.revision)..'/'..C.engineRevision
+ local rotation=C.ActiveRotation and C.ActiveRotation()or nil
+ local revision=tostring(C.simRevision)..'/'..tostring(P.revision)..'/'..C.engineRevision..'/'..tostring(rotation)
  if cacheRevision==revision then return cacheContext end
  local ok,snapshot=pcall(P.capture,true)
  if not ok or type(snapshot)~='table' then return nil end
@@ -153,7 +154,7 @@ function C.SimCacheContext()
  -- Right after the login the hunter quiver can still be unreadable. A key computed from that half-loaded state
  -- would differ from the real one and poison the result cache, so there is no key until it is readable.
  if type(sim.quiver)=='table' and sim.quiver.status=='unreadable' then return nil end
- local serialized=C.json({engine=C.engineRevision,guid=read(UnitGUID,'player') or read(UnitName,'player'),sim=sim})
+ local serialized=C.json({engine=C.engineRevision,guid=read(UnitGUID,'player') or read(UnitName,'player'),sim=sim,rotation=rotation})
  -- Two directional CRC values and length, so accidental key collisions are
  -- extremely unlikely; every item also has its own exact candidate signature.
  cacheContext=tostring(#serialized)..':'..tostring(C.crc(serialized))..':'..tostring(C.crc(serialized:reverse()))

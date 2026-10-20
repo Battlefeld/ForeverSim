@@ -287,9 +287,41 @@ func TestTalentEntriesByPlaceInTheTree(t *testing.T) {
 	if str(player(req), "talentsString") != fireTalents {
 		t.Fatalf("got %q", str(player(req), "talentsString"))
 	}
+	// the compact form [treeIndex,rowIdx,colIdx,rank] gives the same build
+	var compact []any
+	for _, raw := range entries {
+		e := raw.(map[string]any)
+		compact = append(compact, []any{e["treeIndex"], e["rowIdx"], e["colIdx"], e["rank"]})
+	}
+	if req, e = s.liveRequest(Job{State: map[string]any{"sim": snap}, Payload: map[string]any{"talents": compact}}); e != nil || str(player(req), "talentsString") != fireTalents {
+		t.Fatalf("compact entries: %v", e)
+	}
 	// an entry for a place that does not exist is refused, not guessed
 	bad := []any{map[string]any{"treeIndex": float64(1), "rowIdx": float64(6), "colIdx": float64(3), "rank": float64(1)}}
 	if _, e = s.liveRequest(Job{State: map[string]any{"sim": snap}, Payload: map[string]any{"talents": bad}}); e == nil {
 		t.Fatal("an unknown place was accepted")
+	}
+}
+
+func TestRememberedRotationOfAnotherSpecFallsBackToTheDefault(t *testing.T) {
+	s, m := fakeService(t)
+	snap := mageSnapshot(t, m, fireTalents)
+	state := map[string]any{"sim": snap}
+	if _, e := s.liveRequest(Job{State: state, Payload: map[string]any{"rotation": "does-not-exist"}}); e == nil {
+		t.Fatal("an explicit unknown rotation must be an error")
+	}
+	req, e := s.liveRequest(Job{State: state, Payload: map[string]any{"rotation": "does-not-exist", "rotationSoft": true}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	if len(array(child(player(req), "rotation"), "priorityList")) == 0 {
+		t.Fatal("no rotation chosen")
+	}
+	want := rotationNames(m, "mage")[0]
+	if child(child(child(child(m, "specs"), "mage"), "rotations"), "default") == nil {
+		pl := child(child(child(child(m, "specs"), "mage"), "rotations"), want)
+		if len(array(child(player(req), "rotation"), "priorityList")) != len(array(pl, "priorityList")) {
+			t.Fatal("not the alphabetically first rotation")
+		}
 	}
 }

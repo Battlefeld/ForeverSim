@@ -44,6 +44,10 @@ func encodeTalentEntries(trees, entries []any, validate bool, budget int) (strin
 	total := 0
 	for _, raw := range entries {
 		e, ok := raw.(map[string]any)
+		if arr, isArray := raw.([]any); !ok && isArray && len(arr) == 4 {
+			// compact form from the addon: [treeIndex, rowIdx, colIdx, rank]
+			e, ok = map[string]any{"treeIndex": arr[0], "rowIdx": arr[1], "colIdx": arr[2], "rank": arr[3]}, true
+		}
 		if !ok {
 			return "", nil, fmt.Errorf("Ungueltiger Talenteintrag")
 		}

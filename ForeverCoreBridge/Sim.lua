@@ -1,0 +1,223 @@
+-- What the ForeverSim window and the combat HUD know about this character: its talent builds, the rotation that is
+-- active, and the results ForeverCore.exe computed for them. No frames here; the windows only display this.
+-- Everything is kept per character in ForeverCoreBridgeDB.sim[<guid>]; a result carries the state it was computed for
+-- (C.SimCacheContext) so the window can say "veraltet" when gear, talents, level or the engine changed since.
+local C=ForeverCoreClient
+local Sim={};C.Sim=Sim
+-- Levels from which each part is offered (the combat HUD from the first level).
+Sim.MIN={hud=1,talents=60,rotation=50,loot=50}
+Sim.MAX_BUILDS=10
+local function now()return GetTime and GetTime()or 0 end
+local function stamp()return time and time()or 0 end
+local function classKey()local ok,_,c=pcall(UnitClass,'player');if ok and type(c)=='string'then return c:lower()end end
+local function charKey()
+ local ok,guid=pcall(UnitGUID,'player');if ok and type(guid)=='string'and guid~=''then return guid end
+ local ok2,name=pcall(UnitName,'player');return ok2 and name or'unknown'
+end
+function Sim.Class()return classKey()end
+function Sim.Model()local k=classKey();return k and FUSLiveData and FUSLiveData[k]or nil end
+function Sim.Level()local ok,l=pcall(UnitLevel,'player');return ok and tonumber(l)or 0 end
+function Sim.Available(feature)return Sim.Level()>=(Sim.MIN[feature]or 1)end
+
+-- Saved data ---------------------------------------------------------------------------------------------------
+function Sim.Store()
+ ForeverCoreBridgeDB=ForeverCoreBridgeDB or{enabled=true}
+ local db=ForeverCoreBridgeDB;if type(db.sim)~='table'then db.sim={}end
+ local key=charKey();local s=db.sim[key]
+ if type(s)~='table'then s={version=1};db.sim[key]=s end
+ if type(s.builds)~='table'then s.builds={}end
+ if type(s.results)~='table'then s.results={}end
+ s.nextId=tonumber(s.nextId)or 1
+ return s
+end
+local listeners={}
+function Sim.OnChange(fn)listeners[#listeners+1]=fn end
+local function changed()for _,fn in ipairs(listeners)do pcall(fn)end end
+Sim.Changed=changed
+
+-- Talent builds -------------------------------------------------------------------------------------------------
+-- A build is a list of {t=tree 1..3, r=row, c=column, n=rank}, the same coordinates the talent tree window draws and
+-- ForeverCore.exe resolves against the engine's own tree (so the addon's spell ids never matter).
+local function places()
+ local model=Sim.Model();local byKey,byPlace={}, {}
+ for ti,tree in ipairs(model and model.talentTrees or{})do
+  byPlace[ti]={}
+  for _,node in ipairs(tree.talents or{})do
+   local info={t=ti,r=tonumber(node.row)or 0,c=tonumber(node.column)or 0,max=tonumber(node.maxRank)or 1,key=node.key,name=node.name,spellId=node.spellId,node=node}
+   byKey[node.key]=info;byPlace[ti][info.r*10+info.c]=info
+  end
+ end
+ return byKey,byPlace
+end
+Sim.Places=places
+-- The talents the character has right now, from the same capture the item values use.
+function Sim.LiveEntries()
+ local P=FUSLive;if not P or not P.capture then return nil,'ForeverSim fehlt'end
+ local ok,snap=pcall(P.capture,true);if not ok or type(snap)~='table'then return nil,'Charakter nicht lesbar'end
+ local byKey=places();local out={}
+ for _,tree in ipairs(snap.talents or{})do
+  for _,e in ipairs(tree.entries or{})do
+   local info=byKey[e.classKey];local n=tonumber(e.rank)or 0
+   if info and n>0 then out[#out+1]={t=info.t,r=info.r,c=info.c,n=n}end
+  end
+ end
+ return out
+end
+function Sim.Points(entries)
+ local pts={0,0,0};local total=0
+ for _,e in ipairs(entries or{})do pts[e.t]=(pts[e.t]or 0)+e.n;total=total+e.n end
+ return pts,total
+end
+-- Compact form for the job: [tree,row,column,rank]. Keeps a ten-build comparison far below the pixel strip's limit.
+function Sim.Payload(entries)
+ local out={};for _,e in ipairs(entries or{})do out[#out+1]={e.t,e.r,e.c,e.n}end;return out
+end
+function Sim.Signature(entries)
+ local list={};for _,e in ipairs(entries or{})do list[#list+1]=string.format('%d.%d.%d=%d',e.t,e.r,e.c,e.n)end
+ table.sort(list);return table.concat(list,';')
+end
+function Sim.CopyEntries(entries)
+ local out={};for _,e in ipairs(entries or{})do out[#out+1]={t=e.t,r=e.r,c=e.c,n=e.n}end;return out
+end
+function Sim.Builds()return Sim.Store().builds end
+function Sim.Build(id)for _,b in ipairs(Sim.Store().builds)do if b.id==id then return b end end end
+function Sim.CanAddBuild()return #Sim.Store().builds<Sim.MAX_BUILDS end
+function Sim.AddBuild(name,entries,source)
+ local s=Sim.Store()
+ if #s.builds>=Sim.MAX_BUILDS then return nil,'Es sind schon '..Sim.MAX_BUILDS..' Skillungen gespeichert'end
+ name=tostring(name or''):gsub('^%s+',''):gsub('%s+$','');if name==''then name='Skillung '..s.nextId end
+ local build={id='b'..s.nextId,name=name:sub(1,28),source=source or'own',entries=Sim.CopyEntries(entries),created=stamp()}
+ s.nextId=s.nextId+1;s.builds[#s.builds+1]=build;changed();return build
+end
+function Sim.DeleteBuild(id)
+ local s=Sim.Store()
+ for i,b in ipairs(s.builds)do if b.id==id then table.remove(s.builds,i);s.results[id]=nil;changed();return true end end
+end
+function Sim.RenameBuild(id,name)
+ local b=Sim.Build(id);if not b then return false end
+ name=tostring(name or''):gsub('^%s+',''):gsub('%s+$','');if name==''then return false end
+ b.name=name:sub(1,28);changed();return true
+end
+function Sim.UpdateBuild(id,entries)
+ local b=Sim.Build(id);if not b then return false end
+ b.entries=Sim.CopyEntries(entries);Sim.Store().results[id]=nil;changed();return true
+end
+
+-- Engine presets ("MythicSim Top") ---------------------------------------------------------------------------------
+function Sim.Presets()return Sim.Store().presets end
+local function presetBuildEntries(p)
+ local out={};for _,e in ipairs(p.entries or{})do out[#out+1]={t=e.tree,r=e.row,c=e.col,n=e.rank}end;return out
+end
+Sim.PresetEntries=presetBuildEntries
+function Sim.LoadPresets(cb,force)
+ local s=Sim.Store();local have=s.presets
+ if have and have.engine==C.engineRevision and have.class==classKey()and not force then if cb then cb(have)end;return true end
+ local ok=C.Request('presets',{class=classKey()},function(result,issue)
+  if type(result)=='table'and type(result.talents)=='table'then
+   result.at=stamp();result.engine=result.engineRevision or C.engineRevision;s.presets=C.clean(result);changed()
+   if cb then cb(s.presets)end
+  elseif cb then cb(nil,issue or'Keine Antwort')end
+ end)
+ if not ok and cb then cb(nil,'Anfrage nicht moeglich')end
+ return ok
+end
+local function findByName(list,name)
+ for _,x in ipairs(list or{})do if x.name==name then return x end end
+end
+-- One MythicSim build per tree: the builds the engine pairs up (talents + gear), else its legal talent builds.
+-- Returns {{id,name,talentsString,gearPreset,tree,entries,spec}}.
+function Sim.TopBuilds()
+ local p=Sim.Presets();if not p then return{}end
+ local byTree,list={}, {}
+ local function offer(name,talentPreset,gearName)
+  if not talentPreset or talentPreset.valid~=true then return end
+  local tree=tonumber(talentPreset.tree)or 0;if tree<1 or byTree[tree]then return end
+  byTree[tree]=true
+  list[#list+1]={id='top:'..tree,name=name,talentsString=talentPreset.talentsString,gearPreset=gearName,tree=tree,spec=talentPreset.spec,entries=presetBuildEntries(talentPreset)}
+ end
+ for _,b in ipairs(p.builds or{})do offer(b.name,findByName(p.talents,b.talents),b.gear)end
+ for _,t in ipairs(p.talents or{})do
+  local gear;for _,g in ipairs(p.gear or{})do if tostring(g.name):lower():find('bis',1,true)then gear=g.name;break end end
+  offer(t.name,t,gear)
+ end
+ table.sort(list,function(a,b)return a.tree<b.tree end)
+ return list
+end
+
+-- Results -------------------------------------------------------------------------------------------------------
+function Sim.Result(id)return Sim.Store().results[id]end
+-- True when the result was computed for another character state or engine than the current one.
+function Sim.IsStale(result)
+ if type(result)~='table'then return true end
+ local ctx=C.SimCacheContext and C.SimCacheContext()
+ if not ctx or not result.context then return false end
+ return result.context~=ctx or(C.engineRevision and result.engine and result.engine~=C.engineRevision)or false
+end
+local function storeRows(rows,ctx)
+ local s=Sim.Store();local engine=C.engineRevision
+ for _,row in ipairs(rows or{})do
+  local id=row.id
+  if type(id)=='string'and id~=''then
+   local rec={dps=tonumber(row.dps),rotation=row.rotation,rotations=row.rotations,points=row.points,spec=row.spec,error=row.error,
+    context=ctx,engine=engine,at=stamp()}
+   -- the priority list is only needed for the build the character plays now (the combat HUD follows it)
+   if id=='live'then rec.priority=row.priority end
+   s.results[id]=C.clean(rec)
+  end
+ end
+end
+-- Simulates builds: list = {{id,name,entries|talentsString,gearPreset,rotation}}. The character's own gear and options
+-- are the base, each build gets its best rotation. cb(rows) or cb(nil,issue); a build that could not be computed has
+-- row.error. The row with id "live" also sets the active rotation.
+function Sim.Compare(list,cb,opts)
+ opts=opts or{}
+ if #list==0 then if cb then cb({})end;return true end
+ local builds={}
+ for i,b in ipairs(list)do
+  local row={id=b.id,name=b.name}
+  if b.entries then row.talents=Sim.Payload(b.entries)end
+  if b.talentsString and not b.entries then row.talentsString=b.talentsString end
+  row.gearPreset=b.gearPreset;row.rotation=b.rotation;row.spec=b.spec
+  builds[i]=row
+ end
+ local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ok=C.Request('talent-compare',{builds=builds,priority=opts.priority~=false},function(result,issue)
+  if type(result)~='table'or type(result.builds)~='table'then if cb then cb(nil,issue or'Keine Antwort')end;return end
+  storeRows(result.builds,ctx)
+  for _,row in ipairs(result.builds)do
+   if row.id=='live'and row.rotation then Sim.SetRotation(Sim.Result('live'))end
+  end
+  changed();if cb then cb(result.builds)end
+ end,{timeout=300})
+ if not ok and cb then cb(nil,'Anfrage nicht moeglich')end
+ return ok
+end
+-- The character's own builds: what it plays now plus every saved build.
+function Sim.CompareOwn(cb)
+ local list={{id='live',name='Im Spiel'}}
+ for _,b in ipairs(Sim.Store().builds)do list[#list+1]={id=b.id,name=b.name,entries=b.entries}end
+ return Sim.Compare(list,cb)
+end
+-- The engine's top builds, each with its own gear.
+function Sim.CompareTop(cb)
+ local list={};for _,b in ipairs(Sim.TopBuilds())do list[#list+1]={id=b.id,name=b.name,talentsString=b.talentsString,gearPreset=b.gearPreset,spec=b.spec}end
+ return Sim.Compare(list,cb,{priority=false})
+end
+-- Which damage spec is best with the gear worn now: each tree's top build talents, current gear.
+function Sim.CompareSpecs(cb)
+ local list={{id='live',name='Im Spiel'}}
+ for _,b in ipairs(Sim.TopBuilds())do list[#list+1]={id='spec:'..b.tree,name=b.name,talentsString=b.talentsString,spec=b.spec}end
+ return Sim.Compare(list,cb,{priority=false})
+end
+
+-- The active rotation --------------------------------------------------------------------------------------------
+-- The best rotation for the build the character plays now. Item values, the dungeon list and every simulation use it
+-- (Bridge.lua adds it to the jobs), and the combat HUD follows its priority list.
+function Sim.SetRotation(result)
+ if type(result)~='table'or not result.rotation then return end
+ Sim.Store().rotation={name=result.rotation,dps=result.dps,priority=result.priority,rotations=result.rotations,context=result.context,engine=result.engine,at=stamp()}
+end
+function Sim.Rotation()return Sim.Store().rotation end
+function C.ActiveRotation()
+ local r=Sim.Store().rotation;return r and r.name or nil
+end

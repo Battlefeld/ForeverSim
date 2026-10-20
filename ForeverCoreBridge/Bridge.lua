@@ -79,6 +79,12 @@ function C.RequestRoute()
  return C.Request('route',nil,C.ApplyRoute)
 end
 function C.Request(kind,payload,callback,opts)
+ -- One rotation for everything: item values, dungeon lists and simulations are computed with the rotation that is
+ -- active for this character (see Sim.lua), not with the first one the engine happens to list.
+ if(kind=='item'or kind=='sim'or kind=='weights'or kind=='analysis')and C.ActiveRotation then
+  payload=payload or{}
+  if payload.rotation==nil then local name=C.ActiveRotation();if name then payload.rotation=name;payload.rotationSoft=true end end
+ end
  if ForeverCoreBridgeDB and ForeverCoreBridgeDB.pixelOff and not(opts and opts.export)then return false end
  if kind=='item' and #C.queue>=5 then return false end
  if #C.queue>=24 then C.Say('Warteschlange voll; laufende Berechnungen abwarten');return false end
