@@ -341,7 +341,7 @@ function Sim.RunAll(opts,progress,done)
  Sim.running=true;Sim.progress={step=0,total=#steps}
  local function finish(ok,issue)
   Sim.running=false;Sim.progress=nil
-  if ok then Sim.Store().lastRun={context=C.SimCacheContext and C.SimCacheContext(),engine=C.engineRevision,build=gameBuild(),level=Sim.Level(),at=stamp()}end
+  if ok then Sim.Store().lastRun={context=C.SimCacheContext and C.SimCacheContext(),engine=C.engineRevision,build=gameBuild(),level=Sim.Level(),at=stamp(),seen=Sim.ScanBags()}end
   changed();if done then done(ok,issue)end
  end
  local function run(i)
@@ -357,6 +357,51 @@ function Sim.RunAll(opts,progress,done)
  end
  run(1)
  return true
+end
+
+-- Is a new calculation due? (checked once after the login; during the session only the user starts one) ---------------------
+-- The equippable items in the bags: new ones since the last calculation are a reason to calculate again.
+function Sim.ScanBags()
+ local seen={}
+ local numSlots=(C_Container and C_Container.GetContainerNumSlots)or GetContainerNumSlots
+ local itemID=(C_Container and C_Container.GetContainerItemID)or GetContainerItemID
+ if not numSlots or not itemID then return seen end
+ for bag=0,4 do
+  local ok,n=pcall(numSlots,bag)
+  if ok and type(n)=='number' then
+   for slot=1,n do
+    local ok2,id=pcall(itemID,bag,slot)
+    if ok2 and type(id)=='number' then
+     local eq=true
+     if IsEquippableItem then local ok3,v=pcall(IsEquippableItem,id);if ok3 then eq=v and true or false end end
+     if eq then seen[id]=true end
+    end
+   end
+  end
+ end
+ return seen
+end
+function Sim.AutoLogin(on)
+ local s=Sim.Store()
+ if on~=nil then s.autoLogin=on and true or false end
+ return s.autoLogin~=false
+end
+-- The reasons (German texts) why a new calculation is due; empty when the last one still fits.
+function Sim.RecalcReasons()
+ if not Sim.Available('rotation')then return{}end
+ local s=Sim.Store();local last=s.lastRun;local out={}
+ if not last then return{'Erste Berechnung'}end
+ if C.engineRevision and last.engine and last.engine~=C.engineRevision then out[#out+1]='Neue Engine-Version'end
+ local build=gameBuild()
+ if build and last.build and last.build~=build then out[#out+1]='Neuer Spielpatch'end
+ if tonumber(last.level)and Sim.Level()~=last.level then out[#out+1]='Neue Stufe'end
+ local ctx=C.SimCacheContext and C.SimCacheContext()
+ if ctx and last.context and ctx~=last.context and #out==0 then out[#out+1]='Ausrüstung oder Talente haben sich geändert'end
+ if type(last.seen)=='table' then
+  local new=0;for id in pairs(Sim.ScanBags())do if not last.seen[id]then new=new+1 end end
+  if new>0 then out[#out+1]=new==1 and'1 neues Item'or(new..' neue Items')end
+ end
+ return out
 end
 
 -- The active rotation --------------------------------------------------------------------------------------------

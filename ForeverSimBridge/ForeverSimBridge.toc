@@ -31,6 +31,7 @@ UI/Widgets.lua
 UI/Window.lua
 UI/TalentsTab.lua
 UI/RotationTab.lua
+UI/LoginCheck.lua
 HUDLogic.lua
 HUDView.lua
 FightCheck.lua

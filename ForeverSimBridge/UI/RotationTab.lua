@@ -156,6 +156,17 @@ local function refreshPriorities()
 end
 
 -- Status and refresh ------------------------------------------------------------------------------------------------------------------
+local function refreshLastRun()
+ local S=Sim();local last=S.Store().lastRun
+ local text='Noch nicht berechnet'
+ if last and last.at then
+  local f=date or(os and os.date)
+  local ok,when=pcall(f,'%d.%m. %H:%M',last.at)
+  text='Letzte Berechnung: '..(ok and when or'?')
+ end
+ state.lastRun:SetText(text)
+ state.auto:Refresh()
+end
 local function refreshHudPanel()
  local H=hud();local cfg=H.Config()
  for _,c in ipairs(state.checks)do c:Refresh()end
@@ -175,7 +186,7 @@ function UI.rotationRefresh()
   else state.simulate:SetLabel('Beste Rota simmen');state.simulate:SetEnabledLook(true)end
   state.refine:Refresh()
  end
- refreshPriorities();refreshHudPanel()
+ refreshPriorities();refreshHudPanel();refreshLastRun()
 end
 
 local function build(page)
@@ -272,7 +283,11 @@ local function build(page)
  state.delta=UI.Text(state.card,15,COLOR.good,'body','CENTER');state.delta:SetPoint('TOP',state.unit,'BOTTOM',0,-3);state.delta:SetWidth(rw-50)
  state.vs=UI.Text(state.card,11,COLOR.muted,'body','CENTER');state.vs:SetPoint('TOP',state.delta,'BOTTOM',0,-1);state.vs:SetWidth(rw-50)
  state.prioTitle=UI.Text(state.right,10.5,COLOR.gold,'body','LEFT');state.prioTitle:SetPoint('TOPLEFT',state.right,'TOPLEFT',2,-188)
- state.prioEmpty=UI.Text(state.right,11,COLOR.muted,'body','LEFT');state.prioEmpty:SetPoint('BOTTOMLEFT',state.right,'BOTTOMLEFT',2,2);state.prioEmpty:SetWidth(rw)
+ state.prioEmpty=UI.Text(state.right,11,COLOR.muted,'body','LEFT');state.prioEmpty:SetPoint('BOTTOMLEFT',state.right,'BOTTOMLEFT',2,62);state.prioEmpty:SetWidth(rw)
+ state.auto=UI.Check(state.right,'Beim Anmelden neu rechnen',function()return S.AutoLogin()end,function(on)S.AutoLogin(on)end,rw)
+ state.auto:SetPoint('BOTTOMLEFT',state.right,'BOTTOMLEFT',0,32)
+ UI.Tooltip(state.auto,{'Beim Anmelden neu rechnen','Ändern sich Engine, Spielpatch, Ausrüstung, Stufe oder die Items in deinen Taschen, rechnet ForeverSim nach dem Anmelden alles im Hintergrund neu. Sonst nur auf Knopfdruck.'})
+ state.lastRun=UI.Text(state.right,10.5,COLOR.muted,'body','LEFT');state.lastRun:SetPoint('BOTTOMLEFT',state.right,'BOTTOMLEFT',2,10);state.lastRun:SetWidth(rw)
  S.OnChange(function()if page:IsVisible()then UI.rotationRefresh()end end)
 end
 

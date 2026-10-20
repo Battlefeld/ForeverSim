@@ -72,6 +72,10 @@ S.move.__scripts.OnClick(S.move);assert(cfg.locked==false and S.move.label:GetTe
 S.move.__scripts.OnClick(S.move);assert(cfg.locked==true)
 S.reset.__scripts.OnClick(S.reset)
 
+-- login recalculation setting and last run
+assert(S.lastRun:GetText()=='Noch nicht berechnet','nothing calculated: '..S.lastRun:GetText())
+Sim.Store().lastRun={at=1700000000};UI.rotationRefresh();assert(S.lastRun:GetText():find('Letzte Berechnung: ',1,true),'last run shown: '..S.lastRun:GetText())
+assert(Sim.AutoLogin()==true);S.auto.__scripts.OnClick(S.auto);assert(Sim.AutoLogin()==false,'switched off');S.auto.__scripts.OnClick(S.auto);assert(Sim.AutoLogin()==true)
 -- below level 50 only the HUD part is there ----------------------------------------------------------------------------
 level=30;UI.rotationRefresh()
 assert(not S.simBox:IsShown() and S.lockedBox:IsShown() and S.hudPanel:IsShown() and not S.left:IsShown(),'level 30: notice and HUD settings only')
