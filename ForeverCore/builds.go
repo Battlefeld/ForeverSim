@@ -200,24 +200,10 @@ func (s *SimService) compareBuilds(ctx context.Context, j Job) (any, error) {
 			return nil, fmt.Errorf("Skillung %d ungueltig", i+1)
 		}
 		rows[i] = map[string]any{"id": str(b, "id"), "name": str(b, "name")}
-		payload := map[string]any{}
-		for _, key := range []string{"talentsString", "talents", "spec", "gear"} {
-			if v, ok := b[key]; ok {
-				payload[key] = v
-			}
-		}
-		for _, key := range []string{"targetLevel", "targetArmor", "classOptions"} {
-			if v, ok := j.Payload[key]; ok {
-				payload[key] = v
-			}
-		}
-		if name := str(b, "gearPreset"); name != "" {
-			gear, e := presetGear(manifest, class, name)
-			if e != nil {
-				rows[i]["error"] = e.Error()
-				continue
-			}
-			payload["gear"] = gear
+		payload, e := buildPayload(j, manifest, class, b)
+		if e != nil {
+			rows[i]["error"] = e.Error()
+			continue
 		}
 		req, e := s.liveRequest(Job{Schema: j.Schema, Kind: "sim", State: j.State, Payload: payload})
 		if e != nil {
@@ -395,4 +381,28 @@ func (s *SimService) compareBuilds(ctx context.Context, j Job) (any, error) {
 func player(req map[string]any) map[string]any {
 	p, _ := playerOf(req)
 	return p
+}
+
+// buildPayload is the payload of the plain simulation job for one build of a comparison: the build's own talents, spec
+// and gear on top of the job's target settings.
+func buildPayload(j Job, manifest map[string]any, class string, b map[string]any) (map[string]any, error) {
+	payload := map[string]any{}
+	for _, key := range []string{"talentsString", "talents", "spec", "gear"} {
+		if v, ok := b[key]; ok {
+			payload[key] = v
+		}
+	}
+	for _, key := range []string{"targetLevel", "targetArmor", "classOptions"} {
+		if v, ok := j.Payload[key]; ok {
+			payload[key] = v
+		}
+	}
+	if name := str(b, "gearPreset"); name != "" {
+		gear, e := presetGear(manifest, class, name)
+		if e != nil {
+			return nil, e
+		}
+		payload["gear"] = gear
+	}
+	return payload, nil
 }

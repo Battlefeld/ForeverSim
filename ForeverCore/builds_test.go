@@ -325,3 +325,87 @@ func TestRememberedRotationOfAnotherSpecFallsBackToTheDefault(t *testing.T) {
 		}
 	}
 }
+
+func TestBuildDetailBreakdownAndCurve(t *testing.T) {
+	s, m := fakeService(t)
+	snap := mageSnapshot(t, m, fireTalents)
+	got, e := s.Run(t.Context(), Job{Kind: "build-detail", State: map[string]any{"sim": snap}, Payload: map[string]any{}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	r := got.(map[string]any)
+	if num(r, "dps") < 1000 || str(r, "rotation") == "" || len(array(r, "rotations")) == 0 || len(array(r, "priority")) == 0 {
+		t.Fatalf("basic fields missing: %v", r)
+	}
+	shares := array(r, "breakdown")
+	if len(shares) != 6 {
+		t.Fatalf("five rows and the rest: %d", len(shares))
+	}
+	first := shares[0].(map[string]any)
+	if num(first, "spellId") != 133 || num(first, "pct") < 58 || num(first, "pct") > 60 {
+		t.Fatalf("biggest share %v", first)
+	}
+	if label := shares[2].(map[string]any); str(label, "label") != "Ignite" || label["spellId"] != nil {
+		t.Fatalf("an action without a spell id keeps its name: %v", label)
+	}
+	if rest := shares[5].(map[string]any); rest["rest"] != true || num(rest, "pct") <= 0 {
+		t.Fatalf("rest row %v", rest)
+	}
+	sum := 0.0
+	for _, raw := range shares {
+		sum += num(raw.(map[string]any), "pct")
+	}
+	if sum < 99.9 || sum > 100.1 {
+		t.Fatalf("shares add up to %v", sum)
+	}
+	curve := array(r, "curve")
+	if len(curve) != len(curveSeconds) {
+		t.Fatalf("curve points %d", len(curve))
+	}
+	for i := 1; i < len(curve); i++ {
+		a, b := curve[i-1].(map[string]any), curve[i].(map[string]any)
+		if num(b, "t") <= num(a, "t") || num(b, "dps") <= num(a, "dps") {
+			t.Fatalf("the curve must rise with the fight length: %v then %v", a, b)
+		}
+		if num(b, "mana") >= num(a, "mana") {
+			t.Fatalf("mana is spent over time: %v then %v", a, b)
+		}
+	}
+	if num(curve[0].(map[string]any), "mana") != -5*15 {
+		t.Fatalf("mana change of the first point %v", curve[0])
+	}
+	// without the curve, and with a build of its own
+	got, e = s.Run(t.Context(), Job{Kind: "build-detail", State: map[string]any{"sim": snap}, Payload: map[string]any{"curve": false, "build": map[string]any{"talents": []any{[]any{1.0, 0.0, 1.0, 5.0}}}}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	if got.(map[string]any)["curve"] != nil {
+		t.Fatal("curve was asked to be skipped")
+	}
+	if _, e = s.Run(t.Context(), Job{Kind: "build-detail", State: map[string]any{"sim": snap}, Payload: map[string]any{"build": map[string]any{"talentsString": "99"}}}); e == nil {
+		t.Fatal("a broken build must be an error")
+	}
+}
+
+func TestDamageSharesAndManaChange(t *testing.T) {
+	if got := damageShares(nil, 5); len(got) != 0 {
+		t.Fatal("no actions, no shares")
+	}
+	rows := damageShares([]any{
+		map[string]any{"id": map[string]any{"spellId": 1.0}, "damage": 50.0, "casts": 2.0},
+		map[string]any{"id": map[string]any{"spellId": 1.0}, "damage": 50.0, "casts": 3.0}, // pet or second target of the same spell
+		map[string]any{"id": map[string]any{"spellId": 2.0}, "damage": 0.0},
+	}, 5)
+	if len(rows) != 1 || num(rows[0].(map[string]any), "pct") != 100 || num(rows[0].(map[string]any), "casts") != 5 {
+		t.Fatalf("same spell is one row: %v", rows)
+	}
+	res := map[string]any{"raidMetrics": map[string]any{"parties": []any{map[string]any{"players": []any{map[string]any{"resources": []any{
+		map[string]any{"type": 1.0, "actualGain": -30.0}, map[string]any{"type": "ResourceTypeMana", "gain": 10.0}, map[string]any{"type": "ResourceTypeRage", "actualGain": 99.0},
+	}}}}}}}
+	if net, ok := manaChange(res); !ok || net != -20 {
+		t.Fatalf("mana change %v %v", net, ok)
+	}
+	if _, ok := manaChange(map[string]any{}); ok {
+		t.Fatal("no resources, no mana data")
+	}
+}

@@ -39,7 +39,25 @@ func fakeEngine() {
 	if json.Unmarshal(b, &req) != nil {
 		os.Exit(2)
 	}
-	os.WriteFile(out, jsonBytes(map[string]any{"raidMetrics": map[string]any{"dps": map[string]any{"avg": fakeDPS(req)}}}), 0o600)
+	dps := fakeDPS(req)
+	duration := num(child(req, "encounter"), "duration")
+	total := dps * duration
+	target := func(share float64) []any {
+		return []any{map[string]any{"damage": total * share, "casts": 10.0, "hits": 10.0}}
+	}
+	player := map[string]any{
+		"actions": []any{
+			map[string]any{"id": map[string]any{"spellId": 133.0}, "targets": target(.59)},
+			map[string]any{"id": map[string]any{"spellId": 116.0}, "targets": target(.25)},
+			map[string]any{"id": map[string]any{"otherId": "OtherActionIgnite"}, "targets": target(.1)},
+			map[string]any{"id": map[string]any{"spellId": 2948.0}, "targets": target(.04)},
+			map[string]any{"id": map[string]any{"spellId": 5.0}, "targets": target(.01)},
+			map[string]any{"id": map[string]any{"spellId": 6.0}, "targets": target(.01)},
+		},
+		"resources": []any{map[string]any{"type": "ResourceTypeMana", "actualGain": -5 * duration}, map[string]any{"type": "ResourceTypeEnergy", "actualGain": 9.0}},
+	}
+	os.WriteFile(out, jsonBytes(map[string]any{"raidMetrics": map[string]any{"dps": map[string]any{"avg": dps},
+		"parties": []any{map[string]any{"players": []any{player}}}}}), 0o600)
 }
 
 // fakeDPS: talents +3 per point, gear +17 per item, rotation +7 per priority row, each known spell +0.01.
@@ -60,6 +78,7 @@ func fakeDPS(req map[string]any) float64 {
 		}
 	}
 	dps += 7 * float64(len(array(child(player, "rotation"), "priorityList")))
+	dps += 0.5 * num(child(req, "encounter"), "duration") / 10 // longer fights pay more: the curve rises
 	dps += 0.01 * float64(len(array(req, engineSpellsKey)))
 	return dps
 }

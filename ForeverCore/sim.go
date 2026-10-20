@@ -441,7 +441,7 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 	if j.Kind == "item" && j.Payload["partial"] == true {
 		timeout = 20 * time.Minute
 	}
-	if j.Kind == "talent-compare" {
+	if j.Kind == "talent-compare" || j.Kind == "build-detail" {
 		timeout = 5 * time.Minute
 	}
 	ctx, cancel := context.WithTimeout(ctx, timeout)
@@ -451,6 +451,8 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 		return s.presetsFor(ctx, j)
 	case "talent-compare":
 		return s.compareBuilds(ctx, j)
+	case "build-detail":
+		return s.buildDetail(ctx, j)
 	}
 	req := child(j.Payload, "request")
 	var e error
