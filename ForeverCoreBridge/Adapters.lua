@@ -141,11 +141,11 @@ local function stableSim(sim)
   petFamily=hpet and {family=hpet.family,familyId=hpet.familyId,level=hpet.level} or nil}
 end
 C.StableSim=stableSim
-function C.SimCacheContext()
+local function simContext(includeRotation)
  if not C.engineRevision or C.engineRevision=='' then return nil end
  local P=FUSLive
  if not P or not P.capture then return nil end
- local rotation=C.ActiveRotation and C.ActiveRotation()or nil
+ local rotation=includeRotation and C.ActiveRotation and C.ActiveRotation()or nil
  local revision=tostring(C.simRevision)..'/'..tostring(P.revision)..'/'..C.engineRevision..'/'..tostring(rotation)
  if cacheRevision==revision then return cacheContext end
  local ok,snapshot=pcall(P.capture,true)
@@ -161,6 +161,9 @@ function C.SimCacheContext()
  cacheRevision=revision
  return cacheContext
 end
+-- Build results describe a character, while item results also depend on its active rotation.
+function C.SimCharacterContext()return simContext(false)end
+function C.SimCacheContext()return simContext(true)end
 local function persistentItems()
  ForeverCoreBridgeDB=ForeverCoreBridgeDB or{}
  local db=ForeverCoreBridgeDB

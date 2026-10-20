@@ -46,6 +46,9 @@ func parseTunedName(name string) (base string, order []int, ok bool) {
 // reorderRotation returns a copy of the rotation whose priority list is the original rows in `order`.
 func reorderRotation(rotation map[string]any, order []int) (map[string]any, error) {
 	rows := array(rotation, "priorityList")
+	if len(order) != len(rows) {
+		return nil, fmt.Errorf("Reihenfolge muss alle Rotationszeilen enthalten")
+	}
 	seen := map[int]bool{}
 	list := make([]any, 0, len(order))
 	for _, i := range order {
@@ -151,7 +154,11 @@ func (s *SimService) rotaTune(ctx context.Context, j Job) (any, error) {
 	}
 	order := make([]int, 0, rows)
 	for _, v := range array(j.Payload, "order") {
-		order = append(order, int(v.(float64)))
+		index, ok := v.(float64)
+		if !ok || index < 0 || index >= float64(rows) || index != float64(int(index)) {
+			return nil, fmt.Errorf("Ungueltige Rotationszeile")
+		}
+		order = append(order, int(index))
 	}
 	if len(order) == 0 {
 		for i := 0; i < rows; i++ {

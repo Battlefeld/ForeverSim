@@ -125,7 +125,7 @@ func (s *SimService) presetsFor(ctx context.Context, j Job) (any, error) {
 				items = append(items, map[string]any{"slot": float64(slot), "id": m["id"], "enchant": m["enchant"]})
 			}
 		}
-		gear = append(gear, map[string]any{"name": str(g, "name"), "items": items})
+		gear = append(gear, map[string]any{"name": str(g, "name"), "items": items, "spec": g["spec"]})
 	}
 	builds := []any{}
 	for _, raw := range array(set, "builds") {

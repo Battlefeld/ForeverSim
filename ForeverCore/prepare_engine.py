@@ -55,14 +55,16 @@ def rotation_spell_rank_families(engine):
  result={}
  for cls in profiles:
   source=(engine/'sim'/cls/'spell_data_auto_gen.go').read_text()
-  families={}
-  for raw in re.findall(r'spelldata\\.Ranked\\(([\\d,\\s]+)\\)',source):
-   ranks=[int(n) for n in re.findall(r'\\d+',raw)]
+  families={};ambiguous=set()
+  for raw in re.findall(r'spelldata\.Ranked\(([\d,\s]+)\)',source):
+   ranks=[int(n) for n in re.findall(r'\d+',raw)]
    if len(ranks)<2:continue
    for spell_id in ranks:
     key=str(spell_id)
+    if key in ambiguous:continue
     if key in families and families[key]!=ranks:
-     raise SystemExit(f'Ambiguous spell rank mapping for {cls}: {spell_id}')
+     # Some proc ladders share an ID with a regular spell. Never guess its family.
+     ambiguous.add(key);families.pop(key);continue
     families[key]=ranks
   result[cls]=families
  return result

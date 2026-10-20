@@ -134,8 +134,8 @@ end
 -- repeats while the damage rises, then the result is measured next to the engine's rotation with the full count. A tuned
 -- rotation is a name ("eigen:fire:1,0,2,3"), so it goes through every job like any other rotation.
 local TUNE_ROUNDS=6
-local TUNE_GAIN=0.003      -- a step has to bring 0.3 % in the quick measurement
-local TUNE_CONFIRM=0.002   -- and 0.2 % in the full one
+local TUNE_GAIN=0         -- every strictly positive improvement remains a candidate
+local TUNE_CONFIRM=0      -- only a strictly positive full-count result is accepted
 function Sim.TunedBase(name)return type(name)=='string'and(name:match('^eigen:([^:]+):'))or name end
 local function buildFields(spec)
  local b={}
@@ -163,7 +163,7 @@ function Sim.Tune(spec,progress,done,insideRun)
   local name='eigen:'..base..':'..table.concat(order,',')
   s.label='Ergebnis prüfen';report()
   local function with(rotation)local t={id=rotation==name and'tuned'or'base',rotation=rotation};for k,v in pairs(fields)do t[k]=v end;return t end
-  local ctx=C.SimCacheContext and C.SimCacheContext()
+  local ctx=Sim.Context()
   local ok=C.Request('talent-compare',{builds={with(name),with(base)},priority=true},function(result,issue)
    if s.cancel then return finish(nil,'abgebrochen')end
    if type(result)~='table'or type(result.builds)~='table'then return finish(nil,issue or'Keine Antwort')end
@@ -171,7 +171,7 @@ function Sim.Tune(spec,progress,done,insideRun)
    for _,row in ipairs(result.builds)do if row.id=='tuned'then tuned=row elseif row.id=='base'then plain=row end end
    if not(tuned and plain and tonumber(tuned.dps)and tonumber(plain.dps))then return finish(nil,'Die verfeinerte Rotation konnte nicht berechnet werden')end
    local gain=100*(tuned.dps/plain.dps-1)
-   if tuned.dps<plain.dps*(1+TUNE_CONFIRM)then return finish(nil,'Die Änderungen haben sich im genauen Durchlauf nicht bestätigt.')end
+   if plain.dps<=0 or tuned.dps<=plain.dps*(1+TUNE_CONFIRM)then return finish(nil,'Die Änderungen haben sich im genauen Durchlauf nicht bestätigt.')end
    local rec=Sim.Store().results[spec.id]or{}
    local list={{name=name,dps=tonumber(tuned.dps),custom=true}}
    for _,r in ipairs(rec.rotations or{})do if not r.custom then list[#list+1]=r end end

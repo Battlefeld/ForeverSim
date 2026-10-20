@@ -80,6 +80,7 @@ end
 function FC.OnGlow(id,on)
  if not fight or not id then return end
  if on then
+  if fight.open[id]then return end
   local p={id=id,at=now(),casts={}};fight.procs[#fight.procs+1]=p;fight.open[id]=p
  else
   local p=fight.open[id];if p then p.hideAt=now();fight.open[id]=nil end
@@ -158,7 +159,7 @@ function FC.Finish(name,success)
  local s=FC.Summarize(f)
  if s.duration<10 or(s.counted<3 and s.procTotal==0)then return s end   -- too short to say anything
  local dps=FC.ReadDps();s.dps=dps
- local C=ForeverCoreClient;local live=C and C.Sim and C.Sim.Result('live');s.simDps=live and tonumber(live.dps)or nil
+ local C=ForeverCoreClient;local live=C and C.Sim and C.Sim.Result('live');s.simDps=live and not(C.Sim.IsStale and C.Sim.IsStale(live))and tonumber(live.dps)or nil
  if not(HUD.Config().fightCheck==false)then FC.Show(s)end
  FC.last=s
  return s

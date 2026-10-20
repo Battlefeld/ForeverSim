@@ -93,7 +93,7 @@ func damageShares(actions []any, top int) []any {
 }
 
 // manaChange is the net mana the player gained (negative: spent) per fight, summed over the engine's mana resources.
-func manaChange(result map[string]any) (float64, bool) {
+func manaChange(result map[string]any, iterations ...float64) (float64, bool) {
 	net, found := 0.0, false
 	for _, party := range array(child(result, "raidMetrics"), "parties") {
 		for _, p := range array(party.(map[string]any), "players") {
@@ -114,6 +114,9 @@ func manaChange(result map[string]any) (float64, bool) {
 				found = true
 			}
 		}
+	}
+	if len(iterations) > 0 && iterations[0] > 0 {
+		net /= iterations[0]
 	}
 	return net, found
 }
@@ -144,7 +147,10 @@ func (s *SimService) buildDetail(ctx context.Context, j Job) (any, error) {
 		return nil, e
 	}
 	row, _ := array(got.(map[string]any), "builds")[0].(map[string]any)
-	if row == nil || row["dps"] == nil {
+	if row == nil {
+		return nil, fmt.Errorf("Keine Skillung zurueckgegeben")
+	}
+	if row["dps"] == nil {
 		return nil, fmt.Errorf("%v", row["error"])
 	}
 	payload, e := buildPayload(j, manifest, class, b)
@@ -198,7 +204,7 @@ func (s *SimService) buildDetail(ctx context.Context, j Job) (any, error) {
 				return
 			}
 			points[i] = point{t: t, dps: simDPS(got)}
-			points[i].mana, points[i].has = manaChange(got)
+			points[i].mana, points[i].has = manaChange(got, num(child(r, "simOptions"), "iterations"))
 		}(i, t)
 	}
 	wg.Wait()

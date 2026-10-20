@@ -14,6 +14,10 @@ local function charKey()
  local ok,guid=pcall(UnitGUID,'player');if ok and type(guid)=='string'and guid~=''then return guid end
  local ok2,name=pcall(UnitName,'player');return ok2 and name or'unknown'
 end
+function Sim.Context()
+ local f=C.SimCharacterContext or C.SimCacheContext
+ return f and f()or nil
+end
 function Sim.Class()return classKey()end
 function Sim.Model()local k=classKey();return k and FUSLiveData and FUSLiveData[k]or nil end
 function Sim.Level()local ok,l=pcall(UnitLevel,'player');return ok and tonumber(l)or 0 end
@@ -114,8 +118,18 @@ local function rankMap(entries)local m={};for _,e in ipairs(entries or{})do m[e.
 -- true, or false and the reason (German text for the tooltip). budget defaults to the 51 points of level 60.
 function Sim.Valid(entries,budget)
  budget=budget or 51
- local _,byPlace=places();local layout=Sim.Layout();local ranks=rankMap(entries);local total=0
- for _,e in ipairs(entries or{})do
+ if type(entries)~='table'then return false,'Ungültige Talentliste'end
+ local _,byPlace=places();local layout=Sim.Layout();local ranks={};local total=0
+ for _,e in ipairs(entries)do
+  if type(e)~='table'then return false,'Ungültiges Talent'end
+  for _,k in ipairs({'t','r','c','n'})do
+   local v=e[k];if type(v)~='number'or v~=v or v%1~=0 then return false,'Ungültiger Talentrang oder Platz'end
+  end
+  local key=e.t*1000+e.r*10+e.c
+  if ranks[key]~=nil then return false,'Talent doppelt angegeben'end
+  ranks[key]=e.n
+ end
+ for _,e in ipairs(entries)do
   local info=byPlace[e.t]and byPlace[e.t][e.r*10+e.c]
   if not info then return false,'Unbekanntes Talent'end
   if e.n<0 or e.n>info.max then return false,'Maximaler Rang erreicht'end
@@ -151,7 +165,11 @@ function Sim.Import(text)
  if not class then return nil,'Das ist keine ForeverSim-Skillung'end
  if class~=classKey()then return nil,'Diese Skillung gehoert zur Klasse '..class end
  local out={}
- for t,r,c,n in body:gmatch('(%d+)%.(%d+)%.(%d+)=(%d+)')do out[#out+1]={t=tonumber(t),r=tonumber(r),c=tonumber(c),n=tonumber(n)}end
+ for token in (body..';'):gmatch('(.-);')do
+  local t,r,c,n=token:match('^(%d+)%.(%d+)%.(%d+)=(%d+)$')
+  if not t then return nil,'Ungültiger Talenttext'end
+  out[#out+1]={t=tonumber(t),r=tonumber(r),c=tonumber(c),n=tonumber(n)}
+ end
  if #out==0 then return nil,'Die Skillung ist leer'end
  local ok,why=Sim.Valid(out);if not ok then return nil,why end
  return out
@@ -165,10 +183,10 @@ end
 Sim.PresetEntries=presetBuildEntries
 function Sim.LoadPresets(cb,force)
  local s=Sim.Store();local have=s.presets
- if have and have.engine==C.engineRevision and have.class==classKey()and not force then if cb then cb(have)end;return true end
+ if have and have.engine==C.engineRevision and have.class==classKey()and(have.adapterVersion==2)and not force then if cb then cb(have)end;return true end
  local ok=C.Request('presets',{class=classKey()},function(result,issue)
   if type(result)=='table'and type(result.talents)=='table'then
-   result.at=stamp();result.engine=result.engineRevision or C.engineRevision;s.presets=C.clean(result);changed()
+   result.adapterVersion=2;result.at=stamp();result.engine=result.engineRevision or C.engineRevision;s.presets=C.clean(result);changed()
    if cb then cb(s.presets)end
   elseif cb then cb(nil,issue or'Keine Antwort')end
  end)
@@ -191,7 +209,7 @@ function Sim.TopBuilds()
  end
  for _,b in ipairs(p.builds or{})do offer(b.name,findByName(p.talents,b.talents),b.gear)end
  for _,t in ipairs(p.talents or{})do
-  local gear;for _,g in ipairs(p.gear or{})do if tostring(g.name):lower():find('bis',1,true)then gear=g.name;break end end
+  local gear;for _,g in ipairs(p.gear or{})do if(not g.spec or not t.spec or g.spec==t.spec)and tostring(g.name):lower():find('bis',1,true)then gear=g.name;break end end
   offer(t.name,t,gear)
  end
  table.sort(list,function(a,b)return a.tree<b.tree end)
@@ -203,9 +221,9 @@ function Sim.Result(id)return Sim.Store().results[id]end
 -- True when the result was computed for another character state or engine than the current one.
 function Sim.IsStale(result)
  if type(result)~='table'then return true end
- local ctx=C.SimCacheContext and C.SimCacheContext()
- if not ctx or not result.context then return false end
- return result.context~=ctx or(C.engineRevision and result.engine and result.engine~=C.engineRevision)or false
+ if C.engineRevision and result.engine and result.engine~=C.engineRevision then return true end
+ local ctx=Sim.Context()
+ return(ctx~=nil and result.context~=nil and result.context~=ctx)or false
 end
 local function storeRows(rows,ctx)
  local s=Sim.Store();local engine=C.engineRevision
@@ -214,12 +232,12 @@ local function storeRows(rows,ctx)
   if type(id)=='string'and id~=''then
    local rec={dps=tonumber(row.dps),rotation=row.rotation,rotations=row.rotations,points=row.points,spec=row.spec,error=row.error,
     context=ctx,engine=engine,at=stamp()}
-   -- the priority list is only needed for the build the character plays now (the combat HUD follows it)
-   -- a later comparison of the same state must not throw away the detail of the build or its priority list
+   -- Keep priorities for the selected build's detail panel; only live sets the combat HUD.
+   -- A later comparison of the same state may preserve matching detail.
    local old=s.results[id]
    local same=old and old.context==ctx and old.engine==engine
-   if id=='live'then rec.priority=row.priority or(same and old.priority or nil)end
-   if same and old.detail then rec.detail=old.detail end
+   rec.priority=row.priority or(same and old.rotation==rec.rotation and old.priority or nil)
+   if same and old.detail and rec.dps and old.rotation==rec.rotation then rec.detail=old.detail end
    s.results[id]=C.clean(rec)
   end
  end
@@ -238,7 +256,7 @@ function Sim.Compare(list,cb,opts)
   row.gearPreset=b.gearPreset;row.rotation=b.rotation;row.spec=b.spec
   builds[i]=row
  end
- local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ctx=Sim.Context()
  local ok=C.Request('talent-compare',{builds=builds,priority=opts.priority~=false},function(result,issue)
   if type(result)~='table'or type(result.builds)~='table'then if cb then cb(nil,issue or'Keine Antwort')end;return end
   storeRows(result.builds,ctx)
@@ -275,14 +293,14 @@ function Sim.Detail(b,cb)
  if b.entries then build.talents=Sim.Payload(b.entries)end
  if b.talentsString and not b.entries then build.talentsString=b.talentsString end
  build.gearPreset=b.gearPreset;build.spec=b.spec;build.rotation=b.rotation
- local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ctx=Sim.Context()
  local ok=C.Request('build-detail',{build=build,curve=true},function(result,issue)
   if type(result)~='table'or not tonumber(result.dps)then if cb then cb(nil,issue or'Keine Antwort')end;return end
   local rec=Sim.Store().results[b.id]or{}
   rec.dps=tonumber(result.dps);rec.rotation=result.rotation;rec.rotations=C.clean(result.rotations);rec.spec=result.spec;rec.error=nil
   rec.context=ctx;rec.engine=C.engineRevision;rec.at=stamp()
   rec.detail=C.clean({breakdown=result.breakdown,curve=result.curve,duration=result.duration,context=ctx,at=stamp()})
-  if b.id=='live'then rec.priority=C.clean(result.priority)end
+  rec.priority=C.clean(result.priority)
   Sim.Store().results[b.id]=rec
   if b.id=='live'then Sim.SetRotation(rec)end
   changed();if cb then cb(rec.detail,nil,rec)end
@@ -310,7 +328,8 @@ end
 Sim.running=false
 -- the refinement as a step of the full run; a refinement that cannot start must not stop the run
 local function tuneStep(n)
- if Sim.Tune({id='live',name='Im Spiel'},nil,function()n(true)end,true)==false then n(true)end
+ local done=false;local function finish()if not done then done=true;n(true)end end
+ if Sim.Tune({id='live',name='Im Spiel'},nil,finish,true)==false then finish()end
 end
 local function gameBuild()
  if not GetBuildInfo then return nil end
@@ -341,7 +360,7 @@ function Sim.RunAll(opts,progress,done)
  Sim.running=true;Sim.progress={step=0,total=#steps}
  local function finish(ok,issue)
   Sim.running=false;Sim.progress=nil
-  if ok then Sim.Store().lastRun={context=C.SimCacheContext and C.SimCacheContext(),engine=C.engineRevision,build=gameBuild(),level=Sim.Level(),at=stamp(),seen=Sim.ScanBags()}end
+  if ok then Sim.Store().lastRun={context=Sim.Context(),engine=C.engineRevision,build=gameBuild(),level=Sim.Level(),at=stamp(),seen=Sim.ScanBags()}end
   changed();if done then done(ok,issue)end
  end
  local function run(i)
@@ -395,7 +414,7 @@ function Sim.RecalcReasons()
  local build=gameBuild()
  if build and last.build and last.build~=build then out[#out+1]='Neuer Spielpatch'end
  if tonumber(last.level)and Sim.Level()~=last.level then out[#out+1]='Neue Stufe'end
- local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ctx=Sim.Context()
  if ctx and last.context and ctx~=last.context and #out==0 then out[#out+1]='Ausrüstung oder Talente haben sich geändert'end
  if type(last.seen)=='table' then
   local new=0;for id in pairs(Sim.ScanBags())do if not last.seen[id]then new=new+1 end end
@@ -413,5 +432,5 @@ function Sim.SetRotation(result)
 end
 function Sim.Rotation()return Sim.Store().rotation end
 function C.ActiveRotation()
- local r=Sim.Store().rotation;return r and r.name or nil
+ local r=Sim.Store().rotation;return r and not Sim.IsStale(r)and r.name or nil
 end

@@ -15,7 +15,7 @@ C_Container.GetContainerItemID=function(bag,slot)return bag==0 and bags[slot]or 
 IsEquippableItem=function(id)return id<5000 end
 local combat=false;InCombatLockdown=function()return combat end
 MOCK.Fire('PLAYER_LOGIN');MOCK.Advance(.5,.05)
-local C=ForeverCoreClient;local Sim=C.Sim;local UI=assert(ForeverSimUI)
+local C=ForeverCoreClient;C.SimCharacterContext=function()return C.SimCacheContext()end;local Sim=C.Sim;local UI=assert(ForeverSimUI)
 C.queue={};C.pending=nil;C.Say=function()end
 ForeverCoreBridgeDB.sim=nil
 C.engineRevision='eng-1'

@@ -26,7 +26,7 @@ func (s *SimService) statSensitivity(ctx context.Context, req, base map[string]a
 	}
 	list := array(j.Payload, "stats")
 	if len(list) == 0 {
-		for _, key := range []string{"StatSpellDamage", "StatSpellHitRating", "StatSpellCritRating", "StatSpellHasteRating", "StatIntellect", "StatAgility", "StatStrength", "StatAttackPower"} {
+		for _, key := range []string{"StatSpellDamage", "StatSpellHitRating", "StatSpellCritRating", "StatSpellHasteRating", "StatIntellect", "StatAgility", "StatStrength", "StatAttackPower", "StatRangedAttackPower", "StatFeralAttackPower", "StatMeleeHitRating", "StatMeleeCritRating", "StatMeleeHasteRating", "StatExpertiseRating", "StatArmorPenetration"} {
 			list = append(list, map[string]any{"key": key, "increment": float64(10)})
 		}
 	}

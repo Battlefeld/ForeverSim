@@ -138,6 +138,7 @@ local function prioRow(i)
 end
 local function refreshPriorities()
  local H=hud();local rows,source=H.Rows()
+ if state.sel~='live'and Sim().Available('rotation')then local res=resultOf(state.sel);rows=res and res.priority or{};source='engine'end
  state.prioTitle:SetText(source=='engine'and'PRIORITÄTEN · BESTE ROTA'or'PRIORITÄTEN · EINFACHE ROTA')
  local n=math.min(#rows,6)
  for i=1,n do

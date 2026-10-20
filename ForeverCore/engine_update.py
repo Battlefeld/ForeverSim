@@ -172,6 +172,15 @@ def protoc(src):
        '--go_out=sim/core', *protos, cwd=src)
 
 
+def prepare_checkout(src):
+    """Generate Go prerequisites before any data extractor imports engine packages."""
+    prepare = os.environ.get('FOREVERCORE_PREPARE')
+    if prepare:
+        sh('bash', '-c', prepare, cwd=src)
+    else:
+        protoc(src)
+
+
 def packages(src):
     # sim/web needs the UI build (binary_dist); it is not part of the engine.
     return [p for p in sh('go', 'list', '-e', './sim/...', cwd=src, capture=True).splitlines() if not p.endswith('/sim/web')]
@@ -372,6 +381,8 @@ def main():
         for src in (upstream_src, parity_src, overlay_src):
             checkout(repo, base, src)
         apply_patches(overlay_src, patches)
+        for src in (upstream_src, parity_src, overlay_src):
+            prepare_checkout(src)
         client_build = (overlay_src / 'assets/db_inputs/forever_client_build.txt').read_text().strip()
         report['clientBuild'] = client_build
 
@@ -418,12 +429,6 @@ def main():
                         liveHunter='hunter-live-ammo' in report['overlay']['applied'],
                         liveWarlock='warlock-live-demon-stats' in report['overlay']['applied'])
         engine_data.write_text(json.dumps(manifest, separators=(',', ':')))
-        for src in (upstream_src, parity_src, overlay_src):
-            prepare = os.environ.get('FOREVERCORE_PREPARE')
-            if prepare:  # offline or proxied machines: own module/protoc setup, run in the checkout
-                sh('bash', '-c', prepare, cwd=src)
-            else:
-                protoc(src)
         ov_cli = checks(upstream_src, parity_src, overlay_src, patches, work, report)
         if a.windows_exe:
             a.windows_exe.parent.mkdir(parents=True, exist_ok=True)

@@ -41,7 +41,8 @@ func fakeEngine() {
 	}
 	dps := fakeDPS(req)
 	duration := num(child(req, "encounter"), "duration")
-	total := dps * duration
+	iterations := num(child(req, "simOptions"), "iterations")
+	total := dps * duration * iterations
 	target := func(share float64) []any {
 		return []any{map[string]any{"damage": total * share, "casts": 10.0, "hits": 10.0}}
 	}
@@ -54,7 +55,7 @@ func fakeEngine() {
 			map[string]any{"id": map[string]any{"spellId": 5.0}, "targets": target(.01)},
 			map[string]any{"id": map[string]any{"spellId": 6.0}, "targets": target(.01)},
 		},
-		"resources": []any{map[string]any{"type": "ResourceTypeMana", "actualGain": -5 * duration}, map[string]any{"type": "ResourceTypeEnergy", "actualGain": 9.0}},
+		"resources": []any{map[string]any{"type": "ResourceTypeMana", "actualGain": -5 * duration * iterations}, map[string]any{"type": "ResourceTypeEnergy", "actualGain": 9.0}},
 	}
 	os.WriteFile(out, jsonBytes(map[string]any{"raidMetrics": map[string]any{"dps": map[string]any{"avg": dps},
 		"parties": []any{map[string]any{"players": []any{player}}}}}), 0o600)

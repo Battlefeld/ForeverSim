@@ -66,6 +66,8 @@ Loot.LEVEL_FROM=50       -- dungeons that still have something for level 50 and 
 -- Candidates ------------------------------------------------------------------------------------------------------------------
 -- {id,name,pool,sources={{kind='dungeon'|'bag'|'star',...}},star=bool,owned=bool,requiredLevel}
 function Loot.Candidates()
+ local ctx=C.SimCacheContext and C.SimCacheContext()
+ if ctx~=Loot.context then Loot.Reset();Loot.context=ctx end
  if Loot.cands then return Loot.cands end
  local filter=Loot.Filter();local list,byId={}, {}
  local function get(id,name,pool)
@@ -139,7 +141,7 @@ function Loot.Poll(budget)
  for _,c in ipairs(list)do
   local e=c.entry
   if not e or e.state=='busy'or e.state==nil then
-   if asked<budget then
+   if asked<budget and(c.tries or 0)<=6 then
     asked=asked+1
     e=C.ItemResult and C.ItemResult('item:'..c.id,true)
     c.entry=e
@@ -247,7 +249,8 @@ end
 
 -- Stat weights (the engine's own sensitivity of the damage to each stat) ----------------------------------------------------------
 local STAT_LABEL={StatSpellDamage='Zauberschaden',StatSpellHitRating='Trefferwertung',StatSpellCritRating='Kritische Zauberwertung',StatSpellHasteRating='Zaubertempo',
- StatIntellect='Intelligenz',StatAgility='Beweglichkeit',StatStrength='Stärke',StatAttackPower='Angriffskraft'}
+ StatIntellect='Intelligenz',StatAgility='Beweglichkeit',StatStrength='Stärke',StatAttackPower='Angriffskraft',
+ StatRangedAttackPower='Fernkampfangriffskraft',StatFeralAttackPower='Wilde Angriffskraft',StatMeleeHitRating='Trefferwertung',StatMeleeCritRating='Kritische Trefferwertung',StatMeleeHasteRating='Angriffstempo',StatExpertiseRating='Waffenkunde',StatArmorPenetration='Rüstungsdurchschlag'}
 function Loot.LoadWeights(cb,force)
  local s=store();local ctx=C.SimCacheContext and C.SimCacheContext()
  if s.weights and s.weights.context==ctx and not force then if cb then cb(s.weights)end;return true end

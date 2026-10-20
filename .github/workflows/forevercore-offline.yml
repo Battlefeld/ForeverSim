@@ -1,19 +1,21 @@
 name: ForeverCore integration
 on:
   push:
-    branches: [main]
+    branches: [main, claude/focused-lovelace-hqyfx4]
     paths:
       - 'ForeverCore/**'
       - 'ForeverCoreBridge/**'
       - 'ForeverSimBridge/**'
       - '.github/workflows/forevercore-offline.yml'
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -48,6 +50,7 @@ jobs:
           lua5.1 ForeverCore/tests/copy_log_test.lua .
           lua5.1 ForeverCore/tests/state_ref_test.lua .
           lua5.1 ForeverCore/tests/sim_service_test.lua .
+          lua5.1 ForeverCore/tests/review_contract_test.lua .
           lua5.1 ForeverCore/tests/window_test.lua .
           lua5.1 ForeverCore/tests/talents_tab_test.lua .
           lua5.1 ForeverCore/tests/hud_test.lua .
@@ -64,3 +67,19 @@ jobs:
           lua5.1 ForeverCore/tests/enchant_test.lua .
           lua5.1 ForeverCore/tests/scanner_owner_test.lua .
           lua5.1 ForeverCore/tests/dungeon_report_test.lua .
+          for class in WARRIOR PALADIN HUNTER ROGUE PRIEST SHAMAN MAGE WARLOCK DRUID; do
+            for level in 1 5 49 50 59 60; do
+              lua5.1 ForeverCore/tests/class_ui_test.lua . "$class" "$level"
+            done
+          done
+      - name: Actual MythicSim build and contract tests
+        run: |
+          sudo apt-get install -y -qq protobuf-compiler
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          python ForeverCore/checkout_engine.py
+          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/MythicSim-linux"
+          export FC_TEST_ENGINE="$RUNNER_TEMP/MythicSim-linux"
+          export FC_TEST_RUNTIME="$GITHUB_WORKSPACE"
+          export FC_TEST_LUA=/usr/bin/lua5.1
+          (cd ForeverCore && go test -v ./...)

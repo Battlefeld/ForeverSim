@@ -63,6 +63,31 @@ class Presets(unittest.TestCase):
         self.assertEqual(got['gear'][0]['items'][0]['id'], 647)
         self.assertEqual(got['builds'], [{'name': 'Fire', 'talents': 'Fire DPS', 'gear': 'Pre-BiS'}])
 
+    def test_current_upstream_talent_factory(self):
+        text = "export const Fire = PresetUtils.makePresetTalents('Fire DPS', SavedTalents.create({ talentsString: '05002252000003-23550000130135031-' }));"
+        got = engine_presets.parse_talent_presets(text)
+        self.assertEqual(got, [{'var': 'Fire', 'name': 'Fire DPS', 'talentsString': '05002252000003-23550000130135031-'}])
+
+    def test_shipped_manifest_has_class_presets_and_rank_families(self):
+        manifest = json.loads((CORE / 'engine-data.json').read_text())
+        for cl in manifest['classes']:
+            self.assertTrue(manifest['presets'][cl]['talents'], cl)
+            self.assertTrue(manifest['presets'][cl]['gear'], cl)
+            self.assertTrue(manifest['spellRankFamilies'][cl], cl)
+
+    def test_shared_names_keep_each_specs_talents_and_gear(self):
+        with tempfile.TemporaryDirectory() as d:
+            engine = make_engine(d)
+            import shutil
+            shutil.copytree(engine/'ui/specs/mage/dps', engine/'ui/specs/mage/other')
+            presets, _ = engine_presets.collect_presets(engine, {'mage': ('mage', 'mage/dps'), 'otherMage': ('mage', 'mage/other')}, {'647': True, '720': True, '727': True, '744': True})
+        cls = presets['mage']
+        self.assertEqual(len(cls['talents']), 4)
+        self.assertEqual(len(cls['gear']), 6)
+        other = cls['builds'][1]
+        self.assertEqual(other['talents'], 'Fire DPS [otherMage]')
+        self.assertEqual(other['gear'], 'Pre-BiS [otherMage]')
+
     def test_missing_or_unknown_files_give_empty_lists(self):
         with tempfile.TemporaryDirectory() as d:
             self.assertEqual(engine_presets.read_spec_presets(d, 'nope/dps'), {'talents': [], 'gear': [], 'builds': []})

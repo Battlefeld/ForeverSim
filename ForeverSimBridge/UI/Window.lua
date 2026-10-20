@@ -63,6 +63,8 @@ local function place()
  else frame:SetPoint('CENTER',UIParent,'CENTER',0,24)end
 end
 local function selectTab(key)
+ local found=false;for _,t in ipairs(tabs)do if t.key==key then found=true;break end end
+ if not found then key=tabs[1]and tabs[1].key end
  for _,t in ipairs(tabs)do
   local on=t.key==key
   if t.button then

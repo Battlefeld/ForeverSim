@@ -119,12 +119,23 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 	}
 	// payload.talentsString: the same character with another talent build (see builds.go).
 	buildRanks, overridden := liveRanks, false
-	if text := str(j.Payload, "talentsString"); text != "" {
-		if buildRanks, encoded, e = checkedTalentString(trees, text, 51); e != nil {
+	if text, exists := j.Payload["talentsString"]; exists {
+		if _, ok := text.(string); !ok {
+			return nil, fmt.Errorf("Ungueltiger Talenttext")
+		}
+		if buildRanks, encoded, e = checkedTalentString(trees, text.(string), 51); e != nil {
 			return nil, e
 		}
 		overridden = true
-	} else if entries := array(j.Payload, "talents"); len(entries) > 0 {
+	} else if raw, exists := j.Payload["talents"]; exists {
+		entries, ok := raw.([]any)
+		if !ok {
+			// Empty Lua arrays are encoded as {} by the bridge.
+			empty, isMap := raw.(map[string]any)
+			if !isMap || len(empty) != 0 {
+				return nil, fmt.Errorf("Ungueltige Talentliste")
+			}
+		}
 		// the same, as entries {treeIndex,rowIdx,colIdx,rank} (the addon's editor) instead of the engine's text
 		if encoded, buildRanks, e = encodeTalentEntries(trees, entries, true, 51); e != nil {
 			return nil, e
@@ -289,9 +300,9 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 		req[engineWarningsKey] = append(array(req, engineWarningsKey), fmt.Sprintf("Stufe %d: Die Engine rechnet erst ab Stufe 10, es wurde mit Stufe 10 genaehert (Items, Talente und Zauberbuch sind echt).", approxLevel))
 	}
 	// Display-only rank mapping; stripped before passing JSON to MythicSim.
- // Spell availability still comes exclusively from the real player spellbook.
- req["foreverCoreSpellRankFamilies"] = child(snap,"spellRankFamilies")
- return req, nil
+	// Spell availability still comes exclusively from the real player spellbook.
+	req["foreverCoreSpellRankFamilies"] = child(snap, "spellRankFamilies")
+	return req, nil
 }
 func (s *SimService) once(ctx context.Context, req map[string]any) (map[string]any, error) {
 	opt := child(req, "simOptions")
@@ -434,7 +445,9 @@ func (s *SimService) once(ctx context.Context, req map[string]any) (map[string]a
 	return result, nil
 }
 func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
- if j.Kind=="leveling" && j.Payload["benchmark"]==true { j.Payload=levelingBenchmark(j) }
+	if j.Kind == "leveling" && j.Payload["benchmark"] == true {
+		j.Payload = levelingBenchmark(j)
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	timeout := 170 * time.Second
@@ -478,7 +491,7 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 	}
 	res := map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "baselineDps": dps, "dps": dps, "pct": 100, "selected": "baseline", "scenario": "Explizites MythicSim-Szenario; Live-Buffs werden nicht automatisch rekonstruiert"}
 	playerForDisplay, _ := playerOf(req)
-	res["priority"]=s.rotationPriorityFor(req,child(playerForDisplay,"rotation"))
+	res["priority"] = s.rotationPriorityFor(req, child(playerForDisplay, "rotation"))
 	withResultContext(res, req)
 	if j.Kind == "weights" {
 		return s.statSensitivity(ctx, req, base, j)
@@ -497,12 +510,12 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 		if e != nil {
 			return nil, e
 		}
-		if j.Payload["benchmark"]==true {
-            rating["source"]=str(j.Payload,"benchmarkSource")
-            rating["xpKnown"]=false
-            req[engineWarningsKey]=append(array(req,engineWarningsKey),"Durchsatzmodell aus MythicSim-Referenz-DPS; keine exakte Kurz-Kampf-/Ressourcen-/Erholungssimulation. EP pro Stunde mangels NPC-EP nicht bekannt.")
-        }
-        return withResultContext(rating, req), nil
+		if j.Payload["benchmark"] == true {
+			rating["source"] = str(j.Payload, "benchmarkSource")
+			rating["xpKnown"] = false
+			req[engineWarningsKey] = append(array(req, engineWarningsKey), "Durchsatzmodell aus MythicSim-Referenz-DPS; keine exakte Kurz-Kampf-/Ressourcen-/Erholungssimulation. EP pro Stunde mangels NPC-EP nicht bekannt.")
+		}
+		return withResultContext(rating, req), nil
 	}
 	if j.Kind == "analysis" {
 		return withResultContext(summarizeAnalysis(base, req), req), nil
@@ -585,7 +598,9 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 				return nil, fmt.Errorf("Ungueltiger Itemslot")
 			}
 			var manifest map[string]any
-			if e := loadJSON(filepath.Join(s.Config.Runtime,"ForeverCore","engine-data.json"), &manifest); e != nil { return nil,e }
+			if e := loadJSON(filepath.Join(s.Config.Runtime, "ForeverCore", "engine-data.json"), &manifest); e != nil {
+				return nil, e
+			}
 			// Lean candidates carry no item snapshot (only the id). Items the engine database knows
 			// need nothing more; for the others the client is asked to send the full snapshot.
 			variant := item["variant"] == true
@@ -615,7 +630,9 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 				snapshot = cloneMap(snapshot)
 				snapshot["id"] = float64(variantID)
 			}
-			if e := addLiveItem(r, snapshot, manifest); e != nil { return nil,e }
+			if e := addLiveItem(r, snapshot, manifest); e != nil {
+				return nil, e
+			}
 			if fromClient && unknownToEngine {
 				learnedItems.put(s.Config.Data, learnedKey, clientSnapshot) // from now on the id alone is enough
 			}
