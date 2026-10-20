@@ -33,3 +33,4 @@ UI/TalentsTab.lua
 UI/RotationTab.lua
 HUDLogic.lua
 HUDView.lua
+FightCheck.lua

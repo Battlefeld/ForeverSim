@@ -214,6 +214,7 @@ function HUD.Refresh(force)
  end
  fade.target=1;if not root:IsShown()then root:Show()end
  local items,hero=cur.items,cur.proc==true
+ if not cur.demo and not cur.preview then HUD.lastItems=items end
  assign(items)
  for i,it in ipairs(items)do
   local slot=slots[i]

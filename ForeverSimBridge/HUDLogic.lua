@@ -20,7 +20,7 @@ local function each(...)
 end
 
 -- Settings (saved in ForeverSimBridgeDB.hud) ---------------------------------------------------------------------
-local DEFAULTS={enabled=true,locked=true,scale=1,alpha=1,queue=4,showKeys=true,showNames=true,procs=true,showDelay=true,barHighlight=true,procSound=false,procColor={1,.82,.2}}
+local DEFAULTS={enabled=true,locked=true,scale=1,alpha=1,queue=4,showKeys=true,showNames=true,procs=true,showDelay=true,fightCheck=true,barHighlight=true,procSound=false,procColor={1,.82,.2}}
 function HUD.Config()
  ForeverSimBridgeDB=ForeverSimBridgeDB or{}
  local db=ForeverSimBridgeDB;if type(db.hud)~='table'then db.hud={}end
@@ -112,6 +112,7 @@ local function castingNow()
   if ok and str(name)and num(endMs)and num(spellId)then return spellId,math.max(0,endMs/1000-now())end
  end
 end
+HUD.CastSeconds=castSeconds
 local function known(id)
  for _,f in each(C_SpellBook and C_SpellBook.IsSpellKnown,IsPlayerSpell,IsSpellKnown)do
   local ok,v=pcall(f,id)
@@ -415,18 +416,28 @@ end
 function HUD.KeyFor(item)return item and(keyCache[item.id]or(item.name and keyCache[item.name]))or nil end
 HUD.keyCache=function()return keyCache end
 
+-- Hooks: other parts (the fight check) listen to what the HUD sees. fire() never lets a listener break the HUD.
+local hooks={}
+function HUD.On(name,fn)hooks[name]=hooks[name]or{};table.insert(hooks[name],fn)end
+local function fire(name,...)for _,fn in ipairs(hooks[name]or{})do pcall(fn,...)end end
+HUD.Fire=fire
+
 -- Events -----------------------------------------------------------------------------------------------------------------------
 local ev=CreateFrame('Frame')
-for _,e in ipairs({'SPELL_ACTIVATION_OVERLAY_GLOW_SHOW','SPELL_ACTIVATION_OVERLAY_GLOW_HIDE','UNIT_SPELLCAST_SUCCEEDED','PLAYER_REGEN_DISABLED','PLAYER_REGEN_ENABLED','PLAYER_ENTERING_WORLD','PLAYER_DEAD','UPDATE_BINDINGS','ACTIONBAR_SLOT_CHANGED','ACTIONBAR_PAGE_CHANGED','UPDATE_BONUS_ACTIONBAR','UPDATE_SHAPESHIFT_FORM','SPELLS_CHANGED'})do
+for _,e in ipairs({'UNIT_SPELLCAST_START','UNIT_SPELLCAST_CHANNEL_START','ENCOUNTER_START','ENCOUNTER_END','SPELL_ACTIVATION_OVERLAY_GLOW_SHOW','SPELL_ACTIVATION_OVERLAY_GLOW_HIDE','UNIT_SPELLCAST_SUCCEEDED','PLAYER_REGEN_DISABLED','PLAYER_REGEN_ENABLED','PLAYER_ENTERING_WORLD','PLAYER_DEAD','UPDATE_BINDINGS','ACTIONBAR_SLOT_CHANGED','ACTIONBAR_PAGE_CHANGED','UPDATE_BONUS_ACTIONBAR','UPDATE_SHAPESHIFT_FORM','SPELLS_CHANGED'})do
  pcall(ev.RegisterEvent,ev,e)
 end
-ev:SetScript('OnEvent',function(_,event,a,b,c)
- if event=='SPELL_ACTIVATION_OVERLAY_GLOW_SHOW'then HUD.SetGlow(a,true);if HUD.OnProc then HUD.OnProc(num(a))end
- elseif event=='SPELL_ACTIVATION_OVERLAY_GLOW_HIDE'then HUD.SetGlow(a,false)
+ev:SetScript('OnEvent',function(_,event,a,b,c,d,e)
+ if event=='SPELL_ACTIVATION_OVERLAY_GLOW_SHOW'then fire('glow',num(a),true);HUD.SetGlow(a,true);if HUD.OnProc then HUD.OnProc(num(a))end
+ elseif event=='SPELL_ACTIVATION_OVERLAY_GLOW_HIDE'then fire('glow',num(a),false);HUD.SetGlow(a,false)
+ elseif event=='UNIT_SPELLCAST_START'or event=='UNIT_SPELLCAST_CHANNEL_START'then
+  if a=='player'then local id=num(c)or num(b);if id then fire('castStart',id)end end
+ elseif event=='ENCOUNTER_START'then fire('encounterStart',num(a),str(b))
+ elseif event=='ENCOUNTER_END'then fire('encounterEnd',num(a),str(b),e==1 or e==true)
  elseif event=='UNIT_SPELLCAST_SUCCEEDED'then
   if a=='player'then
    -- some builds report (unit, castGUID, spellID), others the spell id in second place
-   local id=num(c)or num(b);if id then HUD.OnCast(id);if HUD.OnCasted then HUD.OnCasted(id)end end
+   local id=num(c)or num(b);if id then fire('cast',id);HUD.OnCast(id);if HUD.OnCasted then HUD.OnCasted(id)end end
   end
  elseif event=='PLAYER_REGEN_DISABLED'then HUD.ClearCasts();if HUD.OnCombat then HUD.OnCombat(true)end
  elseif event=='PLAYER_REGEN_ENABLED'then HUD.ClearCasts();if HUD.OnCombat then HUD.OnCombat(false)end;HUD.RebuildKeys()

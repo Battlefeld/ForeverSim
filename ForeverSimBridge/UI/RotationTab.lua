@@ -235,6 +235,7 @@ local function build(page)
  cfgCheck('Name beim Procc','showNames',midW/2,40)
  cfgCheck('Aktionsleiste hervorheben','barHighlight',midW/2,68,'Goldener Rahmen um die Taste des Zaubers, den du drücken sollst.')
  cfgCheck('Ton bei Procc','procSound',midW/2,96)
+ cfgCheck('Kampf-Auswertung nach Bossen','fightCheck',midW/2,124,'Nach einem Bosskampf zeigt ein kleines Fenster, wie die Rotation lief: gefolgt, Procs genutzt, Zeit ohne Zauber.')
  local function stepper(label,key,min,max,step,fmt,x,y)
   local s=UI.Stepper(panel,label,function()return H.Config()[key]end,function(v)H.Config()[key]=v;H.Apply()end,min,max,step,fmt,midW/2-30)
   s:SetPoint('TOPLEFT',panel,'TOPLEFT',x,-y);state.steppers[#state.steppers+1]=s
