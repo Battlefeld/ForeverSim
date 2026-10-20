@@ -39,8 +39,22 @@ func variantWorkers(n int) int {
 }
 
 type SimService struct {
-	Config Config
-	mu     sync.Mutex
+	Config    Config
+	mu        sync.Mutex
+	manifests manifestCache
+}
+
+func manifestPath(cfg Config) string {
+	return filepath.Join(cfg.Runtime, "ForeverCore", "engine-data.json")
+}
+
+// fileStamp changes whenever the file's size or modification time does; 0 for a missing file.
+func fileStamp(path string) int64 {
+	info, e := os.Stat(path)
+	if e != nil {
+		return 0
+	}
+	return info.ModTime().UnixNano() ^ info.Size()
 }
 
 func cloneMap(m map[string]any) map[string]any {
@@ -98,16 +112,35 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 	if str(child(snap, "talentSnapshotStatus"), "state") != "valid" {
 		return nil, fmt.Errorf("Live-Talente sind nicht vollstaendig lesbar")
 	}
-	encoded, _, e := encodeTalentEntries(array(profile, "trees"), liveTalentEntries(snap), false, 0)
+	trees := array(profile, "trees")
+	encoded, liveRanks, e := encodeTalentEntries(trees, liveTalentEntries(snap), false, 0)
 	if e != nil {
 		return nil, e
+	}
+	// payload.talentsString: the same character with another talent build (see builds.go).
+	buildRanks, overridden := liveRanks, false
+	if text := str(j.Payload, "talentsString"); text != "" {
+		if buildRanks, encoded, e = checkedTalentString(trees, text, 51); e != nil {
+			return nil, e
+		}
+		overridden = true
 	}
 	items := make([]any, 17)
 	for i := range items {
 		items[i] = map[string]any{}
 	}
+	gearOverride := false
+	if gear := child(j.Payload, "gear"); gear != nil {
+		if items, e = gearItems(gear); e != nil {
+			return nil, e
+		}
+		gearOverride = true
+	}
 	slots := map[string]int{"HeadSlot": 0, "NeckSlot": 1, "ShoulderSlot": 2, "BackSlot": 3, "ChestSlot": 4, "WristSlot": 5, "HandsSlot": 6, "WaistSlot": 7, "LegsSlot": 8, "FeetSlot": 9, "Finger0Slot": 10, "Finger1Slot": 11, "Trinket0Slot": 12, "Trinket1Slot": 13, "MainHandSlot": 14, "SecondaryHandSlot": 15, "RangedSlot": 16}
 	for _, entry := range array(snap, "equipped") {
+		if gearOverride {
+			break
+		}
 		it := entry.(map[string]any)
 		index, ok := slots[str(it, "slot")]
 		if !ok {
@@ -125,7 +158,13 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 	if _, ok := child(manifest, "races")[race]; !ok {
 		return nil, fmt.Errorf("Volk nicht in MythicSim: %s", race)
 	}
-	selectedProfile, e := resolveSimProfile(manifest, snap, str(j.Payload, "spec"))
+	var selectedProfile map[string]any
+	if overridden {
+		tree, largest := largestTreeOf(treePoints(trees, buildRanks))
+		selectedProfile, e = resolveSimProfileFor(manifest, class, str(snap, "form"), tree, largest, str(j.Payload, "spec"))
+	} else {
+		selectedProfile, e = resolveSimProfile(manifest, snap, str(j.Payload, "spec"))
+	}
 	if e != nil {
 		return nil, e
 	}
@@ -203,8 +242,19 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 	stats := target["stats"].([]float64)
 	stats[int(num(manifest, "armorStat"))] = armor
 	req := map[string]any{"raid": map[string]any{"parties": []any{map[string]any{"players": []any{player}}}}, "encounter": map[string]any{"duration": 120, "targets": []any{target}}, "simOptions": map[string]any{"iterations": 1000, "randomSeed": "31211"}, engineLevelKey: float64(level), engineSpellsKey: knownSpells}
-	for _, raw := range array(snap, "equipped") {
-		if e := addLiveItem(req, raw.(map[string]any), manifest); e != nil { return nil, e }
+	if !gearOverride {
+		for _, raw := range array(snap, "equipped") {
+			if e := addLiveItem(req, raw.(map[string]any), manifest); e != nil {
+				return nil, e
+			}
+		}
+	}
+	if overridden {
+		swapTalentSpells(req, trees, liveRanks, buildRanks)
+	}
+	req["foreverCoreSpec"] = str(selectedProfile, "spec")
+	if it := int(num(j.Payload, "iterations")); it >= 50 && it <= 20000 {
+		child(req, "simOptions")["iterations"] = float64(it)
 	}
 	if estimated {
 		req[engineArmorEstimatedKey] = true
@@ -377,8 +427,17 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 	if j.Kind == "item" && j.Payload["partial"] == true {
 		timeout = 20 * time.Minute
 	}
+	if j.Kind == "talent-compare" {
+		timeout = 5 * time.Minute
+	}
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
+	switch j.Kind {
+	case "presets":
+		return s.presetsFor(ctx, j)
+	case "talent-compare":
+		return s.compareBuilds(ctx, j)
+	}
 	req := child(j.Payload, "request")
 	var e error
 	if req == nil {
