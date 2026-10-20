@@ -20,7 +20,7 @@ local function each(...)
 end
 
 -- Settings (saved in ForeverSimBridgeDB.hud) ---------------------------------------------------------------------
-local DEFAULTS={enabled=true,locked=true,scale=1,alpha=1,queue=4,showKeys=true,showNames=true,barHighlight=true,procSound=false,procColor={1,.82,.2}}
+local DEFAULTS={enabled=true,locked=true,scale=1,alpha=1,queue=4,showKeys=true,showNames=true,procs=true,showDelay=true,barHighlight=true,procSound=false,procColor={1,.82,.2}}
 function HUD.Config()
  ForeverSimBridgeDB=ForeverSimBridgeDB or{}
  local db=ForeverSimBridgeDB;if type(db.hud)~='table'then db.hud={}end
@@ -306,7 +306,7 @@ local GCD=1.5
 -- Items: {id,icon,name,state='ready'|'wait',delay,proc}. The first is the one to press now; the following are what the
 -- same rotation asks for next, with the effect of each cast taken into account (cooldown, DoT). A spell that is only a
 -- moment away is offered as 'wait' with the seconds that are left.
-function HUD.Build(rows,maxItems)
+function HUD.Build(rows,maxItems,noWait)
  maxItems=maxItems or 6;rows=rows or HUD.Rows()
  local E={vt=0,ready={},dot={}};local items={};local vt=0
  -- seconds until the spell can be cast (0 = now); nil when it cannot be used soon
@@ -320,7 +320,7 @@ function HUD.Build(rows,maxItems)
   end
   local left=E.ready[id]and math.max(0,E.ready[id]-vt)or math.max(0,remaining-vt)
   if left<=.15 or(steps==0 and gcdOnly and left<=GCD+.1)then return 0 end
-  if left<=2.5 then return left end
+  if left<=2.5 and not noWait then return left end
   return nil
  end
  -- what is being cast now counts as done by the time it lands; the queue is what to press after it
@@ -386,8 +386,8 @@ end
 -- What the HUD shows right now: {items, source, proc=bool}
 function HUD.Current()
  local cfg=HUD.Config();local rows,source=HUD.Rows()
- local items=HUD.Build(rows,cfg.queue+1)
- items=HUD.WithProcs(items,rows)
+ local items=HUD.Build(rows,cfg.queue+1,cfg.showDelay==false)
+ if cfg.procs~=false then items=HUD.WithProcs(items,rows)end
  while #items>cfg.queue+1 do items[#items]=nil end
  return{items=items,source=source,proc=items[1]~=nil and items[1].proc==true}
 end
@@ -435,3 +435,31 @@ ev:SetScript('OnEvent',function(_,event,a,b,c)
  else HUD.RebuildKeys()end
 end)
 HUD.events=ev
+
+-- A short German explanation of when a row of the rotation applies, for the priority list in the window.
+function HUD.Describe(row)
+ if row.automatic then return'Läuft automatisch'end
+ local c=row.condition
+ if not c then return'sonst immer'end
+ local text
+ local function walk(n)
+  if type(n)~='table'or text then return end
+  if n.dotRemainingTime or n.auraIsActive then text='Erneuern, wenn der Effekt fehlt';return end
+  if n.spellTimeToReady then text='wenn bereit';return end
+  if n.currentManaPercent then text='abhängig vom Mana';return end
+  if n.numberTargets then text='je nach Zielanzahl';return end
+  for _,v in pairs(n)do if type(v)=='table'then walk(v)end end
+ end
+ walk(c)
+ return text or'unter Bedingungen'
+end
+-- Whether the game lights this spell up in some situation (a proc the class model knows about).
+function HUD.IsProcSpell(id)
+ local class=classToken();local data=class and FUSLiveData and FUSLiveData[class];if not data or not data.procs then return false end
+ for _,p in ipairs(data.procs)do
+  for _,key in ipairs(p.consumeOn or{})do
+   for _,r in ipairs(data.abilities and data.abilities[key]or{})do if r.id==id then return true end end
+  end
+ end
+ return false
+end

@@ -232,3 +232,22 @@ function UI.Prompt(title,text,onOk,opts)
  f:Show();f.edit:SetFocus();if opts.readOnly then f.edit:HighlightText()end
  return f
 end
+
+-- A value with minus and plus buttons: UI.Stepper(parent,label,get,set,min,max,step,format,width). format(value) -> text.
+function UI.Stepper(parent,label,get,set,min,max,step,fmt,width)
+ local f=CreateFrame('Frame',nil,parent);f:SetSize(width or 280,30)
+ f.text=UI.Text(f,12.5,COLOR.text,'body','LEFT');f.text:SetPoint('LEFT',f,'LEFT',0,0);f.text:SetText(label)
+ f.plus=UI.Button(f,'+',{w=34,h=30,size=15});f.plus:SetPoint('RIGHT',f,'RIGHT',0,0)
+ f.value=UI.Text(f,12.5,COLOR.gold,'num','CENTER');f.value:SetPoint('RIGHT',f.plus,'LEFT',-4,0);f.value:SetWidth(52)
+ f.minus=UI.Button(f,'-',{w=34,h=30,size=15});f.minus:SetPoint('RIGHT',f.value,'LEFT',-4,0)
+ local function show()local v=tonumber(get())or min;f.value:SetText(fmt and fmt(v)or tostring(v))end
+ local function move(delta)
+  local v=(tonumber(get())or min)+delta*step
+  v=math.max(min,math.min(max,math.floor(v/step+.5)*step))
+  if set then set(v)end;show()
+ end
+ f.minus:SetScript('OnClick',function()move(-1)end);f.plus:SetScript('OnClick',function()move(1)end)
+ function f:Refresh()show()end
+ f:SetScript('OnShow',function(self)self:Refresh()end)
+ show();return f
+end

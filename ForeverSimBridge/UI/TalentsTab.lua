@@ -40,6 +40,7 @@ local function mainTree(entries)
  for i=1,3 do if(pts[i]or 0)>best then best,bi=pts[i],i end end
  return bi,pts
 end
+UI.talentsMainTree=mainTree
 local function pointsText(entries)
  local pts=Sim().Points(entries);return string.format('%d / %d / %d',pts[1]or 0,pts[2]or 0,pts[3]or 0)
 end
