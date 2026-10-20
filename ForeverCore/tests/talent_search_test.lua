@@ -84,6 +84,10 @@ for i=1,10 do Sim.AddBuild('B'..i,startE,'own')end
 Sim.FindBest({tree=2},nil,function(b,i)built=b;note=i end)
 assert(built==nil and tostring(note):find('belegt',1,true),'full: '..tostring(note))
 
+-- every job kind the window sends needs the character snapshot ('state.sim')
+for _,kind in ipairs({'talent-compare','build-detail','rota-tune','presets','weights'})do
+ local ok,snap=pcall(C.Capture,kind);assert(ok and type(snap)=='table' and snap.sim and snap.sim.class=='mage','the job kind '..kind..' carries the character: '..tostring(snap))
+end
 -- refining the rotation -------------------------------------------------------------------------------------------------------
 Sim.Store().results.live={dps=1500,rotation='fire',rotations={{name='fire',dps=1500}},priority={{spellId=1}},context=C.SimCacheContext and C.SimCacheContext(),engine=C.engineRevision}
 local tuneJobs={};local order0
