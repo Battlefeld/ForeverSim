@@ -451,6 +451,9 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	timeout := 170 * time.Second
+	if j.Kind == "enhancements" {
+		timeout = 20 * time.Minute
+	}
 	if j.Kind == "item" && j.Payload["partial"] == true {
 		timeout = 20 * time.Minute
 	}
@@ -460,6 +463,8 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	switch j.Kind {
+	case "enhancements":
+		return s.compareEnhancements(ctx, j)
 	case "presets":
 		return s.presetsFor(ctx, j)
 	case "talent-compare":

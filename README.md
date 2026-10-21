@@ -432,23 +432,24 @@ zusätzlich prüfen `builds_live_test.go` und die Integrations-CI diese Aufträg
 
 **Noch nicht im Spiel bestätigt:** das ganze Fenster und vor allem das HUD (Procs über die Aktivierungs-Ereignisse,
 Tastenanzeige, Aktionsleisten-Rahmen). Die Beute-Quellen sind der Dungeon-Katalog, deine Taschen und die MythicSim-Liste;
-Quest-, Handwerks-, Ruf-, Auktions- und Raid-Quellen sowie Werte für Verzauberungen und Buffs brauchen Daten, die das Addon
-noch nicht hat. Der „Pre-BiS gesamt“-Wert ist die Summe der Einzelwerte (eine Näherung).
+Quest-, Handwerks-, Ruf-, Auktions- und Raid-Quellen brauchen weitere Daten. Für Verzauberungen und Buff-Food gibt es nun den unten beschriebenen vorläufigen Vergleich. Der „Pre-BiS gesamt“-Wert ist die Summe der Einzelwerte (eine Näherung).
 
-### Vorläufige Datenquelle: Buff-Food
+### Verzauberungen & Buff-Food: DPS-Empfehlungen (vorläufig)
 
-- [Wowhead: All Cooking Food that Currently Gives XP Buffs in WoW: Forever](https://www.wowhead.com/forever/news/all-cooking-food-that-currently-gives-xp-buffs-in-wow-forever-382928) – aufgenommen am 20.10.2026.
-- Dient als vorläufige Sammlung von Lebensmitteln, Kochfertigkeiten und angegebenen Buff-Werten. Der Artikel behandelt XP-Buff-Food im Beta-Stand; eine vollständige Liste sämtlicher Buff-Foods ist damit nicht bestätigt.
-- Vor der Verwendung in Simulationen müssen Item-ID, Buff/Zauber-ID, Mindestlevel, Dauer und Werte mit aktuellen Item-/Zauberdaten abgeglichen werden. Doppelte beziehungsweise widersprüchliche Einträge (z. B. Briny Seafood Stew) bleiben bis dahin ungeprüft.
-- Die Quelle ist zunächst nur dokumentiert; ihre Angaben werden noch nicht automatisch als bestätigte Simulationswerte verwendet.
+Im Tab **Beute → Verzauberungen & Buffs → VZ & Food simmen** berechnet ForeverCore mit der gepinnten MythicSim-Engine die beste bekannte VZ pro getragenem Ausrüstungsplatz und die besten bekannten Buff-Foods. Rechts stehen die Änderungen nach einzelnem DPS-Gewinn sortiert, mit Prozent und DPS. Bei Gleichstand oder schlechteren Alternativen bleibt die aktuelle VZ die Empfehlung.
 
+Die Referenz enthält **alle aktuell getragenen VZ, ohne Food**. Jeder Kandidat ersetzt genau eine VZ beziehungsweise fügt genau ein Food hinzu; Rotation, Charakter und Seed bleiben gleich. Diese Einzelgewinne dürfen nicht addiert werden. Der normale Itemvergleich bleibt ohne VZ und Buff-Food; dieser Tab verwendet einen eigenen Ergebnisstand, der auch bei einer geänderten VZ veraltet.
 
-### Vorläufige Datenquelle: Verzauberungen (VZ)
+Vorläufiger Datenstand vom **20.10.2026**, enthalten in `ForeverCore/enhancements-data.json`:
 
-- [Wowhead Forever: Verzauberkunst-Rezepte (deutsch)](https://www.wowhead.com/forever/de/items/recipes/enchanting#0-4+20) – aufgenommen am 20.10.2026, vom Nutzer als vorläufige Quelle bereitgestellt.
-- Dient als Ausgangsliste für Verzauberkunst-Rezepte. Vollständigkeit und aktuelle Werte sind noch nicht bestätigt; beim Abruf war die Liste durch eine JavaScript-/Bot-Prüfung nicht auslesbar.
-- Vor der Verwendung in Simulationen müssen Rezept-Item-ID, Zauber-/Verzauberungs-ID, Effekt beziehungsweise Werte, zulässiger Ausrüstungsplatz und Waffenart sowie Fertigkeits- und Levelvoraussetzungen mit aktuellen Daten abgeglichen werden. Eine Rezept-Item-ID ist keine Verzauberungs-ID.
-- Die Quelle ist zunächst nur dokumentiert; ungeprüfte Angaben werden noch nicht als bestätigte Simulationswerte verwendet.
+- **Food:** [Wowhead-Artikel](https://www.wowhead.com/forever/news/all-cooking-food-that-currently-gives-xp-buffs-in-wow-forever-382928), 100 verschiedene Item-IDs nach Zusammenführen doppelter Zeilen. Die tatsächlichen Werte, Mindestlevel und Dauer stammen aus den einzelnen aktuellen Forever-Item-Tooltips (`valueSource` pro Eintrag), nicht blind aus der Artikeltabelle.
+- **89 Foods** haben zugeordnete statische Kampfwerte. **11 bleiben ausgeschlossen**: uneindeutige Krit-Zuordnung, Bewegung oder Berufsboni. Sunny Tea ist mit **33 Heilbonus** erfasst, Briny Seafood Stew mit **14 Zauberschaden**; die widersprüchlichen Artikelangaben werden nicht verwendet.
+- **VZ:** [Wowhead Forever: deutsche Verzauberkunst-Rezepte](https://www.wowhead.com/forever/de/items/recipes/enchanting#0-4+20), 172 Rezepte. **115** sind per Rezept-Item-ID einer tatsächlichen Verzauberungs-Effekt-ID im gepinnten Engine-Datenbestand zugeordnet; **57 noch nicht** und deshalb ausgeschlossen. Rezept-, Zauber- und Effekt-ID bleiben getrennt. VZ-Effekte und Procs berechnet die Engine.
+- Slot und Waffenart werden geprüft (z. B. Zweihand, Stab, Schild, gehaltene Nebenhand, Bogen/Armbrust/Gewehr statt Zauberstab). VZ mit nicht bestätigter Berufsvoraussetzung werden ausgeschlossen. **Empfänger-/Itemlevel-Voraussetzungen der VZ sind noch nicht vollständig erfasst und müssen im Spiel geprüft werden.** Die Rangliste ist eine vorläufige Empfehlung unter den modellierten Kandidaten, keine Vollständigkeitszusage.
+- Food wird als vor dem Kampf aktiv und während der gesamten simulierten Kampfdauer wirksam berechnet. Der separat erfasste **5-%-Bonus auf Kill-EP ist kein DPS-Bonus**. Andere Buffs, Tränke und Elixiere sind damit noch nicht ergänzt.
+- Unbekannte aktuell getragene VZ führen zu einer erklärenden Fehlermeldung, statt für die Referenz stillschweigend entfernt zu werden. Fehlgeschlagene Kandidaten und ausgeschlossene Datensätze werden gezählt. Der Katalog ist an die Upstream-Revision gebunden; nach einem Engine-Wechsel muss er abgeglichen werden.
+
+`enhancement_sources.py` erzeugt den Katalog aus gespeicherten Quellseiten, Item-Tooltips und dem gepinnten Engine-Checkout. Der laufende Simulator benötigt dafür keinen Internetabruf. Neue Auftragsart: `enhancements`. Die automatische Login-Berechnung startet diesen zusätzlichen Vergleich nicht; er läuft ausdrücklich auf Knopfdruck.
 
 ---
 

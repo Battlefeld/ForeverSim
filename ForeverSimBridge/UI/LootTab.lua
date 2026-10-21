@@ -166,9 +166,13 @@ local function refreshSide(prebis)
  end
  state.farmEmpty:SetText(#farm==0 and'Noch keine Upgrades gefunden.'or'')
 end
-local ENCHANTABLE={head=true,shoulder=true,back=true,chest=true,wrist=true,hands=true,legs=true,feet=true,mainhand=true,offhand=true,ranged=true}
+local ENCHANTABLE={neck=true,waist=true,finger1=true,finger2=true,head=true,shoulder=true,back=true,chest=true,wrist=true,hands=true,legs=true,feet=true,mainhand=true,offhand=true,ranged=true}
 local function refreshEnchants()
  local L=Loot();local n=0;local missing=0
+ local E=core().Enhancements;local result,stale
+ if E then result,stale=E.Result()end
+ local recommendations={}
+ if result and not stale then for _,r in ipairs(result.recommendations or{})do recommendations[r.slot]=r end end
  for _,def in ipairs(L.SLOTS)do
   if ENCHANTABLE[def.key]then
    n=n+1;local r=state.enchRows[n]
@@ -179,12 +183,34 @@ local function refreshEnchants()
     local e=L.EnchantOf(worn.link)
     if e>0 then r.status:SetText('verzaubert');r.status:SetTextColor(COLOR.good[1],COLOR.good[2],COLOR.good[3],1)
     else r.status:SetText('keine Verzauberung');r.status:SetTextColor(1,.62,.25,1);missing=missing+1 end
+    local rec=recommendations[def.key]
+    if rec then
+     r.name:SetText(rec.name or'Keine Änderung')
+     r.status:SetText(rec.current and'behalten'or pct(tonumber(rec.pct)or 0))
+     r.status:SetTextColor(COLOR.good[1],COLOR.good[2],COLOR.good[3],1)
+    end
    else r.icon:SetIcon(nil);r.name:SetText('leer');r.status:SetText('');r.status:SetTextColor(COLOR.muted[1],COLOR.muted[2],COLOR.muted[3],1)end
    r.frame:Show()
   end
  end
  for i=n+1,#state.enchRows do state.enchRows[i].frame:Hide()end
  state.enchSummary:SetText(missing==0 and'Alle Verzauberbaren Plätze sind verzaubert.'or(missing..(missing==1 and' Platz ist'or' Plätze sind')..' noch nicht verzaubert.'))
+ if not E then return end
+ state.enchRun:SetLabel(E.running and'Rechnet …'or'VZ & Food simmen');state.enchRun:SetEnabledLook(not E.running)
+ state.enchSummary:SetText(E.issue or(stale and'Ergebnis veraltet – bitte neu simmen.'or(result and('Beste bekannte VZ je Platz · Referenz '..UI.FormatDps(result.baselineDps)..' DPS')or(missing..' Plätze noch nicht verzaubert · VZ & Food simmen drücken.'))))
+ for i,r in ipairs(state.foodRows)do
+  local food=result and not stale and result.foods and result.foods[i]
+  r:SetText(food and(tostring(food.name)..'  '..pct(tonumber(food.pct)or 0)..' · '..tostring(food.effect or''))or(i==1 and'Noch keine Food-Empfehlung berechnet.'or''))
+ end
+ for i,r in ipairs(state.enchRankRows)do
+  local rec=result and not stale and result.recommendations and result.recommendations[i]
+  if rec then
+   local slot=L.Slot(rec.slot);local label=slot and slot.label or'Buff-Food'
+   r.name:SetText(label..' · '..tostring(rec.name));r.value:SetText(pct(tonumber(rec.pct)or 0)..' · '..UI.FormatDps(tonumber(rec.delta)or 0)..' DPS');r.frame:Show()
+  else r.frame:Hide()end
+ end
+ local skipped=0;for _,v in pairs(result and result.skipped or{})do skipped=skipped+(tonumber(v)or 0)end
+ state.enchNote:SetText(result and('Vorläufig · '..tostring(result.tested or 0)..' Varianten simuliert · '..skipped..' ausgeschlossen · '..tostring(result.failed or 0)..' Fehler. VZ-Voraussetzungen am Item prüfen.')or'Vorläufige Quellen: Wowhead Food-Tooltips und VZ-Rezepte, mit MythicSim abgeglichen.')
 end
 function UI.lootRefresh()
  local L,S=Loot(),Sim();if not state.page or not L or not S then return end
@@ -212,6 +238,8 @@ function UI.lootRefresh()
   else state.total:SetText('–');state.totalNote:SetText(p.ready>0 and'Kein Item verbessert deinen Schaden.'or'Alle Items simmen drücken')end
  else refreshEnchants()end
  refreshSide(prebis)
+ -- The right column ranks individual VZ/Food gains in the second view.
+ if state.enchRight then UI.Show(state.gearRight,gear);UI.Show(state.enchRight,not gear)end
 end
 
 -- Page --------------------------------------------------------------------------------------------------------------------------------
@@ -275,11 +303,13 @@ local function build(page)
  state.legend:SetText('Totenkopf = Dungeon · Tasche = schon bei dir · Notiz = MythicSim-Liste · ★ am Item = trägt MythicSim Top')
  -- second view: enchants
  state.enchBox=CreateFrame('Frame',nil,state.mid);state.enchBox:SetAllPoints(state.mid)
- local eh=UI.Heading(state.enchBox,'Verzauberungen deiner Ausrüstung');eh:SetPoint('TOPLEFT',state.mid,'TOPLEFT',0,-52);eh:SetWidth(midW)
- for i=1,11 do
+ local eh=UI.Heading(state.enchBox,'Beste bekannte Verzauberungen');eh:SetPoint('TOPLEFT',state.mid,'TOPLEFT',0,-52);eh:SetWidth(midW-170)
+ state.enchRun=UI.Button(state.enchBox,'VZ & Food simmen',{w=160,h=28,size=11});state.enchRun:SetPoint('TOPRIGHT',state.enchBox,'TOPRIGHT',0,-46)
+ state.enchRun:SetScript('OnClick',function()local E=core().Enhancements;if E then E.Run(function()UI.lootRefresh()end)end end)
+ for i=1,15 do
   local f=UI.Box(state.enchBox,{.055,.15,.30,.5},{.47,.63,.9,.2});f:SetHeight(34)
-  local col=(i<=6)and 0 or 1;local rowIndex=(i<=6)and i-1 or i-7
-  f:SetPoint('TOPLEFT',state.mid,'TOPLEFT',col*(midW/2+4),-82-rowIndex*40);f:SetWidth(midW/2-4)
+  local col=(i<=8)and 0 or 1;local rowIndex=(i<=8)and i-1 or i-9
+  f:SetPoint('TOPLEFT',state.mid,'TOPLEFT',col*(midW/2+4),-82-rowIndex*36);f:SetWidth(midW/2-4)
   local r={frame=f}
   r.icon=UI.IconBox(f,26);r.icon:SetPoint('LEFT',f,'LEFT',5,0)
   r.label=UI.Text(f,9.5,COLOR.dim,'body','LEFT');r.label:SetPoint('TOPLEFT',r.icon,'TOPRIGHT',8,2)
@@ -287,17 +317,22 @@ local function build(page)
   r.status=UI.Text(f,11,COLOR.muted,'body','RIGHT');r.status:SetPoint('RIGHT',f,'RIGHT',-8,0)
   state.enchRows[i]=r
  end
- state.enchSummary=UI.Text(state.enchBox,12,COLOR.text,'body','LEFT');state.enchSummary:SetPoint('TOPLEFT',state.mid,'TOPLEFT',2,-330);state.enchSummary:SetWidth(midW)
- local en=UI.Text(state.enchBox,11,COLOR.muted,'body','LEFT');en:SetPoint('TOPLEFT',state.enchSummary,'BOTTOMLEFT',0,-10);en:SetWidth(midW);en:SetWordWrap(true)
- en:SetText('Was eine Verzauberung oder ein Buff an Schaden bringt, zeigt ForeverSim hier, sobald MythicSim dafür Werte liefert. Bis dahin siehst du, welche Plätze noch keine Verzauberung tragen.')
+ state.enchSummary=UI.Text(state.enchBox,12,COLOR.text,'body','LEFT');state.enchSummary:SetPoint('TOPLEFT',state.mid,'TOPLEFT',2,-380);state.enchSummary:SetWidth(midW)
+ state.enchNote=UI.Text(state.enchBox,11,COLOR.muted,'body','LEFT');state.enchNote:SetPoint('TOPLEFT',state.enchSummary,'BOTTOMLEFT',0,-10);state.enchNote:SetWidth(midW);state.enchNote:SetWordWrap(true)
+ local foodTitle=UI.Heading(state.enchBox,'Bestes bekanntes Buff-Food');foodTitle:SetPoint('TOPLEFT',state.enchBox,'TOPLEFT',0,-445);foodTitle:SetWidth(midW)
+ state.foodRows={}
+ for i=1,3 do local r=UI.Text(state.enchBox,11.5,COLOR.text,'body','LEFT');r:SetPoint('TOPLEFT',state.enchBox,'TOPLEFT',2,-470-(i-1)*23);r:SetWidth(midW);r:SetWordWrap(false);state.foodRows[i]=r end
+ local foodNote=UI.Text(state.enchBox,10.5,COLOR.dim,'body','LEFT');foodNote:SetPoint('TOPLEFT',state.enchBox,'TOPLEFT',2,-544);foodNote:SetWidth(midW);foodNote:SetWordWrap(true)
+ foodNote:SetText('Gegen aktuell getragene VZ, ohne Food. Jeweils eine Änderung, Gewinne nicht addieren. Food über die volle Kampfdauer aktiv; XP-Bonus zählt nicht als DPS.')
+ state.gearRight=CreateFrame('Frame',nil,state.right);state.gearRight:SetAllPoints(state.right)
  -- right: the selected slot
- state.detailTitle=UI.Text(state.right,10.5,COLOR.gold,'body','LEFT');state.detailTitle:SetPoint('TOPLEFT',state.right,'TOPLEFT',2,-2)
- local card=UI.Box(state.right,{.02,.05,.1,.95},{.79,.6,.24,.85});card:SetSize(rw,170);card:SetPoint('TOPLEFT',state.right,'TOPLEFT',0,-24)
+ state.detailTitle=UI.Text(state.gearRight,10.5,COLOR.gold,'body','LEFT');state.detailTitle:SetPoint('TOPLEFT',state.gearRight,'TOPLEFT',2,-2)
+ local card=UI.Box(state.gearRight,{.02,.05,.1,.95},{.79,.6,.24,.85});card:SetSize(rw,170);card:SetPoint('TOPLEFT',state.gearRight,'TOPLEFT',0,-24)
  state.itemName=UI.Text(card,14,COLOR.text,'title','LEFT');state.itemName:SetPoint('TOPLEFT',card,'TOPLEFT',12,-12);state.itemName:SetWidth(rw-24);state.itemName:SetWordWrap(false)
  state.itemWorn=UI.Text(card,11.5,COLOR.muted,'body','LEFT');state.itemWorn:SetPoint('TOPLEFT',state.itemName,'BOTTOMLEFT',0,-6);state.itemWorn:SetWidth(rw-24);state.itemWorn:SetWordWrap(true)
  state.itemGain=UI.Text(card,15,COLOR.good,'num','LEFT');state.itemGain:SetPoint('TOPLEFT',card,'TOPLEFT',12,-76)
  state.itemSources=UI.Text(card,11.5,COLOR.text,'body','LEFT');state.itemSources:SetPoint('TOPLEFT',state.itemGain,'BOTTOMLEFT',0,-8);state.itemSources:SetWidth(rw-24);state.itemSources:SetWordWrap(true)
- local ah=UI.Text(state.right,10.5,COLOR.gold,'body','LEFT');ah:SetPoint('TOPLEFT',state.right,'TOPLEFT',2,-206);ah:SetText('ALTERNATIVEN')
+ local ah=UI.Text(state.gearRight,10.5,COLOR.gold,'body','LEFT');ah:SetPoint('TOPLEFT',state.gearRight,'TOPLEFT',2,-206);ah:SetText('ALTERNATIVEN')
  local function listRow(parent,y,store,i)
   local f=UI.Box(parent,{.055,.15,.30,.5},{.47,.63,.9,.2});f:SetHeight(40);f:SetPoint('TOPLEFT',parent,'TOPLEFT',0,y);f:SetPoint('TOPRIGHT',parent,'TOPRIGHT',0,y)
   local r={frame=f}
@@ -307,13 +342,21 @@ local function build(page)
   r.value=UI.Text(f,11.5,COLOR.good,'num','RIGHT');r.value:SetPoint('RIGHT',f,'RIGHT',-8,0)
   store[i]=r;return r
  end
- for i=1,3 do listRow(state.right,-228-(i-1)*44,state.altRows,i)end
- state.altEmpty=UI.Text(state.right,11,COLOR.muted,'body','LEFT');state.altEmpty:SetPoint('TOPLEFT',state.right,'TOPLEFT',4,-232)
- local fh=UI.Text(state.right,10.5,COLOR.gold,'body','LEFT');fh:SetPoint('TOPLEFT',state.right,'TOPLEFT',2,-368);fh:SetText('WO FARMEN?')
+ for i=1,3 do listRow(state.gearRight,-228-(i-1)*44,state.altRows,i)end
+ state.altEmpty=UI.Text(state.gearRight,11,COLOR.muted,'body','LEFT');state.altEmpty:SetPoint('TOPLEFT',state.gearRight,'TOPLEFT',4,-232)
+ local fh=UI.Text(state.gearRight,10.5,COLOR.gold,'body','LEFT');fh:SetPoint('TOPLEFT',state.gearRight,'TOPLEFT',2,-368);fh:SetText('WO FARMEN?')
  for i=1,3 do
-  local r=listRow(state.right,-390-(i-1)*44,state.farmRows,i);r.icon:SetIcon(SKULL)
+  local r=listRow(state.gearRight,-390-(i-1)*44,state.farmRows,i);r.icon:SetIcon(SKULL)
  end
- state.farmEmpty=UI.Text(state.right,11,COLOR.muted,'body','LEFT');state.farmEmpty:SetPoint('TOPLEFT',state.right,'TOPLEFT',4,-394);state.farmEmpty:SetWidth(rw)
+ state.farmEmpty=UI.Text(state.gearRight,11,COLOR.muted,'body','LEFT');state.farmEmpty:SetPoint('TOPLEFT',state.gearRight,'TOPLEFT',4,-394);state.farmEmpty:SetWidth(rw)
+ state.enchRight=CreateFrame('Frame',nil,state.right);state.enchRight:SetAllPoints(state.right)
+ local rh=UI.Heading(state.enchRight,'Größter DPS-Gewinn');rh:SetPoint('TOPLEFT',state.enchRight,'TOPLEFT',0,0);rh:SetWidth(rw)
+ state.enchRankRows={}
+ for i=1,11 do
+  local f=CreateFrame('Frame',nil,state.enchRight);f:SetSize(rw,42);f:SetPoint('TOPLEFT',state.enchRight,'TOPLEFT',0,-36-(i-1)*43)
+  local r={frame=f};r.name=UI.Text(f,11,COLOR.text,'body','LEFT');r.name:SetPoint('TOPLEFT',f,'TOPLEFT',2,0);r.name:SetWidth(rw-4);r.name:SetWordWrap(false)
+  r.value=UI.Text(f,11.5,COLOR.good,'num','LEFT');r.value:SetPoint('TOPLEFT',r.name,'BOTTOMLEFT',0,-2);state.enchRankRows[i]=r
+ end
  S.OnChange(function()if page:IsVisible()then UI.lootRefresh()end end)
 end
 

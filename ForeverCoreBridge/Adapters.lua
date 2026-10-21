@@ -38,9 +38,12 @@ function C.Capture(kind)
   s.mode=M.db.settings and M.db.settings.mode or'balanced'
   s.routeDB={settings=C.clean(M.db.settings),done=C.clean(M.db.done),phases=C.clean(M.db.phases),routeProgress=C.clean(M.db.routeProgress),completedPlans=C.clean(M.db.completedPlans),routeSkips=C.clean(M.db.routeSkips),skipHistory=C.clean(M.db.skipHistory),skipContexts=C.clean(M.db.skipContexts),deferred=C.clean(M.db.deferred),routeRecovery=C.clean(M.db.routeRecovery),routeTravel=C.clean(M.db.routeTravel),routeTravelVisits=C.clean(M.db.routeTravelVisits),buffs=C.clean(M.db.buffs),observedXP=C.clean(M.db.observedXP),dungeonRuns=C.clean(M.db.dungeonRuns)}
  end
- if kind=='sim'or kind=='item'or kind=='talent-compare'or kind=='presets'or kind=='build-detail'or kind=='rota-tune'or kind=='weights'then
+ if kind=='sim'or kind=='item'or kind=='talent-compare'or kind=='presets'or kind=='build-detail'or kind=='rota-tune'or kind=='weights'or kind=='enhancements'then
   local P=FUSLive;if not P or not P.capture then error('ForeverSim fehlt')end
   s.sim=C.clean(P.capture(true));if not s.sim then error('SIM-Snapshot nicht lesbar')end
+  if kind=='enhancements'and C.Enhancements then
+   s.sim.enhancementEnchants=C.Enhancements.CaptureEnchants()
+  end
   local actualFree=read(GetUnspentTalentPoints)
   if actualFree==nil then actualFree=tonumber(s.sim.unspentTalentPoints)end
   if actualFree==nil then

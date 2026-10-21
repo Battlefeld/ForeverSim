@@ -63,6 +63,7 @@ jobs:
           lua5.1 ForeverCore/tests/login_check_test.lua .
           lua5.1 ForeverCore/tests/loot_test.lua .
           lua5.1 ForeverCore/tests/loot_tab_test.lua .
+          lua5.1 ForeverCore/tests/enhancements_test.lua .
           lua5.1 ForeverCore/tests/suffix_stats_test.lua .
           lua5.1 ForeverCore/tests/class_filter_test.lua .
           lua5.1 ForeverCore/tests/requirements_test.lua .
