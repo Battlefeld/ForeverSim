@@ -6,6 +6,10 @@
 name: ForeverCore engine update
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/forevercore-engine.yml'
   schedule:
     - cron: '23 4 * * *'   # daily 04:23 UTC
   workflow_dispatch:
@@ -68,7 +72,7 @@ jobs:
         env:
           GOTOOLCHAIN: auto
           UPSTREAM_BRANCH: ${{ inputs.upstream_branch }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: ${{ github.event_name == 'push' && 'true' || inputs.dry_run }}
         run: |
           args=(--work "$RUNNER_TEMP/engine" --windows-exe "$RUNNER_TEMP/dist/MythicSim.exe")
           if [ -n "$UPSTREAM_BRANCH" ]; then args+=(--branch "$UPSTREAM_BRANCH"); fi
@@ -85,7 +89,7 @@ jobs:
           fi
 
       - name: Commit new lock
-        if: success() && inputs.dry_run != true
+        if: success() && github.event_name != 'push' && inputs.dry_run != true
         id: commit
         run: |
           git config user.name 'forevercore-bot'
@@ -119,7 +123,7 @@ jobs:
           gh release edit "$tag" --draft=false --prerelease
 
       - name: Open issue on failure
-        if: failure()
+        if: failure() && github.event_name != 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
