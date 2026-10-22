@@ -72,20 +72,3 @@ jobs:
           bash .github/scripts/publish-artifacts.sh \
             dist/ForeverCore_0.6.0_Windows_Test.zip::windows/package/ForeverCore_0.6.0_Windows_Test.zip \
             dist/ForeverCore_AllesInEinem_Setup.exe::windows/package/ForeverCore_AllesInEinem_Setup.exe
-      - name: Publish standalone all-in-one setup EXE
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          tag="forevercore-current"
-          exe="dist/ForeverCore_AllesInEinem_Setup.exe"
-          test -s "$exe"
-          notes="Aktueller Komplett-Installer fuer Windows mit ForeverCore, MythicSim und den Addons. Build: $GITHUB_SHA. Dies ist ein Test-Build; Ingame-Funktionen sind noch nicht bestaetigt."
-          if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" "$exe" --clobber
-            gh release edit "$tag" --title "ForeverCore - aktueller Windows-Installer" --notes "$notes"
-          else
-            gh release create "$tag" "$exe" --target "$GITHUB_SHA" --prerelease \
-              --title "ForeverCore - aktueller Windows-Installer" --notes "$notes"
-          fi
