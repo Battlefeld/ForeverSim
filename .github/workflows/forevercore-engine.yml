@@ -90,7 +90,7 @@ jobs:
         run: |
           git config user.name 'forevercore-bot'
           git config user.email 'forevercore-bot@users.noreply.github.com'
-          git add ForeverCore/engine.lock.json ForeverCore/leveling-data.json ForeverCore/engine-data.json ForeverCore/engine-update-report.json
+          git add ForeverCore/engine.lock.json ForeverCore/leveling-data.json ForeverCore/engine-data.json
           if [ -f ForeverCore/creature-families.json ]; then git add ForeverCore/creature-families.json; fi
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -114,7 +114,7 @@ jobs:
           target=$(git rev-parse HEAD)
           gh release create "$tag" --target "$target" --draft --prerelease \
             --title "ForeverCore Engine $identity" \
-            --notes "MythicSim $identity mit Level-10-60-Overlay. Entwicklungsstand; Bericht im main-Branch." \
+            --notes "MythicSim $identity mit Level-10-60-Overlay. Entwicklungsstand; Bericht im artifacts-Branch." \
             "$RUNNER_TEMP"/dist/*
           gh release edit "$tag" --draft=false --prerelease
 
