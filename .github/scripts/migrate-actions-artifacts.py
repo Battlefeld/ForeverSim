@@ -136,7 +136,7 @@ def main():
         # Download and validate *all* before writing to Git or deleting anything.
         for artifact in active:
             id_ = int(artifact["id"])
-            run_id = artifact.get("workflow_run", {}).get("id") or "unlinked"
+            run_id = (artifact.get("workflow_run") or {}).get("id") or "unlinked"
             label = re.sub(r"[^A-Za-z0-9_.-]+", "-", artifact.get("name", "artifact"))[:80]
             filename = f"{id_}-{label}.zip"
             archive = temp / filename
