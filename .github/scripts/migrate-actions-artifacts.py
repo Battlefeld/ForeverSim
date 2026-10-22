@@ -36,6 +36,40 @@ def request(repo: str, token: str, endpoint: str, method: str = "GET"):
     return urllib.request.urlopen(req, timeout=180)
 
 
+def download_zip(repo: str, token: str, artifact_id: int, destination: Path):
+    """Authenticate only to GitHub API; never forward its token to signed blob storage."""
+    from urllib.parse import urlsplit
+
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+
+    req = urllib.request.Request(
+        f"{BASE}/repos/{repo}/actions/artifacts/{artifact_id}/zip",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "Forever-artifact-migration",
+        },
+    )
+    try:
+        with urllib.request.build_opener(NoRedirect()).open(req, timeout=60):
+            raise RuntimeError("GitHub artifact download unexpectedly returned no redirect")
+    except urllib.error.HTTPError as err:
+        if err.code not in (302, 303, 307):
+            raise
+        location = err.headers.get("Location")
+        if not location or urlsplit(location).scheme != "https":
+            raise RuntimeError("GitHub returned an unsafe/missing artifact storage redirect") from None
+    # The signed storage URL authorizes the download itself; adding GitHub's
+    # bearer token here makes the blob service reject the request with HTTP 401.
+    with urllib.request.urlopen(urllib.request.Request(location), timeout=180) as reply:
+        with destination.open("wb") as out:
+            while data := reply.read(1024 * 1024):
+                out.write(data)
+
+
 def inventory(repo: str, token: str) -> list[dict]:
     found = []
     page = 1
@@ -140,9 +174,7 @@ def main():
             label = re.sub(r"[^A-Za-z0-9_.-]+", "-", artifact.get("name", "artifact"))[:80]
             filename = f"{id_}-{label}.zip"
             archive = temp / filename
-            with request(repo, token, f"actions/artifacts/{id_}/zip") as reply, archive.open("wb") as out:
-                while data := reply.read(1024 * 1024):
-                    out.write(data)
+            download_zip(repo, token, id_, archive)
             declared_size = artifact.get("size_in_bytes")
             if declared_size is not None and archive.stat().st_size != declared_size:
                 raise RuntimeError(f"Artifact {id_} ZIP size mismatches GitHub metadata")
