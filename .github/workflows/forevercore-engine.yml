@@ -102,22 +102,6 @@ jobs:
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "identity=${identity}" >> "$GITHUB_OUTPUT"
 
-      - name: Publish engine
-        if: success() && steps.commit.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          cp ForeverCore/engine-data.json ForeverCore/engine.lock.json ForeverCore/leveling-data.json "$RUNNER_TEMP/dist/"
-          if [ -f ForeverCore/creature-families.json ]; then cp ForeverCore/creature-families.json "$RUNNER_TEMP/dist/"; fi
-          identity="${{ steps.commit.outputs.identity }}"
-          tag="engine-${identity##*+}-${GITHUB_RUN_ID}"
-          target=$(git rev-parse HEAD)
-          gh release create "$tag" --target "$target" --draft --prerelease \
-            --title "ForeverCore Engine $identity" \
-            --notes "MythicSim $identity mit Level-10-60-Overlay. Entwicklungsstand; Bericht im artifacts-Branch." \
-            "$RUNNER_TEMP"/dist/*
-          gh release edit "$tag" --draft=false --prerelease
-
       - name: Open issue on failure
         if: failure()
         env:
