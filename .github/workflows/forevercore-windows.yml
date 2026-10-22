@@ -5,7 +5,7 @@ on:
     paths: ['ForeverCore/**', '.github/workflows/forevercore-windows.yml']
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   bridge:
     runs-on: windows-latest
@@ -23,8 +23,8 @@ jobs:
         run: go test -v -run '^(TestWowOriginCallbackReuse|TestPixelCalibration.*)$' -count=1 -timeout=3m .
       - name: Build replacement executable
         run: go build -trimpath -o ../hotfix/ForeverCore.exe .
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ForeverCore-Windows-Hotfix2
-          path: hotfix/ForeverCore.exe
-          retention-days: 7
+      - name: Save Windows bridge hotfix to artifacts branch
+        shell: bash
+        run: |
+          bash .github/scripts/publish-artifacts.sh \
+            hotfix/ForeverCore.exe::windows/hotfix/ForeverCore.exe
