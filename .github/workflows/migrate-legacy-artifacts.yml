@@ -1,4 +1,5 @@
 name: Archive and remove legacy Actions artifacts
+# Authenticated listing + unauthenticated signed-redirect download
 on:
   workflow_dispatch:
   push:
