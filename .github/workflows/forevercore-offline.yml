@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: ForeverCore/go.mod
-          cache-dependency-path: ForeverCore/go.sum
+          cache: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
