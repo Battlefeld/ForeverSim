@@ -141,13 +141,17 @@ local function stableSim(sim)
   petFamily=hpet and {family=hpet.family,familyId=hpet.familyId,level=hpet.level} or nil}
 end
 C.StableSim=stableSim
-function C.SimCacheContext()
+-- ignoreRotation: the key of the character's state alone (gear, talents, level, engine), as the ForeverSim window uses it for its
+-- results; the item values also depend on the active rotation and use the default key.
+local ctxCache={}
+function C.SimCacheContext(ignoreRotation)
  if not C.engineRevision or C.engineRevision=='' then return nil end
  local P=FUSLive
  if not P or not P.capture then return nil end
- local rotation=C.ActiveRotation and C.ActiveRotation()or nil
+ local rotation=(not ignoreRotation)and C.ActiveRotation and C.ActiveRotation()or nil
+ local cache=ctxCache[ignoreRotation and 2 or 1];if not cache then cache={};ctxCache[ignoreRotation and 2 or 1]=cache end
  local revision=tostring(C.simRevision)..'/'..tostring(P.revision)..'/'..C.engineRevision..'/'..tostring(rotation)
- if cacheRevision==revision then return cacheContext end
+ if cache.revision==revision then return cache.context end
  local ok,snapshot=pcall(P.capture,true)
  if not ok or type(snapshot)~='table' then return nil end
  local sim=stableSim(C.clean(snapshot))
@@ -157,9 +161,9 @@ function C.SimCacheContext()
  local serialized=C.json({engine=C.engineRevision,guid=read(UnitGUID,'player') or read(UnitName,'player'),sim=sim,rotation=rotation})
  -- Two directional CRC values and length, so accidental key collisions are
  -- extremely unlikely; every item also has its own exact candidate signature.
- cacheContext=tostring(#serialized)..':'..tostring(C.crc(serialized))..':'..tostring(C.crc(serialized:reverse()))
- cacheRevision=revision
- return cacheContext
+ cache.context=tostring(#serialized)..':'..tostring(C.crc(serialized))..':'..tostring(C.crc(serialized:reverse()))
+ cache.revision=revision
+ return cache.context
 end
 local function persistentItems()
  ForeverCoreBridgeDB=ForeverCoreBridgeDB or{}

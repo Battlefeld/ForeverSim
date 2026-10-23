@@ -103,7 +103,7 @@ local function build()
   self:StopMovingOrSizing()
   local x,y=self:GetCenter();local ux,uy=UIParent:GetCenter()
   local s=self:GetEffectiveScale()/(UIParent:GetEffectiveScale()or 1)
-  if x and ux then db().window={x=(x*s-ux),y=(y*s-uy)};self:ClearAllPoints();self:SetPoint('CENTER',UIParent,'CENTER',db().window.x,db().window.y)end
+  if x and ux then local own=self:GetScale();if not own or own<=0 then own=1 end;db().window={x=(x*s-ux)/own,y=(y*s-uy)/own};self:ClearAllPoints();self:SetPoint('CENTER',UIParent,'CENTER',db().window.x,db().window.y)end
  end)
  -- the frame, drawn once at its fixed size in power-of-two tiles
  for key,e in pairs(ForeverSimArt or{})do

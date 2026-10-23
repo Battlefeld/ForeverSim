@@ -128,6 +128,33 @@ end
 Sim.Tune({id='live'},nil,function(r,g)rec,text=r,g end);assert(rec==nil and tostring(text):find('nicht bestätigt',1,true),'not confirmed: '..tostring(text))
 -- before the first comparison there is nothing to tune
 Sim.Store().results.live=nil;local a,b=Sim.Tune({id='live'});assert(a==false and b,'needs a result first')
+-- a changed rotation does not make the results of the run stale
+do
+ local ctx=0;local realCtx=C.SimCacheContext
+ C.SimCacheContext=function(ignoreRotation)return'c-'..(ignoreRotation and'x'or(C.ActiveRotation()or'none'))end
+ Sim.Store().rotation=nil
+ C.Request=function(kind,payload,cb)
+  if kind=='build-detail'then cb({dps=1500,rotation='fire',rotations={{name='fire',dps=1500}},priority={{spellId=1}},breakdown={},curve={}})end
+  return true
+ end
+ Sim.Detail({id='live',name='Im Spiel'},function()end)
+ assert(Sim.Result('live') and not Sim.IsStale(Sim.Result('live')),'not stale right after the rotation was set')
+ local rev=C.simRevision;Sim.SetRotation({rotation='eigen:fire:1,0',dps=1})
+ assert(C.simRevision==(tonumber(rev)or 0)+1,'a new rotation makes the item values be asked for again')
+ assert(not Sim.IsStale(Sim.Result('live')),'a new rotation alone is no reason for "veraltet"')
+ C.SimCacheContext=realCtx
+end
+-- presets are asked for once while the answer is on its way
+do
+ local asked=0;local waiting
+ C.Request=function(kind,payload,cb)if kind=='presets'then asked=asked+1;waiting=cb end;return true end
+ Sim.Store().presets=nil
+ local got=0
+ Sim.LoadPresets(function()got=got+1 end);Sim.LoadPresets(function()got=got+1 end);Sim.LoadPresets(function()got=got+1 end)
+ assert(asked==1,'one request for three callers: '..asked)
+ waiting({engineRevision='e',class='mage',talents={},gear={},builds={},layout={}})
+ assert(got==3,'every caller gets the answer')
+end
 -- refine is a step of the full run, and the last one
 Sim.Store().refine=true;Sim.Store().presets=nil
 local labels={}

@@ -10,7 +10,7 @@ UI.loginCheck=state
 local popup
 local function build()
  local f=CreateFrame('Frame','ForeverSimLoginNotice',UIParent);f:SetSize(480,170);f:SetPoint('TOP',UIParent,'TOP',0,-140);f:SetFrameStrata('HIGH')
- f:EnableMouse(true);f:Hide()
+ f:Hide()   -- no mouse on the frame itself: it must never swallow clicks in the world
  UI.Style(f,'panel','BACKGROUND')
  f.icon=f:CreateTexture(nil,'ARTWORK');f.icon:SetSize(34,34);f.icon:SetPoint('TOPLEFT',f,'TOPLEFT',32,-36);UI.SetArt(f.icon,'crystal_on')
  f.title=UI.Text(f,16,COLOR.gold,'title','LEFT');f.title:SetPoint('TOPLEFT',f.icon,'TOPRIGHT',10,2)
@@ -65,5 +65,9 @@ driver:SetScript('OnUpdate',function(_,dt)
  if UI.HUDInCombat and UI.HUDInCombat()then return end
  if ForeverSimHUD and ForeverSimHUD.InCombat and ForeverSimHUD.InCombat()then return end
  local on=UI.Connected and UI.Connected()
- if on then UI.RunLoginCheck()end
+ if on then UI.RunLoginCheck()
+ elseif not state.pinged and state.waited>=10 then
+  -- nothing has answered yet in this session: a ping tells whether ForeverCore.exe is there
+  state.pinged=true;local c=ForeverCoreClient;if c and c.Request then pcall(c.Request,'ping',{},function()end)end
+ end
 end)

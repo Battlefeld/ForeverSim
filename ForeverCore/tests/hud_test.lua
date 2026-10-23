@@ -95,6 +95,22 @@ C_Spell.GetSpellCooldown=function(id)return id==A and secret or{startTime=0,dura
 items=HUD.Build({{spellId=A},{spellId=B}},1);assert(items[1].id==B,'a hidden cooldown is skipped')
 C_Spell.GetSpellCooldown=function(id)local left=cd[id]or 0;if left>0 then return{startTime=GetTime()-1,duration=left+1,isEnabled=true}end;return{startTime=0,duration=0,isEnabled=true}end
 issecretvalue=realSecret
+-- an aura whose identity is hidden counts as present, not as missing
+C_UnitAuras.GetAuraDataByIndex=function(unit,i,filter)if unit=='target'and filter=='HARMFUL'and i==1 then return{spellId=secret,name=secret,sourceUnit=secret,expirationTime=secret}end end
+issecretvalue=function(v)return v==secret end
+items=HUD.Build({rows[1],rows[3]},1);assert(items[1].id==A,'a DoT that cannot be identified is not proposed again: '..items[1].id)
+issecretvalue=realSecret
+C_UnitAuras.GetAuraDataByIndex=function(unit,i,filter)
+ if unit~='target'or filter~='HARMFUL'then return nil end
+ local n=0
+ for id,left in pairs(targetDot)do n=n+1;if n==i then return{spellId=id,name='Zauber '..id,sourceUnit='player',expirationTime=GetTime()+left}end end
+end
+-- a spell the character no longer has is left out; when nothing is known the list stays
+IsPlayerSpell=function(id)return id~=Cc end
+items=HUD.Build({rows[2],rows[3]},1);assert(items[1].id==A,'an unlearned spell is not offered')
+IsPlayerSpell=function()return false end
+items=HUD.Build({rows[2],rows[3]},1);assert(#items==1,'if nothing is known the list is used as it is')
+IsPlayerSpell=function()return true end
 -- automatic action when nothing else is possible (Auto Shot)
 items=HUD.Build({{spellId=75,automatic=true}},3);assert(#items==1 and items[1].auto,'only an automatic action: it is shown')
 
@@ -160,6 +176,10 @@ MOCK.Advance(.5,.05);assert(frame:IsShown())
 frame.__scripts.OnDragStart(frame);frame.__scripts.OnDragStop(frame)
 assert(HUD.SetLocked(true));MOCK.Advance(1,.05);assert(not frame:IsShown(),'locked again: hidden')
 combat=true;assert(not HUD.SetLocked(false),'no unlocking during a fight');combat=false
+-- an unlocked HUD takes no clicks during a fight
+HUD.SetLocked(false);combat=true;MOCK.Fire('PLAYER_REGEN_DISABLED');MOCK.Advance(.3,.05)
+assert(not HUD.frame:IsMouseEnabled(),'no mouse on the HUD in combat')
+combat=false;MOCK.Fire('PLAYER_REGEN_ENABLED');MOCK.Advance(.3,.05);assert(HUD.frame:IsMouseEnabled(),'mouse back after the fight (unlocked)');HUD.SetLocked(true)
 -- demo of a proc (to judge the HUD without a fight)
 HUD.Demo('proc',2);MOCK.Advance(.6,.05)
 local heroDemo;for _,c in ipairs(slotCells())do if c:IsShown()and c.glow:IsShown()then heroDemo=c end end

@@ -133,6 +133,8 @@ local function auraRemaining(unit,id,name,harmful)
    if protected(aura)then return 3600,true end
    if not aura then break end
    local spell,auraName,source=num(aura.spellId),str(aura.name),str(aura.sourceUnit)
+   -- the aura is there but the game hides which one: treat it as present, never as missing
+   if spell==nil and auraName==nil then return 3600,true end
    if((id and spell and spell==id)or(name and auraName and auraName==name))and(not harmful or source=='player'or source=='pet')then
     local expires=num(aura.expirationTime)
     if not expires then return 3600,true end
@@ -309,6 +311,8 @@ local GCD=1.5
 -- moment away is offered as 'wait' with the seconds that are left.
 function HUD.Build(rows,maxItems,noWait)
  maxItems=maxItems or 6;rows=rows or HUD.Rows()
+ -- spells the character no longer has (respec since the calculation) are left out; if that would leave nothing, the list stays
+ do local kept={};for _,r in ipairs(rows)do if r.automatic or known(r.spellId)then kept[#kept+1]=r end end;if #kept>0 then rows=kept end end
  local E={vt=0,ready={},dot={}};local items={};local vt=0
  -- seconds until the spell can be cast (0 = now); nil when it cannot be used soon
  local function ready(row,steps)
@@ -335,6 +339,7 @@ function HUD.Build(rows,maxItems,noWait)
   E.vt=vt
   local best,bestWait
   for _,row in ipairs(rows)do
+   -- a spell the character no longer has (respec since the calculation) is never offered
    if not row.automatic and(not row.condition or aplCondition(row.condition,E)==true)then
     local wait=ready(row,step)
     if wait==0 then best,bestWait=row,0;break end
@@ -440,7 +445,7 @@ ev:SetScript('OnEvent',function(_,event,a,b,c,d,e)
    local id=num(c)or num(b);if id then fire('cast',id);HUD.OnCast(id);if HUD.OnCasted then HUD.OnCasted(id)end end
   end
  elseif event=='PLAYER_REGEN_DISABLED'then HUD.ClearCasts();if HUD.OnCombat then HUD.OnCombat(true)end
- elseif event=='PLAYER_REGEN_ENABLED'then HUD.ClearCasts();if HUD.OnCombat then HUD.OnCombat(false)end;HUD.RebuildKeys()
+ elseif event=='PLAYER_REGEN_ENABLED'then for k in pairs(glow)do glow[k]=nil end;HUD.ClearCasts();if HUD.OnCombat then HUD.OnCombat(false)end;HUD.RebuildKeys()
  elseif event=='PLAYER_DEAD'then for k in pairs(glow)do glow[k]=nil end
  elseif event=='PLAYER_ENTERING_WORLD'or event=='SPELLS_CHANGED'then for k in pairs(glow)do glow[k]=nil end;HUD.RebuildKeys()
  else HUD.RebuildKeys()end

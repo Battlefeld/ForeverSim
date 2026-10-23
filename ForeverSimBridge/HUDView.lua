@@ -78,8 +78,13 @@ local function assign(items)
  for i,it in ipairs(items)do
   local found
   for j=last+1,#old do if not taken[j]and old[j].id==it.id then found=j;break end end
-  if found then taken[found]=true;last=found;out[i]=old[found]
-  else out[i]=startSlot(it)end
+  if found then taken[found]=true;last=found;out[#out+1]=old[found]
+  else
+   local fresh=startSlot(it)
+   -- no free cell: the queue ends here (the slots stay dense, so every loop sees all of them)
+   if not fresh then for k=#items,i,-1 do items[k]=nil end;break end
+   out[#out+1]=fresh
+  end
  end
  -- the spell that was first in the queue and is gone because it was cast: it slides out to the left
  for j,s in ipairs(old)do
@@ -235,7 +240,11 @@ end
 
 HUD.OnCasted=function(id)lastCastAt=now();if HUD.frame:IsShown()then HUD.Refresh()end end
 HUD.OnProc=function()if HUD.frame:IsShown()then HUD.Refresh()end end
-HUD.OnCombat=function()HUD.Refresh()end
+HUD.OnCombat=function(entering)
+ -- an unlocked HUD must never take clicks away from the world during a fight
+ if entering then root:EnableMouse(false);handle:Hide();handleText:Hide()else HUD.Apply()end
+ HUD.Refresh()
+end
 
 -- Placement and settings ---------------------------------------------------------------------------------------------------------
 function HUD.Apply()
@@ -259,7 +268,7 @@ root:SetScript('OnDragStart',function(self)if not HUD.Config().locked and not HU
 root:SetScript('OnDragStop',function(self)
  self:StopMovingOrSizing()
  local x,y=self:GetCenter();local ux,uy=UIParent:GetCenter()
- if x and ux then local cfg=HUD.Config();cfg.x,cfg.y=x-ux,y-uy end
+ if x and ux then local cfg=HUD.Config();local s=self:GetScale();if not s or s<=0 then s=1 end;cfg.x,cfg.y=(x*s-ux)/s,(y*s-uy)/s end
 end)
 
 -- a frame that is always shown drives the HUD (the HUD frame itself is hidden between fights)

@@ -53,6 +53,8 @@ Sim.Places=places
 -- The talents the character has right now, from the same capture the item values use.
 function Sim.LiveEntries()
  local P=FUSLive;if not P or not P.capture then return nil,'ForeverSim fehlt'end
+ -- in combat the last reading is used: the full character snapshot is only taken out of combat
+ if InCombatLockdown and InCombatLockdown()and Sim.liveCache then return Sim.CopyEntries(Sim.liveCache)end
  local ok,snap=pcall(P.capture,true);if not ok or type(snap)~='table'then return nil,'Charakter nicht lesbar'end
  local byKey=places();local out={}
  for _,tree in ipairs(snap.talents or{})do
@@ -61,6 +63,7 @@ function Sim.LiveEntries()
    if info and n>0 then out[#out+1]={t=info.t,r=info.r,c=info.c,n=n}end
   end
  end
+ Sim.liveCache=out
  return out
 end
 function Sim.Points(entries)
@@ -166,13 +169,17 @@ Sim.PresetEntries=presetBuildEntries
 function Sim.LoadPresets(cb,force)
  local s=Sim.Store();local have=s.presets
  if have and have.engine==C.engineRevision and have.class==classKey()and not force then if cb then cb(have)end;return true end
+ -- a request is on its way already (every tab switch asks): the answer goes to everybody who waits
+ if Sim.presetWaiters then if cb then table.insert(Sim.presetWaiters,cb)end;return true end
+ Sim.presetWaiters={cb}
+ local function answer(a,b)local list=Sim.presetWaiters;Sim.presetWaiters=nil;for _,fn in ipairs(list)do pcall(fn,a,b)end end
  local ok=C.Request('presets',{class=classKey()},function(result,issue)
   if type(result)=='table'and type(result.talents)=='table'then
    result.at=stamp();result.engine=result.engineRevision or C.engineRevision;s.presets=C.clean(result);changed()
-   if cb then cb(s.presets)end
-  elseif cb then cb(nil,issue or'Keine Antwort')end
+   answer(s.presets)
+  else answer(nil,issue or'Keine Antwort')end
  end)
- if not ok and cb then cb(nil,'Anfrage nicht moeglich')end
+ if not ok then answer(nil,'Anfrage nicht moeglich')end
  return ok
 end
 local function findByName(list,name)
@@ -203,7 +210,7 @@ function Sim.Result(id)return Sim.Store().results[id]end
 -- True when the result was computed for another character state or engine than the current one.
 function Sim.IsStale(result)
  if type(result)~='table'then return true end
- local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ctx=C.SimCacheContext and C.SimCacheContext(true)
  if not ctx or not result.context then return false end
  return result.context~=ctx or(C.engineRevision and result.engine and result.engine~=C.engineRevision)or false
 end
@@ -238,7 +245,7 @@ function Sim.Compare(list,cb,opts)
   row.gearPreset=b.gearPreset;row.rotation=b.rotation;row.spec=b.spec
   builds[i]=row
  end
- local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ctx=C.SimCacheContext and C.SimCacheContext(true)
  local ok=C.Request('talent-compare',{builds=builds,priority=opts.priority~=false},function(result,issue)
   if type(result)~='table'or type(result.builds)~='table'then if cb then cb(nil,issue or'Keine Antwort')end;return end
   storeRows(result.builds,ctx)
@@ -275,7 +282,7 @@ function Sim.Detail(b,cb)
  if b.entries then build.talents=Sim.Payload(b.entries)end
  if b.talentsString and not b.entries then build.talentsString=b.talentsString end
  build.gearPreset=b.gearPreset;build.spec=b.spec;build.rotation=b.rotation
- local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ctx=C.SimCacheContext and C.SimCacheContext(true)
  local ok=C.Request('build-detail',{build=build,curve=true},function(result,issue)
   if type(result)~='table'or not tonumber(result.dps)then if cb then cb(nil,issue or'Keine Antwort')end;return end
   local rec=Sim.Store().results[b.id]or{}
@@ -341,19 +348,21 @@ function Sim.RunAll(opts,progress,done)
  Sim.running=true;Sim.progress={step=0,total=#steps}
  local function finish(ok,issue)
   Sim.running=false;Sim.progress=nil
-  if ok then Sim.Store().lastRun={context=C.SimCacheContext and C.SimCacheContext(),engine=C.engineRevision,build=gameBuild(),level=Sim.Level(),at=stamp(),seen=Sim.ScanBags()}end
-  changed();if done then done(ok,issue)end
+  if ok then Sim.Store().lastRun={context=C.SimCacheContext and C.SimCacheContext(true),engine=C.engineRevision,build=gameBuild(),level=Sim.Level(),at=stamp(),seen=Sim.ScanBags()}end
+  changed();if done then pcall(done,ok,issue)end
  end
  local function run(i)
   if i>#steps then return finish(true)end
-  Sim.progress={step=i,total=#steps,label=steps[i][1]};if progress then progress(i,#steps,steps[i][1])end
+  Sim.progress={step=i,total=#steps,label=steps[i][1]};if progress then pcall(progress,i,#steps,steps[i][1])end
   changed()
   local called=false
-  steps[i][2](function(result,issue)
+  -- a step that fails with an error must not leave the run hanging
+  local ok,err=pcall(steps[i][2],function(result,issue)
    if called then return end;called=true
    if result==nil and issue then return finish(false,issue)end
    run(i+1)
   end)
+  if not ok and not called then called=true;finish(false,tostring(err))end
  end
  run(1)
  return true
@@ -395,7 +404,7 @@ function Sim.RecalcReasons()
  local build=gameBuild()
  if build and last.build and last.build~=build then out[#out+1]='Neuer Spielpatch'end
  if tonumber(last.level)and Sim.Level()~=last.level then out[#out+1]='Neue Stufe'end
- local ctx=C.SimCacheContext and C.SimCacheContext()
+ local ctx=C.SimCacheContext and C.SimCacheContext(true)
  if ctx and last.context and ctx~=last.context and #out==0 then out[#out+1]='Ausrüstung oder Talente haben sich geändert'end
  if type(last.seen)=='table' then
   local new=0;for id in pairs(Sim.ScanBags())do if not last.seen[id]then new=new+1 end end
@@ -409,6 +418,12 @@ end
 -- (Bridge.lua adds it to the jobs), and the combat HUD follows its priority list.
 function Sim.SetRotation(result)
  if type(result)~='table'or not result.rotation then return end
+ -- the item values depend on the rotation: values computed with another one are asked for again
+ local old=Sim.Store().rotation
+ if not old or old.name~=result.rotation then
+  C.simRevision=(tonumber(C.simRevision)or 0)+1
+  local P=FUSLive;if P and P.itemScore and P.itemScore.Changed then pcall(P.itemScore.Changed)end
+ end
  Sim.Store().rotation={name=result.rotation,dps=result.dps,priority=result.priority,rotations=result.rotations,context=result.context,engine=result.engine,at=stamp()}
 end
 function Sim.Rotation()return Sim.Store().rotation end

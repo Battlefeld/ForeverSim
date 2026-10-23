@@ -210,7 +210,8 @@ function Widget:GetEffectiveScale() local p = self.__parent; return self.__scale
 function Widget:SetAlpha(a) self.__alpha = a end
 function Widget:GetAlpha() return self.__alpha end
 function Widget:GetEffectiveAlpha() return self.__alpha end
-function Widget:EnableMouse() end
+function Widget:EnableMouse(on) self.__mouse = on and true or false end
+function Widget:IsMouseEnabled() return self.__mouse == true end
 function Widget:IsMouseOver() return false end
 function Widget:SetEnabled(on) self.__enabled = on and true or false end
 function Widget:Enable() self.__enabled = true end

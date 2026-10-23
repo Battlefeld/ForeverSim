@@ -167,12 +167,14 @@ function Loot.Run(done)
  if Loot.running then return false end
  Loot.running=true;Loot.startedAt=now();Loot.Reset()
  local function tick()
-  local p=Loot.Poll(80);Sim().Changed()
+  local okp,p=pcall(Loot.Poll,80)
+  if not okp then Loot.running=false;Sim().Changed();if done then pcall(done,Loot.progress or{total=0,ready=0,busy=0,unread=0,failed=0,blocked=0})end;return end
+  Sim().Changed()
   local open=p.busy+p.unread
   if open==0 or now()-Loot.startedAt>20*60 then
    Loot.running=false
    local s=store();s.lastRun={at=time and time()or 0,total=p.total,ready=p.ready}
-   Sim().Changed();if done then done(p)end
+   Sim().Changed();if done then pcall(done,p)end
    return
   end
   if C_Timer and C_Timer.After then C_Timer.After(3,tick)else Loot.running=false end
@@ -251,16 +253,19 @@ local STAT_LABEL={StatSpellDamage='Zauberschaden',StatSpellHitRating='Trefferwer
 function Loot.LoadWeights(cb,force)
  local s=store();local ctx=C.SimCacheContext and C.SimCacheContext()
  if s.weights and s.weights.context==ctx and not force then if cb then cb(s.weights)end;return true end
+ if Loot.weightWaiters then if cb then table.insert(Loot.weightWaiters,cb)end;return true end
+ Loot.weightWaiters={cb}
+ local function answer(a,b)local list=Loot.weightWaiters;Loot.weightWaiters=nil;for _,fn in ipairs(list)do pcall(fn,a,b)end end
  local ok=C.Request('weights',{},function(result,issue)
-  if type(result)~='table'or type(result.rows)~='table'then if cb then cb(nil,issue or'Keine Antwort')end;return end
+  if type(result)~='table'or type(result.rows)~='table'then answer(nil,issue or'Keine Antwort');return end
   local rows,top={},0
   for _,r in ipairs(result.rows)do local v=tonumber(r.perPoint)or 0;if v>top then top=v end;rows[#rows+1]={key=r.key,perPoint=v}end
   for _,r in ipairs(rows)do r.weight=top>0 and math.max(0,r.perPoint)/top or 0;r.label=STAT_LABEL[r.key]or tostring(r.key):gsub('^Stat','')end
   table.sort(rows,function(a,b)return a.weight>b.weight end)
   s.weights={context=ctx,rows=C.clean(rows),at=time and time()or 0}
-  Sim().Changed();if cb then cb(s.weights)end
+  Sim().Changed();answer(s.weights)
  end,{timeout=300})
- if not ok and cb then cb(nil,'Anfrage nicht moeglich')end
+ if not ok then answer(nil,'Anfrage nicht moeglich')end
  return ok
 end
 function Loot.Weights()local s=store();return s.weights end

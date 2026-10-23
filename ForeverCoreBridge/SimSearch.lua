@@ -14,7 +14,7 @@ function Sim.CancelSearch()if Sim.search then Sim.search.cancel=true end end
 
 local function report()
  local s=Sim.search;if not s then return end
- if s.progress then s.progress(s)end
+ if s.progress then pcall(s.progress,s)end
  Sim.Changed()
 end
 -- Measures candidates ({id,entries}) in batches. cb(map id -> dps) or cb(nil, issue).
@@ -62,7 +62,7 @@ function Sim.FindBest(opts,progress,done)
  Sim.search=s
  local function finish(build,info)
   Sim.search=nil;Sim.Changed()
-  if done then done(build,info)end
+  if done then pcall(done,build,info)end
  end
  local entries=start
  local function best(cands)local top,topDps;for _,c in ipairs(cands)do local d=s.scores[c.id];if d and(not topDps or d>topDps)then top,topDps=c,d end end;return top,topDps end
@@ -156,14 +156,14 @@ function Sim.Tune(spec,progress,done,insideRun)
  local fields=buildFields(spec)
  local function finish(rec,info)
   Sim.search=nil;Sim.Changed()
-  if done then done(rec,info)end
+  if done then pcall(done,rec,info)end
  end
  local order
  local function confirm()
   local name='eigen:'..base..':'..table.concat(order,',')
   s.label='Ergebnis prüfen';report()
   local function with(rotation)local t={id=rotation==name and'tuned'or'base',rotation=rotation};for k,v in pairs(fields)do t[k]=v end;return t end
-  local ctx=C.SimCacheContext and C.SimCacheContext()
+  local ctx=C.SimCacheContext and C.SimCacheContext(true)
   local ok=C.Request('talent-compare',{builds={with(name),with(base)},priority=true},function(result,issue)
    if s.cancel then return finish(nil,'abgebrochen')end
    if type(result)~='table'or type(result.builds)~='table'then return finish(nil,issue or'Keine Antwort')end

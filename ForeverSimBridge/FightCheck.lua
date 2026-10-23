@@ -36,10 +36,12 @@ function FC.ReadDps()
  local ok,session=pcall(dm.GetCombatSessionFromType,Enum.DamageMeterSessionType.Current,Enum.DamageMeterType.Dps)
  if not ok or type(session)~='table'or(FUSLive and FUSLive.isProtected and FUSLive.isProtected(session))then return nil end
  for _,src in ipairs(session.combatSources or{})do
-  if src.isLocalPlayer==true then
-   local v=FUSLive and FUSLive.publicNumber and FUSLive.publicNumber(src.amountPerSecond)or(type(src.amountPerSecond)=='number'and src.amountPerSecond or nil)
-   if v and v>0 then return v end
-  end
+  local okSrc,v=pcall(function()
+   if src.isLocalPlayer==true then
+    return FUSLive and FUSLive.publicNumber and FUSLive.publicNumber(src.amountPerSecond)or(type(src.amountPerSecond)=='number'and src.amountPerSecond or nil)
+   end
+  end)
+  if okSrc and v and v>0 then return v end
  end
 end
 
@@ -90,7 +92,7 @@ end
 local panel
 local function build()
  local f=CreateFrame('Frame','ForeverSimFightCheck',UIParent);f:SetSize(430,300);f:SetFrameStrata('HIGH');f:SetPoint('RIGHT',UIParent,'RIGHT',-50,120)
- f:EnableMouse(true);f:Hide()
+ f:Hide()   -- the panel itself takes no clicks: the player may still be fighting
  if UI.Style then UI.Style(f,'panel','BACKGROUND')end
  f.icon=f:CreateTexture(nil,'ARTWORK');f.icon:SetSize(34,34);f.icon:SetPoint('TOPLEFT',f,'TOPLEFT',30,-38)
  if UI.SetArt then UI.SetArt(f.icon,'crystal_on')end

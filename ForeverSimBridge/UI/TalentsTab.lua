@@ -18,7 +18,10 @@ local function group(n)
 end
 function UI.FormatDps(x,decimals)
  x=tonumber(x);if not x then return'-'end
- if decimals then return group(x)..','..string.format('%0'..decimals..'d',math.floor((x-math.floor(x))*10^decimals+.5)%10^decimals)end
+ if decimals then
+  local scale=10^decimals;local rounded=math.floor(math.abs(x)*scale+.5)
+  return(x<0 and'-'or'')..group(math.floor(rounded/scale))..','..string.format('%0'..decimals..'d',rounded%scale)
+ end
  return group(x+.5)
 end
 function UI.FormatPct(p)

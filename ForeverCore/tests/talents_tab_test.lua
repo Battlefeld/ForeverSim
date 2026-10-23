@@ -23,6 +23,7 @@ C.Request=function(kind,payload,cb,opts)jobs[#jobs+1]={kind=kind,payload=payload
 -- formatting ----------------------------------------------------------------------------------------------------
 assert(UI.FormatDps(1842.6)=='1.843' and UI.FormatDps(999)=='999' and UI.FormatDps(1234567)=='1.234.567','dps: '..UI.FormatDps(1842.6))
 assert(UI.FormatDps(1842.64,1)=='1.842,6','dps with a decimal: '..UI.FormatDps(1842.64,1))
+assert(UI.FormatDps(1234.96,1)=='1.235,0' and UI.FormatDps(999.97,1)=='1.000,0' and UI.FormatDps(0.04,1)=='0,0','rounding carries into the integer part')
 assert(UI.FormatPct(12.34)=='+12,3 %' and UI.FormatPct(-3.04)=='-3,0 %' and UI.FormatPct(0)=='+0,0 %')
 
 -- the tab is locked below level 60 (a fresh window shows a notice) ---------------------------------------------------
