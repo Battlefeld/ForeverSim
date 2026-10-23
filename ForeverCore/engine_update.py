@@ -174,7 +174,11 @@ def protoc(src):
 
 
 def prepare_checkout(src):
-    """Generate Go prerequisites before any data extractor imports engine packages."""
+    """Generate upstream Go protobuf dependencies before any Go-based data extractor.
+
+    prepare_leveling.py imports sim/core/spelldata, which imports sim/core/proto.
+    The fresh upstream checkout does not contain generated proto Go sources.
+    """
     prepare = os.environ.get('FOREVERCORE_PREPARE')
     if prepare:
         sh('bash', '-c', prepare, cwd=src)
@@ -382,6 +386,7 @@ def main():
         for src in (upstream_src, parity_src, overlay_src):
             checkout(repo, base, src)
         apply_patches(overlay_src, patches)
+        # Generate Go imports before prepare_leveling.py executes 'go run'.
         for src in (upstream_src, parity_src, overlay_src):
             prepare_checkout(src)
         client_build = (overlay_src / 'assets/db_inputs/forever_client_build.txt').read_text().strip()
