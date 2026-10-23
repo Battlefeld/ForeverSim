@@ -144,6 +144,17 @@ do
  assert(not Sim.IsStale(Sim.Result('live')),'a new rotation alone is no reason for "veraltet"')
  C.SimCacheContext=realCtx
 end
+-- a build edited or deleted while the PC calculates gets no result
+do
+ local pend
+ C.Request=function(kind,payload,cb)pend=cb;return true end
+ for i=#Sim.Builds(),1,-1 do Sim.DeleteBuild(Sim.Builds()[i].id)end
+ local b1=Sim.AddBuild('Eins',startE,'own');local b2=Sim.AddBuild('Zwei',startE,'own')
+ Sim.Compare({{id=b1.id,name='Eins',entries=b1.entries},{id=b2.id,name='Zwei',entries=b2.entries}},function()end)
+ Sim.UpdateBuild(b1.id,{{t=2,r=0,c=0,n=1}});Sim.DeleteBuild(b2.id)
+ pend({builds={{id=b1.id,dps=1500},{id=b2.id,dps=1600}}})
+ assert(Sim.Result(b1.id)==nil and Sim.Result(b2.id)==nil,'no result for an edited or a deleted build')
+end
 -- presets are asked for once while the answer is on its way
 do
  local asked=0;local waiting

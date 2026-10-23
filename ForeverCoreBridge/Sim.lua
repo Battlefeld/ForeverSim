@@ -288,9 +288,18 @@ function Sim.Compare(list,cb,opts)
   builds[i]=row
  end
  local ctx=Sim.Context()
+ -- the talents of the saved builds as they were sent: a build edited or deleted while the PC calculates gets no result
+ local sent={};for _,b in ipairs(list)do if b.entries and Sim.Build(b.id)then sent[b.id]=Sim.Signature(b.entries)end end
  local ok=C.Request('talent-compare',{builds=builds,priority=opts.priority~=false},function(result,issue)
   if type(result)~='table'or type(result.builds)~='table'then if cb then cb(nil,issue or'Keine Antwort')end;return end
-  storeRows(result.builds,ctx)
+  local valid={}
+  for _,row in ipairs(result.builds)do
+   local was=sent[row.id]
+   if was==nil and Sim.Build(row.id)==nil and tostring(row.id):match('^b%d+$')then -- deleted meanwhile
+   elseif was~=nil and(Sim.Build(row.id)==nil or Sim.Signature(Sim.Build(row.id).entries)~=was)then -- edited meanwhile
+   else valid[#valid+1]=row end
+  end
+  storeRows(valid,ctx)
   for _,row in ipairs(result.builds)do
    if row.id=='live'and row.rotation and Sim.Result('live')and Sim.Result('live').priority then Sim.SetRotation(Sim.Result('live'))end
   end
