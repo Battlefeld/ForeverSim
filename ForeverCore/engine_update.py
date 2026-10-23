@@ -37,6 +37,7 @@ sys.path.insert(0, str(OVERLAY))
 from apply_overlay import apply as apply_overlay, overlay_digest, OverlayError  # noqa: E402
 from golden_dps import suite_dps  # noqa: E402
 from engine_identity import build_identity, leveling_digest
+from talent_layout import write as write_talent_layout
 from compare_results import canon, differences  # noqa: E402
 
 SMOKE_LEVELS = [10, 20, 30, 45, 59]
@@ -170,6 +171,15 @@ def protoc(src):
     protos = sorted(str(p.relative_to(src)) for p in (src / 'proto').glob('*.proto'))
     sh('protoc', '-I=proto', '--go_opt=Mgoogle/protobuf/descriptor.proto=google.golang.org/protobuf/types/descriptorpb',
        '--go_out=sim/core', *protos, cwd=src)
+
+
+def prepare_checkout(src):
+    """Generate Go prerequisites before any data extractor imports engine packages."""
+    prepare = os.environ.get('FOREVERCORE_PREPARE')
+    if prepare:
+        sh('bash', '-c', prepare, cwd=src)
+    else:
+        protoc(src)
 
 
 def packages(src):
@@ -372,6 +382,8 @@ def main():
         for src in (upstream_src, parity_src, overlay_src):
             checkout(repo, base, src)
         apply_patches(overlay_src, patches)
+        for src in (upstream_src, parity_src, overlay_src):
+            prepare_checkout(src)
         client_build = (overlay_src / 'assets/db_inputs/forever_client_build.txt').read_text().strip()
         report['clientBuild'] = client_build
 
@@ -418,12 +430,6 @@ def main():
                         liveHunter='hunter-live-ammo' in report['overlay']['applied'],
                         liveWarlock='warlock-live-demon-stats' in report['overlay']['applied'])
         engine_data.write_text(json.dumps(manifest, separators=(',', ':')))
-        for src in (upstream_src, parity_src, overlay_src):
-            prepare = os.environ.get('FOREVERCORE_PREPARE')
-            if prepare:  # offline or proxied machines: own module/protoc setup, run in the checkout
-                sh('bash', '-c', prepare, cwd=src)
-            else:
-                protoc(src)
         ov_cli = checks(upstream_src, parity_src, overlay_src, patches, work, report)
         if a.windows_exe:
             a.windows_exe.parent.mkdir(parents=True, exist_ok=True)
@@ -437,6 +443,7 @@ def main():
             if leveling != CORE / 'leveling-data.json':
                 shutil.copyfile(leveling, CORE / 'leveling-data.json')
             shutil.copyfile(engine_data, CORE / 'engine-data.json')
+            write_talent_layout(manifest, CORE.parent / 'ForeverSimBridge/TalentLayoutData.lua')
             if families:
                 shutil.copyfile(families, CORE / 'creature-families.json')
         print(f"engine {new_lock['buildIdentity']} + overlay {new_lock['overlay']}: all checks passed")

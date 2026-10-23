@@ -478,7 +478,7 @@ func TestTunedRotationNamesAndLookup(t *testing.T) {
 	if _, ok := lookupRotation(rotations, "fire"); !ok {
 		t.Fatal("plain name")
 	}
-	for _, bad := range []string{"eigen:fire", "eigen:fire:", "eigen:fire:0,0,1,2", "eigen:fire:0,1,2,9", "eigen:nope:0,1", "eigen:fire:a,b", "fire:0,1"} {
+	for _, bad := range []string{"eigen:fire:0", "eigen:fire:0,1,2", "eigen:fire", "eigen:fire:", "eigen:fire:0,0,1,2", "eigen:fire:0,1,2,9", "eigen:nope:0,1", "eigen:fire:a,b", "fire:0,1"} {
 		if _, ok := lookupRotation(rotations, bad); ok {
 			t.Fatalf("%q must not resolve", bad)
 		}
@@ -551,5 +551,25 @@ func TestRotaTuneFindsABetterOrder(t *testing.T) {
 	}
 	if _, e := s.Run(t.Context(), Job{Kind: "rota-tune", State: map[string]any{"sim": snap}, Payload: map[string]any{}}); e == nil {
 		t.Fatal("a missing rotation must be refused")
+	}
+}
+
+func TestEmptyTalentOverrideAndInvalidRotationOrder(t *testing.T) {
+	s, m := fakeService(t)
+	snap := mageSnapshot(t, m, fireTalents)
+	for _, payload := range []map[string]any{{"talents": []any{}}, {"talents": map[string]any{}}, {"talentsString": ""}} {
+		req, e := s.liveRequest(Job{State: map[string]any{"sim": snap}, Payload: payload})
+		if e != nil {
+			t.Fatal(e)
+		}
+		if text := str(player(req), "talentsString"); strings.Trim(text, "-0") != "" {
+			t.Fatalf("empty build reused live talents: %s", text)
+		}
+	}
+	for _, order := range [][]any{{"bad"}, {0.5}, {0.0}} {
+		_, e := s.rotaTune(t.Context(), Job{State: map[string]any{"sim": snap}, Payload: map[string]any{"rotation": "fire", "order": order}})
+		if e == nil {
+			t.Fatalf("invalid order accepted: %v", order)
+		}
 	}
 }

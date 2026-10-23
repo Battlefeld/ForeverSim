@@ -25,6 +25,7 @@ LiveUI.lua
 ItemScore.lua
 DungeonCatalogData.lua
 DungeonCatalog.lua
+TalentLayoutData.lua
 UI/ArtData.lua
 UI/Art.lua
 UI/Widgets.lua

@@ -171,10 +171,14 @@ local function aplValue(node,E)
  if node.const then
   local v=node.const.val
   if type(v)=='number'then return v end
-  if type(v)=='string'then return tonumber(v:match('([%d%.]+)'))end
+  if type(v)=='string'then
+   local n=tonumber(v:match('^%s*([%+%-]?[%d%.]+)%%?s?%s*$'))
+   if n and v:find('%',1,true)then return n/100 end
+   return n
+  end
   return nil
  end
- if node.currentManaPercent then local v,m,ok=power('player');return ok and m>0 and v*100/m or nil end
+ if node.currentManaPercent then local v,m,ok=power('player');return ok and m>0 and v/m or nil end
  if node.spellTimeToReady then
   local id=aplID(node.spellTimeToReady);if not id then return nil end
   if E.ready[id]then return math.max(0,E.ready[id]-E.vt)end
@@ -267,7 +271,7 @@ end
 function HUD.Rows()
  local C=ForeverCoreClient;local Sim=C and C.Sim
  local rot=Sim and Sim.Rotation and Sim.Rotation()
- if rot and type(rot.priority)=='table'and #rot.priority>0 then return rot.priority,'engine'end
+ if rot and not(Sim.IsStale and Sim.IsStale(rot))and type(rot.priority)=='table'and #rot.priority>0 then return rot.priority,'engine'end
  return HUD.BasicRows(),'basic'
 end
 

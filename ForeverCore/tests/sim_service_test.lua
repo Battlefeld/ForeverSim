@@ -10,7 +10,7 @@ loadAddon('ForeverSimBridge');loadAddon('ForeverCoreBridge')
 UnitClass=function(u)if u=='player'then return'Mage','MAGE',8 end end
 local level=60;UnitLevel=function()return level end
 MOCK.Fire('PLAYER_LOGIN');MOCK.Advance(.5,.05)
-local C=ForeverCoreClient;local Sim=C.Sim;local P=FUSLive
+local C=ForeverCoreClient;C.SimCharacterContext=function()return C.SimCacheContext()end;local Sim=C.Sim;local P=FUSLive
 assert(Sim,'Sim.lua is not loaded')
 C.queue={};C.pending=nil;C.Say=function()end
 ForeverCoreBridgeDB.sim=nil
@@ -92,7 +92,7 @@ sent.cb({builds={
 }})
 assert(#got==2 and issue==nil)
 local rec=Sim.Result('live');assert(rec.dps==1641.2 and rec.rotation=='frost' and rec.context=='ctx-1' and rec.priority[1].spellId==116)
-assert(Sim.Result(own.id).priority==nil,'only the live build keeps its priority list')
+assert(Sim.Result(own.id).priority[1].spellId==133,'saved builds keep priorities for the selected detail panel')
 assert(not Sim.IsStale(rec),'same state: not stale')
 C.SimCacheContext=function()return'ctx-2'end;assert(Sim.IsStale(rec),'another state: stale')
 C.SimCacheContext=function()return'ctx-1'end;C.engineRevision='eng-2';assert(Sim.IsStale(rec),'another engine: stale');C.engineRevision='eng-1'
@@ -190,7 +190,7 @@ assert(sent.kind=='build-detail' and sent.opts.timeout==300 and sent.payload.cur
 sent.cb({dps=1850.5,rotation='fire',rotations={{name='fire',dps=1850.5}},spec='mage',priority={{spellId=133}},duration=120,
  breakdown={{spellId=133,pct=60},{rest=true,pct=40}},curve={{t=15,dps=1500,mana=-70},{t=30,dps=1600,mana=-140}}})
 assert(detail.breakdown[1].pct==60 and #detail.curve==2 and detail.curve[2].mana==-140)
-assert(Sim.Result(own.id).dps==1850.5 and Sim.Result(own.id).detail.breakdown and Sim.Result(own.id).priority==nil,'a saved build keeps no priority list')
+assert(Sim.Result(own.id).dps==1850.5 and Sim.Result(own.id).detail.breakdown and Sim.Result(own.id).priority[1].spellId==133,'a saved build keeps its own priority list')
 assert(C.ActiveRotation()=='frost','another build does not change the active rotation')
 sent=nil;Sim.Detail({id='live',name='Im Spiel'},nil);assert(sent.payload.build.talents==nil and next(sent.payload.build)==nil or sent.payload.build.gearPreset==nil)
 sent.cb({dps=1700,rotation='arcane',priority={{spellId=5143}},breakdown={},curve={}})

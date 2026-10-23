@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.25.4'
-          cache-dependency-path: ForeverCore/go.sum
+          cache: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -66,27 +66,9 @@ jobs:
           cd "$RUNNER_TEMP/forevercore-installer"
           go mod init forevercoreinstaller
           GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o "$GITHUB_WORKSPACE/dist/ForeverCore_AllesInEinem_Setup.exe" .
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ForeverCore-Windows-Complete
-          path: |
-            dist/*.zip
-            dist/*.exe
-          retention-days: 7
-      - name: Publish standalone all-in-one setup EXE
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Save Windows package to artifacts branch
         shell: bash
         run: |
-          set -euo pipefail
-          tag="forevercore-current"
-          exe="dist/ForeverCore_AllesInEinem_Setup.exe"
-          test -s "$exe"
-          notes="Aktueller Komplett-Installer fuer Windows mit ForeverCore, MythicSim und den Addons. Build: $GITHUB_SHA. Dies ist ein Test-Build; Ingame-Funktionen sind noch nicht bestaetigt."
-          if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" "$exe" --clobber
-            gh release edit "$tag" --title "ForeverCore - aktueller Windows-Installer" --notes "$notes"
-          else
-            gh release create "$tag" "$exe" --target "$GITHUB_SHA" --prerelease \
-              --title "ForeverCore - aktueller Windows-Installer" --notes "$notes"
-          fi
+          bash .github/scripts/publish-artifacts.sh \
+            dist/ForeverCore_0.6.0_Windows_Test.zip::windows/package/ForeverCore_0.6.0_Windows_Test.zip \
+            dist/ForeverCore_AllesInEinem_Setup.exe::windows/package/ForeverCore_AllesInEinem_Setup.exe

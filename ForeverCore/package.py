@@ -30,7 +30,7 @@ for name in ['routelib.lua','wowmock.lua','gameapi.lua','timemodel.lua']:
 (runtime/'ForeverCore').mkdir()
 for name in ['headless.lua','engine-data.json','engine.lock.json']:shutil.copy2(core/name,runtime/'ForeverCore'/name)
 if (core/'creature-families.json').exists():shutil.copy2(core/'creature-families.json',runtime/'ForeverCore'/'creature-families.json')
-shutil.copytree(core,stage/'Source/ForeverCore',ignore=shutil.ignore_patterns('*.exe','__pycache__'))
+shutil.copytree(core,stage/'Source/ForeverCore',ignore=shutil.ignore_patterns('*.exe','forevercore','__pycache__'))
 shutil.copytree(repo/'ForeverCoreBridge',stage/'Source/ForeverCoreBridge')
 license_dir=stage/'Lizenzen';license_dir.mkdir();shutil.copy2(a.engine_source/'LICENSE',license_dir/'MythicSim-MIT.txt');shutil.copy2(a.lua_license,license_dir/'Lua.txt')
 notice='MythicSim / WoWSims: https://github.com/sage3648/mythicsim-forever-engine-go\nhttps://github.com/wowsims/forever\nEngine: '+json.loads((core/'engine.lock.json').read_text())['commit']+'\nRestedXP: https://github.com/RestedXP/RXPGuides (CC BY-NC-SA 4.0)\nQuestieDB: https://github.com/Questie/QuestieDB\nLua: https://www.lua.org (MIT)\n'

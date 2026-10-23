@@ -35,14 +35,23 @@ function FC.ReadDps()
  local dm=C_DamageMeter;if not dm or not dm.GetCombatSessionFromType or not Enum or not Enum.DamageMeterSessionType or not Enum.DamageMeterType then return nil end
  local ok,session=pcall(dm.GetCombatSessionFromType,Enum.DamageMeterSessionType.Current,Enum.DamageMeterType.Dps)
  if not ok or type(session)~='table'or(FUSLive and FUSLive.isProtected and FUSLive.isProtected(session))then return nil end
- for _,src in ipairs(session.combatSources or{})do
-  local okSrc,v=pcall(function()
-   if src.isLocalPlayer==true then
-    return FUSLive and FUSLive.publicNumber and FUSLive.publicNumber(src.amountPerSecond)or(type(src.amountPerSecond)=='number'and src.amountPerSecond or nil)
+ local function protected(v)return FUSLive and FUSLive.isProtected and FUSLive.isProtected(v)or false end
+ local function read()
+  local sources=session.combatSources
+  if protected(sources)or type(sources)~='table'then return nil end
+  for _,src in ipairs(sources)do
+   if not protected(src)and type(src)=='table'then
+    local mine=src.isLocalPlayer
+    if not protected(mine)and mine==true then
+     local raw=src.amountPerSecond;local v
+     if FUSLive and FUSLive.publicNumber then v=FUSLive.publicNumber(raw)
+     elseif not protected(raw)and type(raw)=='number'then v=raw end
+     if v and v>0 then return v end
+    end
    end
-  end)
-  if okSrc and v and v>0 then return v end
+  end
  end
+ local readable,value=pcall(read);return readable and value or nil
 end
 
 -- Collecting ------------------------------------------------------------------------------------------------------------------
@@ -82,6 +91,7 @@ end
 function FC.OnGlow(id,on)
  if not fight or not id then return end
  if on then
+  if fight.open[id]then return end
   local p={id=id,at=now(),casts={}};fight.procs[#fight.procs+1]=p;fight.open[id]=p
  else
   local p=fight.open[id];if p then p.hideAt=now();fight.open[id]=nil end
@@ -160,7 +170,7 @@ function FC.Finish(name,success)
  local s=FC.Summarize(f)
  if s.duration<10 or(s.counted<3 and s.procTotal==0)then return s end   -- too short to say anything
  local dps=FC.ReadDps();s.dps=dps
- local C=ForeverCoreClient;local live=C and C.Sim and C.Sim.Result('live');s.simDps=live and tonumber(live.dps)or nil
+ local C=ForeverCoreClient;local live=C and C.Sim and C.Sim.Result('live');s.simDps=live and not(C.Sim.IsStale and C.Sim.IsStale(live))and tonumber(live.dps)or nil
  if not(HUD.Config().fightCheck==false)then FC.Show(s)end
  FC.last=s
  return s

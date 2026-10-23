@@ -1,6 +1,6 @@
 # ForeverCore – Was das Programm macht und wie
 
-Stand: 18.10.2026 · Zielclient: WoW: Forever 1.60.x · Sprache der Oberfläche: Deutsch
+Stand: 20.10.2026 · Zielclient: WoW: Forever 1.60.x · Sprache der Oberfläche: Deutsch
 
 > **Ehrlicher Hinweis vorab:** Alles hier ist mit Lua-Tests und Mocks geprüft, nicht im
 > echten Client. Der Transport über den Bildschirm, die Pixelstreifen-Anpassung und die
@@ -167,7 +167,7 @@ Dadurch löst ein Buff **keine** Neuberechnung aus. Ein Fehler wie "Munition kon
 (Tooltips direkt nach dem Login noch nicht geladen) wird bis zu viermal im Abstand von 3 s wiederholt und nicht
 dauerhaft gespeichert.
 
-- Limit: 1.200 Einträge (ältester fliegt zuerst raus), Cache-Version 3.
+- Limit: 1.200 Einträge (ältester fliegt zuerst raus), Cache-Version 6.
 - Die zuletzt bekannte Engine-Version wird mitgespeichert, damit der Cache direkt nach dem Login
   greift, noch bevor der PC antwortet. Ändert sich die Engine, wird neu gerechnet.
 
@@ -190,7 +190,7 @@ Zonenwechsel oder Aura-Änderungen verändern sie nicht und werden ignoriert.
   mit allen Werten.
 - **Gelernte Item-Werte:** Items, die die Datenbank der EXE nicht kennt (neue Forever-Items, Varianten wie
   "of Agility"), schickt das Addon einmal mit allen Werten. Die EXE speichert sie auf der Platte
-  (`DataItemslearned.json`, 7 Tage gültig). Danach reicht die ID: Ein Dungeon-Auftrag besteht nur noch aus den
+  (`Data/Items/learned.json`, 7 Tage gültig). Danach reicht die ID: Ein Dungeon-Auftrag besteht nur noch aus den
   Item-IDs, der Zustand des Charakters ist der EXE schon bekannt (auch nach `/reload`, solange dieselbe EXE läuft).
 - **Parallel rechnen:** Die EXE startet bis zu 6 Engine-Läufe gleichzeitig (halbe Zahl der Prozessorkerne) statt
   einen nach dem anderen. Bis zu 24 Items pro Auftrag, Zeitlimit 170 s.
@@ -376,16 +376,13 @@ Entfernt wurden zuerst alle Teile, die weder die Item-Berechnung noch Rotation u
 Stat-Gewichte (Fenster und Tabellen), Insights-Fenster, Ausrüstungsplan, die alte Dungeon-Vorberechnung und die
 Routen-Brücke (ersetzt durch die Dungeon-Liste von ForeverCore), das Notiz-Protokoll und nie geladene Altdateien.
 
-Danach wurden **das ForeverSim-Fenster, Rotation und Talente entfernt**, damit sie neu gestaltet werden können (neu gebaut: 6.8):
-das Fenster mit allen Seiten (Übersicht, Ausrüstung, Rotation Style, Talente, Quests, Erweitert/Mehr), der Talentplaner
-und der Talententwurf, das Rotations-HUD, der Rotations-Optimierer im Spiel (auch sein Start nach dem Login), die
-Talentempfehlung über ForeverCore, Leveling-Modell, Kampfverlauf, Kampfaudit, Gegnerauswahl, die XN-Vorlagen und die
-Bilder des Fensters. Der Minimap-Knopf öffnet die ForeverCore-Übersicht; statt „ForeverSim" steht dort „Verbindung".
+Das neue ForeverSim-Fenster ist wieder enthalten: Talente, Rotation und Beute (Abschnitt 6.8), einschließlich
+Rotations-HUD, Skillungsvergleichen, Rotationsverfeinerung und Login-Prüfung. Das bisherige Fenster und seine
+alten Szenario-/Analyseansichten bleiben entfernt. Linksklick auf den Minimap-Kristall öffnet ForeverSim,
+Rechtsklick die ForeverCore-Verbindungsübersicht.
 
-Was bleibt: Das Addon liest weiterhin deine Talente und dein Zauberbuch, denn jede Item-Rechnung schickt sie mit.
-Die Klassenmodule, die Lua-Rechnung (nur noch Rückfall für Items ohne ForeverCore) und die Job-Warteschlange bleiben
-aus demselben Grund. Auf dem PC kennt `ForeverCore.exe` die Aufträge `rotation`, `talents`, `talent-next`,
-`talent-build`, `weights`, `analysis` und `leveling` weiterhin; das Addon schickt sie nur nicht mehr.
+Die Klassenmodule, Talent- und Zauberbucherfassung sowie die Item-Pipeline bleiben gemeinsam nutzbar.
+Auf dem PC sind die in Abschnitt 6.8 beschriebenen Aufträge mit derselben MythicSim-Engine verbunden.
 
 Der Generator des Dungeon-Katalogs liegt in `_dev/tools`, die Entwicklerdateien der Klassenmodule in
 `_dev/ForeverSimBridge-Development` (nicht im Addon).
@@ -406,6 +403,13 @@ links, ForeverCore-Kristall rechts (blau = `ForeverCore.exe` antwortet, grau = n
 in Item-Werte, Dungeon-Liste und Cache-Schlüssel. Eine verfeinerte Rotation reist als Name (`eigen:<Rotation>:<Reihenfolge>`)
 und läuft deshalb durch alle Aufträge wie jede andere.
 
+Build-Ergebnisse werden nach Charakterzustand gespeichert; Item-Ergebnisse zusätzlich nach der aktiven Rotation.
+Ein Rotationswechsel entwertet die Itemvergleiche, aber nicht das gerade berechnete Build-Ergebnis.
+Nach einer Änderung von Ausrüstung, Talenten oder Engine benutzt das HUD bis zur Neuberechnung die einfache
+Klassenrotation. Talentimporte prüfen ganze Ränge, eindeutige Plätze und den vollständigen Text. Ansicht, Live-Erfassung und
+Editor verwenden die aus dem Engine-Manifest erzeugte `TalentLayoutData.lua`; Builds und erfolgreiche
+Engine-Updates erneuern diese Daten gemeinsam mit dem Manifest.
+
 **Neu rechnen:** nur auf Knopfdruck und einmal nach dem Anmelden, wenn sich Engine, Spielpatch, Ausrüstung, Stufe oder die
 tragbaren Items in den Taschen seit der letzten Berechnung geändert haben (kleine Meldung mit den Gründen, läuft im
 Hintergrund). Sonst bleibt alles, wie es ist.
@@ -422,14 +426,30 @@ wird nicht gelesen.
 
 Neue Aufträge von `ForeverCore.exe`: `presets` (Vorlagen der Engine), `talent-compare` (mehrere Skillungen, gleiche Ausrüstung,
 gleicher Seed, jede mit ihrer besten Rotation; `screenOnly` für die Suche), `build-detail` (Zauberanteile, DPS- und Mana-Verlauf),
-`rota-tune` (ein Schritt der Rotationsverfeinerung). Die Tests dazu laufen ohne echte Engine gegen eine Stand-in-Engine
-(`fake_engine_test.go`); die Lua-Tests sind `sim_service`, `window`, `talents_tab`, `rotation_tab`, `loot_tab`, `hud`, `fight`,
+`rota-tune` (ein Schritt der Rotationsverfeinerung). Die Orchestrierungsprüfungen nutzen eine Stand-in-Engine (`fake_engine_test.go`);
+zusätzlich prüfen `builds_live_test.go` und die Integrations-CI diese Aufträge mit der echten gepinnten Engine. die Lua-Tests sind `sim_service`, `window`, `talents_tab`, `rotation_tab`, `loot_tab`, `hud`, `fight`,
 `talent_search`, `login_check`, `loot`.
 
 **Noch nicht im Spiel bestätigt:** das ganze Fenster und vor allem das HUD (Procs über die Aktivierungs-Ereignisse,
 Tastenanzeige, Aktionsleisten-Rahmen). Die Beute-Quellen sind der Dungeon-Katalog, deine Taschen und die MythicSim-Liste;
-Quest-, Handwerks-, Ruf-, Auktions- und Raid-Quellen sowie Werte für Verzauberungen und Buffs brauchen Daten, die das Addon
-noch nicht hat. Der „Pre-BiS gesamt“-Wert ist die Summe der Einzelwerte (eine Näherung).
+Quest-, Handwerks-, Ruf-, Auktions- und Raid-Quellen brauchen weitere Daten. Für Verzauberungen und Buff-Food gibt es nun den unten beschriebenen vorläufigen Vergleich. Der „Pre-BiS gesamt“-Wert ist die Summe der Einzelwerte (eine Näherung).
+
+### Verzauberungen & Buff-Food: DPS-Empfehlungen (vorläufig)
+
+Im Tab **Beute → Verzauberungen & Buffs → VZ & Food simmen** berechnet ForeverCore mit der gepinnten MythicSim-Engine die beste bekannte VZ pro getragenem Ausrüstungsplatz und die besten bekannten Buff-Foods. Rechts stehen die Änderungen nach einzelnem DPS-Gewinn sortiert, mit Prozent und DPS. Bei Gleichstand oder schlechteren Alternativen bleibt die aktuelle VZ die Empfehlung.
+
+Die Referenz enthält **alle aktuell getragenen VZ, ohne Food**. Jeder Kandidat ersetzt genau eine VZ beziehungsweise fügt genau ein Food hinzu; Rotation, Charakter und Seed bleiben gleich. Diese Einzelgewinne dürfen nicht addiert werden. Der normale Itemvergleich bleibt ohne VZ und Buff-Food; dieser Tab verwendet einen eigenen Ergebnisstand, der auch bei einer geänderten VZ veraltet.
+
+Vorläufiger Datenstand vom **20.10.2026**, enthalten in `ForeverCore/enhancements-data.json`:
+
+- **Food:** [Wowhead-Artikel](https://www.wowhead.com/forever/news/all-cooking-food-that-currently-gives-xp-buffs-in-wow-forever-382928), 100 verschiedene Item-IDs nach Zusammenführen doppelter Zeilen. Die tatsächlichen Werte, Mindestlevel und Dauer stammen aus den einzelnen aktuellen Forever-Item-Tooltips (`valueSource` pro Eintrag), nicht blind aus der Artikeltabelle.
+- **89 Foods** haben zugeordnete statische Kampfwerte. **11 bleiben ausgeschlossen**: uneindeutige Krit-Zuordnung, Bewegung oder Berufsboni. Sunny Tea ist mit **33 Heilbonus** erfasst, Briny Seafood Stew mit **14 Zauberschaden**; die widersprüchlichen Artikelangaben werden nicht verwendet.
+- **VZ:** [Wowhead Forever: deutsche Verzauberkunst-Rezepte](https://www.wowhead.com/forever/de/items/recipes/enchanting#0-4+20), 172 Rezepte. **115** sind per Rezept-Item-ID einer tatsächlichen Verzauberungs-Effekt-ID im gepinnten Engine-Datenbestand zugeordnet; **57 noch nicht** und deshalb ausgeschlossen. Rezept-, Zauber- und Effekt-ID bleiben getrennt. VZ-Effekte und Procs berechnet die Engine.
+- Slot und Waffenart werden geprüft (z. B. Zweihand, Stab, Schild, gehaltene Nebenhand, Bogen/Armbrust/Gewehr statt Zauberstab). VZ mit nicht bestätigter Berufsvoraussetzung werden ausgeschlossen. **Empfänger-/Itemlevel-Voraussetzungen der VZ sind noch nicht vollständig erfasst und müssen im Spiel geprüft werden.** Die Rangliste ist eine vorläufige Empfehlung unter den modellierten Kandidaten, keine Vollständigkeitszusage.
+- Food wird als vor dem Kampf aktiv und während der gesamten simulierten Kampfdauer wirksam berechnet. Der separat erfasste **5-%-Bonus auf Kill-EP ist kein DPS-Bonus**. Andere Buffs, Tränke und Elixiere sind damit noch nicht ergänzt.
+- Unbekannte aktuell getragene VZ führen zu einer erklärenden Fehlermeldung, statt für die Referenz stillschweigend entfernt zu werden. Fehlgeschlagene Kandidaten und ausgeschlossene Datensätze werden gezählt. Der Katalog ist an die Upstream-Revision gebunden; nach einem Engine-Wechsel muss er abgeglichen werden.
+
+`enhancement_sources.py` erzeugt den Katalog aus gespeicherten Quellseiten, Item-Tooltips und dem gepinnten Engine-Checkout. Der laufende Simulator benötigt dafür keinen Internetabruf. Neue Auftragsart: `enhancements`. Die automatische Login-Berechnung startet diesen zusätzlichen Vergleich nicht; er läuft ausdrücklich auf Knopfdruck.
 
 ---
 
@@ -521,9 +541,10 @@ löschen. Er baut sich beim Spielen neu auf.
 
 - **Kein Echtclient-Nachweis** für Transport, Pixelstreifen-Anpassung, Dungeon-Automatik,
   Begleiterwerte und Köcher-Erkennung. Dafür gibt es die Testliste unten.
-- **Antwortslots:** 2.048 pro Sitzung; jede Abfrage verbraucht einen. Jedes Item ist ein eigener
-  Auftrag; Bündelung bräuchte eine Änderung am Go-Programm.
-- **Modellgrenzen:** Unter Level 10 keine DPS-Simulation. Level 10–59 ist ein
+- **Antwortslots:** 2.048 pro Sitzung. Auch erfolglose Abfragen verbrauchen einen Slot; ein gebündelter
+  Item-Auftrag liefert mehrere Ergebnisse in einer Antwort. Danach ist `/reload` nötig.
+- **Modellgrenzen:** Item-Bewertungen ab Stufe 5; Stufe 5–9 wird mit Engine-Stufe 10 angenähert und markiert.
+  Rotation/Beute im Fenster ab 50, Talente ab 60, HUD ab 1. Level 10–59 ist ein
   Modell mit eigenem Level-Layer, kein im Spiel bewiesener Vollsimulator. Heilerrollen sind keine
   Freigabe. Gegnerwerte unter Level 60 sind teils geschätzt und markiert.
 - **Nicht modelliert** (wird im Ergebnis genannt): Frostrüstung, Dämonenhaut, Waffensteine,
@@ -553,7 +574,13 @@ Lua-Suiten (ohne WoW, mit Mock-Client), aufrufbar mit `lua5.1 ForeverCore/tests/
 | `pixel_style_test` | Kontrastgrenzen, Größen, Rückfall |
 | `pixel_tune_test` | Automatische Streifen-Anpassung |
 
-Go-Tests, Vet und Windows-Build laufen im GitHub-Workflow *ForeverCore integration*.
+Go-Tests, Vet und Windows-Build laufen im GitHub-Workflow *ForeverCore integration* auf `main` und
+`claude/focused-lovelace-hqyfx4`, außerdem bei Pull Requests nach `main`. Der Claude-Branch ist der
+Entwicklungsstand; erfolgreiche Tests übertragen ihn nicht automatisch nach `main`.
+
+Zusätzlich prüfen `review_contract_test` das Zusammenspiel von Charakter-/Item-Cache, Rotationswechsel,
+Talentimport, Beute-Wiederholungen und APL-Bedingungen und `class_ui_test` alle neun Klassen auf
+Stufe 1/5/49/50/59/60. Diese Mock-Prüfungen ersetzen keine Ingame-Abnahme.
 
 ### Deine Ingame-Prüfliste
 
@@ -575,7 +602,7 @@ Go-Tests, Vet und Windows-Build laufen im GitHub-Workflow *ForeverCore integrati
 | „Antwortslots verbraucht: /reload erforderlich" | 2.048 Antworten in der Sitzung aufgebraucht → `/reload` |
 | „Zustand geändert: Ergebnis verworfen" | Gear/Level/Talente änderten sich während der Rechnung; wird automatisch neu gestartet |
 | Item zeigt „?" | Effekt oder Item nicht modelliert; kein Schätzwert |
-| Item zeigt gar nichts | `/fc on` prüfen; Level < 10; im Kampf wird nicht berechnet |
+| Item zeigt gar nichts | `/fc on` prüfen; Stufe < 5; im Kampf wird nicht berechnet |
 | Alle Werte neu gerechnet nach Engine-Update | Gewollt: andere Engine = andere Ergebnisse |
 | Fehler im Addon | `/fc log` (kopierbares Protokoll); Lua-Fehler zeigt WoW nach `/console scriptErrors 1` |
 
@@ -583,13 +610,13 @@ Go-Tests, Vet und Windows-Build laufen im GitHub-Workflow *ForeverCore integrati
 
 ## 14. Änderungen dieser Version
 
-- **ForeverSim-Fenster, Rotation und Talente entfernt** (siehe 6.7). Sie werden neu gebaut.
+- **Neues ForeverSim-Fenster:** Talente, Rotation, Beute und Kampf-HUD sind umgesetzt (Abschnitt 6.8).
 - **Dauer-Simulation behoben:** weiche/harte Ereignisse, Entprellung ohne Verlängerung,
   Mindestabstand, Doppelaufträge entfernt, getrennte Revisionen für Route und Simulation,
   Rebuild-Hook löst keine Revisionsänderung mehr aus.
 - **Item-Cache:** stabiler Schlüssel (ohne Buffs/Auren/Ressourcen), 1.200 Einträge, Persistenz
   inkl. letzter Engine-Version, Zustandssignatur statt Ereignissen.
-- **Keine automatische Rotation** mehr.
+- **Rotation:** manuell oder einmal nach dem Login bei geändertem Stand und eingeschalteter Login-Prüfung; keine laufende Ereignis-Automatik.
 - **Dungeon-Katalog in der Sim:** 31 Dungeons, Drop-Chancen im Tooltip, Dungeon-Kontext beim Betreten,
   unabhängig von ForeverDungeonQuest (das archiviert ist).
 - **Tempo:** Item-Aufträge werden gebündelt, nicht tragbare Items vorab beantwortet, Bilddauer 0,10 s.

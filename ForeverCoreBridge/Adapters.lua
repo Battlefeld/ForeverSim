@@ -38,9 +38,12 @@ function C.Capture(kind)
   s.mode=M.db.settings and M.db.settings.mode or'balanced'
   s.routeDB={settings=C.clean(M.db.settings),done=C.clean(M.db.done),phases=C.clean(M.db.phases),routeProgress=C.clean(M.db.routeProgress),completedPlans=C.clean(M.db.completedPlans),routeSkips=C.clean(M.db.routeSkips),skipHistory=C.clean(M.db.skipHistory),skipContexts=C.clean(M.db.skipContexts),deferred=C.clean(M.db.deferred),routeRecovery=C.clean(M.db.routeRecovery),routeTravel=C.clean(M.db.routeTravel),routeTravelVisits=C.clean(M.db.routeTravelVisits),buffs=C.clean(M.db.buffs),observedXP=C.clean(M.db.observedXP),dungeonRuns=C.clean(M.db.dungeonRuns)}
  end
- if kind=='sim'or kind=='item'or kind=='talent-compare'or kind=='presets'or kind=='build-detail'or kind=='rota-tune'or kind=='weights'then
+ if kind=='sim'or kind=='item'or kind=='talent-compare'or kind=='presets'or kind=='build-detail'or kind=='rota-tune'or kind=='weights'or kind=='enhancements'then
   local P=FUSLive;if not P or not P.capture then error('ForeverSim fehlt')end
   s.sim=C.clean(P.capture(true));if not s.sim then error('SIM-Snapshot nicht lesbar')end
+  if kind=='enhancements'and C.Enhancements then
+   s.sim.enhancementEnchants=C.Enhancements.CaptureEnchants()
+  end
   local actualFree=read(GetUnspentTalentPoints)
   if actualFree==nil then actualFree=tonumber(s.sim.unspentTalentPoints)end
   if actualFree==nil then
@@ -141,17 +144,13 @@ local function stableSim(sim)
   petFamily=hpet and {family=hpet.family,familyId=hpet.familyId,level=hpet.level} or nil}
 end
 C.StableSim=stableSim
--- ignoreRotation: the key of the character's state alone (gear, talents, level, engine), as the ForeverSim window uses it for its
--- results; the item values also depend on the active rotation and use the default key.
-local ctxCache={}
-function C.SimCacheContext(ignoreRotation)
+local function simContext(includeRotation)
  if not C.engineRevision or C.engineRevision=='' then return nil end
  local P=FUSLive
  if not P or not P.capture then return nil end
- local rotation=(not ignoreRotation)and C.ActiveRotation and C.ActiveRotation()or nil
- local cache=ctxCache[ignoreRotation and 2 or 1];if not cache then cache={};ctxCache[ignoreRotation and 2 or 1]=cache end
+ local rotation=includeRotation and C.ActiveRotation and C.ActiveRotation()or nil
  local revision=tostring(C.simRevision)..'/'..tostring(P.revision)..'/'..C.engineRevision..'/'..tostring(rotation)
- if cache.revision==revision then return cache.context end
+ if cacheRevision==revision then return cacheContext end
  local ok,snapshot=pcall(P.capture,true)
  if not ok or type(snapshot)~='table' then return nil end
  local sim=stableSim(C.clean(snapshot))
@@ -161,10 +160,13 @@ function C.SimCacheContext(ignoreRotation)
  local serialized=C.json({engine=C.engineRevision,guid=read(UnitGUID,'player') or read(UnitName,'player'),sim=sim,rotation=rotation})
  -- Two directional CRC values and length, so accidental key collisions are
  -- extremely unlikely; every item also has its own exact candidate signature.
- cache.context=tostring(#serialized)..':'..tostring(C.crc(serialized))..':'..tostring(C.crc(serialized:reverse()))
- cache.revision=revision
- return cache.context
+ cacheContext=tostring(#serialized)..':'..tostring(C.crc(serialized))..':'..tostring(C.crc(serialized:reverse()))
+ cacheRevision=revision
+ return cacheContext
 end
+-- Build results describe a character, while item results also depend on its active rotation.
+function C.SimCharacterContext()return simContext(false)end
+function C.SimCacheContext()return simContext(true)end
 local function persistentItems()
  ForeverCoreBridgeDB=ForeverCoreBridgeDB or{}
  local db=ForeverCoreBridgeDB

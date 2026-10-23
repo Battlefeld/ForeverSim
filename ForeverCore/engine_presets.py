@@ -30,6 +30,10 @@ def parse_talent_presets(text):
     pattern = r"(?:export\s+const\s+(\w+)\s*=\s*)?\{\s*name:\s*" + QUOTED + r"\s*,\s*data:\s*SavedTalents\.create\(\s*\{\s*talentsString:\s*" + QUOTED
     for m in _strings(pattern, text):
         found.append({'var': m.group(1) or '', 'name': pick(m, 2).strip(), 'talentsString': pick(m, 5).strip()})
+    # Current MythicSim uses makePresetTalents(name, SavedTalents.create(...)).
+    pattern = r"(?:export\s+const\s+(\w+)\s*=\s*)?(?:PresetUtils\.)?makePresetTalents\(\s*" + QUOTED + r"\s*,\s*SavedTalents\.create\(\s*\{\s*talentsString:\s*" + QUOTED
+    for m in _strings(pattern, text):
+        found.append({'var': m.group(1) or '', 'name': pick(m, 2).strip(), 'talentsString': pick(m, 5).strip()})
     return found
 
 
@@ -112,23 +116,35 @@ def collect_presets(engine, specs, known_items):
         got = read_spec_presets(engine, folder)
         entry = result.setdefault(cl, {'talents': [], 'gear': [], 'builds': []})
         names = {t['name'] for t in entry['talents']}
+        talent_names = {}
         for t in got['talents']:
-            if t['name'] in names:
-                continue
-            names.add(t['name'])
-            entry['talents'].append({'name': t['name'], 'talentsString': t['talentsString'], 'spec': spec})
+            name = t['name']
+            if name in names:
+                name = f"{name} [{spec}]"
+            names.add(name)
+            talent_names[t['name']] = name
+            entry['talents'].append({'name': name, 'talentsString': t['talentsString'], 'spec': spec})
         gnames = {g['name'] for g in entry['gear']}
+        gear_names = {}
         for g in got['gear']:
             unknown = sorted({str(i['id']) for i in g['items'] if isinstance(i, dict) and i.get('id') and str(i['id']) not in known_items})
             if unknown:
                 report.append(f"{folder}: Ausruestung '{g['name']}' enthaelt unbekannte Items {', '.join(unknown[:5])}")
                 continue
-            if g['name'] in gnames:
-                continue
-            gnames.add(g['name'])
-            entry['gear'].append({'name': g['name'], 'items': g['items'], 'spec': spec})
+            name = g['name']
+            if name in gnames:
+                name = f"{name} [{spec}]"
+            gnames.add(name)
+            gear_names[g['name']] = name
+            entry['gear'].append({'name': name, 'items': g['items'], 'spec': spec})
         for b in got['builds']:
-            entry['builds'].append(dict(b, spec=spec))
+            row = dict(b, spec=spec)
+            row['talents'] = talent_names[b['talents']]
+            if b.get('gear'):
+                if b['gear'] not in gear_names:
+                    continue
+                row['gear'] = gear_names[b['gear']]
+            entry['builds'].append(row)
         if not got['talents']:
             report.append(f"{folder}: keine Talentvorlagen gefunden")
     return result, report

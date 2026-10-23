@@ -75,13 +75,14 @@ jobs:
           if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
           python ForeverCore/engine_update.py "${args[@]}"
 
-      - name: Report
+      - name: Save engine update report to artifacts branch
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: engine-update-report
-          path: ForeverCore/engine-update-report.json
-          if-no-files-found: ignore
+        shell: bash
+        run: |
+          if [ -f ForeverCore/engine-update-report.json ]; then
+            bash .github/scripts/publish-artifacts.sh \
+              ForeverCore/engine-update-report.json::engine/latest-report.json
+          fi
 
       - name: Commit new lock
         if: success() && inputs.dry_run != true
@@ -89,7 +90,7 @@ jobs:
         run: |
           git config user.name 'forevercore-bot'
           git config user.email 'forevercore-bot@users.noreply.github.com'
-          git add ForeverCore/engine.lock.json ForeverCore/leveling-data.json ForeverCore/engine-data.json ForeverCore/engine-update-report.json
+          git add ForeverSimBridge/TalentLayoutData.lua ForeverCore/engine.lock.json ForeverCore/leveling-data.json ForeverCore/engine-data.json
           if [ -f ForeverCore/creature-families.json ]; then git add ForeverCore/creature-families.json; fi
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -100,22 +101,6 @@ jobs:
           git push origin "HEAD:${ENGINE_BRANCH}"
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "identity=${identity}" >> "$GITHUB_OUTPUT"
-
-      - name: Publish engine
-        if: success() && steps.commit.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          cp ForeverCore/engine-data.json ForeverCore/engine.lock.json ForeverCore/leveling-data.json "$RUNNER_TEMP/dist/"
-          if [ -f ForeverCore/creature-families.json ]; then cp ForeverCore/creature-families.json "$RUNNER_TEMP/dist/"; fi
-          identity="${{ steps.commit.outputs.identity }}"
-          tag="engine-${identity##*+}-${GITHUB_RUN_ID}"
-          target=$(git rev-parse HEAD)
-          gh release create "$tag" --target "$target" --draft --prerelease \
-            --title "ForeverCore Engine $identity" \
-            --notes "MythicSim $identity mit Level-10-60-Overlay. Entwicklungsstand; Bericht im main-Branch." \
-            "$RUNNER_TEMP"/dist/*
-          gh release edit "$tag" --draft=false --prerelease
 
       - name: Open issue on failure
         if: failure()
