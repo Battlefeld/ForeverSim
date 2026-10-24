@@ -453,6 +453,31 @@ Vorläufiger Datenstand vom **20.10.2026**, enthalten in `ForeverCore/enhancemen
 
 ---
 
+### Kampfprofil für ForeverRoutes (`kill-profile`)
+
+Der Auftrag `kill-profile` rechnet mit der Engine samt Level-Overlay, wie schnell eine Klasse Questgegner tötet. Er
+rechnet pro Level (Standard 10–30) Kämpfe von 6, 10, 15, 22 und 30 Sekunden gegen ein gleich hohes Ziel und gegen ein
+Ziel zwei Level darüber. Heraus kommen der Schaden (mit Begleiter), das verbrauchte Mana abzüglich Regeneration und die
+selbst verbrauchte Gesundheit (Aderlass). ForeverRoutes liest die Datei mit `plan -profile` und berechnet daraus Kampf-
+und Pausenzeit jedes Gegners einer Route.
+
+```sh
+ForeverCore.exe -request auftrag.json -output antwort.json
+# auftrag.json: {"schema":3,"session":"kp","sequence":1,"revision":"1","kind":"kill-profile",
+#                "payload":{"class":"warlock","race":"Orc","fromLevel":10,"toLevel":30}}
+```
+
+- Der Charakter ist synthetisch: ohne Ausrüstung und Talente, Zauberränge nach Level (kein Live-Zauberbuch). Das
+  Ergebnis ist also eine Untergrenze.
+- Rotation: beim Hexer Gebrechen mit Leerwandler, beim Magier Feuer. Feuer schafft auf niedrigem Level in kurzen
+  Kämpfen klar mehr als Frost oder Arkan. Mit `rotation`, `spec`, `classOptions` und `iterations` lässt sich das ändern.
+- Der Leerwandler bekommt die Werte seines Levels aus cmangos (`warlock-demons.json`, erzeugt mit `prepare_demons.py`
+  aus classic-db, GPL-3.0). Ohne diese Werte kämpft die Engine mit einem Level-60-Dämon: Auf Level 10 käme der Hexer
+  dann auf 37 statt 14 DPS. Andere Dämonen sind im synthetischen Profil noch nicht möglich.
+- Leben und Mana pro Level kommen aus `leveling-data.json` (fest eingebaut).
+- Die Ergebnisse landen wie jede Rechnung im Cache `Data/Sims`. Ein vollständiges Profil braucht beim ersten Mal etwa
+  40 Sekunden.
+
 ## 7. Der Pixelstreifen: Aussehen, Größe, Anpassung
 
 - **Ort:** oben links im WoW-Fenster, nur während der Übertragung sichtbar.
@@ -635,6 +660,8 @@ Stufe 1/5/49/50/59/60. Diese Mock-Prüfungen ersetzen keine Ingame-Abnahme.
   <https://github.com/wowsims/forever> (MIT)
 - QuestieDB: <https://github.com/Questie/QuestieDB> · RestedXP: <https://github.com/RestedXP/RXPGuides>
 - ForeverDB: <https://foreverdb.net>
+- cmangos classic-db: <https://github.com/cmangos/classic-db> (GPL-3.0): Leerwandler-Werte pro Level in
+  `warlock-demons.json` (Kampfprofil)
 - Guide-Loot: Forever Guide 1.35.1 (mit Erlaubnis des Datenautors)
 - Lizenztexte: Ordner `Lizenzen\`
 

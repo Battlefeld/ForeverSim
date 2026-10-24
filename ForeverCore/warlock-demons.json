@@ -1,0 +1,516 @@
+{
+ "schema": "forevercore.demons.v1",
+ "source": "cmangos classic-db (GPL-3.0) pet_levelstats, creature_template 1860, creature_template_classlevelstats; Schaden nach mangos-classic Pet::InitStatsForLevel (SUMMON_PET)",
+ "voidwalker": {
+  "10": {
+   "strength": 29,
+   "agility": 25,
+   "stamina": 29,
+   "intellect": 22,
+   "spirit": 26,
+   "mana": 147,
+   "meleeMin": 8.25,
+   "meleeMax": 12.37
+  },
+  "11": {
+   "strength": 30,
+   "agility": 25,
+   "stamina": 32,
+   "intellect": 22,
+   "spirit": 28,
+   "mana": 158,
+   "meleeMin": 9.31,
+   "meleeMax": 13.97
+  },
+  "12": {
+   "strength": 31,
+   "agility": 26,
+   "stamina": 36,
+   "intellect": 24,
+   "spirit": 31,
+   "mana": 180,
+   "meleeMin": 10.57,
+   "meleeMax": 15.86
+  },
+  "13": {
+   "strength": 32,
+   "agility": 28,
+   "stamina": 43,
+   "intellect": 26,
+   "spirit": 32,
+   "mana": 203,
+   "meleeMin": 11.57,
+   "meleeMax": 17.35
+  },
+  "14": {
+   "strength": 33,
+   "agility": 28,
+   "stamina": 44,
+   "intellect": 25,
+   "spirit": 35,
+   "mana": 227,
+   "meleeMin": 12.73,
+   "meleeMax": 19.09
+  },
+  "15": {
+   "strength": 34,
+   "agility": 30,
+   "stamina": 48,
+   "intellect": 26,
+   "spirit": 37,
+   "mana": 251,
+   "meleeMin": 13.68,
+   "meleeMax": 20.52
+  },
+  "16": {
+   "strength": 36,
+   "agility": 30,
+   "stamina": 52,
+   "intellect": 27,
+   "spirit": 39,
+   "mana": 275,
+   "meleeMin": 14.57,
+   "meleeMax": 21.85
+  },
+  "17": {
+   "strength": 38,
+   "agility": 31,
+   "stamina": 55,
+   "intellect": 28,
+   "spirit": 42,
+   "mana": 300,
+   "meleeMin": 15.64,
+   "meleeMax": 23.45
+  },
+  "18": {
+   "strength": 39,
+   "agility": 33,
+   "stamina": 59,
+   "intellect": 28,
+   "spirit": 38,
+   "mana": 314,
+   "meleeMin": 16.32,
+   "meleeMax": 24.48
+  },
+  "19": {
+   "strength": 40,
+   "agility": 33,
+   "stamina": 63,
+   "intellect": 30,
+   "spirit": 46,
+   "mana": 351,
+   "meleeMin": 17.18,
+   "meleeMax": 25.77
+  },
+  "20": {
+   "strength": 42,
+   "agility": 35,
+   "stamina": 67,
+   "intellect": 31,
+   "spirit": 49,
+   "mana": 377,
+   "meleeMin": 18.21,
+   "meleeMax": 27.32
+  },
+  "21": {
+   "strength": 44,
+   "agility": 36,
+   "stamina": 80,
+   "intellect": 32,
+   "spirit": 39,
+   "mana": 393,
+   "meleeMin": 19.03,
+   "meleeMax": 28.55
+  },
+  "22": {
+   "strength": 46,
+   "agility": 36,
+   "stamina": 84,
+   "intellect": 33,
+   "spirit": 41,
+   "mana": 420,
+   "meleeMin": 19.94,
+   "meleeMax": 29.91
+  },
+  "23": {
+   "strength": 47,
+   "agility": 38,
+   "stamina": 89,
+   "intellect": 34,
+   "spirit": 42,
+   "mana": 447,
+   "meleeMin": 20.65,
+   "meleeMax": 30.97
+  },
+  "24": {
+   "strength": 49,
+   "agility": 39,
+   "stamina": 93,
+   "intellect": 35,
+   "spirit": 43,
+   "mana": 476,
+   "meleeMin": 21.6,
+   "meleeMax": 32.41
+  },
+  "25": {
+   "strength": 50,
+   "agility": 40,
+   "stamina": 97,
+   "intellect": 36,
+   "spirit": 44,
+   "mana": 504,
+   "meleeMin": 22.21,
+   "meleeMax": 33.32
+  },
+  "26": {
+   "strength": 52,
+   "agility": 41,
+   "stamina": 101,
+   "intellect": 37,
+   "spirit": 46,
+   "mana": 534,
+   "meleeMin": 23.18,
+   "meleeMax": 34.78
+  },
+  "27": {
+   "strength": 53,
+   "agility": 42,
+   "stamina": 105,
+   "intellect": 38,
+   "spirit": 47,
+   "mana": 564,
+   "meleeMin": 24.0,
+   "meleeMax": 36.0
+  },
+  "28": {
+   "strength": 55,
+   "agility": 43,
+   "stamina": 110,
+   "intellect": 39,
+   "spirit": 48,
+   "mana": 592,
+   "meleeMin": 24.82,
+   "meleeMax": 37.24
+  },
+  "29": {
+   "strength": 57,
+   "agility": 44,
+   "stamina": 114,
+   "intellect": 40,
+   "spirit": 49,
+   "mana": 620,
+   "meleeMin": 25.78,
+   "meleeMax": 38.67
+  },
+  "30": {
+   "strength": 57,
+   "agility": 46,
+   "stamina": 118,
+   "intellect": 41,
+   "spirit": 51,
+   "mana": 648,
+   "meleeMin": 26.43,
+   "meleeMax": 39.64
+  },
+  "31": {
+   "strength": 59,
+   "agility": 47,
+   "stamina": 123,
+   "intellect": 42,
+   "spirit": 52,
+   "mana": 676,
+   "meleeMin": 27.23,
+   "meleeMax": 40.85
+  },
+  "32": {
+   "strength": 60,
+   "agility": 47,
+   "stamina": 127,
+   "intellect": 43,
+   "spirit": 53,
+   "mana": 720,
+   "meleeMin": 27.98,
+   "meleeMax": 41.97
+  },
+  "33": {
+   "strength": 62,
+   "agility": 49,
+   "stamina": 131,
+   "intellect": 45,
+   "spirit": 54,
+   "mana": 742,
+   "meleeMin": 28.81,
+   "meleeMax": 43.21
+  },
+  "34": {
+   "strength": 63,
+   "agility": 50,
+   "stamina": 135,
+   "intellect": 46,
+   "spirit": 56,
+   "mana": 793,
+   "meleeMin": 29.56,
+   "meleeMax": 44.34
+  },
+  "35": {
+   "strength": 64,
+   "agility": 51,
+   "stamina": 136,
+   "intellect": 46,
+   "spirit": 57,
+   "mana": 845,
+   "meleeMin": 30.45,
+   "meleeMax": 45.68
+  },
+  "36": {
+   "strength": 67,
+   "agility": 52,
+   "stamina": 137,
+   "intellect": 47,
+   "spirit": 58,
+   "mana": 879,
+   "meleeMin": 31.13,
+   "meleeMax": 46.7
+  },
+  "37": {
+   "strength": 69,
+   "agility": 53,
+   "stamina": 138,
+   "intellect": 48,
+   "spirit": 59,
+   "mana": 916,
+   "meleeMin": 32.15,
+   "meleeMax": 48.23
+  },
+  "38": {
+   "strength": 70,
+   "agility": 55,
+   "stamina": 139,
+   "intellect": 49,
+   "spirit": 61,
+   "mana": 952,
+   "meleeMin": 33.07,
+   "meleeMax": 49.61
+  },
+  "39": {
+   "strength": 72,
+   "agility": 56,
+   "stamina": 142,
+   "intellect": 49,
+   "spirit": 62,
+   "mana": 988,
+   "meleeMin": 34.13,
+   "meleeMax": 51.2
+  },
+  "40": {
+   "strength": 74,
+   "agility": 57,
+   "stamina": 147,
+   "intellect": 50,
+   "spirit": 64,
+   "mana": 1026,
+   "meleeMin": 35.22,
+   "meleeMax": 52.82
+  },
+  "41": {
+   "strength": 77,
+   "agility": 58,
+   "stamina": 152,
+   "intellect": 51,
+   "spirit": 66,
+   "mana": 1063,
+   "meleeMin": 36.72,
+   "meleeMax": 55.07
+  },
+  "42": {
+   "strength": 81,
+   "agility": 59,
+   "stamina": 156,
+   "intellect": 51,
+   "spirit": 67,
+   "mana": 1103,
+   "meleeMin": 39.17,
+   "meleeMax": 58.75
+  },
+  "43": {
+   "strength": 87,
+   "agility": 60,
+   "stamina": 160,
+   "intellect": 52,
+   "spirit": 69,
+   "mana": 1187,
+   "meleeMin": 41.83,
+   "meleeMax": 62.74
+  },
+  "44": {
+   "strength": 91,
+   "agility": 61,
+   "stamina": 164,
+   "intellect": 54,
+   "spirit": 71,
+   "mana": 1214,
+   "meleeMin": 45.41,
+   "meleeMax": 68.12
+  },
+  "45": {
+   "strength": 96,
+   "agility": 64,
+   "stamina": 169,
+   "intellect": 55,
+   "spirit": 72,
+   "mana": 1240,
+   "meleeMin": 47.47,
+   "meleeMax": 71.21
+  },
+  "46": {
+   "strength": 98,
+   "agility": 65,
+   "stamina": 173,
+   "intellect": 57,
+   "spirit": 73,
+   "mana": 1267,
+   "meleeMin": 48.49,
+   "meleeMax": 72.73
+  },
+  "47": {
+   "strength": 100,
+   "agility": 66,
+   "stamina": 177,
+   "intellect": 57,
+   "spirit": 75,
+   "mana": 1294,
+   "meleeMin": 49.67,
+   "meleeMax": 74.5
+  },
+  "48": {
+   "strength": 102,
+   "agility": 68,
+   "stamina": 181,
+   "intellect": 57,
+   "spirit": 76,
+   "mana": 1320,
+   "meleeMin": 50.69,
+   "meleeMax": 76.03
+  },
+  "49": {
+   "strength": 105,
+   "agility": 69,
+   "stamina": 186,
+   "intellect": 58,
+   "spirit": 78,
+   "mana": 1347,
+   "meleeMin": 51.85,
+   "meleeMax": 77.78
+  },
+  "50": {
+   "strength": 107,
+   "agility": 71,
+   "stamina": 190,
+   "intellect": 59,
+   "spirit": 123,
+   "mana": 1391,
+   "meleeMin": 53.23,
+   "meleeMax": 79.85
+  },
+  "51": {
+   "strength": 109,
+   "agility": 72,
+   "stamina": 194,
+   "intellect": 60,
+   "spirit": 127,
+   "mana": 1435,
+   "meleeMin": 54.29,
+   "meleeMax": 81.44
+  },
+  "52": {
+   "strength": 112,
+   "agility": 74,
+   "stamina": 198,
+   "intellect": 62,
+   "spirit": 128,
+   "mana": 1481,
+   "meleeMin": 55.54,
+   "meleeMax": 83.32
+  },
+  "53": {
+   "strength": 114,
+   "agility": 75,
+   "stamina": 203,
+   "intellect": 63,
+   "spirit": 131,
+   "mana": 1527,
+   "meleeMin": 56.62,
+   "meleeMax": 84.93
+  },
+  "54": {
+   "strength": 115,
+   "agility": 76,
+   "stamina": 207,
+   "intellect": 64,
+   "spirit": 133,
+   "mana": 1573,
+   "meleeMin": 57.85,
+   "meleeMax": 86.78
+  },
+  "55": {
+   "strength": 119,
+   "agility": 79,
+   "stamina": 211,
+   "intellect": 65,
+   "spirit": 135,
+   "mana": 1620,
+   "meleeMin": 59.03,
+   "meleeMax": 88.54
+  },
+  "56": {
+   "strength": 121,
+   "agility": 80,
+   "stamina": 215,
+   "intellect": 66,
+   "spirit": 139,
+   "mana": 1666,
+   "meleeMin": 60.34,
+   "meleeMax": 90.52
+  },
+  "57": {
+   "strength": 123,
+   "agility": 81,
+   "stamina": 220,
+   "intellect": 67,
+   "spirit": 142,
+   "mana": 1714,
+   "meleeMin": 61.57,
+   "meleeMax": 92.36
+  },
+  "58": {
+   "strength": 125,
+   "agility": 82,
+   "stamina": 224,
+   "intellect": 68,
+   "spirit": 144,
+   "mana": 1763,
+   "meleeMin": 62.72,
+   "meleeMax": 94.08
+  },
+  "59": {
+   "strength": 127,
+   "agility": 83,
+   "stamina": 230,
+   "intellect": 69,
+   "spirit": 147,
+   "mana": 1824,
+   "meleeMin": 64.11,
+   "meleeMax": 96.17
+  },
+  "60": {
+   "strength": 129,
+   "agility": 85,
+   "stamina": 234,
+   "intellect": 70,
+   "spirit": 150,
+   "mana": 1874,
+   "meleeMin": 65.38,
+   "meleeMax": 98.08
+  }
+ }
+}

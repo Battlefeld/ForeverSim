@@ -92,6 +92,8 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 		sourceMu.RUnlock()
 	case "sim", "item", "rotation", "talents", "talent-next", "talent-build", "weights", "analysis", "leveling", "presets", "talent-compare", "build-detail", "rota-tune", "enhancements":
 		r.Result, e = s.sim.Run(ctx, j)
+	case "kill-profile":
+		r.Result, e = s.sim.killProfile(ctx, j)
 	case "sources":
 		go func() { result, issue := syncSources(ctx, s.cfg); log.Printf("Quellen: %v %v", result, issue) }()
 		r.Result = map[string]any{"status": "background", "message": "Quellen werden im Hintergrund geprueft. Bestehende Routen bleiben aktiv."}
