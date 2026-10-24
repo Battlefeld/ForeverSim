@@ -453,6 +453,30 @@ Vorläufiger Datenstand vom **20.10.2026**, enthalten in `ForeverCore/enhancemen
 
 ---
 
+### Route beim Spielen (`route-next`, ForeverRoutes)
+
+Die Route kommt nicht aus einem festen Guide. Sie wird für deinen Charakter ab seinem aktuellen Stand gerechnet und nach
+jeder Änderung neu geplant.
+
+- **Was das Addon liest** (`ForeverCoreBridge/Route.lua`): Level und Erfahrung, Position (`UnitPosition`, nur in der
+  offenen Welt), erledigte Quests, das Questlog mit dem Fortschritt jedes Ziels, die Abklingzeit des Ruhesteins, die
+  Flugmeister, die du geöffnet hast, und den Ort, an den du deinen Ruhestein gebunden hast. Flugmeister und Ruhestein
+  merkt sich das Addon ab dem Zeitpunkt, an dem diese Version läuft.
+- **Was ForeverCore tut** (`routenext.go`): Es ruft `foreverroutes.exe next` mit dem Datensatz und dem Kampfprofil
+  deiner Klasse auf. Das Kampfprofil rechnet MythicSim beim ersten Mal im Hintergrund, etwa eine Minute lang, und
+  speichert es unter `Data\Profiles`. Bis dahin wird mit der Schätzung geplant, und das Fenster zeigt das an. Eine
+  Planung dauert unter einer Sekunde.
+- **Was du siehst:** Ein verschiebbares Fenster mit den nächsten acht Schritten (Annehmen, Erledigen, Abgeben, Grinden)
+  und der Zeit bis dahin. Auf dem ersten Schritt liegt ein Wegpunkt, mit TomTom, sonst als Kartenmarkierung.
+- **Neu geplant wird** nach Annehmen, Abgeben oder Abbrechen einer Quest, bei Fortschritt eines Ziels, nach einem
+  Level-Up und beim ersten Öffnen eines Flugmeisters. Ein Schwall von Ereignissen ergibt eine einzige Anfrage, höchstens
+  alle 15 Sekunden.
+- **Einrichten:** `foreverroutes.exe` neben `ForeverCore.exe` und den Datensatz als `ForeverRoutes\routes-data.json.gz`
+  ablegen. Andere Orte lassen sich in `config.json` mit `routes` und `routesData` einstellen. Das automatische Laden
+  aus den ForeverRoutes-Releases folgt.
+- **Noch im Spiel zu prüfen:** ob `UnitPosition` im Forever-Client die Achsen wie cmangos liefert. Der Wegpunkt muss
+  auf dem Questgeber liegen; wenn er gespiegelt danebenliegt, sind die Achsen vertauscht.
+
 ### Kampfprofil für ForeverRoutes (`kill-profile`)
 
 Der Auftrag `kill-profile` rechnet mit der Engine samt Level-Overlay, wie schnell eine Klasse Questgegner tötet. Er
@@ -509,7 +533,8 @@ ForeverCore.exe -request auftrag.json -output antwort.json
 | `/fc` | Übersicht (wie Linksklick auf den Minimap-Knopf) |
 | `/fc ping` | Verbindung testen |
 | `/fc on` / `/fc off` | Externe Berechnung ein/aus (`off` leert die Warteschlange) |
-| `/fc route` | Route berechnen (nur mit einem Routen-Addon; sonst kommt ein Hinweis) |
+| `/fc route` | Routenfenster öffnen und die nächste Stunde ab deinem aktuellen Stand planen (ForeverRoutes) |
+| `/fc route an` / `aus` | Nach jeder Quest-Änderung automatisch neu planen ein/aus (Standard: aus) |
 | `/fc sim` | Grund-DPS deines Charakters rechnen (Ergebnis im Chat) |
 | `/fc quests` | Quest-Übersicht (nur mit einem Routen-Addon) |
 | `/fc test` | Diagnose speichern (Zauberbuch, Begleiter, Munition, Köcher …) |

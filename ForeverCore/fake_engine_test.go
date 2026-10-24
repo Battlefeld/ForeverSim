@@ -18,6 +18,10 @@ func TestMain(m *testing.M) {
 		fakeEngine()
 		return
 	}
+	if len(os.Args) > 1 && os.Args[1] == "next" {
+		fakeRoutes()
+		return
+	}
 	os.Exit(m.Run())
 }
 

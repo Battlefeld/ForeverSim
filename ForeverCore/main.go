@@ -23,6 +23,8 @@ type Config struct {
 	Data           string `json:"data"`
 	AutoSync       bool   `json:"autoSync"`
 	Lua            string `json:"lua"`
+	Routes         string `json:"routes"`     // foreverroutes.exe
+	RoutesData     string `json:"routesData"` // ForeverRoutes' dataset (routes-data.json.gz)
 }
 type Job struct {
 	Schema     int            `json:"schema"`
@@ -92,6 +94,8 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 		sourceMu.RUnlock()
 	case "sim", "item", "rotation", "talents", "talent-next", "talent-build", "weights", "analysis", "leveling", "presets", "talent-compare", "build-detail", "rota-tune", "enhancements":
 		r.Result, e = s.sim.Run(ctx, j)
+	case "route-next":
+		r.Result, e = s.routeNext(ctx, j)
 	case "kill-profile":
 		r.Result, e = s.sim.killProfile(ctx, j)
 	case "sources":
@@ -129,7 +133,7 @@ func main() {
 	if !filepath.IsAbs(*config) {
 		*config = filepath.Join(base, *config)
 	}
-	cfg := Config{Lua: filepath.Join(base, "Lua.exe"), Runtime: filepath.Join(base, "Runtime"), Engine: filepath.Join(base, "MythicSim.exe"), Data: filepath.Join(base, "Data")}
+	cfg := Config{Lua: filepath.Join(base, "Lua.exe"), Runtime: filepath.Join(base, "Runtime"), Engine: filepath.Join(base, "MythicSim.exe"), Data: filepath.Join(base, "Data"), Routes: "foreverroutes.exe", RoutesData: filepath.Join("ForeverRoutes", "routes-data.json.gz")}
 	if e := loadJSON(*config, &cfg); e != nil && !os.IsNotExist(e) {
 		log.Fatal(e)
 	}
@@ -150,6 +154,12 @@ func main() {
 	}
 	if !filepath.IsAbs(cfg.Data) {
 		cfg.Data = filepath.Join(base, cfg.Data)
+	}
+	if !filepath.IsAbs(cfg.Routes) {
+		cfg.Routes = filepath.Join(base, cfg.Routes)
+	}
+	if !filepath.IsAbs(cfg.RoutesData) {
+		cfg.RoutesData = filepath.Join(base, cfg.RoutesData)
 	}
 	s := &Service{cfg: cfg, routes: &RouteService{Root: cfg.Runtime, Lua: cfg.Lua}, sim: &SimService{Config: cfg}}
 	ctx := context.Background()

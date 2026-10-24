@@ -75,6 +75,7 @@ end
 -- simulator never sends route jobs; the route glue below stays dormant until such an addon returns.
 function C.RouteAvailable()return _G.ForeverCoreFDQ~=nil end
 function C.RequestRoute()
+ if not C.RouteAvailable()and C.Route then return C.Route.Request(true)end
  if not C.RouteAvailable()then C.Say('Routen: kein Quest-/Routen-Addon geladen (ForeverDungeonQuest wird neu gebaut)');return false end
  return C.Request('route',nil,C.ApplyRoute)
 end
@@ -296,6 +297,10 @@ SlashCmdList.FOREVERCORE=function(msg)
   if C.window then C.window:Show();C.Say(C.status)end
  elseif msg=='ping'then C.Request('ping',{},receivePing)
  elseif msg=='route'then C.RequestRoute()
+ elseif(msg=='route an'or msg=='route aus')and C.Route then
+  ForeverCoreBridgeDB.routeNext=(msg=='route an')or nil
+  C.Say(ForeverCoreBridgeDB.routeNext and'Route: plant nach jeder Quest-Aenderung neu (/fc route aus)'or'Route: automatisches Planen aus (/fc route plant einmal)')
+  if ForeverCoreBridgeDB.routeNext then C.Route.Request(true)end
  elseif msg=='sim'then C.Request('sim',{},C.ApplySim)
  elseif msg=='test'and C.Diagnose then C.Diagnose()
  elseif msg=='sources'then C.Request('sources',{},function(result)C.lastSources=result;if result and result.message then C.Say(result.message)end end)
