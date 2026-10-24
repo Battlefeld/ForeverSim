@@ -36,9 +36,37 @@ var (
 	killWindows = []float64{6, 10, 15, 22, 30} // fight lengths in seconds
 	killOffsets = []int{0, 2}                  // target level minus character level
 	// A rotation for questing mobs: the class's own spell order without raid cooldowns.
-	killRotations = map[string]string{"warlock": "affliction", "mage": "fire"}
+	killRotations = map[string]string{"warlock": "affliction", "mage": "fire", "warrior": "dps_battle", "rogue": "combat_sinister_strike",
+		"paladin": "default", "hunter": "mm", "priest": "smite_lowrank", "shaman": "forever_lowrank", "druid": "launch"}
 	// The warlock fights with the voidwalker, as most do while leveling.
 	killClassOptions = map[string]map[string]any{"warlock": {"summon": float64(2)}}
+)
+
+// starterItem is a white weapon a class starts with (the classic start outfit), with its values from cmangos
+// classic-db (item_template: damage, speed, type). A synthetic character carries only these; without a weapon the
+// melee classes would fight bare-handed and a hunter could not shoot.
+type starterItem struct {
+	id              int
+	name, slot, loc string
+	subclass        int
+	min, max, speed float64
+}
+
+var (
+	wornShortsword = starterItem{25, "Worn Shortsword", "mainhand", "INVTYPE_WEAPONMAINHAND", 7, 1, 3, 1.9}
+	wornMace       = starterItem{36, "Worn Mace", "mainhand", "INVTYPE_WEAPONMAINHAND", 4, 1, 3, 1.9}
+	wornAxe        = starterItem{37, "Worn Axe", "mainhand", "INVTYPE_WEAPONMAINHAND", 0, 1, 3, 2.0}
+	wornDagger     = starterItem{2092, "Worn Dagger", "mainhand", "INVTYPE_WEAPON", 15, 1, 2, 1.6}
+	bentStaff      = starterItem{35, "Bent Staff", "mainhand", "INVTYPE_2HWEAPON", 10, 3, 5, 2.9}
+	battlewornHam  = starterItem{2361, "Battleworn Hammer", "mainhand", "INVTYPE_2HWEAPON", 5, 3, 5, 2.9}
+	wornShortbow   = starterItem{2504, "Worn Shortbow", "ranged", "INVTYPE_RANGED", 2, 2, 5, 2.3}
+	throwingKnife  = starterItem{2947, "Small Throwing Knife", "ranged", "INVTYPE_THROWN", 16, 1, 3, 2.0}
+	starterGear    = map[string][]starterItem{
+		"warrior": {wornShortsword}, "rogue": {wornDagger, throwingKnife}, "paladin": {battlewornHam}, "hunter": {wornAxe, wornShortbow},
+		"shaman": {wornMace}, "priest": {wornMace}, "mage": {bentStaff}, "warlock": {wornDagger}, "druid": {bentStaff},
+	}
+	// Rough Arrow (cmangos 2512): adds 1.5 damage per second; the engine's ammo enum starts at level 25 ammo.
+	starterAmmoDPS = 1.5
 )
 
 type killPoint struct {
@@ -117,8 +145,28 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 	if o := child(j.Payload, "classOptions"); o != nil {
 		options = o
 	}
+	if class == "hunter" && child(j.Payload, "classOptions") == nil {
+		// starter bow without a pet (a synthetic hunter has no tamed pet's values), ammunition as its damage per second
+		h := child(manifest, "hunter")
+		options = map[string]any{"ammo": num(h, "ammoNone"), "quiverBonus": num(h, "quiverNone"), "petType": num(h, "petNone"), "petAttackSpeed": float64(0)}
+	}
 	if class == "hunter" && (options["ammo"] == nil || options["petType"] == nil) {
 		return nil, fmt.Errorf("Jaeger-classOptions muessen Munition und Begleiter ausdruecklich angeben")
+	}
+	items, database := emptyItems(), []any{}
+	for _, it := range starterGear[class] {
+		rec, e := liveItemDatabase(map[string]any{"id": float64(it.id), "name": it.name, "quality": float64(1), "statsComplete": true, "slot": it.slot,
+			"rawStats": map[string]any{}, "itemClass": float64(2), "weaponSubclass": float64(it.subclass), "equipLoc": it.loc,
+			"weapon": map[string]any{"min": it.min, "max": it.max, "speed": it.speed}}, manifest)
+		if e != nil {
+			return nil, e
+		}
+		database = append(database, rec)
+		slot := 14
+		if it.slot == "ranged" {
+			slot = 16
+		}
+		items[slot] = map[string]any{"id": float64(it.id)}
 	}
 	iterations := 300.0
 	if it := num(j.Payload, "iterations"); it >= 50 && it <= 20000 {
@@ -155,7 +203,7 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 	}
 	spec := str(profile, "spec")
 	request := func(level, target int, seconds float64) map[string]any {
-		player := map[string]any{"apiVersion": manifest["apiVersion"], "name": "ForeverCore", "race": "Race" + race, "class": "Class" + strings.ToUpper(class[:1]) + class[1:], "talentsString": "", "equipment": map[string]any{"items": emptyItems()}, "rotation": rotation, spec: map[string]any{"options": map[string]any{"classOptions": cloneMap(options)}}}
+		player := map[string]any{"apiVersion": manifest["apiVersion"], "name": "ForeverCore", "race": "Race" + race, "class": "Class" + strings.ToUpper(class[:1]) + class[1:], "talentsString": "", "equipment": map[string]any{"items": cloneItems(items)}, "database": map[string]any{"items": database}, "rotation": rotation, spec: map[string]any{"options": map[string]any{"classOptions": cloneMap(options)}}}
 		if d := num(profile, "distanceFromTarget"); d > 0 {
 			player["distanceFromTarget"] = d
 		}
@@ -163,6 +211,9 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 		t := map[string]any{"level": target, "name": fmt.Sprintf("Questgegner Level %d", target), "stats": make([]float64, int(num(manifest, "statCount")))}
 		t["stats"].([]float64)[int(num(manifest, "armorStat"))] = armor
 		req := map[string]any{"raid": map[string]any{"parties": []any{map[string]any{"players": []any{player}}}}, "encounter": map[string]any{"duration": seconds, "targets": []any{t}}, "simOptions": map[string]any{"iterations": iterations, "randomSeed": "31211"}, engineLevelKey: float64(level)}
+		if class == "hunter" {
+			req[engineHunterKey] = map[string]any{"ammoDps": starterAmmoDPS}
+		}
 		if d := demons[level]; d != nil {
 			demon := cloneMap(d)
 			demon["summon"] = float64(2)
@@ -230,10 +281,18 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 	return map[string]any{
 		"schema": killProfileSchema, "source": "ForeverCore " + Version + " / MythicSim " + s.Config.EngineRevision,
 		"class": class, "race": race, "spec": spec, "rotation": selected, "classOptions": options,
-		"gear": "none", "talents": "none", "spellbook": "ranks by level", "iterations": iterations,
+		"gear": "starter weapon", "talents": "none", "spellbook": "ranks by level", "iterations": iterations,
 		"targetArmorEstimated": true, "levels": levels,
-		"note": "Synthetischer Charakter ohne Ausruestung und Talente (Untergrenze). Jeder Kampf beginnt mit vollem Mana; das Ziel greift nicht an.",
+		"note": "Synthetischer Charakter mit der weissen Startwaffe, sonst ohne Ausruestung und Talente (Untergrenze); Jaeger ohne Begleiter. Jeder Kampf beginnt mit vollem Mana; das Ziel greift nicht an.",
 	}, nil
+}
+
+func cloneItems(items []any) []any {
+	out := make([]any, len(items))
+	for i, it := range items {
+		out[i] = cloneMap(it.(map[string]any))
+	}
+	return out
 }
 
 func emptyItems() []any {

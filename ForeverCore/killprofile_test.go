@@ -29,7 +29,7 @@ func TestKillProfile(t *testing.T) {
 			t.Errorf("point %+v", p)
 		}
 	}
-	for _, bad := range []map[string]any{{"class": "warlock"}, {"class": "warlock", "race": "Pandaren"}, {"class": "warlock", "race": "Orc", "fromLevel": float64(5)}, {"class": "hunter", "race": "Orc"}} {
+	for _, bad := range []map[string]any{{"class": "warlock"}, {"class": "warlock", "race": "Pandaren"}, {"class": "warlock", "race": "Orc", "fromLevel": float64(5)}} {
 		if _, e := s.killProfile(t.Context(), Job{Kind: "kill-profile", Payload: bad}); e == nil {
 			t.Errorf("%v accepted", bad)
 		}

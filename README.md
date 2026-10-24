@@ -491,10 +491,13 @@ ForeverCore.exe -request auftrag.json -output antwort.json
 #                "payload":{"class":"warlock","race":"Orc","fromLevel":10,"toLevel":30}}
 ```
 
-- Der Charakter ist synthetisch: ohne Ausrüstung und Talente, Zauberränge nach Level (kein Live-Zauberbuch). Das
-  Ergebnis ist also eine Untergrenze.
-- Rotation: beim Hexer Gebrechen mit Leerwandler, beim Magier Feuer. Feuer schafft auf niedrigem Level in kurzen
-  Kämpfen klar mehr als Frost oder Arkan. Mit `rotation`, `spec`, `classOptions` und `iterations` lässt sich das ändern.
+- Der Charakter ist synthetisch: mit der weißen Startwaffe seiner Klasse (Werte aus cmangos), sonst ohne Ausrüstung und
+  Talente, Zauberränge nach Level (kein Live-Zauberbuch). Das Ergebnis ist also eine Untergrenze. Ohne Waffe würden
+  Nahkämpfer mit bloßen Händen kämpfen und ein Jäger könnte nicht schießen.
+- Rotationen für alle Klassen: Hexer Gebrechen mit Leerwandler, Magier Feuer (in kurzen Kämpfen klar vor Frost und
+  Arkan), Krieger Kampfhaltung, Schurke Finsterer Stoß, Paladin Standard, Jäger Treffsicherheit (mit Startbogen und
+  Groben Pfeilen, noch ohne Begleiter), Priester Göttliche Pein mit niedrigen Rängen, Schamane Elementar mit niedrigen
+  Rängen, Druide Gleichgewicht („launch"). Mit `rotation`, `spec`, `classOptions` und `iterations` lässt sich das ändern.
 - Der Leerwandler bekommt die Werte seines Levels aus cmangos (`warlock-demons.json`, erzeugt mit `prepare_demons.py`
   aus classic-db, GPL-3.0). Ohne diese Werte kämpft die Engine mit einem Level-60-Dämon: Auf Level 10 käme der Hexer
   dann auf 37 statt 14 DPS. Andere Dämonen sind im synthetischen Profil noch nicht möglich.
