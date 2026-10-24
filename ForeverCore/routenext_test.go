@@ -20,7 +20,7 @@ func fakeRoutes() {
 	if b, e := os.ReadFile(flags["-live"]); e != nil || json.Unmarshal(b, &req) != nil {
 		os.Exit(2)
 	}
-	reply := map[string]any{"schema": "foreverroutes.next.v1", "class": req["class"], "level": num(child(req, "live"), "level"), "profile": flags["-profile"], "horizon": flags["-horizon"],
+	reply := map[string]any{"schema": "foreverroutes.next.v1", "class": req["class"], "level": num(child(req, "live"), "level"), "profile": flags["-profile"], "horizon": flags["-horizon"], "route": flags["-route"], "faction": req["faction"],
 		"steps": []any{map[string]any{"op": "accept", "quest": 788.0, "name": "Cutting Teeth"}}}
 	os.WriteFile(flags["-out"], jsonBytes(reply), 0o600)
 }
@@ -64,6 +64,20 @@ func TestRouteNext(t *testing.T) {
 		if _, e := s.routeNext(t.Context(), Job{Kind: "route-next", State: bad}); e == nil {
 			t.Errorf("%v accepted", bad)
 		}
+	}
+	// shipped beside the dataset: the class's profile and the character's best route (Skyborne per side)
+	dir := filepath.Dir(data)
+	os.MkdirAll(filepath.Join(dir, "routes"), 0o755)
+	os.MkdirAll(filepath.Join(dir, "profiles"), 0o755)
+	os.WriteFile(filepath.Join(dir, "routes", "skyborne-h-warrior.json"), []byte("[]"), 0o600)
+	os.WriteFile(filepath.Join(dir, "profiles", "warrior.json"), []byte("{}"), 0o600)
+	sky := map[string]any{"race": "Skyborne", "class": "WARRIOR", "faction": "Horde", "live": state["live"]}
+	got, e = s.routeNext(t.Context(), Job{Kind: "route-next", State: sky})
+	if r := got.(map[string]any); e != nil || r["faction"] != "Horde" || !strings.HasSuffix(str(r, "route"), "skyborne-h-warrior.json") || !strings.HasSuffix(str(r, "profile"), filepath.Join("profiles", "warrior.json")) {
+		t.Errorf("skyborne: %v %v", r, e)
+	}
+	if routeFile(data, "Skyborne", "warrior", "") != "" || routeFile(data, "Orc", "warrior", "Horde") != "" {
+		t.Error("route file for an unknown side or a missing route")
 	}
 	s.cfg.Routes = filepath.Join(t.TempDir(), "missing.exe")
 	if _, e := s.routeNext(t.Context(), Job{Kind: "route-next", State: state}); e == nil || !strings.Contains(e.Error(), "foreverroutes.exe") {

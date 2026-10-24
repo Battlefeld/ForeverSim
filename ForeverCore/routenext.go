@@ -57,12 +57,24 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	defer os.RemoveAll(dir)
 	in, out := filepath.Join(dir, "live.json"), filepath.Join(dir, "next.json")
 	// ForeverRoutes spells classes like the game's English names ("Warlock").
-	request := map[string]any{"race": race, "class": strings.ToUpper(class[:1]) + class[1:], "live": live}
+	if race == "Scourge" { // the game's name of the Undead
+		race = "Undead"
+	}
+	faction := str(j.State, "faction") // Alliance or Horde: the Skyborne play on both sides
+	request := map[string]any{"race": race, "class": strings.ToUpper(class[:1]) + class[1:], "faction": faction, "live": live}
 	if e = os.WriteFile(in, jsonBytes(request), 0o600); e != nil {
 		return nil, e
 	}
 	args := []string{"next", "-data", data, "-live", in, "-out", out, "-horizon", fmt.Sprint(horizon)}
-	profile, pending := s.killProfileFor(class, race)
+	// the character's best route (ForeverRoutes' improve, shipped beside the dataset) is followed from where it stands
+	if r := routeFile(data, race, class, faction); r != "" {
+		args = append(args, "-route", r)
+	}
+	// the class's kill profile ForeverRoutes ships beside the dataset, else one calculated here
+	profile, pending := filepath.Join(filepath.Dir(data), "profiles", class+".json"), ""
+	if _, err := os.Stat(profile); err != nil {
+		profile, pending = s.killProfileFor(class, race)
+	}
 	if profile != "" {
 		args = append(args, "-profile", profile)
 	}
@@ -122,4 +134,25 @@ func (s *Service) killProfileFor(class, race string) (path, note string) {
 		}()
 	}
 	return "", "Kampfzeiten geschaetzt: das MythicSim-Kampfprofil fuer diese Klasse wird gerade berechnet"
+}
+
+// routeFile is the best route ForeverRoutes ships for a race and class (routes/<race>-<class>.json beside the dataset;
+// the Skyborne per side: skyborne-a, skyborne-h), or "" when there is none.
+func routeFile(data, race, class, faction string) string {
+	name := strings.ToLower(race)
+	if name == "skyborne" {
+		switch faction {
+		case "Alliance":
+			name += "-a"
+		case "Horde":
+			name += "-h"
+		default:
+			return ""
+		}
+	}
+	path := filepath.Join(filepath.Dir(data), "routes", name+"-"+strings.ToLower(class)+".json")
+	if _, err := os.Stat(path); err != nil {
+		return ""
+	}
+	return path
 }

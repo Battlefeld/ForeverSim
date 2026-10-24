@@ -84,7 +84,7 @@ function R.Capture()
  local _,class=call(UnitClass,'player');local _,race=call(UnitRace,'player')
  local live={level=call(UnitLevel,'player'),xp=call(UnitXP,'player')or 0,pos=R.Position(),completed=completedIDs(),active=questLog(),bind=bind(),hearthIn=hearthIn(),flightMasters=flightMasters()}
  if not class or not race or not live.level then error('Charakter nicht lesbar')end
- return{race=race,class=class,live=live}
+ return{race=race,class=class,faction=call(UnitFactionGroup,'player'),live=live}
 end
 
 -- Wording of a step.

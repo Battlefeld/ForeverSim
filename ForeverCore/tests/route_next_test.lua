@@ -19,7 +19,7 @@ GetQuestLogTitle=function(i)
 end
 GetItemCooldown=function(id)if id==6948 then return GetTime()-600,3600 end;return 0,0 end
 local s=R.Capture()
-assert(s.race=='Orc'and s.class=='WARLOCK','identity')
+assert(s.race=='Orc'and s.class=='WARLOCK'and s.faction~=nil,'identity')
 assert(s.live.level==12 and s.live.xp==3400,'level/xp')
 assert(s.live.pos.m==1 and s.live.pos.x==-607.3 and s.live.pos.y==-4251.5,'position')
 assert(#s.live.completed==3,'completed quests')

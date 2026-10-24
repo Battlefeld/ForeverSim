@@ -462,8 +462,10 @@ jeder Änderung neu geplant.
   offenen Welt), erledigte Quests, das Questlog mit dem Fortschritt jedes Ziels, die Abklingzeit des Ruhesteins, die
   Flugmeister, die du geöffnet hast, und den Ort, an den du deinen Ruhestein gebunden hast. Flugmeister und Ruhestein
   merkt sich das Addon ab dem Zeitpunkt, an dem diese Version läuft.
-- **Was ForeverCore tut** (`routenext.go`): Es ruft `foreverroutes.exe next` mit dem Datensatz und dem Kampfprofil
-  deiner Klasse auf. Das Kampfprofil rechnet MythicSim beim ersten Mal im Hintergrund, etwa eine Minute lang, und
+- **Was ForeverCore tut** (`routenext.go`): Es ruft `foreverroutes.exe next` mit dem Datensatz, dem Kampfprofil deiner
+  Klasse und der besten Route deines Volks und deiner Klasse auf (`routes/<volk>-<klasse>.json` neben dem Datensatz, bei
+  den Skyborne je Fraktion). Die Route wird ab deinem Stand weitergegangen; ist von ihr nichts mehr übrig, plant
+  ForeverRoutes frei. Das Kampfprofil kommt aus `profiles/<klasse>.json` neben dem Datensatz. Das Kampfprofil rechnet MythicSim beim ersten Mal im Hintergrund, etwa eine Minute lang, und
   speichert es unter `Data\Profiles`. Bis dahin wird mit der Schätzung geplant, und das Fenster zeigt das an. Eine
   Planung dauert unter einer Sekunde.
 - **Was du siehst:** Ein verschiebbares Fenster mit den nächsten acht Schritten (Annehmen, Erledigen, Abgeben, Grinden)
