@@ -57,7 +57,7 @@ function FR.Refresh()
   header:SetText('ForeverRoutes');hint:SetText('Keine Route für '..tostring(key));for k=1,ROWS do lines[k]:SetText('')end
   return nil
  end
- header:SetText(live and'ForeverRoutes · live geplant'or string.format('ForeverRoutes · Schritt %d/%d',i,#steps))
+ header:SetText(live and'ForeverRoutes · live geplant'or string.format('ForeverRoutes%s · Schritt %d/%d',tostring(key):find('%-group$')and' · Gruppe'or'',i,#steps))
  hint:SetText(FR.Hint(step)or'')
  for k=1,ROWS do
   local s=steps[i+k-1]
@@ -90,6 +90,7 @@ SLASH_FOREVERROUTES1='/fr'
 SlashCmdList.FOREVERROUTES=function(msg)
  msg=strtrim(tostring(msg or'')):lower()
  if msg=='skip'then FR.Skip()elseif msg=='back'or msg=='zurueck'then FR.Back()elseif msg=='reset'then FR.Reset()
+ elseif msg=='gruppe'or msg=='group'then FR.SetGroup(true)elseif msg=='solo'then FR.SetGroup(false)
  elseif msg==''and frame and frame:IsShown()then frame:Hide();ForeverRoutesDB=ForeverRoutesDB or{};ForeverRoutesDB.hidden=true;return end
  FR.Show()
 end

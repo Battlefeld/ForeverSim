@@ -18,15 +18,24 @@ function FR.Key()
  return r..'-'..tostring(class):lower()
 end
 
-function FR.Route()
- local key=FR.Key();local data=ForeverRoutesData and ForeverRoutesData.routes
- return key and data and data[key],key
-end
-
 local function charDB()
  ForeverRoutesCharDB=ForeverRoutesCharDB or{}
  local c=ForeverRoutesCharDB;c.skipped=c.skipped or{};c.index=c.index or 1
  return c
+end
+
+-- The route of this character: the group route (with dungeon runs) when chosen and there is one, else the solo route.
+function FR.Route()
+ local key=FR.Key();local data=ForeverRoutesData and ForeverRoutesData.routes
+ if not key or not data then return nil,key end
+ if charDB().group and data[key..'-group']then return data[key..'-group'],key..'-group'end
+ return data[key],key
+end
+
+-- Solo or group: the other route starts over from its first step that is not done yet.
+function FR.SetGroup(on)
+ local c=charDB();c.group=on and true or nil;c.index=1;c.skipped={};FR.pinned=nil
+ return FR.Advance()
 end
 
 -- Quest state from the game.
@@ -103,7 +112,7 @@ function FR.Reset()
 end
 
 -- The live plan from the ForeverCore bridge (its route-next result): steps in its own form, turned into ours.
-local OP={accept='a',turnin='t',work='w',grind='g'}
+local OP={accept='a',turnin='t',work='w',grind='g',dungeon='d'}
 function FR.SetLive(result)
  if type(result)~='table'or type(result.steps)~='table'then FR.live=nil;return end
  local out={}
