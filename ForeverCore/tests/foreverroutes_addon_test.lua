@@ -61,6 +61,10 @@ local dstep={op='d',n='The Deadmines',m=0,x=-11073,y=1529,l=20}
 assert(FR.Text(dstep)=='Dungeon mit Gruppe: The Deadmines (alle Quests im Log erledigen)','dungeon text')
 assert(not FR.Done(dstep),'dungeon not run yet');IsInInstance=function()return true,'party'end
 assert(not FR.Done(dstep),'still inside');IsInInstance=function()return false,'none'end;assert(FR.Done(dstep),'run not followed')
+-- a second run of a dungeon: the route pauses inside and goes on outside, the arrow stays put
+pinned=nil;FR.pinned=nil;IsInInstance=function()return true,'party'end;FR.Refresh()
+assert(FR.Paused(FR.Steps()[FR.index])and _G.ForeverRoutesFrame and pinned==nil,'route must pause inside a dungeon')
+IsInInstance=function()return false,'none'end;FR.Refresh();assert(not FR.Paused(FR.Steps()[FR.index]),'route must go on outside')
 -- slash command toggles the window
 SlashCmdList.FOREVERROUTES('');assert(not _G.ForeverRoutesFrame:IsShown(),'/fr must hide');SlashCmdList.FOREVERROUTES('');assert(_G.ForeverRoutesFrame:IsShown(),'/fr must show')
 -- no route for this character: said in the window

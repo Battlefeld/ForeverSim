@@ -24,7 +24,7 @@ Spiel an. Zwei Addons gehören dazu: **ForeverSimBridge** (liest Charakter und I
 - **Levelroute:** Das Addon ForeverRoutes zeigt die beste Route für dein Volk und deine Klasse bis Level 20, mit
   Pfeil (TomTom, sonst die Kartenmarkierung des Spiels) und Death-Skip-Hinweisen. Es läuft auch ohne ForeverCore; mit
   ForeverCore plant es live von deinem aktuellen Stand aus. `/fr` zeigt oder versteckt das Fenster, `/fr skip`
-  überspringt einen Schritt, `/fr back` geht einen zurück, `/fr reset` beginnt von vorn. `/fr gruppe` wechselt auf die Gruppenroute mit Dungeon-Läufen (Dungeonquests vorher einsammeln, Dungeon mit Gruppe laufen, abgeben), `/fr solo` zurück auf die Soloroute.
+  überspringt einen Schritt, `/fr back` geht einen zurück, `/fr reset` beginnt von vorn. `/fr gruppe` wechselt auf die Gruppenroute mit Dungeon-Läufen (Dungeonquests vorher einsammeln, Dungeon mit Gruppe laufen, abgeben), `/fr solo` zurück auf die Soloroute. Die Gruppenroute empfiehlt einen Lauf je Dungeon; läuft die Gruppe einen Dungeon noch einmal, pausiert die Route im Dungeon und geht danach beim nächsten offenen Schritt weiter (was inzwischen erledigt oder durch Stufenaufstieg überholt ist, wird übersprungen).
 - **Routen-Update:** ForeverCore holt beim Start und danach alle 12 Stunden die neuesten Routen und Daten von
   ForeverRoutes (geprüft per SHA-256; ein fehlerhafter Download ändert nichts). Abschalten: `"routesNoUpdate": true`
   in `config.json`.

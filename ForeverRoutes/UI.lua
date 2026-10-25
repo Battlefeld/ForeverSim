@@ -57,6 +57,12 @@ function FR.Refresh()
   header:SetText('ForeverRoutes');hint:SetText('Keine Route für '..tostring(key));for k=1,ROWS do lines[k]:SetText('')end
   return nil
  end
+ if FR.Paused(step)then
+  header:SetText('ForeverRoutes · Route pausiert (Dungeon)')
+  hint:SetText('Geht nach dem Dungeon beim nächsten offenen Schritt weiter')
+  for k=1,ROWS do local s=steps[i+k-1];lines[k]:SetText(s and FR.Text(s)or'')end
+  return step
+ end
  header:SetText(live and'ForeverRoutes · live geplant'or string.format('ForeverRoutes%s · Schritt %d/%d',tostring(key):find('%-group$')and' · Gruppe'or'',i,#steps))
  hint:SetText(FR.Hint(step)or'')
  for k=1,ROWS do

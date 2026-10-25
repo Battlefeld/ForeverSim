@@ -81,6 +81,13 @@ function FR.Done(step)
  return false
 end
 
+-- Paused: the character is inside a dungeon the route does not run now (a second run with the group). Nothing is
+-- blocked: the route waits and goes on from its first open step once the character is out (steps done meanwhile,
+-- levels reached meanwhile, are passed by themselves).
+function FR.Paused(step)
+ return call(IsInInstance)==true and not(step and step.op=='d')
+end
+
 -- The steps to show: the live plan when there is one, else the stored route.
 function FR.Steps()
  if FR.live then return FR.live,true end
