@@ -59,6 +59,7 @@ SlashCmdList.FOREVERROUTES('solo');r,k=FR.Route();assert(k=='dwarf-warrior','sol
 -- a dungeon step: done once the character was inside and is out again
 local dstep={op='d',n='The Deadmines',m=0,x=-11073,y=1529,l=20}
 assert(FR.Text(dstep)=='Dungeon laufen: The Deadmines (Gruppe suchen, alle Quests im Log erledigen)','dungeon text')
+assert(FR.Text({op='d',n='Ragefire Chasm',qi={'Returning the Lost Satchel'}})=='Dungeon laufen: Ragefire Chasm (Gruppe suchen, alle Quests im Log erledigen) – im Dungeon annehmen: Returning the Lost Satchel','quests taken inside')
 assert(not FR.Done(dstep),'dungeon not run yet');IsInInstance=function()return true,'party'end
 assert(not FR.Done(dstep),'still inside');IsInInstance=function()return false,'none'end;assert(FR.Done(dstep),'run not followed')
 -- a second run of a dungeon: the route pauses inside and goes on outside, the arrow stays put
@@ -66,6 +67,27 @@ pinned=nil;FR.pinned=nil;IsInInstance=function()return true,'party'end;FR.Refres
 assert(FR.Paused(FR.Steps()[FR.index])and _G.ForeverRoutesFrame and pinned==nil,'route must pause inside a dungeon')
 local cleared=false;C_Map.ClearUserWaypoint=function()cleared=true end;FR.pinned='x';FR.Refresh();assert(cleared and FR.pinned==nil,'arrow must go away inside a dungeon')
 IsInInstance=function()return false,'none'end;FR.Refresh();assert(not FR.Paused(FR.Steps()[FR.index]),'route must go on outside')
+-- the arrow follows a new live plan; a second live deathskip still leads to its place to die
+pinned=nil;FR.pinned=nil
+C_Map.GetMapPosFromWorldPos=function(m,v)return 1411,CreateVector2D((v.x+1000)/10000,.5)end
+FR.SetLive({steps={{op='turnin',quest=1,name='A',at={m=1,x=100,y=0},via='deathskip: X',viaAt={m=1,x=200,y=0}}}});FR.Refresh()
+assert(pinned and math.abs(pinned.x-.12)<1e-6,'live arrow must lead to the first place to die')
+MOCK.Fire('PLAYER_DEAD');MOCK.Fire('PLAYER_ALIVE');assert(math.abs(pinned.x-.11)<1e-6,'after the death the arrow must lead to the step')
+FR.SetLive({steps={{op='turnin',quest=2,name='B',at={m=1,x=300,y=0},via='deathskip: Y',viaAt={m=1,x=400,y=0}}}});FR.Refresh()
+assert(math.abs(pinned.x-.14)<1e-6,'a second live deathskip must lead to its place to die, got '..pinned.x)
+FR.SetLive({steps={{op='accept',quest=3,name='C',at={m=1,x=500,y=0}}}});FR.Refresh()
+assert(math.abs(pinned.x-.15)<1e-6,'the arrow must follow a new live plan')
+FR.SetLive(nil)
+-- a dungeon step is done in its own dungeon only
+local rfc={op='d',n='Ragefire Chasm',ii=389,m=1,x=1815,y=-4418,l=13}
+GetInstanceInfo=function()return'Wailing Caverns','party',1,'',5,0,false,43 end;IsInInstance=function()return true,'party'end
+assert(not FR.Done(rfc)and FR.Paused(rfc),'another dungeon must not finish the run, the route pauses there')
+GetInstanceInfo=function()return'Ragefire Chasm','party',1,'',5,0,false,389 end
+assert(not FR.Done(rfc)and not FR.Paused(rfc),'inside its own dungeon the run goes on')
+IsInInstance=function()return false,'none'end;assert(FR.Done(rfc),'out of its dungeon the run is done')
+-- reset keeps the choice of the route with dungeons
+ForeverRoutesCharDB.dungeons=true;FR.Reset();assert(ForeverRoutesCharDB.dungeons==true,'reset must keep the route with dungeons')
+ForeverRoutesCharDB.dungeons=nil
 -- slash command toggles the window
 SlashCmdList.FOREVERROUTES('');assert(not _G.ForeverRoutesFrame:IsShown(),'/fr must hide');SlashCmdList.FOREVERROUTES('');assert(_G.ForeverRoutesFrame:IsShown(),'/fr must show')
 -- no route for this character: said in the window

@@ -55,18 +55,30 @@ local function makeFrame()
  return frame
 end
 
+-- Moves the arrow to the current step (also with the window hidden); inside a dungeon there is none.
+local function arrow(step)
+ if call(IsInInstance)==true then FR.ClearWaypoint();return end
+ local m,x,y,dying=FR.Target(step)
+ if not m then return end
+ local key=FR.StepKey(step)..(dying and':die'or'')
+ if FR.pinned~=key then
+  FR.pinned=key
+  FR.Waypoint(m,x,y,dying and'Death Skip: hier sterben'or FR.Text(step))
+ end
+end
+
 -- Redraws the window and moves the arrow to the current step.
 function FR.Refresh()
  local step,i=FR.Advance()
  local steps,live=FR.Steps()
  local route,key=FR.Route()
+ if FR.Paused(step)then FR.ClearWaypoint()else arrow(step)end
  if not frame then return step end
  if not live and not route then
   header:SetText('ForeverRoutes');hint:SetText('Keine Route für '..tostring(key));for k=1,ROWS do lines[k]:SetText('')end
   return nil
  end
  if FR.Paused(step)then
-  FR.ClearWaypoint()
   header:SetText('ForeverRoutes · Route pausiert (Dungeon)')
   hint:SetText('Geht nach dem Dungeon beim nächsten offenen Schritt weiter')
   for k=1,ROWS do local s=steps[i+k-1];lines[k]:SetText(s and FR.Text(s)or'')end
@@ -77,15 +89,6 @@ function FR.Refresh()
  for k=1,ROWS do
   local s=steps[i+k-1]
   lines[k]:SetText(s and FR.Text(s)or(k==1 and FR.Text(nil)or''))
- end
- -- inside a dungeon (the run the route plans) the arrow has nothing to show
- if call(IsInInstance)==true then FR.ClearWaypoint();return step end
- local m,x,y,dying=FR.Target(step)
- if m then
-  if FR.pinned~=(i..(dying and'd'or''))then
-   FR.pinned=i..(dying and'd'or'')
-   FR.Waypoint(m,x,y,dying and'Death Skip: hier sterben'or FR.Text(step))
-  end
  end
  return step
 end

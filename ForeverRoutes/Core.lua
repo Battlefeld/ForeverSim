@@ -67,6 +67,24 @@ local function objectiveDone(step)
  return true
 end
 
+-- The instance the character is in (its map id), nil outside.
+local function instanceID()
+ if call(IsInInstance)~=true then return nil end
+ local r={call(GetInstanceInfo)}
+ return r[8]or 0
+end
+-- Whether the character is inside the dungeon of a dungeon step (any dungeon when the step does not name one).
+local function inDungeonOf(step)
+ local id=instanceID()
+ return id~=nil and(not step.ii or step.ii==id)
+end
+
+-- A step's identity, the same for the same step in the stored route and in a new live plan.
+function FR.StepKey(step)
+ if not step then return''end
+ return table.concat({tostring(step.op),tostring(step.q or''),tostring(step.o or''),tostring(step.n or''),tostring(step.x or''),tostring(step.y or'')},':')
+end
+
 -- Whether a step is done: taken, handed in, objective finished, level reached.
 function FR.Done(step)
  if not step then return true end
@@ -75,9 +93,9 @@ function FR.Done(step)
  if step.op=='w'then return completed(step.q)or(onQuest(step.q)and objectiveDone(step))end
  if step.op=='g'then return(call(UnitLevel,'player')or 0)>=(step.l or 0)end
  if step.op=='d'then
-  -- a dungeon run: done once the character has been inside and is out again
+  -- a dungeon run: done once the character has been inside that dungeon and is out again
   local db=charDB();db.ran=db.ran or{}
-  if call(IsInInstance)then db.ran[step.n or'?']=true;return false end
+  if inDungeonOf(step)then db.ran[step.n or'?']=true;return false end
   return db.ran[step.n or'?']==true
  end
  return false
@@ -87,7 +105,7 @@ end
 -- blocked: the route waits and goes on from its first open step once the character is out (steps done meanwhile,
 -- levels reached meanwhile, are passed by themselves).
 function FR.Paused(step)
- return call(IsInInstance)==true and not(step and step.op=='d')
+ return instanceID()~=nil and not(step and step.op=='d'and inDungeonOf(step))
 end
 
 -- The steps to show: the live plan when there is one, else the stored route.
@@ -117,7 +135,8 @@ function FR.Back()
  return FR.Steps()[i],i
 end
 function FR.Reset()
- ForeverRoutesCharDB={};return FR.Advance()
+ local dungeons=charDB().dungeons
+ ForeverRoutesCharDB={dungeons=dungeons};return FR.Advance()
 end
 
 -- The live plan from the ForeverCore bridge (its route-next result): steps in its own form, turned into ours.
@@ -128,7 +147,8 @@ function FR.SetLive(result)
  for _,s in ipairs(result.steps)do
   local at=type(s.at)=='table'and s.at or{}
   local via=type(s.via)=='string'and s.via or''
-  out[#out+1]={op=OP[s.op]or s.op,q=s.quest,n=s.name,m=at.m,x=at.x,y=at.y,l=s.level,
+  local name=type(s.name)=='string'and s.name:gsub(' %(dungeon run%)$','')or s.name
+  out[#out+1]={op=OP[s.op]or s.op,q=s.quest,n=name,m=at.m,x=at.x,y=at.y,l=s.level,
    v=(via:find('^deathskip')and'd')or(via=='hearth'and'h')or nil,gy=via:match('^deathskip: (.+)$'),
    dm=s.viaAt and s.viaAt.m,dx=s.viaAt and s.viaAt.x,dy=s.viaAt and s.viaAt.y,live=true}
  end
@@ -146,7 +166,11 @@ function FR.Text(step)
  if step.op=='a'then return'Annehmen: '..n end
  if step.op=='t'then return'Abgeben: '..n end
  if step.op=='g'then return string.format('Grinden bis Level %d%s',step.l or 0,step.tg and(': '..step.tg)or'')end
- if step.op=='d'then return'Dungeon laufen: '..(step.n or'?')..' (Gruppe suchen, alle Quests im Log erledigen)'end
+ if step.op=='d'then
+  local t='Dungeon laufen: '..(step.n or'?')..' (Gruppe suchen, alle Quests im Log erledigen)'
+  if type(step.qi)=='table'and #step.qi>0 then t=t..' – im Dungeon annehmen: '..table.concat(step.qi,', ')end
+  return t
+ end
  if step.op=='w'then
   local c,tg=step.c or 1,step.tg
   if step.k=='kill'then return string.format('%s: töte %d × %s',n,c,tg or'?')end
@@ -170,8 +194,11 @@ end
 function FR.Target(step)
  if not step then return nil end
  local died=charDB().died
- if step.v=='d'and step.dx and not call(UnitIsDeadOrGhost,'player')and died~=FR.index then return step.dm,step.dx,step.dy,true end
+ if step.v=='d'and step.dx and not call(UnitIsDeadOrGhost,'player')and died~=FR.StepKey(step)then return step.dm,step.dx,step.dy,true end
  return step.m,step.x,step.y,false
 end
 -- The character died: the deathskip of the current step is done.
-function FR.Died()charDB().died=FR.index end
+function FR.Died()
+ local steps=FR.Steps()
+ charDB().died=FR.StepKey(steps[FR.index or 1])
+end
