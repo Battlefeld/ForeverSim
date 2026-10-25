@@ -51,14 +51,14 @@ FR.SetLive({steps={{op='work',quest=790,name='Sarkoth: kill 10',at={m=1,x=-500,y
 local s,i=FR.Advance();assert(i==1 and s.q==790 and s.op=='w','live step')
 assert(FR.live[2].v=='d'and FR.live[2].gy=='Razor Hill'and FR.live[2].dx==-10,'live deathskip')
 FR.SetLive(nil);assert(not FR.live,'live plan not cleared')
--- the group route (with dungeon runs) when chosen; back to solo
-ForeverRoutesData.routes['dwarf-warrior-group']={race='Dwarf',class='Warrior',target=40,s={{op='d',n='The Deadmines',m=0,x=-11073,y=1529,l=20}}}
+-- "Solo mit Dungeon" when chosen; back to "Solo ohne Dungeon"
+ForeverRoutesData.routes['dwarf-warrior-dungeons']={race='Dwarf',class='Warrior',target=40,s={{op='d',n='The Deadmines',m=0,x=-11073,y=1529,l=20}}}
 UnitClass=function()return'Krieger','WARRIOR'end
-SlashCmdList.FOREVERROUTES('gruppe');local r,k=FR.Route();assert(k=='dwarf-warrior-group'and FR.Steps()[1].op=='d','group route not chosen')
+SlashCmdList.FOREVERROUTES('dungeon');local r,k=FR.Route();assert(k=='dwarf-warrior-dungeons'and FR.Steps()[1].op=='d','route with dungeons not chosen')
 SlashCmdList.FOREVERROUTES('solo');r,k=FR.Route();assert(k=='dwarf-warrior','solo route not back')
 -- a dungeon step: done once the character was inside and is out again
 local dstep={op='d',n='The Deadmines',m=0,x=-11073,y=1529,l=20}
-assert(FR.Text(dstep)=='Dungeon mit Gruppe: The Deadmines (alle Quests im Log erledigen)','dungeon text')
+assert(FR.Text(dstep)=='Dungeon laufen: The Deadmines (Gruppe suchen, alle Quests im Log erledigen)','dungeon text')
 assert(not FR.Done(dstep),'dungeon not run yet');IsInInstance=function()return true,'party'end
 assert(not FR.Done(dstep),'still inside');IsInInstance=function()return false,'none'end;assert(FR.Done(dstep),'run not followed')
 -- a second run of a dungeon: the route pauses inside and goes on outside, the arrow stays put

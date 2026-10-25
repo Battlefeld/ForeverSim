@@ -24,17 +24,19 @@ local function charDB()
  return c
 end
 
--- The route of this character: the group route (with dungeon runs) when chosen and there is one, else the solo route.
+-- The route of this character: "Solo mit Dungeon" (with dungeon runs) when chosen and there is one, else "Solo ohne
+-- Dungeon".
 function FR.Route()
  local key=FR.Key();local data=ForeverRoutesData and ForeverRoutesData.routes
  if not key or not data then return nil,key end
- if charDB().group and data[key..'-group']then return data[key..'-group'],key..'-group'end
+ local c=charDB()
+ if(c.dungeons or c.group)and data[key..'-dungeons']then return data[key..'-dungeons'],key..'-dungeons'end
  return data[key],key
 end
 
--- Solo or group: the other route starts over from its first step that is not done yet.
-function FR.SetGroup(on)
- local c=charDB();c.group=on and true or nil;c.index=1;c.skipped={};FR.pinned=nil
+-- With or without dungeons: the other route starts over from its first step that is not done yet.
+function FR.SetDungeons(on)
+ local c=charDB();c.dungeons=on and true or nil;c.group=nil;c.index=1;c.skipped={};FR.pinned=nil
  return FR.Advance()
 end
 
@@ -73,7 +75,7 @@ function FR.Done(step)
  if step.op=='w'then return completed(step.q)or(onQuest(step.q)and objectiveDone(step))end
  if step.op=='g'then return(call(UnitLevel,'player')or 0)>=(step.l or 0)end
  if step.op=='d'then
-  -- a dungeon run with the group: done once the character has been inside and is out again
+  -- a dungeon run: done once the character has been inside and is out again
   local db=charDB();db.ran=db.ran or{}
   if call(IsInInstance)then db.ran[step.n or'?']=true;return false end
   return db.ran[step.n or'?']==true
@@ -81,7 +83,7 @@ function FR.Done(step)
  return false
 end
 
--- Paused: the character is inside a dungeon the route does not run now (a second run with the group). Nothing is
+-- Paused: the character is inside a dungeon the route does not run now (a second run). Nothing is
 -- blocked: the route waits and goes on from its first open step once the character is out (steps done meanwhile,
 -- levels reached meanwhile, are passed by themselves).
 function FR.Paused(step)
@@ -144,7 +146,7 @@ function FR.Text(step)
  if step.op=='a'then return'Annehmen: '..n end
  if step.op=='t'then return'Abgeben: '..n end
  if step.op=='g'then return string.format('Grinden bis Level %d%s',step.l or 0,step.tg and(': '..step.tg)or'')end
- if step.op=='d'then return'Dungeon mit Gruppe: '..(step.n or'?')..' (alle Quests im Log erledigen)'end
+ if step.op=='d'then return'Dungeon laufen: '..(step.n or'?')..' (Gruppe suchen, alle Quests im Log erledigen)'end
  if step.op=='w'then
   local c,tg=step.c or 1,step.tg
   if step.k=='kill'then return string.format('%s: töte %d × %s',n,c,tg or'?')end

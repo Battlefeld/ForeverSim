@@ -84,9 +84,10 @@ function R.Capture()
  local _,class=call(UnitClass,'player');local _,race=call(UnitRace,'player')
  local live={level=call(UnitLevel,'player'),xp=call(UnitXP,'player')or 0,pos=R.Position(),completed=completedIDs(),active=questLog(),bind=bind(),hearthIn=hearthIn(),flightMasters=flightMasters()}
  if not class or not race or not live.level then error('Charakter nicht lesbar')end
- -- the group route (dungeon runs) when the player chose it in the ForeverRoutes addon (/fr gruppe)
- local group=type(ForeverRoutesCharDB)=='table'and ForeverRoutesCharDB.group==true or nil
- return{race=race,class=class,faction=call(UnitFactionGroup,'player'),group=group,live=live}
+ -- "Solo mit Dungeon" when the player chose it in the ForeverRoutes addon (/fr dungeon)
+ local db=type(ForeverRoutesCharDB)=='table'and ForeverRoutesCharDB or{}
+ local dungeons=(db.dungeons==true or db.group==true)or nil
+ return{race=race,class=class,faction=call(UnitFactionGroup,'player'),dungeons=dungeons,live=live}
 end
 
 -- Wording of a step.
