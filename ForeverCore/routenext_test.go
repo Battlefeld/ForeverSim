@@ -22,6 +22,11 @@ func fakeRoutes() {
 	}
 	reply := map[string]any{"schema": "foreverroutes.next.v1", "class": req["class"], "level": num(child(req, "live"), "level"), "profile": flags["-profile"], "horizon": flags["-horizon"], "route": flags["-route"], "faction": req["faction"],
 		"steps": []any{map[string]any{"op": "accept", "quest": 788.0, "name": "Cutting Teeth"}}}
+	for _, a := range os.Args {
+		if a == "-dungeons=true" {
+			reply["group"] = true
+		}
+	}
 	os.WriteFile(flags["-out"], jsonBytes(reply), 0o600)
 }
 
@@ -76,7 +81,13 @@ func TestRouteNext(t *testing.T) {
 	if r := got.(map[string]any); e != nil || r["faction"] != "Horde" || !strings.HasSuffix(str(r, "route"), "skyborne-h-warrior.json") || !strings.HasSuffix(str(r, "profile"), filepath.Join("profiles", "warrior.json")) {
 		t.Errorf("skyborne: %v %v", r, e)
 	}
-	if routeFile(data, "Skyborne", "warrior", "") != "" || routeFile(data, "Orc", "warrior", "Horde") != "" {
+	os.WriteFile(filepath.Join(dir, "routes", "skyborne-h-warrior-group.json"), []byte("[]"), 0o600)
+	sky["group"] = true
+	got, e = s.routeNext(t.Context(), Job{Kind: "route-next", State: sky})
+	if r := got.(map[string]any); e != nil || r["group"] != true || !strings.HasSuffix(str(r, "route"), "skyborne-h-warrior-group.json") {
+		t.Errorf("group route: %v %v", r, e)
+	}
+	if routeFile(data, "Skyborne", "warrior", "", false) != "" || routeFile(data, "Orc", "warrior", "Horde", false) != "" {
 		t.Error("route file for an unknown side or a missing route")
 	}
 	s.cfg.Routes = filepath.Join(t.TempDir(), "missing.exe")

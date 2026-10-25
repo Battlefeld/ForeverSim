@@ -67,7 +67,9 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	}
 	args := []string{"next", "-data", data, "-live", in, "-out", out, "-horizon", fmt.Sprint(horizon)}
 	// the character's best route (ForeverRoutes' improve, shipped beside the dataset) is followed from where it stands
-	if r := routeFile(data, race, class, faction); r != "" {
+	// with the group route (dungeon runs) when the player chose it in the addon
+	group, _ := j.State["group"].(bool)
+	if r := routeFile(data, race, class, faction, group); r != "" {
 		args = append(args, "-route", r)
 	}
 	// the class's kill profile ForeverRoutes ships beside the dataset, else one calculated here
@@ -77,6 +79,9 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	}
 	if profile != "" {
 		args = append(args, "-profile", profile)
+	}
+	if group {
+		args = append(args, "-dungeons=true")
 	}
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
@@ -138,7 +143,7 @@ func (s *Service) killProfileFor(class, race string) (path, note string) {
 
 // routeFile is the best route ForeverRoutes ships for a race and class (routes/<race>-<class>.json beside the dataset;
 // the Skyborne per side: skyborne-a, skyborne-h), or "" when there is none.
-func routeFile(data, race, class, faction string) string {
+func routeFile(data, race, class, faction string, group bool) string {
 	name := strings.ToLower(race)
 	if name == "skyborne" {
 		switch faction {
@@ -151,8 +156,19 @@ func routeFile(data, race, class, faction string) string {
 		}
 	}
 	path := filepath.Join(filepath.Dir(data), "routes", name+"-"+strings.ToLower(class)+".json")
-	if _, err := os.Stat(path); err != nil {
+	if group {
+		// the group route when there is one, else the solo route
+		if g := strings.TrimSuffix(path, ".json") + "-group.json"; fileOK(g) {
+			return g
+		}
+	}
+	if !fileOK(path) {
 		return ""
 	}
 	return path
+}
+
+func fileOK(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }
