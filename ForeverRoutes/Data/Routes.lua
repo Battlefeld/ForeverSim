@@ -9013,7 +9013,7 @@ ForeverRoutesData.routes["skyborne-a-hunter"] = {race = "Skyborne", class = "Hun
  {op = "w", q = 970, n = "The Tower of Althalaxx", o = 1, k = "item", c = 1, tg = "Dark Strand Cultist", m = 1, x = 3497.2, y = -93.7, l = 19},
  {op = "t", q = 970, n = "The Tower of Althalaxx", m = 1, x = 3185.3, y = 188.9, l = 20},
 }}
-ForeverRoutesData.routes["skyborne-a-mage"] = {race = "Skyborne", class = "Mage", faction = "A", target = 20, hours = 17.2, basis = "plan", s = {
+ForeverRoutesData.routes["skyborne-a-mage"] = {race = "Skyborne", class = "Mage", faction = "A", target = 20, hours = 18.1, basis = "plan", s = {
  {op = "a", q = 92460, n = "Coming of Age", m = 2991, x = 4089.5, y = 1849.5, l = 1},
  {op = "t", q = 92460, n = "Coming of Age", m = 2991, x = 4085.0, y = 1890.0, l = 1},
  {op = "a", q = 92461, n = "Harmony in Balance", m = 2991, x = 4085.0, y = 1890.0, l = 1},
@@ -9160,13 +9160,14 @@ ForeverRoutesData.routes["skyborne-a-mage"] = {race = "Skyborne", class = "Mage"
  {op = "w", q = 92909, n = "Harvesting the Harvesters", o = 1, k = "item", c = 14, m = 0, x = -10185.9, y = 1114.1, l = 12},
  {op = "w", q = 92909, n = "Harvesting the Harvesters", o = 2, k = "item", c = 5, m = 0, x = -10185.9, y = 1114.1, l = 12},
  {op = "w", q = 92911, n = "Harvesting the Harvesters", o = 1, k = "item", c = 8, tg = "Harvest Golem", m = 0, x = -10222.1, y = 1026.8, l = 12},
- {op = "w", q = 92911, n = "Harvesting the Harvesters", o = 2, k = "item", c = 4, tg = "Box of Assorted Parts", m = 0, x = -10949.6, y = 1572.2, l = 12, v = "h"},
+ {op = "w", q = 92911, n = "Harvesting the Harvesters", o = 3, k = "item", c = 1, tg = "Defias Pillager", m = 0, x = -11010.4, y = 1490.6, l = 12, v = "h"},
+ {op = "w", q = 92911, n = "Harvesting the Harvesters", o = 2, k = "item", c = 4, tg = "Box of Assorted Parts", m = 1, x = 1295.0, y = -3592.8, l = 12},
  {op = "w", q = 22, n = "Goretusk Liver Pie", o = 1, k = "item", c = 8, tg = "Young Goretusk", m = 0, x = -10393.3, y = 1125.5, l = 13},
  {op = "w", q = 92745, n = "The State of the Mines", o = 1, k = "kill", c = 4, tg = "Kobold Digger", m = 0, x = -9867.8, y = 1431.4, l = 13},
- {op = "w", q = 92745, n = "The State of the Mines", o = 2, k = "kill", c = 6, tg = "Riverpaw Miner", m = 0, x = -10522.3, y = 1973.3, l = 13},
+ {op = "w", q = 92745, n = "The State of the Mines", o = 2, k = "kill", c = 6, tg = "Riverpaw Miner", m = 0, x = -10522.3, y = 1973.3, l = 13, v = "h"},
  {op = "w", q = 13, n = "The People's Militia", o = 2, k = "kill", c = 15, tg = "Defias Looter", m = 0, x = -10502.4, y = 1959.5, l = 13},
  {op = "w", q = 13, n = "The People's Militia", o = 1, k = "kill", c = 15, tg = "Defias Pillager", m = 0, x = -10487.4, y = 1950.3, l = 13},
- {op = "t", q = 92745, n = "The State of the Mines", m = 0, x = -10638.0, y = 1180.0, l = 13, v = "h"},
+ {op = "t", q = 92745, n = "The State of the Mines", m = 0, x = -10638.0, y = 1180.0, l = 13},
  {op = "t", q = 13, n = "The People's Militia", m = 0, x = -10508.5, y = 1046.0, l = 13},
  {op = "t", q = 109, n = "Report to Gryan Stoutmantle", m = 0, x = -10508.5, y = 1046.0, l = 13},
  {op = "t", q = 92911, n = "Harvesting the Harvesters", m = 0, x = -10158.0, y = 1214.0, l = 13},
