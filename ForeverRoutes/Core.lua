@@ -63,6 +63,12 @@ function FR.Done(step)
  if step.op=='t'then return completed(step.q)end
  if step.op=='w'then return completed(step.q)or(onQuest(step.q)and objectiveDone(step))end
  if step.op=='g'then return(call(UnitLevel,'player')or 0)>=(step.l or 0)end
+ if step.op=='d'then
+  -- a dungeon run with the group: done once the character has been inside and is out again
+  local db=charDB();db.ran=db.ran or{}
+  if call(IsInInstance)then db.ran[step.n or'?']=true;return false end
+  return db.ran[step.n or'?']==true
+ end
  return false
 end
 
@@ -122,6 +128,7 @@ function FR.Text(step)
  if step.op=='a'then return'Annehmen: '..n end
  if step.op=='t'then return'Abgeben: '..n end
  if step.op=='g'then return string.format('Grinden bis Level %d%s',step.l or 0,step.tg and(': '..step.tg)or'')end
+ if step.op=='d'then return'Dungeon mit Gruppe: '..(step.n or'?')..' (alle Quests im Log erledigen)'end
  if step.op=='w'then
   local c,tg=step.c or 1,step.tg
   if step.k=='kill'then return string.format('%s: töte %d × %s',n,c,tg or'?')end
