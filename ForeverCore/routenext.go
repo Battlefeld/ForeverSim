@@ -21,7 +21,7 @@ import (
 // While a profile is still being calculated, the route is planned with ForeverRoutes' default estimate and says so.
 
 // routeProfileLevels is the level range of the kill profiles route-next calculates (the levels ForeverRoutes plans).
-var routeProfileLevels = [2]float64{10, 30}
+var routeProfileLevels = [2]float64{10, 40}
 
 var profileJobs sync.Map // profile path -> true while running, or the error that stopped it (not retried until restart)
 

@@ -32,7 +32,7 @@ func fakeRoutes() {
 
 func TestRouteNext(t *testing.T) {
 	routeProfileLevels = [2]float64{10, 11}
-	defer func() { routeProfileLevels = [2]float64{10, 30} }()
+	defer func() { routeProfileLevels = [2]float64{10, 40} }()
 	exe, _ := os.Executable()
 	sim, _ := fakeService(t)
 	data := filepath.Join(t.TempDir(), "routes-data.json.gz")
