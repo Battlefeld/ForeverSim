@@ -17,6 +17,8 @@ for src,name in [(a.core_exe,'ForeverCore.exe'),(a.engine_exe,'MythicSim.exe'),(
 for name in ['Install.ps1','Restore.ps1','Installieren.cmd','Starten.cmd','config.example.json','engine.lock.json']:shutil.copy2(core/name,stage/name)
 shutil.copy2(core/'README-DE.md',stage/'START-HIER.md')
 shutil.copytree(repo/'ForeverCoreBridge',stage/'AddOns/ForeverCoreBridge')
+# the leveling route with its arrow: works without ForeverCore, plans live with it
+shutil.copytree(repo/'ForeverRoutes',stage/'AddOns/ForeverRoutes')
 # Full matching addon set; the installer backs up existing addon folders.
 for addon in ['ForeverSimBridge']:
  shutil.copytree(repo/addon,stage/'AddOns'/addon,ignore=shutil.ignore_patterns('Development','tools','__pycache__','*.md','CHANGES_*'))
@@ -33,7 +35,7 @@ if (core/'creature-families.json').exists():shutil.copy2(core/'creature-families
 shutil.copytree(core,stage/'Source/ForeverCore',ignore=shutil.ignore_patterns('*.exe','forevercore','__pycache__'))
 shutil.copytree(repo/'ForeverCoreBridge',stage/'Source/ForeverCoreBridge')
 license_dir=stage/'Lizenzen';license_dir.mkdir();shutil.copy2(a.engine_source/'LICENSE',license_dir/'MythicSim-MIT.txt');shutil.copy2(a.lua_license,license_dir/'Lua.txt')
-notice='MythicSim / WoWSims: https://github.com/sage3648/mythicsim-forever-engine-go\nhttps://github.com/wowsims/forever\nEngine: '+json.loads((core/'engine.lock.json').read_text())['commit']+'\nRestedXP: https://github.com/RestedXP/RXPGuides (CC BY-NC-SA 4.0)\nQuestieDB: https://github.com/Questie/QuestieDB\nLua: https://www.lua.org (MIT)\n'
+notice='MythicSim / WoWSims: https://github.com/sage3648/mythicsim-forever-engine-go\nhttps://github.com/wowsims/forever\nEngine: '+json.loads((core/'engine.lock.json').read_text())['commit']+'\nRestedXP: https://github.com/RestedXP/RXPGuides (CC BY-NC-SA 4.0; routes of ForeverRoutes adapted from its guides are shared under the same licence)\nForeverRoutes: https://github.com/Battlefeld/ForeverRoutes (routes and dataset, GPL-3.0)\nQuestieDB: https://github.com/Questie/QuestieDB\nLua: https://www.lua.org (MIT)\n'
 (license_dir/'QUELLEN.txt').write_text(notice)
 files={str(f.relative_to(stage)).replace('\\','/'):hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted(stage.rglob('*'))if f.is_file()}
 (stage/'SHA256.json').write_text(json.dumps(files,indent=2))

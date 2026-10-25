@@ -2,7 +2,7 @@ name: ForeverCore Windows test package
 on:
   push:
     branches: [main]
-    paths: ['ForeverCore/**', 'ForeverCoreBridge/**', 'ForeverSimBridge/**', '.github/workflows/forevercore-package.yml']
+    paths: ['ForeverCore/**', 'ForeverCoreBridge/**', 'ForeverRoutes/**', 'ForeverSimBridge/**', '.github/workflows/forevercore-package.yml']
   workflow_dispatch:
 permissions:
   contents: write
@@ -39,6 +39,8 @@ jobs:
           lua5.1 ForeverCore/tests/bridge_test.lua .
           lua5.1 ForeverCore/tests/integration_test.lua .
           lua5.1 ForeverCore/tests/hunter_capture_test.lua .
+          lua5.1 ForeverCore/tests/route_next_test.lua .
+          lua5.1 ForeverCore/tests/foreverroutes_addon_test.lua .
       - name: Windows binaries
         env:
           GOOS: windows

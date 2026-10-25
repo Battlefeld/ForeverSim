@@ -21,6 +21,13 @@ Spiel an. Zwei Addons gehören dazu: **ForeverSimBridge** (liest Charakter und I
 
 - **Hover:** Item ansehen → Zeile im Tooltip mit Pfeil und „+x % DPS" (Details mit Shift).
 - **Dungeon:** Beim Betreten erscheint das Dungeon-Fenster mit den Drops, die dich verbessern.
+- **Levelroute:** Das Addon ForeverRoutes zeigt die beste Route für dein Volk und deine Klasse bis Level 20, mit
+  Pfeil (TomTom, sonst die Kartenmarkierung des Spiels) und Death-Skip-Hinweisen. Es läuft auch ohne ForeverCore; mit
+  ForeverCore plant es live von deinem aktuellen Stand aus. `/fr` zeigt oder versteckt das Fenster, `/fr skip`
+  überspringt einen Schritt, `/fr back` geht einen zurück, `/fr reset` beginnt von vorn.
+- **Routen-Update:** ForeverCore holt beim Start und danach alle 12 Stunden die neuesten Routen und Daten von
+  ForeverRoutes (geprüft per SHA-256; ein fehlerhafter Download ändert nichts). Abschalten: `"routesNoUpdate": true`
+  in `config.json`.
 - **Auktionshaus:** Leiste rechts am Fenster: Scannen, Berechnen, dann `/reload` – danach steht das beste Item je
   Platz in der Liste.
 

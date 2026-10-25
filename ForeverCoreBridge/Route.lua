@@ -170,6 +170,12 @@ function R.Apply(result,issue)
  R.waiting=false
  if issue then R.issue=issue else R.issue=nil;R.last=result;R.at=GetTime and GetTime()or 0;R.Waypoint(result and result.steps and result.steps[1])end
  R.Draw()
+ -- the ForeverRoutes addon shows the live plan in place of its stored route, and goes back to that when planning fails
+ local FR=ForeverRoutes
+ if FR and FR.SetLive then
+  FR.SetLive(not issue and result or nil)
+  if FR.Refresh then pcall(FR.Refresh)end
+ end
 end
 function R.Request(show)
  if show then R.Show()end

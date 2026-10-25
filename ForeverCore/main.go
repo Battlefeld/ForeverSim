@@ -23,8 +23,10 @@ type Config struct {
 	Data           string `json:"data"`
 	AutoSync       bool   `json:"autoSync"`
 	Lua            string `json:"lua"`
-	Routes         string `json:"routes"`     // foreverroutes.exe
-	RoutesData     string `json:"routesData"` // ForeverRoutes' dataset (routes-data.json.gz)
+	Routes         string `json:"routes"`         // foreverroutes.exe
+	RoutesData     string `json:"routesData"`     // ForeverRoutes' dataset (routes-data.json.gz)
+	RoutesRepo     string `json:"routesRepo"`     // GitHub repository the routes update comes from (Battlefeld/ForeverRoutes)
+	RoutesNoUpdate bool   `json:"routesNoUpdate"` // do not fetch new routes
 }
 type Job struct {
 	Schema     int            `json:"schema"`
@@ -133,7 +135,7 @@ func main() {
 	if !filepath.IsAbs(*config) {
 		*config = filepath.Join(base, *config)
 	}
-	cfg := Config{Lua: filepath.Join(base, "Lua.exe"), Runtime: filepath.Join(base, "Runtime"), Engine: filepath.Join(base, "MythicSim.exe"), Data: filepath.Join(base, "Data"), Routes: "foreverroutes.exe", RoutesData: filepath.Join("ForeverRoutes", "routes-data.json.gz")}
+	cfg := Config{Lua: filepath.Join(base, "Lua.exe"), Runtime: filepath.Join(base, "Runtime"), Engine: filepath.Join(base, "MythicSim.exe"), Data: filepath.Join(base, "Data"), Routes: filepath.Join("ForeverRoutes", "foreverroutes.exe"), RoutesData: filepath.Join("ForeverRoutes", "routes-data.json.gz")}
 	if e := loadJSON(*config, &cfg); e != nil && !os.IsNotExist(e) {
 		log.Fatal(e)
 	}
@@ -194,9 +196,11 @@ func main() {
 	log.Printf("ForeverCore %s | MythicSim %s | %s", Version, cfg.EngineRevision, cfg.Addons)
 	if *noCapture {
 		log.Printf("Bildschirmaufnahme AUS: nur Auktionshaus-Auftraege aus der SavedVariables-Datei (im Spiel /fc pixel aus; nach FC Berechnen /reload). Es wird nichts vom Bildschirm gelesen.")
+		go keepRoutesUpdated(ctx, cfg)
 		watchSavedVariables(ctx, s)
 		return
 	}
+	go keepRoutesUpdated(ctx, cfg)
 	go watchSavedVariables(ctx, s)
 	if e := runBridge(ctx, s); e != nil {
 		log.Fatal(e)
