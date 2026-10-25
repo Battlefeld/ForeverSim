@@ -23,6 +23,14 @@ function FR.Waypoint(m,x,y,title)
  return false
 end
 
+-- Takes the arrow away (inside a dungeon it has nothing to show).
+function FR.ClearWaypoint()
+ if FR.tomtom and TomTom and TomTom.RemoveWaypoint then call(TomTom.RemoveWaypoint,TomTom,FR.tomtom)end
+ FR.tomtom=nil
+ if FR.pinned and C_Map and C_Map.ClearUserWaypoint then call(C_Map.ClearUserWaypoint)end
+ FR.pinned=nil
+end
+
 local frame,header,hint,lines
 local function makeFrame()
  if frame then return frame end
@@ -58,6 +66,7 @@ function FR.Refresh()
   return nil
  end
  if FR.Paused(step)then
+  FR.ClearWaypoint()
   header:SetText('ForeverRoutes · Route pausiert (Dungeon)')
   hint:SetText('Geht nach dem Dungeon beim nächsten offenen Schritt weiter')
   for k=1,ROWS do local s=steps[i+k-1];lines[k]:SetText(s and FR.Text(s)or'')end
@@ -69,6 +78,8 @@ function FR.Refresh()
   local s=steps[i+k-1]
   lines[k]:SetText(s and FR.Text(s)or(k==1 and FR.Text(nil)or''))
  end
+ -- inside a dungeon (the run the route plans) the arrow has nothing to show
+ if call(IsInInstance)==true then FR.ClearWaypoint();return step end
  local m,x,y,dying=FR.Target(step)
  if m then
   if FR.pinned~=(i..(dying and'd'or''))then

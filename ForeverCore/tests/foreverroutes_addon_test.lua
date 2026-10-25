@@ -64,6 +64,7 @@ assert(not FR.Done(dstep),'still inside');IsInInstance=function()return false,'n
 -- a second run of a dungeon: the route pauses inside and goes on outside, the arrow stays put
 pinned=nil;FR.pinned=nil;IsInInstance=function()return true,'party'end;FR.Refresh()
 assert(FR.Paused(FR.Steps()[FR.index])and _G.ForeverRoutesFrame and pinned==nil,'route must pause inside a dungeon')
+local cleared=false;C_Map.ClearUserWaypoint=function()cleared=true end;FR.pinned='x';FR.Refresh();assert(cleared and FR.pinned==nil,'arrow must go away inside a dungeon')
 IsInInstance=function()return false,'none'end;FR.Refresh();assert(not FR.Paused(FR.Steps()[FR.index]),'route must go on outside')
 -- slash command toggles the window
 SlashCmdList.FOREVERROUTES('');assert(not _G.ForeverRoutesFrame:IsShown(),'/fr must hide');SlashCmdList.FOREVERROUTES('');assert(_G.ForeverRoutesFrame:IsShown(),'/fr must show')
