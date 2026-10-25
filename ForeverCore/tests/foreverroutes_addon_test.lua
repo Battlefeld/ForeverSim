@@ -85,6 +85,18 @@ assert(not FR.Done(rfc)and FR.Paused(rfc),'another dungeon must not finish the r
 GetInstanceInfo=function()return'Ragefire Chasm','party',1,'',5,0,false,389 end
 assert(not FR.Done(rfc)and not FR.Paused(rfc),'inside its own dungeon the run goes on')
 IsInInstance=function()return false,'none'end;assert(FR.Done(rfc),'out of its dungeon the run is done')
+-- a live dungeon step takes its instance and the quests taken inside from the stored route
+ForeverRoutesData.routes['dwarf-warrior-dungeons'].s[2]={op='d',n='Ragefire Chasm',ii=389,qi={'Returning the Lost Satchel'},m=1,x=1815,y=-4418,l=13}
+ForeverRoutesCharDB.dungeons=true
+FR.SetLive({steps={{op='dungeon',name='Ragefire Chasm (dungeon run)',at={m=1,x=1815,y=-4418},level=13}}})
+assert(FR.live[1].n=='Ragefire Chasm'and FR.live[1].ii==389 and FR.live[1].qi[1]=='Returning the Lost Satchel','live dungeon step without its instance')
+FR.SetLive(nil);ForeverRoutesCharDB.dungeons=nil
+-- two alike objectives: the one naming the step's target counts
+objs[500]={{type='monster',text='Kobold Vermin slain: 10/10',numFulfilled=10,numRequired=10,finished=true},{type='monster',text='Kobold Worker slain: 3/10',numFulfilled=3,numRequired=10,finished=false}}
+taken[500]=true
+assert(not FR.Done({op='w',q=500,o=2,k='kill',c=10,tg='Kobold Worker'}),'the other objective must not finish the step')
+assert(FR.Done({op='w',q=500,o=1,k='kill',c=10,tg='Kobold Vermin'}),'its own objective finishes the step')
+taken[500]=nil
 -- reset keeps the choice of the route with dungeons
 ForeverRoutesCharDB.dungeons=true;FR.Reset();assert(ForeverRoutesCharDB.dungeons==true,'reset must keep the route with dungeons')
 ForeverRoutesCharDB.dungeons=nil

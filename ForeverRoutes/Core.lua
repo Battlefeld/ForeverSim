@@ -54,15 +54,23 @@ local function questDone(q)
 end
 local TYPE={kill='monster',item='item',object='object',event='event',talk='monster'}
 -- An objective step is done when the game says its objective is finished: the game's objective of the same kind and
--- count (the route numbers objectives its own way), or every objective when none matches.
+-- count (the route numbers objectives its own way), the one naming the step's target first when two are alike, or
+-- every objective when none matches.
 local function objectiveDone(step)
  if questDone(step.q)then return true end
  local list=C_QuestLog and call(C_QuestLog.GetQuestObjectives,step.q)
  if type(list)~='table'or #list==0 then return false end
  local want=TYPE[step.k]
+ local alike={}
  for _,o in ipairs(list)do
-  if(not want or o.type==want)and(not step.c or tonumber(o.numRequired)==step.c)then return o.finished==true end
+  if(not want or o.type==want)and(not step.c or tonumber(o.numRequired)==step.c)then alike[#alike+1]=o end
  end
+ if #alike>1 and type(step.tg)=='string'and step.tg~=''then
+  for _,o in ipairs(alike)do
+   if type(o.text)=='string'and o.text:lower():find(step.tg:lower(),1,true)then return o.finished==true end
+  end
+ end
+ if alike[1]then return alike[1].finished==true end
  for _,o in ipairs(list)do if not o.finished then return false end end
  return true
 end
@@ -141,6 +149,15 @@ end
 
 -- The live plan from the ForeverCore bridge (its route-next result): steps in its own form, turned into ours.
 local OP={accept='a',turnin='t',work='w',grind='g',dungeon='d'}
+-- A live dungeon step names the dungeon only: its instance and the quests taken inside come from the stored routes.
+local function storedDungeon(name)
+ local data=ForeverRoutesData and ForeverRoutesData.routes
+ local r=FR.Route()
+ for _,route in ipairs({r or{},data and data[(FR.Key()or'')..'-dungeons']or{}})do
+  for _,st in ipairs(route.s or{})do if st.op=='d'and st.n==name then return st end end
+ end
+ return nil
+end
 function FR.SetLive(result)
  if type(result)~='table'or type(result.steps)~='table'then FR.live=nil;return end
  local out={}
@@ -151,6 +168,8 @@ function FR.SetLive(result)
   out[#out+1]={op=OP[s.op]or s.op,q=s.quest,n=name,m=at.m,x=at.x,y=at.y,l=s.level,
    v=(via:find('^deathskip')and'd')or(via=='hearth'and'h')or nil,gy=via:match('^deathskip: (.+)$'),
    dm=s.viaAt and s.viaAt.m,dx=s.viaAt and s.viaAt.x,dy=s.viaAt and s.viaAt.y,live=true}
+  local st=out[#out]
+  if st.op=='d'then local known=storedDungeon(st.n);if known then st.ii,st.qi=known.ii,known.qi end end
  end
  FR.live=out
 end
