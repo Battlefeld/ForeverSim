@@ -104,6 +104,29 @@ ForeverRoutesCharDB.dungeons=true;FR.Reset();assert(ForeverRoutesCharDB.dungeons
 ForeverRoutesCharDB.dungeons=nil
 -- slash command toggles the window
 SlashCmdList.FOREVERROUTES('');assert(not _G.ForeverRoutesFrame:IsShown(),'/fr must hide');SlashCmdList.FOREVERROUTES('');assert(_G.ForeverRoutesFrame:IsShown(),'/fr must show')
+-- options: off the route is as it is; on, their steps go in after theirs, the route goes on from its first open step
+local base=ForeverRoutesData.routes['dwarf-warrior']
+base.o={{id=79976,n='Gemütlicher Schlafsack',tier='recommended',min=83,l=18,s={
+ {af=0,op='a',q=79008,n='... and that note you found',m=0,x=-10581,y=1710,l=14},
+ {af=3,op='t',q=79008,n='... and that note you found',m=1,x=-3379,y=-2075,l=15}}},
+ {id=1919,n='Report to Jennea',tier='optional',min=2,l=16,s={{af=5,op='a',q=1919,n='Report to Jennea',m=0,x=1,y=1,l=16}}}}
+local n0=#FR.Steps();assert(n0==5 and FR.OptionsOn()==0,'options must be off at first')
+local o,on=FR.SetOption(1);assert(o.id==79976 and on,'option 1 not on')
+local st=FR.Steps();assert(#st==7 and st[1].q==79008 and st[2].q==179 and st[5].q==79008 and st[5].op=='t','option steps not in place')
+assert(FR.Hint(st[1])=='Option: Gemütlicher Schlafsack','option hint '..tostring(FR.Hint(st[1])))
+assert(FR.Hint(st[5]):find('Death Skip',1,true)==nil and FR.Hint(base.s[4]):find('Death Skip',1,true),'travel hints stay')
+SlashCmdList.FOREVERROUTES('option 1919');assert(#FR.Steps()==8 and FR.Steps()[8].q==1919 and FR.OptionsOn()==2,'option by id')
+assert(ForeverRoutesCharDB.index>=1 and next(ForeverRoutesCharDB.skipped)==nil,'switching starts over from the first open step')
+local said={};local p0=print;print=function(t)said[#said+1]=t end;SlashCmdList.FOREVERROUTES('optionen');print=p0
+assert(said[1]=='1. Gemütlicher Schlafsack (empfohlen, +83 Min, fertig mit Level 18): an','options list '..tostring(said[1]))
+FR.Reset();assert(FR.OptionsOn()==2,'reset must keep the options')
+FR.SetOption(1,false);FR.SetOption(2,false);assert(#FR.Steps()==5 and FR.OptionsOn()==0,'options off again')
+assert(FR.SetOption(9)==nil,'no such option')
+base.o=nil
+-- a caster's wand: done once it is in the bags or worn
+local zs={op='z',it=11287,m=0,x=1,y=1,l=5};local count=0
+GetItemCount=function(id)return id==11287 and count or 0 end;IsEquippedItem=function()return false end
+assert(not FR.Done(zs)and FR.Text(zs):find('Geringen Zauberstab',1,true),'wand step');count=1;assert(FR.Done(zs),'wand in the bags')
 -- no route for this character: said in the window
 UnitClass=function()return'Hexer','WARLOCK'end;FR.Refresh()
 for _,e in ipairs(MOCK.errors)do error(e.kind..': '..tostring(e.msg))end

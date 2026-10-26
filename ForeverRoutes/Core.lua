@@ -100,6 +100,7 @@ function FR.Done(step)
  if step.op=='t'then return completed(step.q)end
  if step.op=='w'then return completed(step.q)or(onQuest(step.q)and objectiveDone(step))end
  if step.op=='g'then return(call(UnitLevel,'player')or 0)>=(step.l or 0)end
+ if step.op=='z'then return(call(GetItemCount,step.it)or 0)>0 or call(IsEquippedItem,step.it)==true end
  if step.op=='d'then
   -- a dungeon run: done once the character has been inside that dungeon and is out again
   local db=charDB();db.ran=db.ran or{}
@@ -116,10 +117,62 @@ function FR.Paused(step)
  return instanceID()~=nil and not(step and step.op=='d'and inDungeonOf(step))
 end
 
--- The steps to show: the live plan when there is one, else the stored route.
+-- Options (route.o): goals the route leaves out that can be switched on, each with its steps and for each the step
+-- of the route it comes after (af, 0 before the first). On, its steps go in there; the route's grind steps are then
+-- done earlier by themselves (a grind step is done at its level).
+function FR.Options()
+ local r=FR.Route();return r and r.o or{}
+end
+local function optionOn(o)local c=charDB();return c.opts and c.opts[o.id]==true end
+-- How many options are switched on.
+function FR.OptionsOn()
+ local n=0;for _,o in ipairs(FR.Options())do if optionOn(o)then n=n+1 end end;return n
+end
+-- An option by its number in the list or its id; nil when there is none.
+function FR.Option(n)
+ n=tonumber(n);if not n then return nil end
+ local list=FR.Options()
+ if list[n]then return list[n]end
+ for _,o in ipairs(list)do if o.id==n then return o end end
+ return nil
+end
+-- Switches an option on or off (nil: the other way); the route goes on from its first step not done yet.
+function FR.SetOption(n,on)
+ local o=FR.Option(n);if not o then return nil end
+ local c=charDB();c.opts=c.opts or{}
+ if on==nil then on=not optionOn(o)end
+ c.opts[o.id]=on and true or nil;c.index=1;c.skipped={};FR.pinned=nil
+ FR.Advance()
+ return o,on
+end
+-- The stored route with the options switched on in it (kept until the route or the options change).
+local merged
+local function withOptions(r,key)
+ local on={}
+ for _,o in ipairs(r.o or{})do if optionOn(o)then on[#on+1]=o end end
+ if #on==0 then return r.s or{}end
+ local ids={};for _,o in ipairs(on)do ids[#ids+1]=o.id end
+ local tag=key..':'..table.concat(ids,',')
+ if merged and merged.tag==tag then return merged.s end
+ local at={}
+ for _,o in ipairs(on)do
+  for _,st in ipairs(o.s or{})do
+   st.opt=o.n;local a=st.af or 0;at[a]=at[a]or{};local l=at[a];l[#l+1]=st
+  end
+ end
+ local out={}
+ for i=0,#(r.s or{})do
+  if i>0 then out[#out+1]=r.s[i]end
+  for _,st in ipairs(at[i]or{})do out[#out+1]=st end
+ end
+ merged={tag=tag,s=out}
+ return out
+end
+
+-- The steps to show: the live plan when there is one, else the stored route (with the options switched on).
 function FR.Steps()
  if FR.live then return FR.live,true end
- local r=FR.Route();return r and r.s or{},false
+ local r,key=FR.Route();return r and withOptions(r,key)or{},false
 end
 
 -- Moves past what is done or skipped. Returns the current step.
@@ -143,8 +196,8 @@ function FR.Back()
  return FR.Steps()[i],i
 end
 function FR.Reset()
- local dungeons=charDB().dungeons
- ForeverRoutesCharDB={dungeons=dungeons};return FR.Advance()
+ local c=charDB()
+ ForeverRoutesCharDB={dungeons=c.dungeons,opts=c.opts};return FR.Advance()
 end
 
 -- The live plan from the ForeverCore bridge (its route-next result): steps in its own form, turned into ours.
@@ -184,6 +237,7 @@ function FR.Text(step)
  local n=questName(step)
  if step.op=='a'then return'Annehmen: '..n end
  if step.op=='t'then return'Abgeben: '..n end
+ if step.op=='z'then return'Zauberstab: Verzauberkunst lernen und Geringen Zauberstab herstellen (Einfaches Holz, Geringe Magische Essenz)'end
  if step.op=='g'then return string.format('Grinden bis Level %d%s',step.l or 0,step.tg and(': '..step.tg)or'')end
  if step.op=='d'then
   local t='Dungeon laufen: '..(step.n or'?')..' (Gruppe suchen, alle Quests im Log erledigen)'
@@ -203,6 +257,11 @@ end
 -- What to do first to get there: a deathskip, the hearthstone or a druid's teleport to Moonglade.
 function FR.Hint(step)
  if not step then return nil end
+ local h=FR.TravelHint(step)
+ if step.opt then return'Option: '..step.opt..(h and(' · '..h)or'')end
+ return h
+end
+function FR.TravelHint(step)
  if step.v=='d'then return'Death Skip: hier sterben, beim Geistheiler wiederbeleben'..(step.gy and(' ('..step.gy..')')or'')end
  if step.v=='h'then return'Ruhestein benutzen'end
  if step.v=='t'then return'Teleportieren: Mondlichtung'end

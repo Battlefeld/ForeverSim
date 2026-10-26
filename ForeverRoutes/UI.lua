@@ -84,13 +84,26 @@ function FR.Refresh()
   for k=1,ROWS do local s=steps[i+k-1];lines[k]:SetText(s and FR.Text(s)or'')end
   return step
  end
- header:SetText(live and'ForeverRoutes · live geplant'or string.format('ForeverRoutes · %s · Schritt %d/%d',tostring(key):find('%-dungeons$')and'Solo mit Dungeon'or'Solo ohne Dungeon',i,#steps))
+ header:SetText(live and'ForeverRoutes · live geplant'or string.format('ForeverRoutes · %s%s · Schritt %d/%d',tostring(key):find('%-dungeons$')and'Solo mit Dungeon'or'Solo ohne Dungeon',FR.OptionsOn()>0 and string.format(' + %d Option(en)',FR.OptionsOn())or'',i,#steps))
  hint:SetText(FR.Hint(step)or'')
  for k=1,ROWS do
   local s=steps[i+k-1]
   lines[k]:SetText(s and FR.Text(s)or(k==1 and FR.Text(nil)or''))
  end
  return step
+end
+
+-- The options of the route in the chat: number, name, what it costs, on or off.
+local TIER={recommended='empfohlen',optional='optional'}
+function FR.PrintOptions()
+ local list=FR.Options()
+ if #list==0 then print('ForeverRoutes: diese Route hat keine Optionen');return end
+ local c=ForeverRoutesCharDB or{}
+ for i,o in ipairs(list)do
+  local on=c.opts and c.opts[o.id]
+  print(string.format('%d. %s (%s, %+d Min, fertig mit Level %d): %s',i,o.n,TIER[o.tier]or tostring(o.tier),o.min or 0,o.l or 0,on and'an'or'aus'))
+ end
+ print('/fr option <Nummer> schaltet eine Option an oder aus')
 end
 
 function FR.Show()makeFrame():Show();ForeverRoutesDB=ForeverRoutesDB or{};ForeverRoutesDB.hidden=nil;FR.Refresh()end
@@ -112,6 +125,10 @@ SlashCmdList.FOREVERROUTES=function(msg)
  if msg=='skip'then FR.Skip()elseif msg=='back'or msg=='zurueck'then FR.Back()elseif msg=='reset'then FR.Reset()
  elseif msg=='dungeon'or msg=='dungeons'or msg=='mit'or msg=='gruppe'then FR.SetDungeons(true)
  elseif msg=='solo'or msg=='ohne'then FR.SetDungeons(false)
+ elseif msg=='optionen'or msg=='options'or msg=='option'then FR.PrintOptions();return
+ elseif msg:match('^option%s+%d+$')then
+  local o,on=FR.SetOption(msg:match('(%d+)$'))
+  if o then print(string.format('ForeverRoutes: %s %s',o.n,on and'an'or'aus'))else print('ForeverRoutes: keine solche Option')end
  elseif msg==''and frame and frame:IsShown()then frame:Hide();ForeverRoutesDB=ForeverRoutesDB or{};ForeverRoutesDB.hidden=true;return end
  FR.Show()
 end
