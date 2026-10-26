@@ -31,20 +31,22 @@ function FR.ClearWaypoint()
  FR.pinned=nil
 end
 
-local frame,header,hint,lines
+local frame,header,hint,side,lines
 local function makeFrame()
  if frame then return frame end
  frame=CreateFrame('Frame','ForeverRoutesFrame',UIParent,'BackdropTemplate')
- frame:SetSize(400,74+ROWS*18);frame:SetPoint('RIGHT',UIParent,'RIGHT',-40,120)
+ frame:SetSize(400,90+ROWS*18);frame:SetPoint('RIGHT',UIParent,'RIGHT',-40,120)
  if frame.SetBackdrop then frame:SetBackdrop({bgFile='Interface\\Tooltips\\UI-Tooltip-Background'});frame:SetBackdropColor(.03,.04,.07,.88)end
  frame:SetMovable(true);frame:EnableMouse(true);frame:RegisterForDrag('LeftButton')
  frame:SetScript('OnDragStart',frame.StartMoving);frame:SetScript('OnDragStop',frame.StopMovingOrSizing)
  header=frame:CreateFontString(nil,'OVERLAY','GameFontNormal');header:SetPoint('TOPLEFT',10,-8);header:SetWidth(300);header:SetJustifyH('LEFT')
  hint=frame:CreateFontString(nil,'OVERLAY','GameFontHighlightSmall');hint:SetPoint('TOPLEFT',10,-26);hint:SetWidth(380);hint:SetJustifyH('LEFT')
+ -- beside the route: what to do on the way (farm leather for the camp)
+ side=frame:CreateFontString(nil,'OVERLAY','GameFontNormalSmall');side:SetPoint('TOPLEFT',10,-42);side:SetWidth(380);side:SetJustifyH('LEFT')
  lines={}
  for i=1,ROWS do
   local l=frame:CreateFontString(nil,'OVERLAY',i==1 and'GameFontHighlight'or'GameFontDisableSmall')
-  l:SetPoint('TOPLEFT',10,-46-(i-1)*18);l:SetWidth(380);l:SetJustifyH('LEFT');lines[i]=l
+  l:SetPoint('TOPLEFT',10,-62-(i-1)*18);l:SetWidth(380);l:SetJustifyH('LEFT');lines[i]=l
  end
  local skip=CreateFrame('Button',nil,frame,'UIPanelButtonTemplate');skip:SetSize(84,20);skip:SetPoint('TOPRIGHT',-26,-5);skip:SetText('Überspringen')
  skip:SetScript('OnClick',function()FR.Skip();FR.Refresh()end)
@@ -86,6 +88,7 @@ function FR.Refresh()
  end
  header:SetText(live and'ForeverRoutes · live geplant'or string.format('ForeverRoutes · %s%s · Schritt %d/%d',tostring(key):find('%-dungeons$')and'Solo mit Dungeon'or'Solo ohne Dungeon',FR.OptionsOn()>0 and string.format(' + %d Option(en)',FR.OptionsOn())or'',i,#steps))
  hint:SetText(FR.Hint(step)or'')
+ local _,beside=FR.CampStatus();side:SetText(beside or'')
  for k=1,ROWS do
   local s=steps[i+k-1]
   lines[k]:SetText(s and FR.Text(s)or(k==1 and FR.Text(nil)or''))
@@ -109,8 +112,9 @@ end
 function FR.Show()makeFrame():Show();ForeverRoutesDB=ForeverRoutesDB or{};ForeverRoutesDB.hidden=nil;FR.Refresh()end
 
 local events=CreateFrame('Frame')
-for _,e in ipairs({'PLAYER_LOGIN','PLAYER_ENTERING_WORLD','QUEST_ACCEPTED','QUEST_TURNED_IN','QUEST_REMOVED','QUEST_LOG_UPDATE','PLAYER_LEVEL_UP','PLAYER_DEAD','PLAYER_UNGHOST','PLAYER_ALIVE'})do pcall(events.RegisterEvent,events,e)end
-events:SetScript('OnEvent',function(_,event)
+for _,e in ipairs({'PLAYER_LOGIN','PLAYER_ENTERING_WORLD','QUEST_ACCEPTED','QUEST_TURNED_IN','QUEST_REMOVED','QUEST_LOG_UPDATE','PLAYER_LEVEL_UP','PLAYER_DEAD','PLAYER_UNGHOST','PLAYER_ALIVE','UNIT_AURA','BAG_UPDATE'})do pcall(events.RegisterEvent,events,e)end
+events:SetScript('OnEvent',function(_,event,unit)
+ if event=='UNIT_AURA'and unit~='player'then return end
  if event=='PLAYER_LOGIN'then
   if not(ForeverRoutesDB and ForeverRoutesDB.hidden)then FR.Show()end
   return

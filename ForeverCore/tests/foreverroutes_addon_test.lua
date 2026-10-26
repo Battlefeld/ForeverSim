@@ -132,10 +132,20 @@ count=1;assert(FR.Done(zs),'wand in the bags');assert(not FR.Text({op='z',it=112
 local lines={};GetNumSkillLines=function()return #lines end;GetSkillLineInfo=function(i)return lines[i]end
 local ps={op='p',cl=10,m=0,x=1,y=1,l=3};assert(not FR.Done(ps)and FR.Text(ps):find('Lederverarbeitung',1,true),'professions step')
 lines={'Kürschnerei','Lederverarbeitung'};assert(FR.Done(ps),'professions learned')
-local now=100000;time=function()return now end
-ForeverRoutesCharDB.campLevel=10;ForeverRoutesCharDB.camp=nil;level=9;assert(not FR.CampDue(),'no camp below its level')
-level=10;assert(FR.CampDue()and FR.Hint({op='a'}):find('Lager aufschlagen',1,true),'camp due')
-SlashCmdList.FOREVERROUTES('lager');assert(not FR.CampDue(),'camp done');now=now+3600;assert(FR.CampDue(),'an hour later again')
+local now=100000;time=function()return now end;local gt=500;GetTime=function()return gt end
+local bags={};GetItemCount=function(id)return bags[id]or 0 end
+local auras={};UnitBuff=function(u,i)local a=auras[i];if a then return a.n,nil,0,nil,3600,a.e end end;UnitDebuff=function()end
+ForeverRoutesCharDB.campLevel=10;ForeverRoutesCharDB.camp=nil;level=9;assert(FR.CampStatus()==nil,'no camp below its level')
+level=10;assert(FR.CampStatus():find('Lager aufschlagen',1,true)and FR.Hint({op='a'}):find('Lager aufschlagen',1,true),'camp due')
+local _,beside=FR.CampStatus();assert(beside and beside:find('0/5 Leichtes Leder',1,true),'farm leather beside the route')
+-- the buff: an hour, nothing to say until 10 minutes before its end
+auras[1]={n='Lagerfeuer',e=gt+3000};assert(FR.CampStatus()==nil and select(2,FR.CampStatus())==nil,'quiet with the buff on')
+auras[1].e=gt+540;local h,b=FR.CampStatus();assert(h==nil and b:find('Leder farmen',1,true),'10 min before: farm leather')
+bags[2318]=5;h,b=FR.CampStatus();assert(h==nil and b==nil,'10 min before with leather: quiet')
+auras[1].e=gt+240;h=FR.CampStatus();assert(h=='Lager-Buff endet in 4 Min – Zelt: bereit, Lagerfeuer: fehlt','5 min before: '..tostring(h))
+bags[4470],bags[4471]=1,1;h=FR.CampStatus();assert(h:find('Lagerfeuer: bereit',1,true),'fire ready')
+auras[1]=nil;now=now+3600;h=FR.CampStatus();assert(h:find('Lager aufschlagen',1,true),'run out: make camp')
+SlashCmdList.FOREVERROUTES('lager');assert(FR.CampStatus()==nil,'camp done (no buff seen: the time since /fr lager)')
 ForeverRoutesCharDB.campLevel=nil;assert(FR.Text({op='z',it=1,cl=10,l=4}):find('Verzauberkunst verlernen',1,true),'casters unlearn Enchanting')
 -- no route for this character: said in the window
 UnitClass=function()return'Hexer','WARLOCK'end;FR.Refresh()

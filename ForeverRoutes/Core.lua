@@ -123,12 +123,57 @@ function FR.HasProfessions()
  return skin and leather
 end
 
--- The hourly camp: from the level the route says (cl), once the professions are there, an hour after the last camp
--- (/fr lager marks one) a reminder to make camp for the Camp Tent's rested experience.
-function FR.CampDue()
+-- The camp, coupled to the camp buff (an hour; all camp objects share that cooldown). The buff is found among the
+-- character's auras by its name (CAMP_AURAS); without it the time since the last camp (/fr lager) stands in.
+-- 10 minutes before it runs out: is there leather for another tent? If not, "farm leather" beside the route.
+-- 5 minutes before: the buff ends soon, with what the camp still lacks. Run out: make camp.
+FR.CAMP_AURAS={'Camp','Lager','Zelt','Tent'}
+FR.LIGHT_LEATHER=2318;FR.TENT_LEATHER=5            -- a Camp Tent: 5 Light Leather (two tents per craft)
+FR.TENT_NAMES={'Camp Tent','Lagerzelt'}
+FR.FIRE={{4470,1},{4471,1}}                        -- Basic Campfire: Simple Wood, Flint and Tinder (as in Classic)
+local function campAura()
+ local now=call(GetTime)or 0
+ for _,fn in ipairs({UnitBuff,UnitDebuff})do
+  for i=1,40 do
+   local name,_,_,_,duration,expires=call(fn,'player',i)
+   if not name then break end
+   for _,k in ipairs(FR.CAMP_AURAS)do
+    if tostring(name):find(k,1,true)and(duration or 0)>0 and expires then return expires-now end
+   end
+  end
+ end
+ return nil
+end
+-- Seconds the camp buff has left (0: none or run out); nil before the camps start.
+function FR.CampLeft()
  local c=charDB()
- if not c.campLevel or(call(UnitLevel,'player')or 0)<c.campLevel then return false end
- return(call(time)or 0)-(c.camp or 0)>=3600
+ if not c.campLevel or(call(UnitLevel,'player')or 0)<c.campLevel then return nil end
+ local left=campAura()
+ if left then return math.max(0,left)end
+ return math.max(0,3600-((call(time)or 0)-(c.camp or -1e9)))
+end
+-- What a camp needs that the bags lack: tent (or leather for one), fire.
+function FR.CampMaterials()
+ local tents=0
+ for _,n in ipairs(FR.TENT_NAMES)do tents=tents+(call(GetItemCount,n)or 0)end
+ local leather=call(GetItemCount,FR.LIGHT_LEATHER)or 0
+ local fire=true
+ for _,r in ipairs(FR.FIRE)do if(call(GetItemCount,r[1])or 0)<r[2]then fire=false end end
+ return{tent=tents>0 or leather>=FR.TENT_LEATHER,leather=leather,fire=fire}
+end
+-- The camp's word for the window: a hint for the route line and a task beside the route (nil when nothing).
+function FR.CampStatus()
+ local left=FR.CampLeft();if not left then return nil,nil end
+ local m=FR.CampMaterials()
+ local farm=not m.tent and string.format('Nebenbei: Leder farmen – Wildtiere kürschnern (%d/%d Leichtes Leder für ein Lagerzelt)',m.leather,FR.TENT_LEATHER)or nil
+ if left<=0 then
+  return'Lager aufschlagen: Lagerfeuer, Lagerzelt, 1 Minute rasten (/fr lager)',farm
+ end
+ if left<=300 then
+  return string.format('Lager-Buff endet in %d Min – Zelt: %s, Lagerfeuer: %s',math.ceil(left/60),m.tent and'bereit'or'fehlt',m.fire and'bereit'or'fehlt'),farm
+ end
+ if left<=600 then return nil,farm end
+ return nil,nil
 end
 function FR.Camped()local c=charDB();c.camp=call(time)or 0 end
 
@@ -290,7 +335,8 @@ function FR.Hint(step)
  if not step then return nil end
  local h=FR.TravelHint(step)
  if step.opt then h='Option: '..step.opt..(h and(' · '..h)or'')end
- if FR.CampDue()then h=(h and(h..' · ')or'')..'Lager aufschlagen: Lagerfeuer, Lagerzelt, 1 Minute rasten (/fr lager)'end
+ local camp=FR.CampStatus()
+ if camp then h=(h and(h..' · ')or'')..camp end
  return h
 end
 function FR.TravelHint(step)
