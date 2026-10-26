@@ -128,7 +128,8 @@ end
 -- The camp, coupled to the camp buff (an hour; all camp objects share that cooldown). The buff is found among the
 -- character's auras by its name (CAMP_AURAS); without it the time since the last camp (/fr lager) stands in.
 -- 10 minutes before it runs out: is there leather for another tent? If not, "farm leather" beside the route.
--- 5 minutes before: the buff ends soon, with what the camp still lacks. Run out: make camp.
+-- 5 minutes before: the buff ends soon, with what the camp still lacks. Run out: make camp. All of it only when the
+-- rested experience is used up (or will be): with rested experience left the tent raises nothing.
 -- The hour is the camp cooldown aura (spell 1229451) or the Leatherworking camp buff "Well Rested Shelter"
 -- (kovarel.com/wow-forever/features/camping); the tent's rest bonus raises rested XP to 5 % of a level.
 FR.CAMP_AURA_IDS={[1229451]=true}
@@ -168,9 +169,19 @@ function FR.CampMaterials()
  end
  return{tent=tent,leather=leather,fire=fire}
 end
+-- Rested experience left, as a share of the level (the tent raises it to 5 %: with more left a camp brings nothing).
+function FR.RestedShare()
+ local max=call(UnitXPMax,'player')or 0
+ if max<=0 then return 0 end
+ return(call(GetXPExhaustion)or 0)/max
+end
+FR.CAMP_EMPTY=0.01   -- make camp once the rested experience is used up (below 1 % of the level)
+FR.CAMP_SOON=0.025   -- warn ahead only when it will be used up by then (below half a tent)
 -- The camp's word for the window: a hint for the route line and a task beside the route (nil when nothing).
 function FR.CampStatus()
  local left=FR.CampLeft();if not left then return nil,nil end
+ local rested=FR.RestedShare()
+ if rested>=FR.CAMP_SOON or(left<=0 and rested>=FR.CAMP_EMPTY)then return nil,nil end -- rested experience left: no camp yet
  local m=FR.CampMaterials()
  local farm=not m.tent and string.format('Nebenbei: Leder farmen – Wildtiere kürschnern (%d/%d Leichtes Leder für ein Lagerzelt)',m.leather,FR.TENT_LEATHER)or nil
  if left<=0 then

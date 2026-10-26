@@ -133,6 +133,7 @@ local lines={};GetNumSkillLines=function()return #lines end;GetSkillLineInfo=fun
 local ps={op='p',cl=10,m=0,x=1,y=1,l=3};assert(not FR.Done(ps)and FR.Text(ps):find('Lederverarbeitung',1,true),'professions step')
 lines={'Kürschnerei','Lederverarbeitung'};assert(FR.Done(ps),'professions learned')
 local now=100000;time=function()return now end;local gt=500;GetTime=function()return gt end
+local rest=0;GetXPExhaustion=function()return rest>0 and rest or nil end;UnitXPMax=function()return 10000 end
 local bags={};GetItemCount=function(id)return bags[id]or 0 end
 local auras={};UnitBuff=function(u,i)local a=auras[i];if a then return a.n,nil,0,nil,3600,a.e,nil,nil,nil,a.id end end;UnitDebuff=function()end
 ForeverRoutesCharDB.campLevel=10;ForeverRoutesCharDB.camp=nil;level=9;assert(FR.CampStatus()==nil,'no camp below its level')
@@ -148,6 +149,9 @@ bags[279981]=1;h=FR.CampStatus();assert(h:find('Lagerfeuer: bereit',1,true),'fir
 auras[1]={n='Unbekannt',id=1229451,e=gt+100};h=FR.CampStatus();assert(h:find('endet in 2 Min',1,true),'the cooldown aura by its id')
 auras[1]=nil;now=now+3600;h=FR.CampStatus();assert(h:find('Lager aufschlagen',1,true),'run out: make camp')
 SlashCmdList.FOREVERROUTES('lager');assert(FR.CampStatus()==nil,'camp done (no buff seen: the time since /fr lager)')
+-- rested experience left: no camp, no warning
+now=now+3600;rest=500;assert(FR.CampStatus()==nil,'rested left: no camp');rest=50;assert(FR.CampStatus():find('Lager aufschlagen',1,true),'used up: camp')
+rest=200;auras[1]={n='Well Rested Shelter',e=gt+240};assert(FR.CampStatus()~=nil,'2 % left 5 min before: warn');rest=400;assert(FR.CampStatus()==nil,'4 % left: no warning');auras[1]=nil;rest=0
 ForeverRoutesCharDB.campLevel=nil;assert(FR.Text({op='z',it=1,cl=10,l=4}):find('Verzauberkunst verlernen',1,true),'casters unlearn Enchanting')
 -- no route for this character: said in the window
 UnitClass=function()return'Hexer','WARLOCK'end;FR.Refresh()
