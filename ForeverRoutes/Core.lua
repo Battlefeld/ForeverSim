@@ -166,7 +166,7 @@ function FR.SetLive(result)
   local via=type(s.via)=='string'and s.via or''
   local name=type(s.name)=='string'and s.name:gsub(' %(dungeon run%)$','')or s.name
   out[#out+1]={op=OP[s.op]or s.op,q=s.quest,n=name,m=at.m,x=at.x,y=at.y,l=s.level,
-   v=(via:find('^deathskip')and'd')or(via=='hearth'and'h')or nil,gy=via:match('^deathskip: (.+)$'),
+   v=(via:find('^deathskip')and'd')or(via=='hearth'and'h')or(via=='teleport'and't')or nil,gy=via:match('^deathskip: (.+)$'),
    dm=s.viaAt and s.viaAt.m,dx=s.viaAt and s.viaAt.x,dy=s.viaAt and s.viaAt.y,live=true}
   local st=out[#out]
   if st.op=='d'then local known=storedDungeon(st.n);if known then st.ii,st.qi=known.ii,known.qi end end
@@ -200,11 +200,12 @@ function FR.Text(step)
  end
  return tostring(step.op)
 end
--- What to do first to get there: a deathskip or the hearthstone.
+-- What to do first to get there: a deathskip, the hearthstone or a druid's teleport to Moonglade.
 function FR.Hint(step)
  if not step then return nil end
  if step.v=='d'then return'Death Skip: hier sterben, beim Geistheiler wiederbeleben'..(step.gy and(' ('..step.gy..')')or'')end
  if step.v=='h'then return'Ruhestein benutzen'end
+ if step.v=='t'then return'Teleportieren: Mondlichtung'end
  return nil
 end
 

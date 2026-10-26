@@ -41,6 +41,8 @@ pinned=nil;C_Map.GetMapPosFromWorldPos=function(m,v)return 1426,CreateVector2D(v
 assert(pinned and pinned.x==.1,'arrow must lead to the place to die')
 assert(FR.Hint(FR.Steps()[4]):find('Death Skip',1,true),'deathskip hint')
 MOCK.Fire('PLAYER_DEAD');MOCK.Fire('PLAYER_ALIVE');assert(pinned.x==.9,'after the death the arrow must lead to the step')
+assert(FR.Hint({op='a',v='t'})=='Teleportieren: Mondlichtung','teleport hint')
+FR.SetLive({steps={{op='accept',quest=5,name='X',at={m=1,x=1,y=1},via='teleport'}}});assert(FR.live[1].v=='t','live teleport');FR.SetLive(nil)
 -- skip and back
 FR.Skip();assert(FR.index==5,'skip');FR.Back();FR.Refresh();assert(FR.index==4,'back')
 -- grinding is done at the level
