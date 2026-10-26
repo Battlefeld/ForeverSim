@@ -124,9 +124,11 @@ FR.SetOption(1,false);FR.SetOption(2,false);assert(#FR.Steps()==5 and FR.Options
 assert(FR.SetOption(9)==nil,'no such option')
 base.o=nil
 -- a caster's wand: done once it is in the bags or worn
-local zs={op='z',it=11287,m=0,x=1,y=1,l=5};local count=0
+local zs={op='z',wt=2,it=11287,m=0,x=1,y=1,l=5};local count=0
 GetItemCount=function(id)return id==11287 and count or 0 end;IsEquippedItem=function()return false end
 assert(not FR.Done(zs)and FR.Text(zs):find('Geringen Zauberstab',1,true),'wand step');count=1;assert(FR.Done(zs),'wand in the bags')
+local pw,worn={op='z',wt=1,m=0,x=1,y=1,l=2},nil;GetInventoryItemID=function(u,slot)return slot==18 and worn or nil end
+assert(not FR.Done(pw)and FR.Text(pw):find("Novice's Practice Wand",1,true),'practice wand step');worn=5;assert(FR.Done(pw),'practice wand worn')
 -- no route for this character: said in the window
 UnitClass=function()return'Hexer','WARLOCK'end;FR.Refresh()
 for _,e in ipairs(MOCK.errors)do error(e.kind..': '..tostring(e.msg))end

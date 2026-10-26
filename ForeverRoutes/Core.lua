@@ -100,7 +100,11 @@ function FR.Done(step)
  if step.op=='t'then return completed(step.q)end
  if step.op=='w'then return completed(step.q)or(onQuest(step.q)and objectiveDone(step))end
  if step.op=='g'then return(call(UnitLevel,'player')or 0)>=(step.l or 0)end
- if step.op=='z'then return(call(GetItemCount,step.it)or 0)>0 or call(IsEquippedItem,step.it)==true end
+ if step.op=='z'then
+  -- a wand: the Lesser Magic Wand by its item; the practice wand (its item unknown) once a wand is worn
+  if step.it then return(call(GetItemCount,step.it)or 0)>0 or call(IsEquippedItem,step.it)==true end
+  return call(GetInventoryItemID,'player',18)~=nil
+ end
  if step.op=='d'then
   -- a dungeon run: done once the character has been inside that dungeon and is out again
   local db=charDB();db.ran=db.ran or{}
@@ -237,7 +241,10 @@ function FR.Text(step)
  local n=questName(step)
  if step.op=='a'then return'Annehmen: '..n end
  if step.op=='t'then return'Abgeben: '..n end
- if step.op=='z'then return'Zauberstab: Verzauberkunst lernen und Geringen Zauberstab herstellen (Einfaches Holz, Geringe Magische Essenz)'end
+ if step.op=='z'then
+  if step.wt==1 then return"Zauberstab: Verzauberkunst lernen, Novice's Practice Wand herstellen (Einfaches Holz und Mote of Magic vom Verzauberkunst-Händler)"end
+  return'Zauberstab: Verzauberkunst mit Übungszauberstäben auf 10, Geringe Magische Essenz im Auktionshaus kaufen, Geringen Zauberstab herstellen'
+ end
  if step.op=='g'then return string.format('Grinden bis Level %d%s',step.l or 0,step.tg and(': '..step.tg)or'')end
  if step.op=='d'then
   local t='Dungeon laufen: '..(step.n or'?')..' (Gruppe suchen, alle Quests im Log erledigen)'
