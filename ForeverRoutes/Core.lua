@@ -3,7 +3,9 @@
 -- ForeverCore bridge plans live, its steps take the place of the stored ones (FR.SetLive).
 local FR={}
 ForeverRoutes=FR
-local function call(fn,...)if type(fn)~='function'then return nil end;local r={pcall(fn,...)};if not r[1]then return nil end;return select(2,unpack(r))end
+-- every return value kept, nils in between too (an aura's spell id comes after several nils)
+local function pass(ok,...)if not ok then return nil end;return ... end
+local function call(fn,...)if type(fn)~='function'then return nil end;return pass(pcall(fn,...))end
 
 -- The route's key: race and class as the route files name them; the Skyborne by side.
 local RACE={Scourge='undead',Undead='undead',NightElf='nightelf',Human='human',Dwarf='dwarf',Gnome='gnome',Orc='orc',Troll='troll',Tauren='tauren'}
@@ -127,19 +129,22 @@ end
 -- character's auras by its name (CAMP_AURAS); without it the time since the last camp (/fr lager) stands in.
 -- 10 minutes before it runs out: is there leather for another tent? If not, "farm leather" beside the route.
 -- 5 minutes before: the buff ends soon, with what the camp still lacks. Run out: make camp.
-FR.CAMP_AURAS={'Camp','Lager','Zelt','Tent'}
-FR.LIGHT_LEATHER=2318;FR.TENT_LEATHER=5            -- a Camp Tent: 5 Light Leather (two tents per craft)
-FR.TENT_NAMES={'Camp Tent','Lagerzelt'}
-FR.FIRE={{4470,1},{4471,1}}                        -- Basic Campfire: Simple Wood, Flint and Tinder (as in Classic)
+-- The hour is the camp cooldown aura (spell 1229451) or the Leatherworking camp buff "Well Rested Shelter"
+-- (kovarel.com/wow-forever/features/camping); the tent's rest bonus raises rested XP to 5 % of a level.
+FR.CAMP_AURA_IDS={[1229451]=true}
+FR.CAMP_AURAS={'Well Rested Shelter'}
+FR.LIGHT_LEATHER=2318;FR.TENT_LEATHER=5            -- Camp Tent (item 279978): 5 Light Leather
+FR.TENT_ITEM=279978
+FR.FIRE_KIT=279981;FR.FIRE={{4470,1},{4471,1}}     -- Basic Campfire Kit (item 279981): Simple Wood, Flint and Tinder
 local function campAura()
  local now=call(GetTime)or 0
  for _,fn in ipairs({UnitBuff,UnitDebuff})do
   for i=1,40 do
-   local name,_,_,_,duration,expires=call(fn,'player',i)
+   local name,_,_,_,duration,expires,_,_,_,spell=call(fn,'player',i)
    if not name then break end
-   for _,k in ipairs(FR.CAMP_AURAS)do
-    if tostring(name):find(k,1,true)and(duration or 0)>0 and expires then return expires-now end
-   end
+   local ours=FR.CAMP_AURA_IDS[spell]
+   for _,k in ipairs(FR.CAMP_AURAS)do ours=ours or tostring(name)==k end
+   if ours and(duration or 0)>0 and expires then return expires-now end
   end
  end
  return nil
@@ -154,12 +159,14 @@ function FR.CampLeft()
 end
 -- What a camp needs that the bags lack: tent (or leather for one), fire.
 function FR.CampMaterials()
- local tents=0
- for _,n in ipairs(FR.TENT_NAMES)do tents=tents+(call(GetItemCount,n)or 0)end
  local leather=call(GetItemCount,FR.LIGHT_LEATHER)or 0
- local fire=true
- for _,r in ipairs(FR.FIRE)do if(call(GetItemCount,r[1])or 0)<r[2]then fire=false end end
- return{tent=tents>0 or leather>=FR.TENT_LEATHER,leather=leather,fire=fire}
+ local tent=(call(GetItemCount,FR.TENT_ITEM)or 0)>0 or leather>=FR.TENT_LEATHER
+ local fire=(call(GetItemCount,FR.FIRE_KIT)or 0)>0
+ if not fire then
+  fire=true
+  for _,r in ipairs(FR.FIRE)do if(call(GetItemCount,r[1])or 0)<r[2]then fire=false end end
+ end
+ return{tent=tent,leather=leather,fire=fire}
 end
 -- The camp's word for the window: a hint for the route line and a task beside the route (nil when nothing).
 function FR.CampStatus()

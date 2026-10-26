@@ -1,7 +1,9 @@
 -- The window (current step, what comes next) and the arrow: a TomTom waypoint when TomTom is there, else the game's
 -- own map pin. Plain on purpose; the look comes later.
 local FR=ForeverRoutes
-local function call(fn,...)if type(fn)~='function'then return nil end;local r={pcall(fn,...)};if not r[1]then return nil end;return select(2,unpack(r))end
+-- every return value kept, nils in between too (an aura's spell id comes after several nils)
+local function pass(ok,...)if not ok then return nil end;return ... end
+local function call(fn,...)if type(fn)~='function'then return nil end;return pass(pcall(fn,...))end
 local ROWS=5
 
 function FR.Waypoint(m,x,y,title)
