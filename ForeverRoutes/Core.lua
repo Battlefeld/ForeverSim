@@ -101,6 +101,7 @@ function FR.Done(step)
  if step.op=='w'then return completed(step.q)or(onQuest(step.q)and objectiveDone(step))end
  if step.op=='g'then return(call(UnitLevel,'player')or 0)>=(step.l or 0)end
  if step.op=='z'then return(call(GetItemCount,step.it)or 0)>0 or call(IsEquippedItem,step.it)==true end
+ if step.op=='p'then return FR.HasProfessions()end
  if step.op=='d'then
   -- a dungeon run: done once the character has been inside that dungeon and is out again
   local db=charDB();db.ran=db.ran or{}
@@ -109,6 +110,27 @@ function FR.Done(step)
  end
  return false
 end
+
+-- Skinning and Leatherworking learned (by the skill lines, English or German).
+local SKILL={skin={Skinning=true,['Kürschnerei']=true},leather={Leatherworking=true,Lederverarbeitung=true}}
+function FR.HasProfessions()
+ local n=call(GetNumSkillLines)or 0;local skin,leather=false,false
+ for i=1,n do
+  local name=call(GetSkillLineInfo,i)
+  if SKILL.skin[name]then skin=true end
+  if SKILL.leather[name]then leather=true end
+ end
+ return skin and leather
+end
+
+-- The hourly camp: from the level the route says (cl), once the professions are there, an hour after the last camp
+-- (/fr lager marks one) a reminder to make camp for the Camp Tent's rested experience.
+function FR.CampDue()
+ local c=charDB()
+ if not c.campLevel or(call(UnitLevel,'player')or 0)<c.campLevel then return false end
+ return(call(time)or 0)-(c.camp or 0)>=3600
+end
+function FR.Camped()local c=charDB();c.camp=call(time)or 0 end
 
 -- Paused: the character is inside a dungeon the route does not run now (a second run). Nothing is
 -- blocked: the route waits and goes on from its first open step once the character is out (steps done meanwhile,
@@ -179,7 +201,10 @@ end
 function FR.Advance()
  local steps,live=FR.Steps();local c=charDB()
  local i=live and 1 or c.index
- while steps[i]and(FR.Done(steps[i])or(not live and c.skipped[i]))do i=i+1 end
+ while steps[i]and(FR.Done(steps[i])or(not live and c.skipped[i]))do
+  if(steps[i].op=='p'or steps[i].op=='z')and steps[i].cl then c.campLevel=steps[i].cl end -- the professions: camps from then on
+  i=i+1
+ end
  if not live then c.index=i end
  FR.index=i
  return steps[i],i
@@ -237,9 +262,11 @@ function FR.Text(step)
  local n=questName(step)
  if step.op=='a'then return'Annehmen: '..n end
  if step.op=='t'then return'Abgeben: '..n end
+ if step.op=='p'then return'Berufe: Kürschnern, Kochkunst und Lederverarbeitung lernen – Wildtiere kürschnern, Lederverarbeitung mit dem Leder auf 20 (Lagerzelt)'end
  if step.op=='z'then
   local t="Zauberstäbe: Verzauberkunst lernen, Novice's Practice Wand herstellen (Einfaches Holz, Mote of Magic vom Händler), mit Übungszauberstäben auf 10, Geringe Magische Essenz im Auktionshaus, Geringen Zauberstab herstellen"
   if(step.l or 0)<5 then t=t..' – den Übungszauberstab tragen, ab Level 5 den Geringen'end
+  if step.cl then t=t..'. Danach Verzauberkunst verlernen; Kürschnern, Kochkunst und Lederverarbeitung lernen (Lagerzelt)'end
   return t
  end
  if step.op=='g'then return string.format('Grinden bis Level %d%s',step.l or 0,step.tg and(': '..step.tg)or'')end
@@ -262,7 +289,8 @@ end
 function FR.Hint(step)
  if not step then return nil end
  local h=FR.TravelHint(step)
- if step.opt then return'Option: '..step.opt..(h and(' · '..h)or'')end
+ if step.opt then h='Option: '..step.opt..(h and(' · '..h)or'')end
+ if FR.CampDue()then h=(h and(h..' · ')or'')..'Lager aufschlagen: Lagerfeuer, Lagerzelt, 1 Minute rasten (/fr lager)'end
  return h
 end
 function FR.TravelHint(step)

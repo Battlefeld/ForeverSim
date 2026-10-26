@@ -128,6 +128,15 @@ local zs={op='z',it=11287,m=0,x=1,y=1,l=4};local count=0
 GetItemCount=function(id)return id==11287 and count or 0 end;IsEquippedItem=function()return false end
 assert(not FR.Done(zs)and FR.Text(zs):find("Novice's Practice Wand",1,true)and FR.Text(zs):find('ab Level 5',1,true),'wand step')
 count=1;assert(FR.Done(zs),'wand in the bags');assert(not FR.Text({op='z',it=11287,l=5}):find('ab Level 5',1,true),'from level 5 no note')
+-- the professions and the hourly camp
+local lines={};GetNumSkillLines=function()return #lines end;GetSkillLineInfo=function(i)return lines[i]end
+local ps={op='p',cl=10,m=0,x=1,y=1,l=3};assert(not FR.Done(ps)and FR.Text(ps):find('Lederverarbeitung',1,true),'professions step')
+lines={'Kürschnerei','Lederverarbeitung'};assert(FR.Done(ps),'professions learned')
+local now=100000;time=function()return now end
+ForeverRoutesCharDB.campLevel=10;ForeverRoutesCharDB.camp=nil;level=9;assert(not FR.CampDue(),'no camp below its level')
+level=10;assert(FR.CampDue()and FR.Hint({op='a'}):find('Lager aufschlagen',1,true),'camp due')
+SlashCmdList.FOREVERROUTES('lager');assert(not FR.CampDue(),'camp done');now=now+3600;assert(FR.CampDue(),'an hour later again')
+ForeverRoutesCharDB.campLevel=nil;assert(FR.Text({op='z',it=1,cl=10,l=4}):find('Verzauberkunst verlernen',1,true),'casters unlearn Enchanting')
 -- no route for this character: said in the window
 UnitClass=function()return'Hexer','WARLOCK'end;FR.Refresh()
 for _,e in ipairs(MOCK.errors)do error(e.kind..': '..tostring(e.msg))end

@@ -101,7 +101,7 @@ function FR.PrintOptions()
  local c=ForeverRoutesCharDB or{}
  for i,o in ipairs(list)do
   local on=c.opts and c.opts[o.id]
-  print(string.format('%d. %s (%s, %+d Min, fertig mit Level %d): %s',i,o.n,TIER[o.tier]or tostring(o.tier),o.min or 0,o.l or 0,on and'an'or'aus'))
+  print(string.format('%d. %s (%s, %+d Min, fertig mit Level %d): %s',i,o.n,TIER[o.tier]or tostring(o.tier),o.min or 0,o.l or 0,on and'an'or'aus')..(o.nt and(' – '..o.nt)or''))
  end
  print('/fr option <Nummer> schaltet eine Option an oder aus')
 end
@@ -125,6 +125,7 @@ SlashCmdList.FOREVERROUTES=function(msg)
  if msg=='skip'then FR.Skip()elseif msg=='back'or msg=='zurueck'then FR.Back()elseif msg=='reset'then FR.Reset()
  elseif msg=='dungeon'or msg=='dungeons'or msg=='mit'or msg=='gruppe'then FR.SetDungeons(true)
  elseif msg=='solo'or msg=='ohne'then FR.SetDungeons(false)
+ elseif msg=='lager'or msg=='camp'then FR.Camped()
  elseif msg=='optionen'or msg=='options'or msg=='option'then FR.PrintOptions();return
  elseif msg:match('^option%s+%d+$')then
   local o,on=FR.SetOption(msg:match('(%d+)$'))
