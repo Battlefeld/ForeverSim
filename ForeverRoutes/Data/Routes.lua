@@ -17925,10 +17925,10 @@ ForeverRoutesData.routes["skyborne-a-druid"] = {race = "Skyborne", class = "Drui
  {af = 312, op = "w", q = 29, n = "Trial of the Lake", o = 1, k = "object", c = 1, tg = "Shrine Of Remulos", m = 1, x = 7854.0, y = -2212.0, l = 16, v = "t"},
  {af = 312, op = "t", q = 29, n = "Trial of the Lake", m = 1, x = 7874.2, y = -2224.2, l = 16},
  {af = 312, op = "a", q = 272, n = "Trial of the Sea Lion", m = 1, x = 7874.2, y = -2224.2, l = 16},
- {af = 312, op = "w", q = 272, n = "Trial of the Sea Lion", o = 1, k = "item", c = 1, m = 1, x = 7839.0, y = -259.3, l = 16},
+ {af = 312, op = "w", q = 272, n = "Trial of the Sea Lion", o = 1, k = "item", c = 1, m = 0, x = -10172.3, y = 2389.2, l = 16, v = "h"},
  {af = 312, op = "t", q = 272, n = "Trial of the Sea Lion", m = 1, x = 8020.3, y = -2678.7, l = 16, v = "t"},
  {af = 312, op = "a", q = 5061, n = "Aquatic Form", m = 1, x = 8020.3, y = -2678.7, l = 16},
- {af = 312, op = "t", q = 5061, n = "Aquatic Form", m = 1, x = 10178.7, y = 2563.7, l = 16, v = "h"},
+ {af = 312, op = "t", q = 5061, n = "Aquatic Form", m = 1, x = 10178.7, y = 2563.7, l = 16},
 }},
 {id = 6125, n = "Power over Poison", tier = "optional", min = 12, l = 14, s = {
  {af = 261, op = "a", q = 6125, n = "Power over Poison", m = 1, x = 8020.3, y = -2678.7, l = 14, v = "t"},
@@ -19721,7 +19721,7 @@ ForeverRoutesData.routes["skyborne-a-warrior-dungeons"] = {race = "Skyborne", cl
  {af = 79, op = "t", q = 94003, n = "The Skybreaker Bulwark", m = 2991, x = 2256.0, y = 901.5, l = 11},
 }},
 }}
-ForeverRoutesData.routes["skyborne-a-warrior"] = {race = "Skyborne", class = "Warrior", faction = "A", target = 20, hours = 14.7, basis = "plan", s = {
+ForeverRoutesData.routes["skyborne-a-warrior"] = {race = "Skyborne", class = "Warrior", faction = "A", target = 20, hours = 14.1, basis = "plan", s = {
  {op = "a", q = 92460, n = "Coming of Age", m = 2991, x = 4089.5, y = 1849.5, l = 1},
  {op = "t", q = 92460, n = "Coming of Age", m = 2991, x = 4085.0, y = 1890.0, l = 1},
  {op = "a", q = 92462, n = "Infestation Investigation", m = 2991, x = 4037.0, y = 1817.0, l = 1},
@@ -19861,9 +19861,8 @@ ForeverRoutesData.routes["skyborne-a-warrior"] = {race = "Skyborne", class = "Wa
  {op = "w", q = 102, n = "Patrolling Westfall", o = 1, k = "item", c = 8, tg = "Riverpaw Miner", m = 0, x = -10522.3, y = 1973.3, l = 15},
  {op = "w", q = 92744, n = "Murloc Gills", o = 1, k = "item", c = 7, tg = "Murloc Raider", m = 0, x = -9621.6, y = 1118.0, l = 15},
  {op = "w", q = 92911, n = "Harvesting the Harvesters", o = 1, k = "item", c = 8, tg = "Rusty Harvest Golem", m = 0, x = -9905.0, y = 1045.0, l = 15},
- {op = "w", q = 92911, n = "Harvesting the Harvesters", o = 3, k = "item", c = 1, tg = "Murloc Netter", m = 0, x = -9813.7, y = 1781.4, l = 15},
- {op = "w", q = 92911, n = "Harvesting the Harvesters", o = 2, k = "item", c = 4, tg = "Box of Assorted Parts", m = 1, x = 1295.0, y = -3592.8, l = 15},
- {op = "w", q = 92747, n = "Moonbrook Espionage", o = 1, k = "item", c = 8, m = 0, x = -11176.6, y = 1225.7, l = 15, v = "h"},
+ {op = "w", q = 92911, n = "Harvesting the Harvesters", o = 2, k = "item", c = 4, tg = "Box of Assorted Parts", m = 0, x = -10949.6, y = 1572.2, l = 15},
+ {op = "w", q = 92747, n = "Moonbrook Espionage", o = 1, k = "item", c = 8, m = 0, x = -11120.7, y = 1703.1, l = 15},
  {op = "t", q = 92745, n = "The State of the Mines", m = 0, x = -10638.0, y = 1180.0, l = 15},
  {op = "t", q = 92747, n = "Moonbrook Espionage", m = 0, x = -10638.0, y = 1180.0, l = 15},
  {op = "t", q = 92742, n = "Testing the Wells", m = 0, x = -10636.8, y = 1178.9, l = 15},
@@ -19877,7 +19876,7 @@ ForeverRoutesData.routes["skyborne-a-warrior"] = {race = "Skyborne", class = "Wa
  {op = "t", q = 92909, n = "Harvesting the Harvesters", m = 0, x = -10151.9, y = 1213.2, l = 15},
  {op = "t", q = 9, n = "The Killing Fields", m = 0, x = -10128.1, y = 1056.5, l = 15},
  {op = "t", q = 22, n = "Goretusk Liver Pie", m = 0, x = -10111.7, y = 1042.5, l = 15},
- {op = "t", q = 36, n = "Westfall Stew", m = 0, x = -10111.7, y = 1042.5, l = 16},
+ {op = "t", q = 36, n = "Westfall Stew", m = 0, x = -10111.7, y = 1042.5, l = 15},
  {op = "t", q = 151, n = "Poor Old Blanchy", m = 0, x = -9852.7, y = 920.1, l = 16},
  {op = "t", q = 64, n = "The Forgotten Heirloom", m = 0, x = -9852.7, y = 916.6, l = 16},
  {op = "t", q = 92748, n = "Explosive Consultation", m = 0, x = -8349.7, y = 647.7, l = 16},
@@ -19890,7 +19889,7 @@ ForeverRoutesData.routes["skyborne-a-warrior"] = {race = "Skyborne", class = "Wa
  {op = "t", q = 125, n = "The Lost Tools", m = 0, x = -9279.8, y = -2269.8, l = 16},
  {op = "a", q = 89, n = "The Everstill Bridge", m = 0, x = -9279.8, y = -2267.6, l = 16},
  {op = "w", q = 89, n = "The Everstill Bridge", o = 1, k = "item", c = 5, tg = "Ribchaser", m = 0, x = -9492.1, y = -1908.1, l = 16},
- {op = "t", q = 89, n = "The Everstill Bridge", m = 0, x = -9278.4, y = -2269.8, l = 16},
+ {op = "t", q = 89, n = "The Everstill Bridge", m = 0, x = -9278.4, y = -2269.8, l = 16, v = "h"},
  {op = "a", q = 129, n = "A Free Lunch", m = 0, x = -9220.1, y = -2153.3, l = 16},
  {op = "t", q = 129, n = "A Free Lunch", m = 0, x = -9607.6, y = -1902.6, l = 16},
  {op = "a", q = 130, n = "Visit the Herbalist", m = 0, x = -9607.6, y = -1902.6, l = 16},
@@ -19904,7 +19903,7 @@ ForeverRoutesData.routes["skyborne-a-warrior"] = {race = "Skyborne", class = "Wa
  {op = "w", q = 246, n = "Assessing the Threat", o = 2, k = "kill", c = 6, tg = "Redridge Poacher", m = 0, x = -9766.1, y = -2261.1, l = 16},
  {op = "w", q = 246, n = "Assessing the Threat", o = 1, k = "kill", c = 10, tg = "Redridge Mongrel", m = 0, x = -9778.6, y = -2251.9, l = 16},
  {op = "w", q = 98407, n = "Show of Force", o = 1, k = "item", c = 5, tg = "Redridge Thrasher", m = 0, x = -9510.9, y = -1908.0, l = 16},
- {op = "t", q = 246, n = "Assessing the Threat", m = 0, x = -9444.5, y = -2236.8, l = 16, v = "h"},
+ {op = "t", q = 246, n = "Assessing the Threat", m = 0, x = -9444.5, y = -2236.8, l = 16},
  {op = "t", q = 98407, n = "Show of Force", m = 0, x = -9444.5, y = -2237.7, l = 17},
  {op = "g", c = 30, tg = "Black Dragon Whelp", m = 0, x = -9594.1, y = -2321.8, l = 17},
  {op = "g", c = 30, tg = "Black Dragon Whelp", m = 0, x = -9594.1, y = -2321.8, l = 17},
@@ -19943,10 +19942,10 @@ ForeverRoutesData.routes["skyborne-a-warrior"] = {race = "Skyborne", class = "Wa
 }, o = {
 {id = 1667, n = "Waffe", tier = "recommended", min = 13, l = 16, s = {
  {af = 106, op = "a", q = 1666, n = "Marshal Haggard", m = 0, x = -8613.1, y = 383.0, l = 14},
- {af = 170, op = "t", q = 1666, n = "Marshal Haggard", m = 0, x = -9545.5, y = -1400.8, l = 16},
- {af = 170, op = "a", q = 1667, n = "Dead-tooth Jack", m = 0, x = -9545.5, y = -1400.8, l = 16},
- {af = 170, op = "w", q = 1667, n = "Dead-tooth Jack", o = 1, k = "item", c = 1, tg = "Dead-tooth's Strongbox", m = 0, x = -9765.4, y = -1565.1, l = 16},
- {af = 170, op = "t", q = 1667, n = "Dead-tooth Jack", m = 0, x = -9545.5, y = -1400.8, l = 16},
+ {af = 169, op = "t", q = 1666, n = "Marshal Haggard", m = 0, x = -9545.5, y = -1400.8, l = 16},
+ {af = 169, op = "a", q = 1667, n = "Dead-tooth Jack", m = 0, x = -9545.5, y = -1400.8, l = 16},
+ {af = 169, op = "w", q = 1667, n = "Dead-tooth Jack", o = 1, k = "item", c = 1, tg = "Dead-tooth's Strongbox", m = 0, x = -9765.4, y = -1565.1, l = 16},
+ {af = 169, op = "t", q = 1667, n = "Dead-tooth Jack", m = 0, x = -9545.5, y = -1400.8, l = 16},
 }},
 {id = 79976, n = "Gemütlicher Schlafsack", tier = "recommended", min = 27, l = 15, nt = "lohnt sich, wenn du über 20 weiterlevelst (Bonus erst danach)", s = {
  {af = 94, op = "a", q = 79008, n = "... and that note you found", m = 0, x = -10581.5, y = 1710.0, l = 14},
@@ -34498,4 +34497,4 @@ ForeverRoutesData.routes["undead-warrior"] = {race = "Undead", class = "Warrior"
  {af = 339, op = "t", q = 79976, n = "This Must Be The Place", m = 0, x = -713.6, y = -1676.4, l = 19},
 }},
 }}
-ForeverRoutesData.build = "1.60.1.70450"
+ForeverRoutesData.build = "1.60.1.70532"
