@@ -289,7 +289,8 @@ function FR.Reset()
 end
 
 -- The live plan from the ForeverCore bridge (its route-next result): steps in its own form, turned into ours.
-local OP={accept='a',turnin='t',work='w',grind='g',dungeon='d'}
+local OP={accept='a',turnin='t',work='w',grind='g',dungeon='d',wand='z',prof='p'}
+FR.LESSER_WAND=11287;FR.CAMP_LEVEL=10   -- a live wand step: done with this wand; live professions: camps from this level
 -- A live dungeon step names the dungeon only: its instance and the quests taken inside come from the stored routes.
 local function storedDungeon(name)
  local data=ForeverRoutesData and ForeverRoutesData.routes
@@ -311,6 +312,8 @@ function FR.SetLive(result)
    dm=s.viaAt and s.viaAt.m,dx=s.viaAt and s.viaAt.x,dy=s.viaAt and s.viaAt.y,live=true}
   local st=out[#out]
   if st.op=='d'then local known=storedDungeon(st.n);if known then st.ii,st.qi=known.ii,known.qi end end
+  if st.op=='z'then st.it,st.cl=FR.LESSER_WAND,FR.CAMP_LEVEL end
+  if st.op=='p'then st.cl=FR.CAMP_LEVEL end
  end
  FR.live=out
 end

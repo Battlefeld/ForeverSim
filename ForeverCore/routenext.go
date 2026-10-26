@@ -62,6 +62,9 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	}
 	faction := str(j.State, "faction") // Alliance or Horde: the Skyborne play on both sides
 	request := map[string]any{"race": race, "class": strings.ToUpper(class[:1]) + class[1:], "faction": faction, "live": live}
+	if opts, ok := j.State["options"].([]any); ok && len(opts) > 0 {
+		request["options"] = opts // the route's options switched on in the addon (/fr option)
+	}
 	if e = os.WriteFile(in, jsonBytes(request), 0o600); e != nil {
 		return nil, e
 	}

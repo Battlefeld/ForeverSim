@@ -20,7 +20,7 @@ func fakeRoutes() {
 	if b, e := os.ReadFile(flags["-live"]); e != nil || json.Unmarshal(b, &req) != nil {
 		os.Exit(2)
 	}
-	reply := map[string]any{"schema": "foreverroutes.next.v1", "class": req["class"], "level": num(child(req, "live"), "level"), "profile": flags["-profile"], "horizon": flags["-horizon"], "route": flags["-route"], "faction": req["faction"],
+	reply := map[string]any{"schema": "foreverroutes.next.v1", "class": req["class"], "level": num(child(req, "live"), "level"), "profile": flags["-profile"], "horizon": flags["-horizon"], "route": flags["-route"], "faction": req["faction"], "options": req["options"],
 		"steps": []any{map[string]any{"op": "accept", "quest": 788.0, "name": "Cutting Teeth"}}}
 	for _, a := range os.Args {
 		if a == "-dungeons=true" {
@@ -52,6 +52,11 @@ func TestRouteNext(t *testing.T) {
 	// the first call has no kill profile yet: it is calculated in the background and the route says so
 	if r["profile"] != "" || !strings.Contains(str(r, "profileNote"), "berechnet") {
 		t.Errorf("first call: profile %q note %q", r["profile"], r["profileNote"])
+	}
+	// the options switched on in the addon reach foreverroutes next
+	withOpts := map[string]any{"race": "Orc", "class": "WARLOCK", "options": []any{79976.0}, "live": state["live"]}
+	if got, e := s.routeNext(t.Context(), Job{Kind: "route-next", State: withOpts}); e != nil || len(array(got.(map[string]any), "options")) != 1 {
+		t.Errorf("options not passed: %v %v", got, e)
 	}
 	path, note := s.killProfileFor("warlock", "Orc")
 	for i := 0; path == "" && i < 200; i++ {

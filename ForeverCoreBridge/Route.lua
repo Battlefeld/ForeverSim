@@ -65,6 +65,22 @@ local function hearthIn()
  return math.max(0,start+duration-(GetTime and GetTime()or 0))
 end
 
+-- The Lesser Magic Wand (item 11287) in the bags or worn; Skinning and Leatherworking learned (the ForeverRoutes
+-- addon reads the skill lines). nil when not known.
+local function hasWand()
+ return(call(GetItemCount,11287)or 0)>0 or call(IsEquippedItem,11287)==true
+end
+local function hasProfessions()
+ if type(ForeverRoutes)=='table'and type(ForeverRoutes.HasProfessions)=='function'then return ForeverRoutes.HasProfessions()end
+ return nil
+end
+-- The options of the route switched on in the ForeverRoutes addon (/fr option), by their goal quest.
+local function options(db)
+ local out={}
+ for id,on in pairs(type(db.opts)=='table'and db.opts or{})do if on then out[#out+1]=id end end
+ table.sort(out);return#out>0 and out or nil
+end
+
 local function flightMasters()
  local out={};for id in pairs(charDB('routeFlight'))do out[#out+1]=id end;table.sort(out);return out
 end
@@ -87,7 +103,8 @@ function R.Capture()
  -- "Solo mit Dungeon" when the player chose it in the ForeverRoutes addon (/fr dungeon)
  local db=type(ForeverRoutesCharDB)=='table'and ForeverRoutesCharDB or{}
  local dungeons=(db.dungeons==true or db.group==true)or nil
- return{race=race,class=class,faction=call(UnitFactionGroup,'player'),dungeons=dungeons,live=live}
+ live.wand=hasWand();live.prof=hasProfessions()
+ return{race=race,class=class,faction=call(UnitFactionGroup,'player'),dungeons=dungeons,options=options(db),live=live}
 end
 
 -- Wording of a step.

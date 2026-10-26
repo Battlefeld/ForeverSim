@@ -26,6 +26,12 @@ assert(#s.live.completed==3,'completed quests')
 assert(#s.live.active==2 and s.live.active[1].id==790 and s.live.active[1].objectives[1].have==3 and s.live.active[1].objectives[1].type=='monster','log progress')
 assert(s.live.active[2].ready==true,'finished quest must be ready')
 assert(math.abs(s.live.hearthIn-3000)<1,'hearthstone cooldown')
+-- the wand, the professions and the options switched on in ForeverRoutes go along
+GetItemCount=function(id)return id==11287 and 1 or 0 end;ForeverRoutes={HasProfessions=function()return true end}
+ForeverRoutesCharDB={opts={[79976]=true,[1503]=false}}
+local s2=R.Capture();assert(s2.live.wand==true and s2.live.prof==true,'wand and professions')
+assert(s2.options and #s2.options==1 and s2.options[1]==79976,'options switched on')
+ForeverRoutes=nil;ForeverRoutesCharDB=nil;assert(R.Capture().options==nil and R.Capture().live.prof==nil,'without ForeverRoutes nothing about them')
 -- in an instance there is no position, the PC refuses to plan
 UnitPosition=function(u)if u=='player'then return 10,10,0,33 end end;assert(R.Capture().live.pos==nil,'instance position sent')
 UnitPosition=function(u)if u=='player'then return -607.3,-4251.5,0,1 end end
