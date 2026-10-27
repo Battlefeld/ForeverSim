@@ -1,6 +1,7 @@
 -- Existing ForeverSim textures, packaged locally so ForeverRoutes runs independently.
 ForeverRoutes.Art={dir='Interface\\AddOns\\ForeverRoutes\\Media\\UI\\'}
 local A=ForeverRoutes.Art
+A['panel_square_medium']={file='panel_square_medium.tga',tw=512,th=256,w=263,h=256,coords={0,0.513672,0,1}}
 A['crystal_on']={file='crystal_on.tga',tw=256,th=256,w=256,h=256,coords={0,1,0,1}}
 A['crystal_off']={file='crystal_off.tga',tw=256,th=256,w=256,h=256,coords={0,1,0,1}}
 A['button_normal']={file='button_normal.tga',tw=512,th=128,w=289,h=84,coords={0,0.564453,0,0.65625}}

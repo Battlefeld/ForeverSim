@@ -31,6 +31,7 @@ local function data(steps)
 end
 for _,file in ipairs({'Core','Tasks','ArtData','Art','Navigation','Tooltips','UI'})do dofile('ForeverRoutes/'..file..'.lua')end
 local FR=ForeverRoutes
+for _,style in ipairs({'panel','button','note'})do check(FR.Art[FR.UI.STYLE[style][1]]~=nil,'packaged art exists for '..style)end
 local steps={{op='a',q=1,n='First',m=0,x=100,y=0},{op='w',q=1,n='First',k='kill',c=2,tg='Wolf',m=0,x=100,y=0},{op='t',q=1,n='First',m=0,x=0,y=0},{op='note',n='Read this'}}
 data(steps);FR.Show();check(FR.TaskView().step.op=='a','accept first')
 accepted[1]=true;objectives[1]={{text='Wolves: 1/2',type='monster',numFulfilled=1,numRequired=2,finished=false}}
