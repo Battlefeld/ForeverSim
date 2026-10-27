@@ -14,7 +14,7 @@ function FR.Key()
  if not race or not class then return nil end
  local r=RACE[race]
  if not r and tostring(race):find('Skyborne')then
-  local side=call(UnitFactionGroup,'player');r=(side=='Horde')and'skyborne-h'or'skyborne-a'
+  local side=call(UnitFactionGroup,'player');if side~='Horde'and side~='Alliance'then return nil end;r=(side=='Horde')and'skyborne-h'or'skyborne-a'
  end
  if not r then r=tostring(race):lower()end
  return r..'-'..tostring(class):lower()
@@ -22,23 +22,30 @@ end
 
 local function charDB()
  ForeverRoutesCharDB=ForeverRoutesCharDB or{}
- local c=ForeverRoutesCharDB;c.skipped=c.skipped or{};c.index=c.index or 1
+ local c=ForeverRoutesCharDB;c.skipped=c.skipped or{};c.confirmed=c.confirmed or{};c.index=math.max(1,tonumber(c.index)or 1)
  return c
 end
 
 -- The route of this character: "Solo mit Dungeon" (with dungeon runs) when chosen and there is one, else "Solo ohne
 -- Dungeon".
 function FR.Route()
- local key=FR.Key();local data=ForeverRoutesData and ForeverRoutesData.routes
+ local key=FR.Key();local data=ForeverRoutesData
  if not key or not data then return nil,key end
- local c=charDB()
- if(c.dungeons or c.group)and data[key..'-dungeons']then return data[key..'-dungeons'],key..'-dungeons'end
- return data[key],key
+ local c=charDB();local selected=key..((c.dungeons or c.group)and'-dungeons'or'')
+ local revision=data.routes and data.routes[selected]and data.routes[selected].revision or data.build
+ if c.routeKey~=selected or c.dataRevision~=revision then
+  c.routeKey=selected;c.dataRevision=revision;c.index=1;c.skipped={};c.confirmed={};FR.pinned=nil
+ end
+ local r=data.routes and data.routes[selected]
+ if r and r.s and #r.s>0 then return r,selected,'optimized'end
+ local solo=data.routes and data.routes[key]
+ if solo and solo.s and #solo.s>0 then return solo,key,'optimized'end
+ return data.fallbacks and data.fallbacks[key],selected,'rxp-fallback'
 end
 
 -- With or without dungeons: the other route starts over from its first step that is not done yet.
 function FR.SetDungeons(on)
- local c=charDB();c.dungeons=on and true or nil;c.group=nil;c.index=1;c.skipped={};FR.pinned=nil
+ local c=charDB();c.dungeons=on and true or nil;c.group=nil;c.index=1;c.skipped={};c.confirmed={};FR.live=nil;FR.pinned=nil
  return FR.Advance()
 end
 
@@ -72,7 +79,9 @@ local function objectiveDone(step)
    if type(o.text)=='string'and o.text:lower():find(step.tg:lower(),1,true)then return o.finished==true end
   end
  end
- if alike[1]then return alike[1].finished==true end
+ if #alike==1 then return alike[1].finished==true end
+ -- A localized or ambiguous target must not be confused with another completed objective.
+ if #alike>1 then return false end
  for _,o in ipairs(list)do if not o.finished then return false end end
  return true
 end
@@ -92,37 +101,39 @@ end
 -- A step's identity, the same for the same step in the stored route and in a new live plan.
 function FR.StepKey(step)
  if not step then return''end
- return table.concat({tostring(step.op),tostring(step.q or''),tostring(step.o or''),tostring(step.n or''),tostring(step.x or''),tostring(step.y or'')},':')
+ return table.concat({tostring(step.op),tostring(step.q or''),tostring(step.o or''),tostring(step.n or''),tostring(step.x or''),tostring(step.y or''),tostring(step.l or''),tostring(step.xp or''),tostring(step.id or''),tostring(step.stacks or'')},':')
 end
 
 -- Whether a step is done: taken, handed in, objective finished, level reached.
 function FR.Done(step)
  if not step then return true end
+ if charDB().confirmed[FR.StepKey(step)]then return true end
  if step.op=='a'then return onQuest(step.q)or completed(step.q)end
  if step.op=='t'then return completed(step.q)end
  if step.op=='w'then return completed(step.q)or(onQuest(step.q)and objectiveDone(step))end
- if step.op=='g'then return(call(UnitLevel,'player')or 0)>=(step.l or 0)end
+ if step.op=='g'then
+  local l=call(UnitLevel,'player')or 0
+  if not step.l then return false end
+  return l>step.l or(l==step.l and(step.xp==nil or(call(UnitXP,'player')or 0)>=step.xp))
+ end
  if step.op=='z'then return(call(GetItemCount,step.it)or 0)>0 or call(IsEquippedItem,step.it)==true end
  if step.op=='p'then return FR.HasProfessions()end
- if step.op=='d'then
-  -- a dungeon run: done once the character has been inside that dungeon and is out again
-  local db=charDB();db.ran=db.ran or{}
-  if inDungeonOf(step)then db.ran[step.n or'?']=true;return false end
-  return db.ran[step.n or'?']==true
- end
+ -- Dungeon, sleep and other unobservable tasks require explicit confirmation in the tracker.
+
  return false
 end
 
 -- Skinning and Leatherworking learned (by the skill lines, English or German).
-local SKILL={skin={Skinning=true,['Kürschnerei']=true},leather={Leatherworking=true,Lederverarbeitung=true}}
+local SKILL={skin={Skinning=true,['Kürschnerei']=true},leather={Leatherworking=true,Lederverarbeitung=true},cook={Cooking=true,Kochkunst=true}}
 function FR.HasProfessions()
- local n=call(GetNumSkillLines)or 0;local skin,leather=false,false
+ local n=call(GetNumSkillLines)or 0;local skin,leather,cook=false,false,false
  for i=1,n do
-  local name=call(GetSkillLineInfo,i)
+  local name,_,_,rank=call(GetSkillLineInfo,i)
   if SKILL.skin[name]then skin=true end
-  if SKILL.leather[name]then leather=true end
+  if SKILL.leather[name]and(tonumber(rank)or 0)>=20 then leather=true end
+  if SKILL.cook[name]then cook=true end
  end
- return skin and leather
+ return skin and leather and cook
 end
 
 -- The camp, coupled to the camp buff (an hour; all camp objects share that cooldown). The buff is found among the
@@ -226,7 +237,7 @@ function FR.SetOption(n,on)
  local o=FR.Option(n);if not o then return nil end
  local c=charDB();c.opts=c.opts or{}
  if on==nil then on=not optionOn(o)end
- c.opts[o.id]=on and true or nil;c.index=1;c.skipped={};FR.pinned=nil
+ c.opts[o.id]=on and true or nil;c.index=1;c.skipped={};c.confirmed={};FR.live=nil;FR.pinned=nil
  FR.Advance()
  return o,on
 end
@@ -257,7 +268,7 @@ end
 -- The steps to show: the live plan when there is one, else the stored route (with the options switched on).
 function FR.Steps()
  if FR.live then return FR.live,true end
- local r,key=FR.Route();return r and withOptions(r,key)or{},false
+ local r,key=FR.Route();return r and r.s and withOptions(r,key)or{},false
 end
 
 -- Moves past what is done or skipped. Returns the current step.
@@ -274,22 +285,24 @@ function FR.Advance()
 end
 
 function FR.Skip()
- local steps,live=FR.Steps();local c=charDB()
- if live then table.remove(FR.live,1)else c.skipped[c.index]=true;c.index=c.index+1 end
+ local st,i=FR.Advance();local _,live=FR.Steps();local c=charDB();if not st then return end
+ FR.undo={step=st,index=i,live=live,removed=live}
+ if live then table.remove(FR.live,i)else c.skipped[i]=true;c.index=i+1 end
  return FR.Advance()
 end
 function FR.Back()
- local c=charDB();if FR.live then return FR.Advance()end
- local i=math.max(1,c.index-1);c.skipped[i]=nil;c.index=i
+ local c=charDB();if FR.undo then local u=FR.undo;FR.undo=nil;if u.live and FR.live then if u.removed then table.insert(FR.live,u.index,u.step)end;c.confirmed[FR.StepKey(u.step)]=nil else c.skipped[u.index]=nil;c.confirmed[FR.StepKey(u.step)]=nil;c.index=u.index end;return FR.Advance()end;if FR.live then return FR.Advance()end
+ local i=math.max(1,c.index-1);c.skipped[i]=nil;c.index=i;local st=FR.Steps()[i];if st then c.confirmed[FR.StepKey(st)]=nil end
  return FR.Steps()[i],i
 end
 function FR.Reset()
  local c=charDB()
+ FR.undo=nil
  ForeverRoutesCharDB={dungeons=c.dungeons,opts=c.opts};return FR.Advance()
 end
 
 -- The live plan from the ForeverCore bridge (its route-next result): steps in its own form, turned into ours.
-local OP={accept='a',turnin='t',work='w',grind='g',dungeon='d',wand='z',prof='p'}
+local OP={sleep="sleep",accept='a',turnin='t',work='w',grind='g',dungeon='d',wand='z',prof='p'}
 FR.LESSER_WAND=11287;FR.CAMP_LEVEL=10   -- a live wand step: done with this wand; live professions: camps from this level
 -- A live dungeon step names the dungeon only: its instance and the quests taken inside come from the stored routes.
 local function storedDungeon(name)
@@ -307,7 +320,7 @@ function FR.SetLive(result)
   local at=type(s.at)=='table'and s.at or{}
   local via=type(s.via)=='string'and s.via or''
   local name=type(s.name)=='string'and s.name:gsub(' %(dungeon run%)$','')or s.name
-  out[#out+1]={op=OP[s.op]or s.op,q=s.quest,n=name,m=at.m,x=at.x,y=at.y,l=s.level,
+  out[#out+1]={op=OP[s.op]or s.op,q=s.quest,n=name,m=at.m,x=at.x,y=at.y,l=s.level,o=s.obj and(s.obj+1),npc=s.npc,object=s.object,items=s.items,stacks=s.stacks,
    v=(via:find('^deathskip')and'd')or(via=='hearth'and'h')or(via=='teleport'and't')or nil,gy=via:match('^deathskip: (.+)$'),
    dm=s.viaAt and s.viaAt.m,dx=s.viaAt and s.viaAt.x,dy=s.viaAt and s.viaAt.y,live=true}
   local st=out[#out]
@@ -315,7 +328,7 @@ function FR.SetLive(result)
   if st.op=='z'then st.it,st.cl=FR.LESSER_WAND,FR.CAMP_LEVEL end
   if st.op=='p'then st.cl=FR.CAMP_LEVEL end
  end
- FR.live=out
+ FR.live=out;FR.undo=nil;FR.pinned=nil
 end
 
 -- Wording.
@@ -328,6 +341,7 @@ function FR.Text(step)
  local n=questName(step)
  if step.op=='a'then return'Annehmen: '..n end
  if step.op=='t'then return'Abgeben: '..n end
+ if step.op=='sleep'then return'Rasten: Schlafsack verwenden und den vorgesehenen Buff aufbauen'end
  if step.op=='p'then return'Berufe: Kürschnern, Kochkunst und Lederverarbeitung lernen – Wildtiere kürschnern, Lederverarbeitung mit dem Leder auf 20 (Lagerzelt)'end
  if step.op=='z'then
   local t="Zauberstäbe: Verzauberkunst lernen, Novice's Practice Wand herstellen (Einfaches Holz, Mote of Magic vom Händler), mit Übungszauberstäben auf 10, Geringe Magische Essenz im Auktionshaus, Geringen Zauberstab herstellen"
@@ -335,7 +349,7 @@ function FR.Text(step)
   if step.cl then t=t..'. Danach Verzauberkunst verlernen; Kürschnern, Kochkunst und Lederverarbeitung lernen (Lagerzelt)'end
   return t
  end
- if step.op=='g'then return string.format('Grinden bis Level %d%s',step.l or 0,step.tg and(': '..step.tg)or'')end
+ if step.op=='g'then return string.format('Grinden bis Level %d%s%s',step.l or 0,step.xp and(' + '..step.xp..' XP')or'',step.tg and(': '..step.tg)or'')end
  if step.op=='d'then
   local t='Dungeon laufen: '..(step.n or'?')..' (Gruppe suchen, alle Quests im Log erledigen)'
   if type(step.qi)=='table'and #step.qi>0 then t=t..' – im Dungeon annehmen: '..table.concat(step.qi,', ')end
@@ -380,3 +394,30 @@ function FR.Died()
  local steps=FR.Steps()
  charDB().died=FR.StepKey(steps[FR.index or 1])
 end
+
+
+-- Explicit completion is distinct from skipping; quest steps always follow the game quest log.
+function FR.CanConfirm(step)
+ return step and(step.op=='d'or step.op=='sleep'or step.op=='p'or step.op=='z')and not FR.Paused(step)
+end
+function FR.Confirm()
+ local step=FR.Advance()
+ if not FR.CanConfirm(step)then return false end
+ FR.undo={step=step,index=FR.index or 1,live=FR.live~=nil}
+ charDB().confirmed[FR.StepKey(step)]=true
+ FR.Advance();return true
+end
+function FR.Objectives(step)
+ if not step or not step.q then return{}end
+ local list=C_QuestLog and call(C_QuestLog.GetQuestObjectives,step.q)
+ return type(list)=='table'and list or{}
+end
+function FR.RestoreSkipped()
+ local c=charDB();c.skipped={};c.index=1;FR.pinned=nil;return FR.Advance()
+end
+
+FR.Call=call
+FR.CharDB=charDB
+FR.OnQuest=onQuest
+FR.Completed=completed
+FR.QuestDone=questDone

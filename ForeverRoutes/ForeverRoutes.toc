@@ -1,10 +1,16 @@
 ## Interface: 16001
 ## Title: ForeverRoutes
-## Notes: Levelroute 1-20 fuer jedes Volk und jede Klasse, mit Pfeil. Laeuft ohne ForeverCore; mit ForeverCore plant es live. /fr
-## Version: 0.1.0
+## Notes: Eigenstaendiges Routen-HUD mit Questfortschritt, Navigation und Nebenaufgaben. /fr
+## Version: 0.2.0
 ## OptionalDeps: ForeverCoreBridge, TomTom
 ## SavedVariables: ForeverRoutesDB
 ## SavedVariablesPerCharacter: ForeverRoutesCharDB
 Data\Routes.lua
 Core.lua
+Tasks.lua
+ArtData.lua
+Art.lua
+Navigation.lua
+Tooltips.lua
 UI.lua
+
