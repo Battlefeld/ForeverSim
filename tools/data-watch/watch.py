@@ -183,8 +183,8 @@ def main():
     # All fetches and validation finish before replacing either baseline/output.
     args.output.mkdir(parents=True, exist_ok=True)
     state_path = args.output / 'state.json.gz'
-    with gzip.open(state_path.with_suffix('.tmp'), 'wt', encoding='utf-8') as stream:
-        json.dump(state, stream, sort_keys=True, separators=(',', ':'))
+    raw_state = json.dumps(state, sort_keys=True, separators=(',', ':')).encode('utf-8')
+    state_path.with_suffix('.tmp').write_bytes(gzip.compress(raw_state, mtime=0))
     state_path.with_suffix('.tmp').replace(state_path)
     (args.output / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps({'buildChanges': len(report['buildChanges']), 'tables': len(report['tables']),
