@@ -20,8 +20,9 @@ Felder, hinzugefügte und entfernte Zeilen, auch bei identischer Buildnummer.
 Beschreibungen aus Patchnotes sind für die Erkennung nicht erforderlich.
 
 Mit `--wow-folder /path/to/World\ of\ Warcraft` wird zusätzlich der dort vorhandene
-Hotfix-Cache erfasst. Vorher Spiel schließen. Bei manchen Installationen liegt der
-Cache im Produkt-Unterordner; `watch.py --cache-dir` kann diesen explizit angeben.
+Hotfix-Cache erfasst. Vorher Spiel schließen. Der passende Produkt-Unterordner (`_forever_` beziehungsweise `_classic_beta_`)
+wird automatisch erkannt; `--cache-dir` kann einen anderen Pfad angeben.
+Fehlende Caches bleiben ausdrücklich fehlend. Ein Retail-Cache ersetzt keinen Forever-Cache.
 Der Cache muss auch vom lokalen Exporter geladen sein; ein Fingerabdruck allein
 dekodiert keine Hotfixes. Ohne Cache lautet der Status ausdrücklich
 `missing_client_cache`. Ein unveränderter Export ist dann kein Beleg, dass keine

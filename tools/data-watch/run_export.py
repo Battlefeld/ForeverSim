@@ -18,12 +18,23 @@ SHA256 = '47dea46331a09ee9460118bc80366165e4f72aa45a739302e5402b5a038d157e'
 URL = f'https://github.com/Marlamin/wow.tools.local/releases/download/{VERSION}/Release-linux-x64.zip'
 
 
+def product_cache_folder(wow_folder, product):
+    if wow_folder is None:
+        return None
+    product_folder = {'wowf': '_forever_', 'wow_classic_beta': '_classic_beta_'}[product]
+    for cache in (Path(wow_folder) / product_folder / 'Cache', Path(wow_folder) / 'Cache'):
+        if cache.is_dir():
+            return cache
+    return None
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--work', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--previous', type=Path)
     p.add_argument('--wow-folder', type=Path, help='Optional local WoW installation, including client hotfix cache')
+    p.add_argument('--cache-dir', type=Path, help='Override the selected product hotfix-cache folder')
     p.add_argument('--product', choices=['wowf', 'wow_classic_beta'], default='wowf')
     p.add_argument('--port', type=int, default=5089)
     a = p.parse_args()
@@ -65,7 +76,8 @@ def main():
                 time.sleep(2)
             args = [sys.executable, str(HERE / 'watch.py'), '--output', str(a.output.resolve()), '--exporter', base, '--build', discover('eu')[a.product]['row']['VersionsName']]
             if a.previous: args += ['--previous', str(a.previous.resolve())]
-            if a.wow_folder: args += ['--cache-dir', str(a.wow_folder.resolve() / 'Cache')]
+            cache = a.cache_dir or product_cache_folder(a.wow_folder, a.product)
+            if cache: args += ['--cache-dir', str(cache.resolve())]
             subprocess.run(args, check=True)
         finally:
             process.terminate()
