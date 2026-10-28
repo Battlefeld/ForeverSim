@@ -1,0 +1,77 @@
+name: Forever direct data watch
+on:
+  schedule:
+    - cron: '17 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/data-watch/**'
+      - '.github/workflows/forever-data-watch.yml'
+  pull_request:
+    paths:
+      - 'tools/data-watch/**'
+      - '.github/workflows/forever-data-watch.yml'
+  workflow_dispatch:
+    inputs:
+      extract_client:
+        description: 'Also export raw Blizzard client tables (first run requires CDN access)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: forever-data-watch-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Data comparison regressions
+        run: python -m unittest discover -s tools/data-watch -v
+      - name: Restore last valid baseline
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/forever-data"
+          git fetch --no-tags origin artifacts
+          if git cat-file -e FETCH_HEAD:data-watch/latest/state.json.gz 2>/dev/null; then
+            git show FETCH_HEAD:data-watch/latest/state.json.gz > "$RUNNER_TEMP/forever-data/previous.json.gz"
+          fi
+      - name: Read Blizzard version service directly
+        if: inputs.extract_client != true
+        run: >-
+          python tools/data-watch/watch.py
+          --previous "$RUNNER_TEMP/forever-data/previous.json.gz"
+          --output "$RUNNER_TEMP/forever-data/result"
+      - name: Extract Blizzard client tables
+        if: github.event_name == 'workflow_dispatch' && inputs.extract_client == true
+        run: >-
+          python tools/data-watch/run_export.py
+          --work "$RUNNER_TEMP/forever-exporter"
+          --previous "$RUNNER_TEMP/forever-data/previous.json.gz"
+          --output "$RUNNER_TEMP/forever-data/result"
+      - name: Save validated baseline and report
+        if: github.event_name != 'pull_request'
+        run: |
+          bash .github/scripts/publish-artifacts.sh \
+            "$RUNNER_TEMP/forever-data/result/state.json.gz::data-watch/latest/state.json.gz" \
+            "$RUNNER_TEMP/forever-data/result/report.json::data-watch/latest/report.json"
+      - name: Coverage summary
+        if: success()
+        run: |
+          python - "$RUNNER_TEMP/forever-data/result/report.json" <<'PY'
+          import json, os, sys
+          report = json.load(open(sys.argv[1]))
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('## Direct Blizzard data check\n\n')
+              for product, data in report['products'].items():
+                  out.write(f"- {product}: {data['row']['VersionsName']}\n")
+              out.write(f"\nExtracted tables: {len(report['tables'])}. Hotfix coverage: {report['hotfixCoverage']}.\n")
+              out.write('No production simulation values were changed automatically.\n')
+          PY

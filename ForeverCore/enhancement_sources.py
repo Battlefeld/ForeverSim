@@ -98,7 +98,13 @@ def generate(food_html, enchant_html, tooltip_dir, engine, lock):
     # Minimal item geometry proves weapon/slot eligibility using the same pinned database as the engine.
     geometry = {str(i['id']): {k: i[k] for k in ['type', 'weaponType', 'handType', 'rangedWeaponType'] if k in i}
                 for i in database['items']}
-    return {'schema': 1, 'asOf': '2026-10-20', 'upstreamRevision': lock['commit'],
+    corrections = json.loads(Path(__file__).with_name('enhancement-corrections.json').read_text())
+    for row in foods:
+        skill = corrections['foodCookingSkill'].get(str(row['itemId']))
+        if skill is not None:
+            row['cookingSkill'] = skill
+            row['cookingSkillSource'] = corrections['source']
+    return {'schema': 1, 'asOf': corrections['asOf'], 'upstreamRevision': lock['commit'],
             'databaseSHA256': hashlib.sha256(database_path.read_bytes()).hexdigest(),
             'sources': [{'kind': 'food', 'url': FOOD_URL}, {'kind': 'enchant', 'url': ENCHANT_URL}],
             'entries': foods + enchants, 'itemGeometry': geometry,

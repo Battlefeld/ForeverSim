@@ -290,8 +290,8 @@ func TestPresetsAreDecodedAndChecked(t *testing.T) {
 		t.Fatal("builds lost")
 	}
 	layout := array(r, "layout")
-	if len(layout) != 19+17+19 {
-		t.Fatalf("the mage tree has 55 talents, layout has %d", len(layout))
+	if len(layout) != 19+17+18 {
+		t.Fatalf("the current mage tree has 54 talents, layout has %d", len(layout))
 	}
 	prereqs := 0
 	for _, raw := range layout {

@@ -22,6 +22,11 @@ func TestMain(m *testing.M) {
 		fakeRoutes()
 		return
 	}
+	// Child processes only decode a request and synchronously write one reply. The race
+	// runtime's default one-second exit sleep per fake engine run can exceed the route
+	// readiness deadline on CI. Keep race reporting enabled; remove only that idle sleep
+	// in children. The already-initialized parent race runtime retains its own settings.
+	os.Setenv("GORACE", strings.TrimSpace(os.Getenv("GORACE")+" atexit_sleep_ms=0"))
 	os.Exit(m.Run())
 }
 
