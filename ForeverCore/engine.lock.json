@@ -31,13 +31,19 @@
       "sha256": "b25c062fd9ca54ba5b83f3ca68990d4cdc7dbe7e4a6290513e1279f1ad228c50",
       "upstreamCommit": "ec0b687da8ba3466b1f1138c0f5e4dccd51000f9",
       "reason": "Upstream combat fix on parallel MythicSim branch; remove once included in the base revision."
+    },
+    {
+      "file": "engine-patches/142-foreverchanges-client-corrections.patch",
+      "sha256": "0ba545807a742f5e31e8ea2bb841c491a4e9526168ce2b2ae607a13e789ce266",
+      "reason": "Targeted talent layout and enchant 2618 corrections verified against ForeverChanges on 2026-10-28. Base client remains 70425; not a complete 70658 import.",
+      "reference": "https://foreverchanges.pro/talents/mage"
     }
   ],
   "characterLevel": 60,
   "reference": "https://github.com/sage3648/mythicsim-forever-engine-go/tree/mythicsim/client70425",
   "branch": "mythicsim/client70425",
   "clientBuild": "1.60.1.70425",
-  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+7ebb1baa7f231d8009d7d1f0",
+  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+86ac7b1d07a801c816491ebf",
   "overlay": "79a27325d2c024d9",
   "levelDataSHA256": "2a029563bc2860cd4947e68726a0a40e6ea4cef82f95182c7542b88958819f19"
 }

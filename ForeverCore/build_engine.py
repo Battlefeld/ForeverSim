@@ -39,7 +39,7 @@ with tempfile.TemporaryDirectory(prefix='forevercore-engine-') as temp:
         subprocess.run(['go', 'test', '-tags=with_db', './sim/core/...', './cmd/wowsimcli/cmd'], cwd=stage, check=True)
         # Parallel combat fixes change golden DPS; keep historical goldens intact.
         subprocess.run(['go', 'test', '-tags=with_db', './sim/mage', './sim/shaman/...',
-                        '-run', 'TestFingersOfFrostLastCharge|TestStormstrikeOnlyBoosts|TestWindfury|Test.*70425|Test.*Notes'], cwd=stage, check=True)
+                        '-run', 'TestForeverCoreElementalPrecisionCurrentValues|TestForeverCoreCurrentFrostOrder|TestRemovedPiercingIce|TestFingersOfFrostLastCharge|TestStormstrikeOnlyBoosts|TestWindfury|Test.*70425|Test.*Notes'], cwd=stage, check=True)
     output = args.output.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(['go', 'build', '-tags=with_db', '-trimpath', '-o', str(output), './cmd/wowsimcli'], cwd=stage, check=True)
