@@ -43,4 +43,24 @@ class DataWatchTests(unittest.TestCase):
             p.write_bytes(b'updated')
             self.assertNotEqual(old, w.cache_facts(directory)[0]['sha256'])
 
+    def test_new_same_build_cache_requires_export_without_erasing_effective_data(self):
+        import gzip
+        import json
+        import sys
+        import hotfix_cache
+        products = {p: {'row': {'VersionsName': '1.60.1.70685'}} for p in w.PRODUCTS}
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            common = ['watch.py', '--output', str(root/'first'), '--raidbots']
+            with patch.object(w, 'discover', return_value=products), patch.object(w, 'export_table', return_value=({'1': {'Value': 'old'}}, 'csvhash')), patch.object(hotfix_cache, 'download', return_value={'status':'available','sha256':'oldcache'}), patch.object(sys, 'argv', common+['--exporter','http://localhost:5089','--build','1.60.1.70685']):
+                w.main()
+            with patch.object(w, 'discover', return_value=products), patch.object(hotfix_cache, 'download', return_value={'status':'available','sha256':'newcache'}), patch.object(sys, 'argv', ['watch.py','--output',str(root/'second'),'--previous',str(root/'first/state.json.gz'),'--raidbots']):
+                w.main()
+            state = w.read_state(root/'second/state.json.gz')
+            report = json.loads((root/'second/report.json').read_text())
+            self.assertTrue(report['extractionRequired'])
+            self.assertEqual(state['exportedCacheSHA256'], 'oldcache')
+            self.assertEqual(state['tables']['SpellEffect']['effective']['1']['Value'], 'old')
+            self.assertEqual(report['hotfixCoverage'], 'downloaded_not_applied')
+
 if __name__ == '__main__': unittest.main()

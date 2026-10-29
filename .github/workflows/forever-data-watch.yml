@@ -70,7 +70,9 @@ jobs:
           --output "$RUNNER_TEMP/forever-data/candidate"
       - name: Promote complete extraction
         if: steps.client.outcome == 'success'
-        run: cp "$RUNNER_TEMP/forever-data/candidate/"{state.json.gz,report.json} "$RUNNER_TEMP/forever-data/result/"
+        run: |
+          cp "$RUNNER_TEMP/forever-data/candidate/"{state.json.gz,report.json} "$RUNNER_TEMP/forever-data/result/"
+          cp -R "$RUNNER_TEMP/forever-data/candidate/caches/." "$RUNNER_TEMP/forever-data/result/caches/"
       - name: Save validated baseline and report
         if: github.event_name != 'pull_request'
         run: |

@@ -14,13 +14,24 @@ import re
 import sys
 import time
 from urllib.parse import urlencode, urlparse
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 PRODUCTS = ('wowf', 'wow_classic_beta')
-TABLES = ('TraitNode', 'TraitDefinition', 'TraitEdge', 'SpellName', 'SpellEffect',
+TABLES = ('Talent', 'TalentTab', 'TraitNode', 'TraitDefinition', 'TraitEdge', 'SpellName', 'SpellEffect',
           'SpellLevels', 'SpellPower', 'SpellMisc', 'SpellItemEnchantment',
+          'SpellAuraOptions', 'SpellCooldowns', 'SpellCategories', 'SpellClassOptions',
+          'SpellLabel', 'SpellDuration', 'SpellRadius', 'SpellCastTimes', 'SpellScaling',
+          'ItemSet', 'ItemSetSpell',
           'QuestV2', 'QuestXP', 'QuestMoneyReward',
           'SkillLineAbility', 'ItemSparse', 'ItemEffect', 'PlayerExpectedStat')
+
+OPTIONAL_TABLES = frozenset(('Talent', 'TalentTab', 'TraitNode', 'TraitDefinition', 'TraitEdge', 'PlayerExpectedStat', 'ItemEffect', 'QuestMoneyReward'))
+
+
+class EmptyTable(ValueError):
+    pass
+
 
 def fetch(url, timeout=90):
     error = None
@@ -81,7 +92,7 @@ def parse_csv(raw):
             raise ValueError('Invalid or duplicate record ID')
         records[key] = {k: v for k, v in row.items() if k != id_key}
     if not records:
-        raise ValueError('Empty table export')
+        raise EmptyTable('Empty table export')
     return records
 
 
@@ -115,6 +126,8 @@ def cache_facts(folder):
 def export_table(base, table, build, hotfixes):
     query = urlencode({'name': table, 'build': build, 'useHotfixes': str(hotfixes).lower(), 'locale': 'enUS'})
     raw = fetch(base.rstrip('/') + '/dbc/export/csv?' + query, timeout=300)
+    if not raw:
+        raise EmptyTable('Exporter returned an empty table')
     return parse_csv(raw), hashlib.sha256(raw).hexdigest()
 
 
@@ -172,6 +185,7 @@ def main():
             raise ValueError('Cannot mix product baselines')
         state['product'] = args.product
         state['build'] = build
+        state['tableSelection'] = args.tables
         caches = cache_facts(args.cache_dir)
         state['hotfixCaches'] = caches
         report['hotfixCoverage'] = 'local_cache_available_not_global' if caches else 'missing_client_cache'
@@ -180,8 +194,17 @@ def main():
         for table in args.tables:
             if not re.fullmatch(r'[A-Za-z][A-Za-z0-9]+', table):
                 raise ValueError('Invalid table name')
-            plain, plain_hash = export_table(args.exporter, table, build, False)
-            effective, effective_hash = export_table(args.exporter, table, build, True)
+            try:
+                plain, plain_hash = export_table(args.exporter, table, build, False)
+                effective, effective_hash = export_table(args.exporter, table, build, True)
+            except (HTTPError, EmptyTable) as exc:
+                # Some modern UI tables are absent/empty on Forever. Never hide a
+                # decode/network error or erase a previously populated baseline.
+                absent = isinstance(exc, EmptyTable) or exc.code == 404
+                if table not in OPTIONAL_TABLES or not absent or table in previous.get('tables', {}):
+                    raise
+                report.setdefault('unavailableOptionalTables', []).append(table)
+                continue
             old = previous.get('tables', {}).get(table)
             state['tables'][table] = {'plain': plain, 'effective': effective}
             report['tables'][table] = {'records': len(effective), 'plainSHA256': plain_hash,
@@ -195,14 +218,15 @@ def main():
             raise ValueError('Refusing to erase baseline tables: ' + ', '.join(sorted(missing)))
     elif previous.get('tables'):
         # Metadata checks must never erase a full extraction baseline.
-        state.update({key: previous[key] for key in ('tables', 'build', 'hotfixCaches', 'product') if key in previous})
+        state.update({key: previous[key] for key in ('tables', 'build', 'hotfixCaches', 'product', 'tableSelection') if key in previous})
     if args.exporter:
         state['exportedCacheSHA256'] = state.get('raidbots', {}).get(args.product, {}).get('sha256')
     elif 'exportedCacheSHA256' in previous:
         state['exportedCacheSHA256'] = previous['exportedCacheSHA256']
     cache = state.get('raidbots', {}).get(args.product, {})
     report['extractionRequired'] = (state.get('build') != products[args.product]['row']['VersionsName']
-        or state.get('exportedCacheSHA256') != cache.get('sha256'))
+        or state.get('exportedCacheSHA256') != cache.get('sha256')
+        or state.get('tableSelection') != list(args.tables))
     report['effectiveBuild'] = state.get('build')
     report['exportedCacheSHA256'] = state.get('exportedCacheSHA256')
     if not args.exporter and cache.get('status') == 'available':
