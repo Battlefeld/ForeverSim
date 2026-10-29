@@ -44,24 +44,57 @@ jobs:
             git show FETCH_HEAD:data-watch/latest/state.json.gz > "$RUNNER_TEMP/forever-data/previous.json.gz"
           fi
       - name: Read Blizzard version service directly
-        if: inputs.extract_client != true
         run: >-
           python tools/data-watch/watch.py
           --previous "$RUNNER_TEMP/forever-data/previous.json.gz"
           --output "$RUNNER_TEMP/forever-data/result"
-      - name: Extract Blizzard client tables
-        if: github.event_name == 'workflow_dispatch' && inputs.extract_client == true
+          --raidbots
+      - name: Decide whether client extraction is needed
+        id: extraction
+        run: |
+          python - <<'PYTHON'
+          import json, os
+          from pathlib import Path
+          report = json.loads(Path(os.environ['RUNNER_TEMP'] + '/forever-data/result/report.json').read_text())
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write('needed=' + str(report['extractionRequired']).lower() + '\n')
+          PYTHON
+      - name: Extract matching Blizzard client tables and hotfixes
+        id: client
+        if: github.event_name != 'pull_request' && (steps.extraction.outputs.needed == 'true' || inputs.extract_client == true)
+        continue-on-error: true
         run: >-
           python tools/data-watch/run_export.py
           --work "$RUNNER_TEMP/forever-exporter"
-          --previous "$RUNNER_TEMP/forever-data/previous.json.gz"
-          --output "$RUNNER_TEMP/forever-data/result"
+          --previous "$RUNNER_TEMP/forever-data/result/state.json.gz"
+          --output "$RUNNER_TEMP/forever-data/candidate"
+      - name: Promote complete extraction
+        if: steps.client.outcome == 'success'
+        run: cp "$RUNNER_TEMP/forever-data/candidate/"{state.json.gz,report.json} "$RUNNER_TEMP/forever-data/result/"
       - name: Save validated baseline and report
         if: github.event_name != 'pull_request'
         run: |
-          bash .github/scripts/publish-artifacts.sh \
-            "$RUNNER_TEMP/forever-data/result/state.json.gz::data-watch/latest/state.json.gz" \
+          statehash="$(sha256sum "$RUNNER_TEMP/forever-data/result/state.json.gz" | cut -d ' ' -f 1)"
+          mappings=(
+            "$RUNNER_TEMP/forever-data/result/state.json.gz::data-watch/snapshots/$statehash.json.gz"
+            "$RUNNER_TEMP/forever-data/result/report.json::data-watch/reports/$GITHUB_RUN_ID.json"
+            "$RUNNER_TEMP/forever-data/result/state.json.gz::data-watch/latest/state.json.gz"
             "$RUNNER_TEMP/forever-data/result/report.json::data-watch/latest/report.json"
+          )
+          while IFS= read -r -d '' cache; do
+            product="$(basename "$(dirname "$cache")")"
+            digest="$(sha256sum "$cache" | cut -d ' ' -f 1)"
+            mappings+=("$cache::data-watch/caches/$product/$digest.bin")
+          done < <(find "$RUNNER_TEMP/forever-data/result/caches" -name DBCache.bin -print0)
+          if test -f "$RUNNER_TEMP/forever-exporter/exporter.log"; then
+            mappings+=("$RUNNER_TEMP/forever-exporter/exporter.log::data-watch/latest/exporter.log")
+          fi
+          bash .github/scripts/publish-artifacts.sh "${mappings[@]}"
+      - name: Report extraction failure explicitly
+        if: steps.client.outcome == 'failure'
+        run: |
+          echo '::warning::Client extraction failed. Previous effective database retained; cache download succeeded. Next hourly check retries.'
+          echo 'Client extraction FAILED: effective database remains at its previous build. See extraction log. Next hourly run retries.' >> "$GITHUB_STEP_SUMMARY"
       - name: Coverage summary
         if: success()
         run: |

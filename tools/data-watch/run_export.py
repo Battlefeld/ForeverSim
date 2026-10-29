@@ -13,6 +13,7 @@ import zipfile
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from watch import fetch, discover
+from hotfix_cache import download
 VERSION = '0.9.9'
 SHA256 = '47dea46331a09ee9460118bc80366165e4f72aa45a739302e5402b5a038d157e'
 URL = f'https://github.com/Marlamin/wow.tools.local/releases/download/{VERSION}/Release-linux-x64.zip'
@@ -51,6 +52,15 @@ def main():
                     raise ValueError('Unsafe exporter archive path')
             archive.extractall(work)
         executable.chmod(0o700)
+    build = discover('eu')[a.product]['row']['VersionsName']
+    # An isolated directory prevents caches from other products/builds leaking in.
+    caches = work / 'caches'
+    caches.mkdir(exist_ok=True)
+    for stale in caches.glob('*.bin'):
+        stale.unlink()
+    facts = download(build.split('.')[-1], caches)
+    if facts['status'] != 'available':
+        raise RuntimeError('Matching hotfix cache not available yet; retaining previous effective data')
     # Supply config explicitly: empty additionalCDNs arguments may revert to mirrors in WTL.
     config = {'config': {'wowProduct': a.product, 'wowFolder': str(a.wow_folder.resolve()) if a.wow_folder else '',
                          'useWago': 'false', 'useTACTChannels': 'false', 'region': 'eu', 'locale': 'enUS',
@@ -74,11 +84,17 @@ def main():
                 if time.monotonic() >= deadline:
                     raise TimeoutError('CASC exporter did not become ready')
                 time.sleep(2)
-            args = [sys.executable, str(HERE / 'watch.py'), '--output', str(a.output.resolve()), '--exporter', base, '--build', discover('eu')[a.product]['row']['VersionsName']]
+            args = [sys.executable, str(HERE / 'watch.py'), '--output', str(a.output.resolve()), '--exporter', base, '--build', build, '--product', a.product, '--raidbots']
             if a.previous: args += ['--previous', str(a.previous.resolve())]
-            cache = a.cache_dir or product_cache_folder(a.wow_folder, a.product)
+            cache = a.cache_dir or product_cache_folder(a.wow_folder, a.product) or caches
             if cache: args += ['--cache-dir', str(cache.resolve())]
             subprocess.run(args, check=True)
+            from watch import read_state
+            state_path = a.output / 'state.json.gz'
+            state = read_state(state_path)
+            if state['raidbots'][a.product].get('sha256') != facts['sha256']:
+                raise RuntimeError('Hotfix cache changed during export; retry required')
+
         finally:
             process.terminate()
             try: process.wait(timeout=15)

@@ -19,6 +19,7 @@ from urllib.request import Request, urlopen
 PRODUCTS = ('wowf', 'wow_classic_beta')
 TABLES = ('TraitNode', 'TraitDefinition', 'TraitEdge', 'SpellName', 'SpellEffect',
           'SpellLevels', 'SpellPower', 'SpellMisc', 'SpellItemEnchantment',
+          'QuestV2', 'QuestXP', 'QuestMoneyReward',
           'SkillLineAbility', 'ItemSparse', 'ItemEffect', 'PlayerExpectedStat')
 
 def fetch(url, timeout=90):
@@ -129,8 +130,10 @@ def read_state(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--raidbots', action='store_true', help='Fetch build-specific verified caches even when build is unchanged')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--previous', type=Path)
+    parser.add_argument('--product', choices=PRODUCTS, default='wowf')
     parser.add_argument('--region', choices=('eu', 'us', 'kr', 'tw', 'cn'), default='eu')
     parser.add_argument('--exporter', help='Local wow.tools.local base URL; must use direct CASC mode')
     parser.add_argument('--build', help='Explicit four-part build loaded by exporter')
@@ -148,6 +151,16 @@ def main():
         old = previous.get('products', {}).get(product, {}).get('row')
         if old != value['row']:
             report['buildChanges'][product] = {'before': old, 'after': value['row']}
+    if args.raidbots:
+        from hotfix_cache import download
+        state['raidbots'] = {}
+        for product, value in products.items():
+            build_number = value['row']['VersionsName'].split('.')[-1]
+            facts = download(build_number, args.output / 'caches' / product)
+            state['raidbots'][product] = facts
+        report['raidbots'] = state['raidbots']
+    elif previous.get('raidbots'):
+        state['raidbots'] = previous['raidbots']
     if args.exporter:
         url = urlparse(args.exporter)
         if url.scheme != 'http' or url.hostname not in ('localhost', '127.0.0.1', '::1'):
@@ -155,6 +168,9 @@ def main():
         build = args.build or max((p['row']['VersionsName'] for p in products.values()), key=lambda v: tuple(map(int, v.split('.'))))
         if not re.fullmatch(r'1\.60\.\d+\.\d+', build):
             raise ValueError('Not a Forever build')
+        if previous.get('tables') and previous.get('product', 'wowf') != args.product:
+            raise ValueError('Cannot mix product baselines')
+        state['product'] = args.product
         state['build'] = build
         caches = cache_facts(args.cache_dir)
         state['hotfixCaches'] = caches
@@ -179,7 +195,18 @@ def main():
             raise ValueError('Refusing to erase baseline tables: ' + ', '.join(sorted(missing)))
     elif previous.get('tables'):
         # Metadata checks must never erase a full extraction baseline.
-        state.update({key: previous[key] for key in ('tables', 'build', 'hotfixCaches') if key in previous})
+        state.update({key: previous[key] for key in ('tables', 'build', 'hotfixCaches', 'product') if key in previous})
+    if args.exporter:
+        state['exportedCacheSHA256'] = state.get('raidbots', {}).get(args.product, {}).get('sha256')
+    elif 'exportedCacheSHA256' in previous:
+        state['exportedCacheSHA256'] = previous['exportedCacheSHA256']
+    cache = state.get('raidbots', {}).get(args.product, {})
+    report['extractionRequired'] = (state.get('build') != products[args.product]['row']['VersionsName']
+        or state.get('exportedCacheSHA256') != cache.get('sha256'))
+    report['effectiveBuild'] = state.get('build')
+    report['exportedCacheSHA256'] = state.get('exportedCacheSHA256')
+    if not args.exporter and cache.get('status') == 'available':
+        report['hotfixCoverage'] = 'downloaded_not_applied' if report['extractionRequired'] else 'previous_validated_export'
     # All fetches and validation finish before replacing either baseline/output.
     args.output.mkdir(parents=True, exist_ok=True)
     state_path = args.output / 'state.json.gz'
