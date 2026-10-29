@@ -76,10 +76,16 @@ function UI.State()
  if C.pending or #(C.queue or{})>0 or(AH and(AH.calculating or AH.scanning or AH.reading))then return 'busy',tostring(C.status or'rechnet ...') end
  if UI.lastError and now()-(UI.lastErrorAt or 0)<300 then return 'error',UI.lastError end
  if d.pixelOff then return 'off','Pixelstreifen aus: nur Auktionshaus ueber /reload' end
+ local data=C.dataStatus
+ if UI.lastOk and type(data)=='table' then
+  if data.status=='checking' then return 'busy',data.message or'Daten werden geprueft' end
+  if data.status=='warning' or data.status=='error' then return 'warning',data.message or'Datenpruefung ausstehend' end
+  if data.status=='ready' then return 'ok','Bereit · Daten automatisch geprueft' end
+ end
  if UI.lastOk then return 'ok','Bereit' end
  return 'idle','Wartet auf die erste Berechnung (ForeverCore.exe starten)'
 end
-local STATE_COLOR={ok=UI.GREEN,busy=UI.GOLD,error=UI.RED,off=UI.GREY,idle=UI.GREY}
+local STATE_COLOR={ok=UI.GREEN,busy=UI.GOLD,error=UI.RED,warning=UI.ORANGE,off=UI.GREY,idle=UI.GREY}
 function UI.StateColor(state)return STATE_COLOR[state]or UI.GREY end
 
 -- Shared look: a dark tooltip-style window with a gold title, movable, position remembered -----------------------
@@ -219,7 +225,7 @@ function UI.Refresh()
  local state,text=UI.State();local c=UI.StateColor(state)
  if UI.minimap and UI.minimap.dot then UI.minimap.dot:SetVertexColor(c[1],c[2],c[3])end
  if UI.minimap and UI.minimap.crystal and ForeverSimArt then
-  local e=ForeverSimArt[(state=='ok'or state=='busy')and UI.lastOk and'crystal_on'or'crystal_off']
+  local e=ForeverSimArt[(state=='ok'or state=='busy'or state=='warning')and UI.lastOk and'crystal_on'or'crystal_off']
   if e and UI.minimap.crystalKey~=e.file then UI.minimap.crystalKey=e.file;UI.minimap.crystal:SetTexture(ForeverSimArt.dir..e.file)end
  end
  local m=UI.main
@@ -304,3 +310,4 @@ if CreateFrame then
  end)
  if IsLoggedIn and IsLoggedIn()then pcall(UI.BuildMinimap)end
 end
+

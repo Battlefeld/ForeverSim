@@ -10,10 +10,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
-const Version = "0.6.0-hotfix2"
+const Version = "0.6.0-autodata1"
 
 type Config struct {
 	Addons         string `json:"addons"`
@@ -51,9 +52,14 @@ type Reply struct {
 	ReplyStart int    `json:"-"`
 }
 type Service struct {
-	cfg    Config
-	routes *RouteService
-	sim    *SimService
+	clientMu        sync.Mutex
+	clientUpdateMu  sync.Mutex
+	clientOnce      sync.Once
+	clientStatus    clientDataStatus
+	clientCacheSeen map[string]string
+	cfg             Config
+	routes          *RouteService
+	sim             *SimService
 }
 
 func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
@@ -88,7 +94,26 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 	var e error
 	switch j.Kind {
 	case "ping":
-		r.Result = map[string]any{"version": Version, "engineRevision": s.cfg.EngineRevision, "engine": "MythicSim Go", "stateRefs": true}
+		s.startClientData(ctx)
+		if s.cfg.Addons != "" && s.cfg.Data != "" {
+			go s.checkClientData(ctx)
+		}
+		r.Result = map[string]any{"version": Version, "engineRevision": s.cfg.EngineRevision, "engine": "MythicSim Go", "stateRefs": true, "clientDataSync": true, "dataStatus": s.dataStatus()}
+	case "data-status":
+		r.Result = map[string]any{"dataStatus": s.dataStatus()}
+	case "quest-observations":
+		if s.cfg.Data == "" {
+			e = fmt.Errorf("Datenordner fehlt")
+			break
+		}
+		var n int
+		n, e = importClientQuests(s.cfg, []byte(str(j.Payload, "capture")))
+		if e == nil {
+			s.clientMu.Lock()
+			s.clientStatus.Quests = n
+			s.clientMu.Unlock()
+			r.Result = map[string]any{"imported": n, "dataStatus": s.dataStatus()}
+		}
 	case "route":
 		sourceMu.RLock()
 		service := &RouteService{Root: activeRuntime(s.cfg), Lua: s.cfg.Lua, ScriptRoot: s.cfg.Runtime}
@@ -196,11 +221,11 @@ func main() {
 	log.Printf("ForeverCore %s | MythicSim %s | %s", Version, cfg.EngineRevision, cfg.Addons)
 	if *noCapture {
 		log.Printf("Bildschirmaufnahme AUS: nur Auktionshaus-Auftraege aus der SavedVariables-Datei (im Spiel /fc pixel aus; nach FC Berechnen /reload). Es wird nichts vom Bildschirm gelesen.")
-		go keepRoutesUpdated(ctx, cfg)
+		s.startClientData(ctx)
 		watchSavedVariables(ctx, s)
 		return
 	}
-	go keepRoutesUpdated(ctx, cfg)
+	s.startClientData(ctx)
 	go watchSavedVariables(ctx, s)
 	if e := runBridge(ctx, s); e != nil {
 		log.Fatal(e)

@@ -27,6 +27,8 @@ var profileJobs sync.Map // profile path -> true while running, or the error tha
 
 // routeNext answers job "route-next". State: {race, class, live}, live as ForeverRoutes reads it (route.Live).
 func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
+	routesAccessMu.RLock()
+	defer routesAccessMu.RUnlock()
 	race := strings.ReplaceAll(str(j.State, "race"), " ", "")
 	class := strings.ToLower(str(j.State, "class"))
 	live := child(j.State, "live")
@@ -69,6 +71,9 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 		return nil, e
 	}
 	args := []string{"next", "-data", data, "-live", in, "-out", out, "-horizon", fmt.Sprint(horizon)}
+	if routesSupportClientQuests(s.cfg) && fileOK(clientQuestsPath(s.cfg)) {
+		args = append(args, "-client-quests", clientQuestsPath(s.cfg))
+	}
 	// the character's best route (ForeverRoutes' improve, shipped beside the dataset) is followed from where it stands
 	// "Solo mit Dungeon" (dungeon runs) when the player chose it in the addon
 	dungeons, _ := j.State["dungeons"].(bool)

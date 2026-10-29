@@ -44,4 +44,18 @@ for _,cmd in ipairs({'','gear','talents','rotation','quests','dungeons','advance
  SlashCmdList.FOREVERCORE(cmd)
 end
 assert(#MOCK.errors==0,MOCK.errors[1]and MOCK.errors[1].msg or'')
+-- Background data transport never captures a character snapshot and survives character changes.
+C.queue={};C.pending=nil;C.needPing=false;C.Capture=function()error('control jobs must not capture character data')end
+local imported=false
+assert(C.Request('quest-observations',{capture='{}'},function(result)imported=result and result.imported==1 end))
+MOCK.Advance(.2,.05);pending=C.pending;assert(pending and pending.kind=='quest-observations')
+C.simRevision=C.simRevision+1
+C_AddOns.LoadAddOn=function()ForeverCore_Reply={schema=3,session=C.session,sequence=pending.sequence,revision=pending.revision,kind='quest-observations',status='ok',result={imported=1}};return true end
+MOCK.Advance(2.1,.05);assert(imported,'character change discarded acknowledged quest import')
+C.ApplyDataStatus({status='checking',message='Checking'})
+assert(C.nextDataPoll and C.dataStatus.status=='checking','background completion is not polled')
+C.ApplyDataStatus({status='warning',message='Pending'})
+assert(C.dataStatus.status=='warning','unverified hotfix status lost')
+C.queue={};C.pending=nil;ForeverCoreBridgeDB.enabled=true;ForeverCoreBridgeDB.pixelTuned={cell=2,style='low'};ForeverCoreBridgeDB.stateRefOK=true
+MOCK.Fire('PLAYER_LOGIN');assert(C.queue[1] and C.queue[1].kind=='ping','reconnect skipped automatic data handshake')
 print=io.write;print('bridge tests passed\n')

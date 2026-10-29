@@ -17,8 +17,8 @@ for src,name in [(a.core_exe,'ForeverCore.exe'),(a.engine_exe,'MythicSim.exe'),(
 for name in ['Install.ps1','Restore.ps1','Installieren.cmd','Starten.cmd','config.example.json','engine.lock.json']:shutil.copy2(core/name,stage/name)
 shutil.copy2(core/'README-DE.md',stage/'START-HIER.md')
 shutil.copytree(repo/'ForeverCoreBridge',stage/'AddOns/ForeverCoreBridge')
-# the leveling route with its arrow: works without ForeverCore, plans live with it
-shutil.copytree(repo/'ForeverRoutes',stage/'AddOns/ForeverRoutes')
+# ForeverRoutes is installed from its own release. Never overwrite it with the
+# obsolete HUD copy in this simulator repository.
 # Full matching addon set; the installer backs up existing addon folders.
 for addon in ['ForeverSimBridge']:
  shutil.copytree(repo/addon,stage/'AddOns'/addon,ignore=shutil.ignore_patterns('Development','tools','__pycache__','*.md','CHANGES_*'))

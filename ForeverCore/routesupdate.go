@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -30,8 +31,11 @@ const (
 	routesBundle      = "foreverroutes-bundle.zip"
 	routesManifest    = "foreverroutes-bundle.json"
 	routesBundleLimit = 256 << 20
-	routesEvery       = 12 * time.Hour
+	routesEvery       = 24 * time.Hour
 )
+
+var routesUpdateMu sync.Mutex
+var routesAccessMu sync.RWMutex
 
 type routesBundleManifest struct {
 	Schema  string            `json:"schema"`
@@ -46,6 +50,8 @@ func routesDir(cfg Config) string { return filepath.Dir(cfg.RoutesData) }
 // updateRoutes brings the ForeverRoutes folder to the latest release. It returns the version installed afterwards and
 // whether it changed.
 func updateRoutes(ctx context.Context, cfg Config) (string, bool, error) {
+	routesUpdateMu.Lock()
+	defer routesUpdateMu.Unlock()
 	repo := cfg.RoutesRepo
 	if repo == "" {
 		repo = "Battlefeld/ForeverRoutes"
@@ -57,8 +63,9 @@ func updateRoutes(ctx context.Context, cfg Config) (string, bool, error) {
 	var rel struct {
 		Tag    string `json:"tag_name"`
 		Assets []struct {
-			Name string `json:"name"`
-			URL  string `json:"browser_download_url"`
+			Name   string `json:"name"`
+			URL    string `json:"browser_download_url"`
+			APIURL string `json:"url"`
 		} `json:"assets"`
 	}
 	if err := json.Unmarshal(b, &rel); err != nil {
@@ -67,6 +74,9 @@ func updateRoutes(ctx context.Context, cfg Config) (string, bool, error) {
 	urls := map[string]string{}
 	for _, a := range rel.Assets {
 		urls[a.Name] = a.URL
+		if githubToken() != "" && a.APIURL != "" {
+			urls[a.Name] = a.APIURL
+		}
 	}
 	if urls[routesBundle] == "" || urls[routesManifest] == "" {
 		return "", false, fmt.Errorf("ForeverRoutes-Release %s ohne Paket", rel.Tag)
@@ -101,6 +111,8 @@ func updateRoutes(ctx context.Context, cfg Config) (string, bool, error) {
 		os.RemoveAll(fresh)
 		return "", false, err
 	}
+	routesAccessMu.Lock()
+	defer routesAccessMu.Unlock()
 	old := dir + ".alt"
 	os.RemoveAll(old)
 	if _, err := os.Stat(dir); err == nil {

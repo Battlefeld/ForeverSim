@@ -79,6 +79,7 @@ function C.RequestRoute()
  if not C.RouteAvailable()then C.Say('Routen: kein Quest-/Routen-Addon geladen (ForeverDungeonQuest wird neu gebaut)');return false end
  return C.Request('route',nil,C.ApplyRoute)
 end
+function C.IsControlJob(kind)return kind=='ping'or kind=='sources'or kind=='data-status'or kind=='quest-observations'end
 function C.Request(kind,payload,callback,opts)
  -- One rotation for everything: item values, dungeon lists and simulations are computed with the rotation that is
  -- active for this character (see Sim.lua), not with the first one the engine happens to list.
@@ -90,8 +91,8 @@ function C.Request(kind,payload,callback,opts)
  if kind=='item' and #C.queue>=5 then return false end
  if #C.queue>=24 then C.Say('Warteschlange voll; laufende Berechnungen abwarten');return false end
  if C.slot>P.slots then C.Say('Antwortslots verbraucht: /reload erforderlich');return false end
- for _,job in ipairs(C.queue)do if job.kind==kind and(kind=='route'or kind=='ping')then return false end end
- if C.pending and C.pending.kind==kind and(kind=='route'or kind=='ping')then return false end
+ for _,job in ipairs(C.queue)do if job.kind==kind and(kind=='route'or kind=='ping'or kind=='data-status'or kind=='quest-observations')then return false end end
+ if C.pending and C.pending.kind==kind and(kind=='route'or kind=='ping'or kind=='data-status'or kind=='quest-observations')then return false end
  C.queue[#C.queue+1]={kind=kind,payload=payload or{},callback=callback,timeout=opts and opts.timeout,tuning=opts and opts.tuning,export=opts and opts.export};return true
 end
 -- Data the client may not deliver yet (right after the login or /reload). The PC refuses a whole state when one
@@ -130,12 +131,12 @@ local function begin()
  local job=table.remove(C.queue,1);local ok,state=true,{}
  -- Nothing is painted at login any more. The connection is checked once, right before the first real job
  -- (the ping answer tells which features the running ForeverCore.exe has, e.g. state references).
- if C.needPing and job.kind~='ping' and job.kind~='sources' then
+ if C.needPing and not C.IsControlJob(job.kind) then
   C.needPing=false
   table.insert(C.queue,1,job)
   job={kind='ping',payload={},callback=function(result)receivePing(result)end}
  end
- if job.kind~='ping'and job.kind~='sources'then ok,state=pcall(C.Capture or function()return{}end,job.kind)end
+ if not C.IsControlJob(job.kind)then ok,state=pcall(C.Capture or function()return{}end,job.kind)end
  if not ok or not state then C.Say('Charakterdaten nicht lesbar');if job.callback then job.callback(nil,'Charakterdaten nicht lesbar')end;return end
  -- Simulation jobs consume only the SIM snapshot; route databases can exceed 40 KB.
  if job.kind~='route'and type(state.sim)=='table'then state={sim=state.sim}end
@@ -157,7 +158,7 @@ local function begin()
  -- The character state (about 10 KB) is sent once; afterwards the PC is asked to reuse it by key, which turns
  -- a hover job from ~45 frames into ~3. The key is the stable-state hash that also keys the result cache.
  local stateKey
- if job.kind~='route'and job.kind~='ping'and job.kind~='sources'and type(state.sim)=='table'and C.SimCacheContext then
+ if job.kind~='route'and not C.IsControlJob(job.kind)and type(state.sim)=='table'and C.SimCacheContext then
   local okKey,key=pcall(C.SimCacheContext);if okKey and type(key)=='string'and key~=''then stateKey=key end
  end
  job.stateKey=stateKey
@@ -192,11 +193,21 @@ local function deliver()
  if r.status=='ok' and p.stateKey then C.stateKnown=p.stateKey;if ForeverCoreBridgeDB then ForeverCoreBridgeDB.stateKnown=p.stateKey end end
  if r.status~='ok' and p.stateOmitted then C.stateKnown=nil;if ForeverCoreBridgeDB then ForeverCoreBridgeDB.stateKnown=nil end end
  if r.status~='ok'then C.Say(r.message or 'Berechnung fehlgeschlagen');if p.callback then p.callback(nil,r.message)end;return end
- if p.kind~='ping'and p.kind~='sources'and not p.resumed and p.revision~=tostring(p.kind=='route' and C.revision or C.simRevision)then C.Say('Zustand geaendert: Ergebnis verworfen');C.MarkChanged(true,2);if p.callback then p.callback(nil,'Zustand geaendert')end;return end
+ if not C.IsControlJob(p.kind)and not p.resumed and p.revision~=tostring(p.kind=='route' and C.revision or C.simRevision)then C.Say('Zustand geaendert: Ergebnis verworfen');C.MarkChanged(true,2);if p.callback then p.callback(nil,'Zustand geaendert')end;return end
  C.Say('Verbunden · '..p.kind..' fertig');if p.callback then p.callback(r.result)end
+end
+function C.ApplyDataStatus(data)
+ if type(data)~='table' then return end
+ C.dataStatus=data
+ if ForeverCoreBridgeDB then ForeverCoreBridgeDB.dataStatus=data end
+ if data.status=='checking' then C.nextDataPoll=(GetTime and GetTime()or 0)+15 else C.nextDataPoll=(GetTime and GetTime()or 0)+300 end
+ if ForeverRoutes then ForeverRoutes.dataStatus=data end
+ if C.UI and C.UI.Refresh then C.UI.Refresh()end
 end
 function receivePing(result)
  if type(result)~='table' then return end
+ C.clientDataSync=result.clientDataSync==true
+ C.ApplyDataStatus(result.dataStatus)
  C.stateRefOK=result.stateRefs==true
  if ForeverCoreBridgeDB then ForeverCoreBridgeDB.stateRefOK=C.stateRefOK or nil end
  local revision=result.engineRevision
@@ -244,7 +255,7 @@ ticker:SetScript('OnEvent',function(_,event,questId)
  if event=='UNIT_LEVEL' and questId~='player' and questId~='pet' then return end
  if event=='UNIT_PET' and questId~='player' then return end
  if event=='QUEST_TURNED_IN'and type(questId)=='number'and C.public(questId)then C.extraCompleted=C.extraCompleted or{};C.extraCompleted[questId]=true end
- if event=='PLAYER_LOGIN'then ForeverCoreBridgeDB=ForeverCoreBridgeDB or{enabled=true};C.engineRevision=C.engineRevision or ForeverCoreBridgeDB.lastEngineRevision;do local c=tonumber(ForeverCoreBridgeDB.pixelCell);if c and c>=1 and c<=8 then P.cell=math.floor(c)end end;makePixels();makeStatus();if C.InstallAdapters then C.InstallAdapters()end;C.MarkChanged();if ForeverCoreBridgeDB.enabled then if ForeverCoreBridgeDB.pixelTuned then C.stateRefOK=ForeverCoreBridgeDB.stateRefOK==true;C.stateKnown=ForeverCoreBridgeDB.stateKnown;C.needPing=not C.stateRefOK else C.StartPixelTune(1) end end;return end
+ if event=='PLAYER_LOGIN'then ForeverCoreBridgeDB=ForeverCoreBridgeDB or{enabled=true};C.engineRevision=C.engineRevision or ForeverCoreBridgeDB.lastEngineRevision;do local c=tonumber(ForeverCoreBridgeDB.pixelCell);if c and c>=1 and c<=8 then P.cell=math.floor(c)end end;makePixels();makeStatus();if C.InstallAdapters then C.InstallAdapters()end;C.MarkChanged();if ForeverCoreBridgeDB.enabled then if ForeverCoreBridgeDB.pixelTuned then C.stateRefOK=ForeverCoreBridgeDB.stateRefOK==true;C.stateKnown=ForeverCoreBridgeDB.stateKnown;C.needPing=false;C.Request('ping',{},receivePing) else C.StartPixelTune(1) end end;return end
  -- Noisy events fire constantly (quest log refreshes, bag updates, pet bar):
  -- refresh later and without invalidating running jobs.
  if event=='QUEST_LOG_UPDATE' or event=='BAG_UPDATE_DELAYED' or event=='PET_UI_UPDATE' or event=='SKILL_LINES_CHANGED' then
@@ -258,6 +269,10 @@ ticker:SetScript('OnEvent',function(_,event,questId)
 end)
 ticker:SetScript('OnUpdate',function(_,elapsed)
  if not C.pixelFrame then return end
+ if C.clientDataSync and C.nextDataPoll and now()>=C.nextDataPoll and not C.pending and #C.queue==0 then
+  C.nextDataPoll=now()+15
+  C.Request('data-status',{},function(result)if result then C.ApplyDataStatus(result.dataStatus)end end)
+ end
  if C.dirty then C.debounce=(C.debounce or 0)-elapsed;if C.debounce<=0 and not C.pending and #C.queue==0 and now()-(C.lastAutoAt or -1e9)>=MIN_AUTO_GAP then C.dirty=false;C.lastAutoAt=now();if ForeverCoreBridgeDB and ForeverCoreBridgeDB.enabled~=false and C.RouteAvailable()then C.Request('route',nil,C.ApplyRoute)end end end
  begin();local p=C.pending;if not p then return end
  p.elapsed=p.elapsed+elapsed;untilFrame=untilFrame-elapsed;untilInbox=untilInbox-elapsed
@@ -318,3 +333,4 @@ SlashCmdList.FOREVERCORE=function(msg)
  elseif msg=='on'then ForeverCoreBridgeDB.enabled=true;C.MarkChanged()
  else if C.window then C.window:Show();C.Say('Unbekannter Befehl; /fc oeffnet die Uebersicht')end end
 end
+

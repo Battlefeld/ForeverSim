@@ -32,3 +32,45 @@ Spiel an. Zwei Addons gehören dazu: **ForeverSimBridge** (liest Charakter und I
   Platz in der Liste.
 
 Alles Weitere (Befehle, Filter, Grenzen): `README.md`.
+
+
+## Automatische Datenpflege ab 0.6.0-autodata1
+
+Nach einmaliger Installation der neuen ForeverCore-Version und des aktuellen,
+separaten ForeverRoutes-Addons genügt der normale Start von ForeverCore und WoW.
+Der Login führt auch mit bereits eingestellter Pixelverbindung einen Handshake aus.
+Die Verbindung startet die Datenpflege im Hintergrund. Ein bereits erfolgreich
+geprüfter Tagesstand wird über Neustarts hinweg wiederverwendet. Bei einem
+laufenden Client erfolgt die nächste externe Prüfung nach 24 Stunden. Gleichzeitige
+Anfragen starten keinen zweiten Download; Netzwerkfehler lassen den letzten gültigen
+Stand aktiv. Der Status erscheint automatisch in der Übersicht und am Kristall.
+
+- Aktuelle ForeverRoutes-Pakete werden mit SHA-256 geprüft und vor der Aktivierung
+  vollständig vorbereitet. Eine laufende Routenplanung wird beim Tausch geschützt.
+- Der ForeverRoutes-Collector übermittelt neue öffentliche Questtitel über eine
+  freie Verbindung. Dafür braucht es weder Python noch `/reload`. Vollständige
+  gespeicherte Beobachtungen liest ForeverCore beim nächsten Schreiben der
+  SavedVariables zusätzlich ein (Ausloggen oder normaler UI-Neustart).
+- Die lokale Datenbank liegt in `Data/ClientData/client-quests.json`, getrennt nach
+  Build, Region und Sprache. Unterstützende Routenplaner erhalten sie automatisch.
+  Englischsprachige bestätigte Titel bekannter Quests werden beim Planen eingelesen;
+  beobachtete XP, Ziele ohne Ziel-ID und UI-Kartenpunkte verändern keine Basiswerte.
+- Vorhandene Hotfix-Caches der ausgewählten Installation werden strukturell geprüft
+  und lokal unter `Data/ClientData/HotfixCaches` archiviert. Es erfolgt kein Upload
+  von Account-, Charakter- oder Cachedateien. Gesperrte oder teilweise geschriebene
+  Dateien werden später erneut gelesen; Lua aus SavedVariables wird nicht ausgeführt.
+
+Die tägliche Serverprüfung und der Bluepost-Tracker bleiben unabhängig vom laufenden
+Spiel. Ein Cache-Download oder eine passende Buildnummer allein wird niemals als
+aktueller Engine-Stand angezeigt: dafür müssen auch der geprüfte Export und der
+Hotfix-Fingerabdruck der kompilierten Engine passen. Der derzeitige HTTP-403-Fehler
+beim Blizzard-DB2-Abruf bleibt daher als ausstehende Hotfix-Prüfung sichtbar. Das
+Archivieren eines lokalen Caches übersetzt dessen Werte noch nicht in Kampfformeln.
+
+Bei privaten GitHub-Repositories braucht der PC einmalig Leseberechtigung für beide
+Repositories. Der Client verwendet dafür eine vorhandene Umgebungsvariable
+`FOREVER_GITHUB_TOKEN` (alternativ `GH_TOKEN` oder `GITHUB_TOKEN`). Das Token wird
+nicht in Konfigurationsdateien oder Protokolle geschrieben und nur an GitHub gesendet.
+Ohne Zugriff bleibt die Prüfung sichtbar fehlgeschlagen; sie meldet keine Aktualität.
+ForeverRoutes wird ausschließlich aus seinem eigenen Release installiert; das
+ForeverSim-Paket überschreibt das eigenständige HUD nicht mit einer alten Kopie.

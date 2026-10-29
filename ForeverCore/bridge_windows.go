@@ -114,6 +114,7 @@ func runBridge(ctx context.Context, s *Service) error {
 			if !wasRunning {
 				wasRunning = true
 				log.Printf("WoW-Fenster erkannt; Client-Ursprung %d,%d", x, y)
+				go s.checkClientData(ctx)
 				if s.cfg.AutoSync {
 					go func() {
 						result, issue := syncSources(ctx, s.cfg)

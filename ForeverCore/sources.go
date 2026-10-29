@@ -36,6 +36,14 @@ func fetchBounded(ctx context.Context, url string, max int64) ([]byte, error) {
 		return nil, e
 	}
 	req.Header.Set("User-Agent", "ForeverCore/"+Version)
+	if githubHost(url) {
+		if token := githubToken(); token != "" {
+			req.Header.Set("Authorization", "Bearer "+token)
+		}
+		if strings.Contains(url, "/releases/assets/") {
+			req.Header.Set("Accept", "application/octet-stream")
+		}
+	}
 	client := &http.Client{Timeout: 90 * time.Second}
 	r, e := client.Do(req)
 	if e != nil {
