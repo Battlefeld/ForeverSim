@@ -73,6 +73,19 @@ jobs:
         run: |
           cp "$RUNNER_TEMP/forever-data/candidate/"{state.json.gz,report.json} "$RUNNER_TEMP/forever-data/result/"
           cp -R "$RUNNER_TEMP/forever-data/candidate/caches/." "$RUNNER_TEMP/forever-data/result/caches/"
+      - name: Record effective data freshness
+        env:
+          CLIENT_OUTCOME: ${{ steps.client.outcome }}
+        run: |
+          python - <<'PYTHON'
+          import json, os
+          from pathlib import Path
+          path = Path(os.environ['RUNNER_TEMP']) / 'forever-data/result/report.json'
+          report = json.loads(path.read_text())
+          outcome = os.environ['CLIENT_OUTCOME']
+          report['clientExtraction'] = {'status': {'success': 'complete', 'failure': 'failed'}.get(outcome, 'not_needed'), 'previousDataRetained': outcome == 'failure'}
+          path.write_text(json.dumps(report, indent=2) + '\n')
+          PYTHON
       - name: Save validated baseline and report
         if: github.event_name != 'pull_request'
         run: |

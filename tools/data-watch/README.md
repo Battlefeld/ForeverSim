@@ -68,3 +68,13 @@ Combat-Regressionen auf ihrem ausgewiesenen Stand. `effectiveBuild`,
 
 Quellen: <https://www.raidbots.com/developers>,
 <https://github.com/Marlamin/wow.tools.local>, <https://github.com/wowdev/DBCD>.
+
+### Geprüfter Betriebsstand am 29.10.2026
+
+Der GitHub-Lauf hat Versionen und beide Raidbots-Caches erfolgreich geprüft und
+archiviert. WTL konnte den Build 70685 und dessen Hotfix-Cache laden, der anschließende
+CSV-Export scheiterte jedoch beim direkten Blizzard-Dateiabruf (HTTP 403, sowohl
+TraitNode als auch Talent). Daher liegt noch kein gültiger effektiver Tabellenstand
+vor. Der Workflow behält die Daten und wiederholt den Versuch; `clientExtraction`
+weist einen fehlgeschlagenen Export maschinenlesbar aus. Ein grüner Monitorlauf
+bestätigt in diesem Fall die Überwachung, nicht einen erfolgreichen DB2-Import.
