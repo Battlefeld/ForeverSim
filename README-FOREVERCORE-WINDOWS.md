@@ -7,6 +7,34 @@
 > **Ziel:** Nutzer lädt **eine** signierte Datei `ForeverCore.exe` herunter, startet sie per Doppelklick und erledigt die gesamte Installation, Einrichtung, Aktualisierung, Simulation und Routenverwaltung grafisch. Kein CMD/PowerShell, keine manuell zu installierende `MythicSim.exe`, `foreverroutes.exe`, `Lua.exe` oder Addon-ZIP.
 
 
+
+## Verbindliche Bedienentscheidung: bestehende Addon-GUIs erhalten
+
+**Korrektur vom 29.10.2026:** ForeverSim und ForeverRoutes behalten ihre vorhandenen Ingame-Oberflächen, Reiter, Einstellungen und Bedienfunktionen. Die gemeinsame ForeverCore.exe ergänzt Installation, Updates und Rechenleistung; sie ersetzt keine bestehenden Addon-Fenster. Gear, Talente, Rotation, Buff-/VZ-Auswahl, Loot-/Dungeonhinweise und vorhandene Vergleiche bleiben dort bedienbar, wo sie heute bereits angeboten werden. Keine manuelle Übertragung realer Ausrüstung in eine Windows-Itemliste verlangen.
+
+**Ingame-Auftrag:** Im Addon auswählen -> benötigten Charakter-/Itemzustand automatisch und revisionsgebunden an ForeverCore übermitteln -> intern berechnen -> kompaktes Ergebnis in derselben Addon-Oberfläche anzeigen. Gear-, Level- und Talentänderungen automatisch berücksichtigen; unpassende Cachewerte verwerfen. Die bestehende Transport-/Kampf-/Slotbegrenzung bleibt bestehen. Eingaben und Anzeige bleiben im Spiel, schwere Berechnungen laufen auf Windows.
+
+**Optional am PC:** frei eingegebene hypothetische Stat-Profile vergleichen, ohne konkrete Item-IDs oder eine auszufüllende Ausrüstungsliste. Ein automatisch erfasster Charakter darf als freiwillige Ausgangsbasis dienen. Hypothetische Werte werden getrennt gespeichert und verändern weder Live-Charakter noch aktive Ingame-Einstellungen.
+
+Beispiel einer noch zu implementierenden Windows-Eingabe, **kein berechnetes Ergebnis**:
+
+| Eingabe | Profil A | Profil B |
+|---|---|---|
+| Beweglichkeit | 300 | 320 |
+| Intelligenz | 200 | 180 |
+| Kritische Trefferchance | 20 % | 24 % |
+| Trefferchance | am festgelegten Cap | 2 Prozentpunkte unter demselben Cap |
+
+Ein Treffer-Cap ist kein globaler Wert: Klasse, Level, Ziellevel, Angriffstyp (z. B. Zauber/Nahkampf/Fernkampf) und relevante Talente/Regeln müssen feststehen. „2 Prozentpunkte unter Cap“ ausdrücklich so speichern, nicht als 2 % relative Verringerung. Bei mehreren Angriffstypen getrennte Trefferwerte bzw. Caps angeben.
+
+Für eine belastbare DPS-Simulation sind zusätzlich gemeinsamer Kontext und ein kompatibles Engine-Modell nötig: Klasse/Spezialisierung soweit vorhanden, Level, Gegner, Rotation, relevante Talente/Buffs, Dauer/Iterationszahl und je nach Angriff Waffen-/Zauberdaten. Diese Werte können aus einem bekannten Basisszenario übernommen werden; sie werden nicht aus AGI/INT/Crit erraten. Falls der Nutzer nur vier Werte eingibt, fehlenden Kontext abfragen oder als explizite gemeinsame Annahme anzeigen.
+
+**Einheiten und Ableitung:** Eingabefelder zwischen Attributen, Rating, Prozentchance und Prozentpunkten unterscheiden. Bei manuell gesetzter effektiver Crit-/Hit-Chance nicht zusätzlich unbemerkt die aus AGI/Rating/Talenten abgeleitete Chance addieren. Definieren, ob ein Feld effektiver Endwert oder abgeleiteter Basiswert ist; widersprüchliche Kombinationen ablehnen. Beide Profile unter denselben Annahmen vergleichen, Baseline A = 100 %, Ergebnis inklusive Differenz und Modellgrenzen zeigen. Keine DPS-Zahlen erfinden.
+
+**Implementierung:** eigenen versionierten Stat-Szenario-Vertrag und Engine-Adapter ergänzen; vorhandene itemgebundene Engine nicht ungeprüft mit Pseudo-Items füttern. Nicht unterstützte Stat-/Angriffskombinationen klar melden. Für diesen Ausbau wird keine neue Berechnungsformel ohne fachliche Regression eingeführt.
+
+**Abnahme:** (1) Sämtliche bisherigen Addon-Reiter/Einstellungen bleiben nutzbar. (2) Reales Gear wird automatisch erfasst, nicht manuell auf dem PC nachgebaut. (3) Zwei manuelle Stat-Profile lassen sich mit belegtem gemeinsamen Kontext reproduzierbar vergleichen. (4) Ein PC-Szenario überschreibt niemals den Live-Charakter. (5) Der Windows-Routenbaukasten/Timeline bleibt eine zusätzliche Planungsfunktion; die vorhandene Routes-GUI wird nicht reduziert.
+
 ## Verbindliche Arbeitsreihenfolge ab Release
 
 **Planungsstand: 29.10.2026.** Dieses Dokument beschreibt noch zu implementierende Schritte. Die folgenden Abläufe sind keine Behauptung, dass die GUI bereits ausgeliefert oder der Release-Client getestet ist. Ein erfolgreicher bisheriger Windows-Testpaket-Build ist keine Abnahme dieser neuen Oberfläche.
@@ -110,12 +138,12 @@ Dieser Ablauf ist die **spätere Bedienanleitung**, keine heute bereits ausführ
 5. Nach /reload Export-ID bestätigen; ohne Bestätigung „geladen“ nicht behaupten. Bei Scheitern alten Stand behalten und Neustart anbieten.
 **Abnahme:** Route ohne dauernde Host-Neuberechnung spielbar; neue Route nach geprüftem Export und /reload aktiv; Live-Itemvergleich weiterhin ohne /reload außerhalb des Kampfes.
 
-### S4 – Bestehendes Sim Studio und stabile Bibliotheksgrenzen
-1. Vorhandene Profil-, Gear-, Talent-, Rotation-, Buff- und Item-Funktionen schrittweise in Windows übernehmen; alte Presets migrieren.
+### S4 – Optionale Stat-Szenarien und stabile Bibliotheksgrenzen
+1. Vorhandene Profil-, Gear-, Talent-, Rotations-, Buff- und Item-Bedienung im Addon erhalten. Windows-Rechendienste anbinden und nur zusätzlich den manuellen Stat-Profilvergleich implementieren; keine Gear-Eingabepflicht am PC.
 2. Identische Szenarien vor/nach Umzug mit gleicher Engine, Datenrevision und Seeds vergleichen. Ein GUI-Umzug verändert keine fachliche Formel.
 3. Routes-API/DTOs gemeinsam einmal definieren, kompatible Versionen pinnen; aktuelle CLI optional intern beibehalten, langfristig Bibliotheksintegration.
 4. Zeitintensive Aufträge abbrechbar in Worker/Queue, GUI bedienbar; Tooltipaufträge priorisieren. HUDs behalten Rolle und Design.
-**Abnahme:** Bestehende Funktionen grafisch nutzbar, passende Ergebnisse reproduzierbar, keine zyklischen Repo-Abhängigkeiten.
+**Abnahme:** Bestehende Funktionen unverändert in der Ingame-GUI nutzbar; optionaler Windows-Statvergleich mit explizitem Kontext reproduzierbar; keine zyklischen Repo-Abhängigkeiten.
 
 ### S5 – Route Studio integrieren
 1. Bausteinkatalog, Pflicht-/Verbots-/Sperrregeln und vollständigen Replay aus ForeverRoutes anbinden.
@@ -140,9 +168,9 @@ Die folgenden Abschnitte liefern Details zu den Schritten S0–S6. Deren früher
 
 | Bestandteil | Verantwortung |
 |---|---|
-| **ForeverCore.exe (Windows)** | Alle Einstellungen, GUI, Datenquellen, Import/Update, Profil- und Item-Simulationen, Talent-/Rotations-Editor, Routen-Editor, Job-Queue, Installer, Diagnose und Bridge-Host |
+| **ForeverCore.exe (Windows)** | Grafische Installation/Updates, Datenquellen, Rechenhost/Job-Queue, Diagnose, optionale manuelle Stat-Szenarien und Routenplanung; vorhandene Addon-Einstellungen bleiben ingame |
 | **ForeverCoreBridge (WoW)** | Minimaler Transport, Charakter-/Questzustand und Cache, Zustands-/Versionskontrolle; keine schweren Simulationen |
-| **ForeverSimBridge / ForeverSim HUD (WoW)** | Vergleichsprozente, Item-/Loot-/Dungeon-Hinweise, aktuell gültige Rotation/HUD, relevante Live-Ereignisse; kein vollwertiger Simulationseditor |
+| **ForeverSimBridge / ForeverSim HUD (WoW)** | Bestehende vollständige Ingame-GUI einschließlich vorhandener Reiter, Einstellungen, Talent-/Rotations-/Itemvergleiche, Tooltips und HUD; externe Berechnung über ForeverCore |
 | **ForeverRoutes HUD (WoW)** | Eigenständige Pfeil-/Quest-/Routenanzeige und kleine Live-Aktionen; Routenplanung erfolgt auf Windows |
 | **ForeverRoutes-Engine (Go)** | Routenbaukasten, Timeline, Replays, Datenvalidierung, Export; vom Windows-Core über versionierte API aufgerufen |
 | **MythicSim / ForeverSim Engine** | Offline-Kampfrechnungen, Profilserien, Ausrüstungs-/Talent-/Rotationsoptimierung; niemals im WoW-Addon |
@@ -154,7 +182,7 @@ Die folgenden Abschnitte liefern Details zu den Schritten S0–S6. Deren früher
 - `ForeverCore/main.go`: bisher Kommandozeilen-Startpunkt, `Config` (u. a. `Engine`, `Lua`, `Routes`, `RoutesData`, `AutoSync`), Job-/Antwort-Schema. **Umbau:** wiederverwendbaren Service/Backend-Kern vom CLI-Start entkoppeln; GUI-Lifecycle, Ein-Instanz-Start und ordentliche Shutdown-/Task-Abbruchregeln.
 - `ForeverCore/routenext.go`: startet derzeit `foreverroutes.exe next` mit Dateipfaden/Prozessaufruf. **Umbau:** versionierte, in-process Routen-API bevorzugen; bis dahin nur interne, mitgelieferte Sidecar-Engine als Zwischenlösung, keinerlei Pfadsuche/CLI für Endnutzer.
 - Existierende `ForeverCore.exe`, `MythicSim.exe`, `Lua.exe`, `ForeverCoreBridge` und `ForeverSimBridge` aus README.md nicht blind neu implementieren: Services, Cache, Transfer und Klassenmodule erhalten und gezielt einkapseln.
-- `/fus`-Fenster mit Talent-/Rotations-/Beute-Reitern und den vorhandenen Engine-Aufträgen in **ForeverSim Studio (Windows)** verlagern. Ingame bleiben nur HUD, Tooltips, Dungeon-/Loot-Kurzinfos, Kristall und zwingende Sofortaktionen. Bisherige Favoriten/Presets mit Migrationspfad übernehmen.
+- Das bestehende `/fus`-Fenster mit allen vorhandenen Talent-/Rotations-/Beute-Reitern und Engine-Aufträgen ingame erhalten. Nur Berechnung auslagern; Charakterzustand automatisch übertragen. PC-Stat-Szenarien sind eine getrennte zusätzliche Funktion. Favoriten/Presets und akzeptiertes Design bewahren.
 - Das aktuelle Transferdesign nutzt Pixelrahmen, DXGI-Desktopaufnahme und LoadOnDemand-Antwortslots (2.048 Slots/Sitzung). **Vor Erweiterung der Übertragungsmengen echte Client-Tests:** Antwortlimits, Race-Conditions, Vollbild-/Mehrmonitorbetrieb, `/reload`, WoW-/Bridge-Version, Kampfzustand und Wiederverbindung.
 
 ## 3. Windows-App und Navigation
@@ -163,7 +191,7 @@ Die folgenden Abschnitte liefern Details zu den Schritten S0–S6. Deren früher
 
 Navigationsstruktur:
 1. **Dashboard:** Spiel/Bridge verbunden? Game-Build, Core/Sim/Routes-Versionen, Quellrevisionen, letzter validierter Stand, Builds, Installations- und Updatezustand, Warnungen.
-2. **ForeverSim Studio:** Klassen-/Rassenprofile, importierte MythicSim- und eigene Datensätze, Talente, Rotationen/APL, Testgegner, Gear, Pre-BiS, Buffs, VZ, Item-/Dungeon-Drops; Einzel- und Stapelberechnung mit nachvollziehbarem Referenzzustand.
+2. **Stat-Szenarien (optional):** zwei oder mehr frei eingegebene Stat-Profile unter gemeinsamem Klassen-/Level-/Ziel-/Rotationskontext vergleichen; keine konkrete Itemauswahl erforderlich. Reales Gear und bestehende Sim-Bedienung verbleiben im Addon.
 3. **ForeverRoutes Studio:** Auto-Builder und mehrspuriger Drag-and-drop-Zeitstrahl des Routes-Repos, Variantenvergleich, XP-/Zeit-/Gold-Bilanz, Export an das HUD.
 4. **Datenbankzentrum:** QuestieDB, ForeverDB, WarcraftDB, weitere belegte Quellen, Client-Build-/Hotfix-Differenzen, Rohdaten/Normalisierung/Quellpriorität, Importprotokoll, Validierung, Historie, Rollback.
 5. **Addon- & Update-Center:** erkannte WoW-Installationen, Komponentenstände, installierbare Pakete, Updatevorschau, Installieren/Reparieren, Fortschritt und Rücksetzen.
@@ -187,14 +215,14 @@ Alle Aktionen per GUI; keine sichtbare Shell, keine Konsolenlogs als primäre Be
 
 Für echte **Ein-Datei-Auslieferung** muss der Release-Build Nutzdaten und benötigte Binärteile einbetten (Go `embed`/Ressourcen). Dynamische Quellen-/Cache-Dateien dürfen nach dem Start unter `%LOCALAPPDATA%\ForeverCore` liegen. Benutzerbezogene Profile nicht neben der EXE im geschützten Installationsordner schreiben. Optionales Startmenü/Uninstall über grafische App-Funktion – keine separate EXE für Endnutzer erforderlich.
 
-## 5. ForeverSim Studio: was aus dem Addon nach Windows wandert
+## 5. Windows-Rechenhost und zusätzliche Stat-Szenarien
 
 - **Imports:** MythicSim-Manifest/Engine-Revisionsdaten und eigene ForeverSim-Imports nebeneinander einlesen; Schema prüfen, Quelle/Datum/Berechtigung dokumentieren, Konflikte anzeigen, nur bestätigte Daten freigeben. Keine imaginären Clientdaten auslesen.
-- **Szenarien:** Klassen, Rassen, Level, Gear, Talente, Rotation/APL, Gegner, Buffs, Zauberstab, VZ und Consumables; gespeicherte Presets, Kopieren, Import/Export und Massenvergleich.
+- **Szenarien:** optionale hypothetische Stat-Profile gemäß Bedienentscheidung am Dokumentanfang. Gemeinsamen Simulationskontext explizit setzen, Profile speichern/kopieren/importieren. Bestehende Gear-/Talent-/Rotations-/Buff-/VZ-Bedienung ingame erhalten.
 - **Rechnungen:** DPS/Rotation/Stat-/Itemvergleiche, Pre-BiS, Buff-/Enchant-/Dungeon-Szenarien auf Windows; Baseline, Seed, Modellrevision und ausgeschlossene Effekte je Ergebnis sichtbar.
 - **Vergleichslogik:** Prozentwert im WoW-Tooltip immer gegen passenden Live-Stand und kompatible Revision; keine Addition unabhängiger DPS-Prozentgewinne; nicht modellierte Effekte als unbekannt anzeigen.
 - **Routenkopplung:** Forge `KillProfile`/veränderliche Charakter-Snapshots mit Gear-/Wand-/Talentwechsel ab konkretem Routenzeitpunkt. Jede Änderung invalidiert nur betroffene Segmentergebnisse; Freeze/Versionierung je Simulationslauf.
-- **HUD:** nur aktuelle Rota/Procs (falls API tatsächlich bestätigt), minimale Item-/Loot- und Upgradeanzeige, Kristall sowie Status/Fehler. Kein Ingame-Tab für lange Modellrechnungen nötig. HUD-Fallback bei getrenntem Core: letzter kompatibler Cache, sichtbar als „offline/veraltet“.
+- **Addon-GUI/HUD:** alle vorhandenen Reiter, Editoren, Vergleiche, Tooltips, Rota-/Proc-Anzeigen soweit API-bestätigt und Kristall erhalten. Asynchrone Windows-Berechnung mit Fortschritt/Fehlerstatus in der bestehenden GUI. Bei getrenntem Host nur passende Cachewerte mit Kennzeichnung anzeigen.
 - **Spielschutz:** keine Simulation im Addon und keine geschützten Aktionen oder verdeckte Client-Manipulation. Windows darf rechnen; die aktuelle Bridge lädt Antworten im Kampf nicht nach. Live-Eingaben nur über zulässige Addon-Ereignisse/API.
 
 ## 6. Gemeinsame ForeverCore-/ForeverRoutes-Schnittstelle
@@ -213,7 +241,7 @@ Eine gemeinsame versionierte Spezifikation mit JSON-Schemas oder generierten Go-
 - **M0 – Architektur-Audit:** Branch/Build/Assets/Go-Versionen, MythicSim-Lizenz, Ressourcen und vorhandenen Installer/Bridge erfassen; unveränderbare Vertragsfixtures festlegen.
 - **M1 – GUI-Shell/Start:** eine Windows-EXE mit Dashboard, Einstellungen, Logging und bestehenden read-only Status-Services, ohne CMD; vorhandener Bridge-Betrieb weiterhin möglich.
 - **M2 – Installer (Mindestumfang bereits S1):** Erststart-Erkennung, Mehrfachinstallationen, Sicherung, überprüfbarer Addon-Install, Reinstall, Offline-Start, Rollback und Update-GUI.
-- **M3 – Sim Studio:** Ingame-Editoren nach Windows überführen, Engine-Adapter, reproduzierbare Imports/Presets und Ergebnis-Caches. HUD-Layouts/Tooltip-Verträge beibehalten.
+- **M3 – Rechenhost/Stat-Szenarien:** Ingame-Editoren vollständig erhalten, Engine-Adapter und reproduzierbare Ergebnis-Caches anbinden; Windows um getrennten manuellen Stat-Profilvergleich ergänzen.
 - **M4 – Routes Studio:** integrierte Go-Engine/API, Auto-Bausteine, Timeline und Export; separate Routen-CLI in produktivem GUI-Betrieb entbehrlich (für Entwickler optional weiter möglich).
 - **M5 – Bridge/Live (Basisabnahme bereits S2):** Host-Handshake, Version-/Sessionprüfung, Paketgrößen, echte Ingame-Abnahme, Disconnect-/Reload-Fallback, HUD-Snapshot-Sync. Bestehenden Pixel-/Slotkanal bis zu einem belegten Ersatz behalten.
 - **M6 – Release:** gepinnte Cross-Repo-Builds, Reproduzierbarkeit, Signatur/Hash, vollständige Lizenzen, GitHub Release mit **nur einem benötigten Download** und geprüfter frischer Installation.
@@ -224,7 +252,7 @@ Eine gemeinsame versionierte Spezifikation mit JSON-Schemas oder generierten Go-
 - [ ] WoW-Forever-Pfad automatisch gefunden **oder** komfortabler Ordnerdialog; mehrere Installationen, Pfade mit Leerzeichen/Umlauten, Standardbenutzer getestet.
 - [ ] Beide HUD-Addons plus CoreBridge und nötige Antwortmodule automatisch vollständig installiert, im Addon-Menü erkannt; bestehende `WTF`-Daten unangetastet.
 - [ ] Sicherer Update-, Reparatur-, Rollback- und Offline-Pfad; kein inkonsistenter halbinstallierter Zustand bei Abbruch/Stromausfall.
-- [ ] Simulationsimports, Gear-/DPS-/Rotation-/Buff-Vergleich funktionieren komplett in Windows; gleiche Engine/Gear/Seed -> reproduzierbares Ergebnis.
+- [ ] Bestehende Gear-/DPS-/Rotations-/Buff-Vergleiche und Eingaben bleiben ingame funktionsfähig; Windows rechnet. Optionaler Statvergleich benötigt keine konkreten Items; gleicher Kontext/Engine/Seed -> reproduzierbares Ergebnis.
 - [ ] Routes-Autobuilder und manueller Editor verwenden dieselbe Daten- und Kampfbasis; veröffentlichte Route im Spiel nutzbar.
 - [ ] Bridge-Verbindung, Live-Zustand, Tooltip/HUD, `/reload`, Gameplay/Combat, Slotlimit und Mehrmonitor/DXGI auf echtem Client geprüft; keine unzulässigen Client-Eingriffe.
 - [ ] Dokumentierte Migrations-/Rollbackstrategie für bisherige `/fus`-Einstellungen, `/fc`-Kommandos und SavedVariables.
@@ -333,7 +361,7 @@ Jede Datenänderung: Quelle -> Roh-Snapshot -> Schema-/Plausibilitätsprüfung -
 7. Offline ohne Host: letzter passender Cache und installierte Route; „offline/veraltet“ anzeigen. Wenn Versionen nicht passen, keinen falschen DPS-Gewinn anzeigen.
 8. `/reload`, Logout, Client-Neustart, WoW-Patch, Displaywechsel/HDR/DXGI-Reset und Timeout in echter Spielumgebung testen; das vorhandene Pixel/Slot-Protokoll bis zu **belegter** Ersatzlösung beibehalten.
 
-**Settings-Verantwortung:** Windows-UI ist der Editor/Source-of-Truth für Sim- und Routen-Presets; nur spielrelevante HUD-Einstellungen zur passenden Addon-Konfiguration synchronisieren. Ingame-Sofortaktionen (z. B. Skip/Zurück, HUD-Position) müssen lokal weiter funktionieren und konfliktfrei später synchronisiert werden. Konfliktregel: Charakter-/Installations-ID + Version + Zeitstempel, niemals eine zufällige globale „letzter Schreiber gewinnt“-Überschreibung.
+**Settings-Verantwortung:** Bestehende Addon-Einstellungen, Gear-/Talent-/Rotationsauswahl und HUD-Positionen werden weiterhin ingame bedient und bleiben maßgeblich für Live-Aufträge. Windows besitzt Installation/Update sowie getrennte hypothetische Stat-Profile und eigene Routenentwürfe. Expliziter Export/Import statt stiller globaler Überschreibung; Charakter-/Installations-ID und Revision prüfen. Kein PC-Testprofil überschreibt Live-Presets.
 
 ## 16. Verifizierbare Cross-Repo-Release-Pipeline
 
