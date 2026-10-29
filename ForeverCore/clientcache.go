@@ -62,7 +62,10 @@ func (s *Service) captureClientCaches() {
 		}
 		hash := fmt.Sprintf("%x", sha256.Sum256(raw))
 		destination := filepath.Join(s.cfg.Data, "ClientData", "HotfixCaches", fmt.Sprint(build), hash+".bin")
-		if _, err := os.Stat(destination); os.IsNotExist(err) {
+		if _, err := os.Stat(destination); err != nil {
+			if !os.IsNotExist(err) {
+				continue
+			}
 			if err := atomicWrite(destination, raw); err != nil {
 				continue
 			}

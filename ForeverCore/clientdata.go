@@ -14,6 +14,7 @@ import (
 )
 
 type clientDataStatus struct {
+	ClientBuild     string    `json:"clientBuild,omitempty"`
 	Status          string    `json:"status"`
 	Message         string    `json:"message"`
 	CheckedAt       time.Time `json:"checkedAt,omitempty"`
@@ -62,14 +63,15 @@ func (s *Service) startClientData(ctx context.Context) {
 		}()
 	})
 }
-func (s *Service) checkClientData(ctx context.Context) {
+func (s *Service) checkClientData(ctx context.Context, onConnect ...bool) {
+	force := len(onConnect) > 0 && onConnect[0]
 	if !s.clientUpdateMu.TryLock() {
 		return
 	}
 	defer s.clientUpdateMu.Unlock()
 	status := s.dataStatus()
 	now := time.Now().UTC()
-	if status.CheckedAt.Format("2006-01-02") == now.Format("2006-01-02") && (status.Status == "ready" || status.Status == "warning") {
+	if !force && status.CheckedAt.Format("2006-01-02") == now.Format("2006-01-02") && (status.Status == "ready" || status.Status == "warning") {
 		return
 	}
 	if !status.AttemptedAt.IsZero() && now.Sub(status.AttemptedAt) < 10*time.Minute {
@@ -97,9 +99,10 @@ func (s *Service) checkClientData(ctx context.Context) {
 				Version string `json:"VersionsName"`
 			} `json:"row"`
 		} `json:"products"`
-		EffectiveBuild string `json:"effectiveBuild"`
-		Coverage       string `json:"hotfixCoverage"`
-		CacheSHA       string `json:"exportedCacheSHA256"`
+		EffectiveBuild string    `json:"effectiveBuild"`
+		CheckedAt      time.Time `json:"checkedAt"`
+		Coverage       string    `json:"hotfixCoverage"`
+		CacheSHA       string    `json:"exportedCacheSHA256"`
 		Extraction     struct {
 			Status string `json:"status"`
 		} `json:"clientExtraction"`
@@ -133,6 +136,7 @@ func (s *Service) checkClientData(ctx context.Context) {
 	_ = loadJSON(filepath.Join(s.cfg.Runtime, "ForeverCore", "engine-data.json"), &engine)
 	s.clientMu.Lock()
 	defer s.clientMu.Unlock()
+	status.ClientBuild = s.clientStatus.ClientBuild
 	status.Quests = s.clientStatus.Quests
 	status.LocalCacheSHA = s.clientStatus.LocalCacheSHA
 	status.LocalCacheBuild = s.clientStatus.LocalCacheBuild
@@ -149,7 +153,8 @@ func (s *Service) checkClientData(ctx context.Context) {
 		status.Status = "ready"
 		status.Message = "Routenpaket und Datenbericht automatisch geprueft"
 		// A successful metadata check is not proof that the installed engine includes the new hotfixes.
-		if report.Extraction.Status != "complete" && report.Coverage != "previous_validated_export" || report.EffectiveBuild == "" || engine.Build != status.AvailableBuild || report.CacheSHA == "" || engine.CacheSHA != report.CacheSHA || status.LocalCacheSHA == "" || engine.CacheSHA != status.LocalCacheSHA {
+		reportCurrent := !report.CheckedAt.IsZero() && now.Sub(report.CheckedAt) <= 48*time.Hour && !report.CheckedAt.After(now.Add(5*time.Minute))
+		if !reportCurrent || status.ClientBuild == "" || status.ClientBuild != engine.Build || (report.Extraction.Status != "complete" && report.Coverage != "previous_validated_export") || report.EffectiveBuild == "" || engine.Build != status.AvailableBuild || report.CacheSHA == "" || engine.CacheSHA != report.CacheSHA || status.LocalCacheSHA == "" || engine.CacheSHA != status.LocalCacheSHA {
 			status.Status = "warning"
 			status.Message = "Hotfix-Pruefung ausstehend; letzter gueltiger Datenstand aktiv."
 		}

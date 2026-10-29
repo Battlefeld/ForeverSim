@@ -39,9 +39,10 @@ Alles Weitere (Befehle, Filter, Grenzen): `README.md`.
 Nach einmaliger Installation der neuen ForeverCore-Version und des aktuellen,
 separaten ForeverRoutes-Addons genügt der normale Start von ForeverCore und WoW.
 Der Login führt auch mit bereits eingestellter Pixelverbindung einen Handshake aus.
-Die Verbindung startet die Datenpflege im Hintergrund. Ein bereits erfolgreich
-geprüfter Tagesstand wird über Neustarts hinweg wiederverwendet. Bei einem
-laufenden Client erfolgt die nächste externe Prüfung nach 24 Stunden. Gleichzeitige
+Die Verbindung startet die Datenpflege im Hintergrund. Der letzte Prüfstand bleibt über Neustarts erhalten. Neue Verbindungen können
+eine erneute Prüfung anstoßen; ein Schutz von zehn Minuten verhindert doppelte
+Abrufe. Bei einem laufenden Client erfolgt die nächste reguläre externe Prüfung
+nach 24 Stunden. Gleichzeitige
 Anfragen starten keinen zweiten Download; Netzwerkfehler lassen den letzten gültigen
 Stand aktiv. Der Status erscheint automatisch in der Übersicht und am Kristall.
 

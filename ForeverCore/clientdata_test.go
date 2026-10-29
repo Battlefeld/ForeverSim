@@ -67,7 +67,7 @@ func TestHotfixCacheBoundariesAndBuild(t *testing.T) {
 }
 func TestConnectCheckIsDailyAndCannotClaimUnappliedHotfixes(t *testing.T) {
 	var hits atomic.Int32
-	report := map[string]any{"products": map[string]any{"wowf": map[string]any{"row": map[string]any{"VersionsName": "1.60.1.70685"}}}, "effectiveBuild": "1.60.1.70685", "exportedCacheSHA256": "hotfix-sha", "clientExtraction": map[string]string{"status": "complete"}}
+	report := map[string]any{"checkedAt": time.Now().UTC().Format(time.RFC3339), "products": map[string]any{"wowf": map[string]any{"row": map[string]any{"VersionsName": "1.60.1.70685"}}}, "effectiveBuild": "1.60.1.70685", "exportedCacheSHA256": "hotfix-sha", "clientExtraction": map[string]string{"status": "complete"}}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		hits.Add(1)
 		raw, _ := json.Marshal(report)
@@ -82,7 +82,7 @@ func TestConnectCheckIsDailyAndCannotClaimUnappliedHotfixes(t *testing.T) {
 	if err := atomicWrite(filepath.Join(root, "ForeverCore", "engine-data.json"), jsonBytes(map[string]string{"clientBuild": "1.60.1.70685"})); err != nil {
 		t.Fatal(err)
 	}
-	s := &Service{cfg: cfg}
+	s := &Service{cfg: cfg, clientStatus: clientDataStatus{ClientBuild: "1.60.1.70685"}}
 	s.checkClientData(context.Background())
 	s.checkClientData(context.Background())
 	if hits.Load() != 1 {

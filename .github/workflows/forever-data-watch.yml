@@ -96,6 +96,8 @@ jobs:
           blue = json.loads((path.parent / 'blueposts.json').read_text())
           report['blueposts'] = blue['lastCheck']
           outcome = os.environ['CLIENT_OUTCOME']
+          from datetime import datetime, timezone
+          report['checkedAt'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
           report['clientExtraction'] = {'status': {'success': 'complete', 'failure': 'failed'}.get(outcome, 'not_needed'), 'previousDataRetained': outcome == 'failure'}
           path.write_text(json.dumps(report, indent=2) + '\n')
           PYTHON

@@ -57,6 +57,7 @@ type Service struct {
 	clientOnce      sync.Once
 	clientStatus    clientDataStatus
 	clientCacheSeen map[string]string
+	clientSession   string
 	cfg             Config
 	routes          *RouteService
 	sim             *SimService
@@ -95,8 +96,23 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 	switch j.Kind {
 	case "ping":
 		s.startClientData(ctx)
+		if build := str(j.Payload, "clientBuild"); foreverClientBuild.MatchString(build) {
+			s.clientMu.Lock()
+			s.clientStatus.ClientBuild = build
+			if s.clientStatus.EngineBuild != "" && s.clientStatus.EngineBuild != build {
+				s.clientStatus.Status = "warning"
+				s.clientStatus.Message = "Hotfix-Pruefung ausstehend; letzter gueltiger Datenstand aktiv."
+			}
+			s.clientMu.Unlock()
+		}
 		if s.cfg.Addons != "" && s.cfg.Data != "" {
-			go s.checkClientData(ctx)
+			s.clientMu.Lock()
+			connected := s.clientSession != j.Session
+			s.clientSession = j.Session
+			s.clientMu.Unlock()
+			if connected {
+				go s.checkClientData(ctx, true)
+			}
 		}
 		r.Result = map[string]any{"version": Version, "engineRevision": s.cfg.EngineRevision, "engine": "MythicSim Go", "stateRefs": true, "clientDataSync": true, "dataStatus": s.dataStatus()}
 	case "data-status":

@@ -81,6 +81,10 @@ function C.RequestRoute()
 end
 function C.IsControlJob(kind)return kind=='ping'or kind=='sources'or kind=='data-status'or kind=='quest-observations'end
 function C.Request(kind,payload,callback,opts)
+ if kind=='ping' and GetBuildInfo then
+  local version,build=GetBuildInfo()
+  if type(version)=='string' and version:match('^1%.60%.') and build then payload=payload or{};payload.clientBuild=version..'.'..build end
+ end
  -- One rotation for everything: item values, dungeon lists and simulations are computed with the rotation that is
  -- active for this character (see Sim.lua), not with the first one the engine happens to list.
  if(kind=='item'or kind=='sim'or kind=='weights'or kind=='analysis'or kind=='enhancements')and C.ActiveRotation then
