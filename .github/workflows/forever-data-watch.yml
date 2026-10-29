@@ -1,7 +1,7 @@
 name: Forever direct data watch
 on:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '17 5 * * *'
   push:
     branches: [main]
     paths:
@@ -11,6 +11,8 @@ on:
     paths:
       - 'tools/data-watch/**'
       - '.github/workflows/forever-data-watch.yml'
+  repository_dispatch:
+    types: [forever-bluepost]
   workflow_dispatch:
     inputs:
       extract_client:
@@ -43,12 +45,21 @@ jobs:
           if git cat-file -e FETCH_HEAD:data-watch/latest/state.json.gz 2>/dev/null; then
             git show FETCH_HEAD:data-watch/latest/state.json.gz > "$RUNNER_TEMP/forever-data/previous.json.gz"
           fi
+          if git cat-file -e FETCH_HEAD:data-watch/latest/blueposts.json 2>/dev/null; then
+            git show FETCH_HEAD:data-watch/latest/blueposts.json > "$RUNNER_TEMP/forever-data/blueposts-previous.json"
+          fi
       - name: Read Blizzard version service directly
         run: >-
           python tools/data-watch/watch.py
           --previous "$RUNNER_TEMP/forever-data/previous.json.gz"
           --output "$RUNNER_TEMP/forever-data/result"
           --raidbots
+      - name: Check Forever blue posts
+        run: >-
+          python tools/data-watch/blueposts.py
+          --previous "$RUNNER_TEMP/forever-data/blueposts-previous.json"
+          --output "$RUNNER_TEMP/forever-data/result/blueposts.json"
+          --report "$RUNNER_TEMP/forever-data/result/report.json"
       - name: Decide whether client extraction is needed
         id: extraction
         run: |
@@ -57,11 +68,11 @@ jobs:
           from pathlib import Path
           report = json.loads(Path(os.environ['RUNNER_TEMP'] + '/forever-data/result/report.json').read_text())
           with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
-              out.write('needed=' + str(report['extractionRequired']).lower() + '\n')
+              out.write('needed=' + str(report['extractionRequired'] or report.get('blueposts', {}).get('relevantChanges', 0) > 0).lower() + '\n')
           PYTHON
       - name: Extract matching Blizzard client tables and hotfixes
         id: client
-        if: github.event_name != 'pull_request' && (steps.extraction.outputs.needed == 'true' || inputs.extract_client == true)
+        if: github.event_name != 'pull_request' && (steps.extraction.outputs.needed == 'true' || inputs.extract_client == true || github.event_name == 'repository_dispatch')
         continue-on-error: true
         run: >-
           python tools/data-watch/run_export.py
@@ -82,6 +93,8 @@ jobs:
           from pathlib import Path
           path = Path(os.environ['RUNNER_TEMP']) / 'forever-data/result/report.json'
           report = json.loads(path.read_text())
+          blue = json.loads((path.parent / 'blueposts.json').read_text())
+          report['blueposts'] = blue['lastCheck']
           outcome = os.environ['CLIENT_OUTCOME']
           report['clientExtraction'] = {'status': {'success': 'complete', 'failure': 'failed'}.get(outcome, 'not_needed'), 'previousDataRetained': outcome == 'failure'}
           path.write_text(json.dumps(report, indent=2) + '\n')
@@ -95,6 +108,7 @@ jobs:
             "$RUNNER_TEMP/forever-data/result/report.json::data-watch/reports/$GITHUB_RUN_ID.json"
             "$RUNNER_TEMP/forever-data/result/state.json.gz::data-watch/latest/state.json.gz"
             "$RUNNER_TEMP/forever-data/result/report.json::data-watch/latest/report.json"
+            "$RUNNER_TEMP/forever-data/result/blueposts.json::data-watch/latest/blueposts.json"
           )
           while IFS= read -r -d '' cache; do
             product="$(basename "$(dirname "$cache")")"
@@ -108,8 +122,8 @@ jobs:
       - name: Report extraction failure explicitly
         if: steps.client.outcome == 'failure'
         run: |
-          echo '::warning::Client extraction failed. Previous effective database retained; cache download succeeded. Next hourly check retries.'
-          echo 'Client extraction FAILED: effective database remains at its previous build. See extraction log. Next hourly run retries.' >> "$GITHUB_STEP_SUMMARY"
+          echo '::warning::Client extraction failed. Previous effective database retained; cache download succeeded. Next daily check retries.'
+          echo 'Client extraction FAILED: effective database remains at its previous build. See extraction log. Next daily run retries.' >> "$GITHUB_STEP_SUMMARY"
       - name: Coverage summary
         if: success()
         run: |

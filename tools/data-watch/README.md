@@ -2,7 +2,7 @@
 
 `watch.py` liest Blizzards HTTPS-Versionsdienst direkt. `wowf` und `wow_classic_beta`
 bleiben getrennt: am 28.10.2026 lieferten sie 70658 beziehungsweise 70532.
-Der Workflow prüft stündlich und hält den letzten gültigen Stand im Artefakt-Branch.
+Der Workflow prüft täglich und hält den letzten gültigen Stand im Artefakt-Branch.
 Er verändert keine produktiven Simulationswerte allein aufgrund einer Buildnummer.
 
 ## Clienttabellen und Änderungen ohne Patchnote
@@ -42,7 +42,7 @@ noch auf einem Rechner mit CDN-Zugang beziehungsweise eigener Installation zu pr
 
 ## Automatischer Raidbots-Abgleich
 
-Der Stundenlauf lädt mit `watch.py --raidbots` den build-spezifischen, verifizierten
+Der Tageslauf lädt mit `watch.py --raidbots` den build-spezifischen, verifizierten
 NA/enUS-Cache beider Forever-Produkte. HTFX-v9-Header, eingebettete Buildnummer und
 sämtliche Datensatzgrenzen werden vor dem Speichern geprüft. SHA-256 erkennt auch
 neue Cache-Inhalte bei gleicher Buildnummer. Eine 404 ist eine Datenlücke, kein
@@ -54,7 +54,7 @@ im `caches`-Ordner. QuestV2, QuestXP und QuestMoneyReward werden mit den bisheri
 Sim-Tabellen exportiert. Für Beta werden Caches archiviert, aber kein gemeinsamer
 Live-/Beta-Tabellenstand erzeugt. Ein neuer Cache während des Exports verwirft den
 Kandidaten. Fehlgeschlagene Exporte behalten den letzten gültigen Datenstand und
-werden beim nächsten Stundenlauf wieder versucht; Workflow-Summary und Exportlog
+werden beim nächsten Tageslauf wieder versucht; Workflow-Summary und Exportlog
 weisen die Lücke ausdrücklich aus.
 
 Der Artefakt-Branch enthält `data-watch/latest/{state.json.gz,report.json}`, rohe
@@ -78,3 +78,21 @@ TraitNode als auch Talent). Daher liegt noch kein gültiger effektiver Tabellens
 vor. Der Workflow behält die Daten und wiederholt den Versuch; `clientExtraction`
 weist einen fehlgeschlagenen Export maschinenlesbar aus. Ein grüner Monitorlauf
 bestätigt in diesem Fall die Überwachung, nicht einen erfolgreichen DB2-Import.
+
+
+## Zeitplan und Blueposts
+
+Die planmäßige Datenprüfung läuft einmal täglich um 05:17 UTC. Dabei wird auch der
+Forever-spezifische RSS-Blue-Tracker <https://theforeverera.com/en/blue.xml> gelesen.
+Neue und bearbeitete Meldungen werden anhand von Inhaltsprüfsummen erkannt;
+Hotfix-/Patch-/Entwicklungs-/Fehlermeldungen lösen zusätzlich einen Exportversuch
+aus, auch wenn Build und Cache unverändert sind. Die erste Erhebung ist eine
+Basislinie. Eine fehlende Meldung im gekürzten Feed gilt niemals als Löschung.
+Tracker-Ausfälle verhindern die tägliche Blizzard-/Cache-Prüfung nicht.
+Bluepost-Texte werden nicht als Balancewerte in die Engine übernommen.
+
+Für einen vorhandenen externen Tracker ist außerdem der authentifizierte GitHub-
+Repository-Dispatch-Typ `forever-bluepost` freigeschaltet. Ein externer Push/Webhook
+ist damit vorbereitet, aber nicht an einen Anbieter angeschlossen. Der hier
+angeschlossene RSS-Tracker wird täglich gelesen, nicht in Echtzeit. Ein manueller
+Workflow-Start bleibt möglich. GitHub kann geplante Läufe verzögert starten.
