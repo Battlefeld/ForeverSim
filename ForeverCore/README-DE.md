@@ -44,7 +44,8 @@ eine erneute Prüfung anstoßen; ein Schutz von zehn Minuten verhindert doppelte
 Abrufe. Bei einem laufenden Client erfolgt die nächste reguläre externe Prüfung
 nach 24 Stunden. Gleichzeitige
 Anfragen starten keinen zweiten Download; Netzwerkfehler lassen den letzten gültigen
-Stand aktiv. Der Status erscheint automatisch in der Übersicht und am Kristall.
+Stand aktiv und werden bei bestehender Verbindung mit mindestens zehn Minuten
+Abstand automatisch erneut geprüft. Der Status erscheint automatisch in der Übersicht und am Kristall.
 
 - Aktuelle ForeverRoutes-Pakete werden mit SHA-256 geprüft und vor der Aktivierung
   vollständig vorbereitet. Eine laufende Routenplanung wird beim Tausch geschützt.

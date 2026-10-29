@@ -100,6 +100,9 @@ jobs:
           report['checkedAt'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
           report['clientExtraction'] = {'status': {'success': 'complete', 'failure': 'failed'}.get(outcome, 'not_needed'), 'previousDataRetained': outcome == 'failure'}
           path.write_text(json.dumps(report, indent=2) + '\n')
+          # Keep the client handshake small even when the full diff spans megabytes.
+          summary = {key: report.get(key) for key in ('schema', 'checkedAt', 'products', 'effectiveBuild', 'hotfixCoverage', 'exportedCacheSHA256', 'clientExtraction')}
+          (path.parent / 'client-status.json').write_text(json.dumps(summary, indent=2) + '\n')
           PYTHON
       - name: Save validated baseline and report
         if: github.event_name != 'pull_request'
@@ -111,6 +114,7 @@ jobs:
             "$RUNNER_TEMP/forever-data/result/state.json.gz::data-watch/latest/state.json.gz"
             "$RUNNER_TEMP/forever-data/result/report.json::data-watch/latest/report.json"
             "$RUNNER_TEMP/forever-data/result/blueposts.json::data-watch/latest/blueposts.json"
+            "$RUNNER_TEMP/forever-data/result/client-status.json::data-watch/latest/client-status.json"
           )
           while IFS= read -r -d '' cache; do
             product="$(basename "$(dirname "$cache")")"

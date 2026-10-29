@@ -104,6 +104,16 @@ func TestConnectCheckIsDailyAndCannotClaimUnappliedHotfixes(t *testing.T) {
 	if s.dataStatus().Status != "ready" {
 		t.Fatal("matching validated identities not recognized")
 	}
+	// Metadata for another effective build must not make the engine look current.
+	report["effectiveBuild"] = "1.60.1.70425"
+	s.clientMu.Lock()
+	s.clientStatus.CheckedAt = time.Time{}
+	s.clientStatus.AttemptedAt = time.Time{}
+	s.clientMu.Unlock()
+	s.checkClientData(context.Background())
+	if s.dataStatus().Status != "warning" {
+		t.Fatal("old effective build reported current")
+	}
 }
 func TestPrivateGitHubCredentialsAreRestrictedToGitHub(t *testing.T) {
 	for _, url := range []string{"https://evil.test/x", "https://github.com.evil.test/x", "http://api.github.com/x"} {

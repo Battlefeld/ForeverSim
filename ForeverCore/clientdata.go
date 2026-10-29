@@ -107,7 +107,7 @@ func (s *Service) checkClientData(ctx context.Context, onConnect ...bool) {
 			Status string `json:"status"`
 		} `json:"clientExtraction"`
 	}
-	raw, err := fetchBounded(ctx, routesAPI+"/repos/Battlefeld/ForeverSim/contents/data-watch/latest/report.json?ref=artifacts", 4<<20)
+	raw, err := fetchBounded(ctx, routesAPI+"/repos/Battlefeld/ForeverSim/contents/data-watch/latest/client-status.json?ref=artifacts", 4<<20)
 	if err == nil {
 		var file struct {
 			Content  string `json:"content"`
@@ -154,7 +154,10 @@ func (s *Service) checkClientData(ctx context.Context, onConnect ...bool) {
 		status.Message = "Routenpaket und Datenbericht automatisch geprueft"
 		// A successful metadata check is not proof that the installed engine includes the new hotfixes.
 		reportCurrent := !report.CheckedAt.IsZero() && now.Sub(report.CheckedAt) <= 48*time.Hour && !report.CheckedAt.After(now.Add(5*time.Minute))
-		if !reportCurrent || status.ClientBuild == "" || status.ClientBuild != engine.Build || (report.Extraction.Status != "complete" && report.Coverage != "previous_validated_export") || report.EffectiveBuild == "" || engine.Build != status.AvailableBuild || report.CacheSHA == "" || engine.CacheSHA != report.CacheSHA || status.LocalCacheSHA == "" || engine.CacheSHA != status.LocalCacheSHA {
+		validExport := report.Extraction.Status == "complete" || (report.Extraction.Status == "not_needed" && report.Coverage == "previous_validated_export")
+		sameBuild := status.ClientBuild != "" && status.ClientBuild == engine.Build && engine.Build == status.AvailableBuild && report.EffectiveBuild == engine.Build
+		sameCache := report.CacheSHA != "" && engine.CacheSHA == report.CacheSHA && status.LocalCacheSHA == engine.CacheSHA
+		if !reportCurrent || !validExport || !sameBuild || !sameCache {
 			status.Status = "warning"
 			status.Message = "Hotfix-Pruefung ausstehend; letzter gueltiger Datenstand aktiv."
 		}

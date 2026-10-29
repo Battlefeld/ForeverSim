@@ -116,6 +116,9 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 		}
 		r.Result = map[string]any{"version": Version, "engineRevision": s.cfg.EngineRevision, "engine": "MythicSim Go", "stateRefs": true, "clientDataSync": true, "dataStatus": s.dataStatus()}
 	case "data-status":
+		if s.cfg.Addons != "" && s.cfg.Data != "" && s.dataStatus().Status == "error" {
+			go s.checkClientData(ctx)
+		}
 		r.Result = map[string]any{"dataStatus": s.dataStatus()}
 	case "quest-observations":
 		if s.cfg.Data == "" {
