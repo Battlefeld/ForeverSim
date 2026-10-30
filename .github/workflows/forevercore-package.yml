@@ -56,21 +56,24 @@ jobs:
           git -C "$RUNNER_TEMP/questiedb" fetch --depth=1 origin a376144778947060ce0e81c4b2232ecf671df529
           git -C "$RUNNER_TEMP/questiedb" checkout --detach FETCH_HEAD
           (cd "$RUNNER_TEMP/questiedb/tools/lua-binary" && sha256sum --check SHA256SUMS)
+      - name: ForeverRoutes addon of its latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/routes"
+          gh release download --repo Battlefeld/ForeverRoutes --pattern ForeverRoutes-addon.zip --dir "$RUNNER_TEMP/routes" \
+            || echo "::warning::ForeverRoutes-addon.zip not found; the package installs without the routes HUD"
       - name: Package
         run: |
           mkdir -p dist
-          python ForeverCore/package.py --core-exe "$RUNNER_TEMP/ForeverCore.exe" --engine-exe "$RUNNER_TEMP/MythicSim.exe" --lua "$RUNNER_TEMP/questiedb/tools/lua-binary/lua.exe" --engine-source deps/mythicsim --lua-license "$RUNNER_TEMP/questiedb/tools/lua-binary/THIRD_PARTY_NOTICES.txt" --output dist/ForeverCore_0.6.0_Windows_Test.zip
-      - name: One-click Windows setup executable
-        run: |
-          mkdir -p "$RUNNER_TEMP/forevercore-installer"
-          cp ForeverCore/setup/installer.go.txt "$RUNNER_TEMP/forevercore-installer/main.go"
-          cp dist/ForeverCore_0.6.0_Windows_Test.zip "$RUNNER_TEMP/forevercore-installer/installer_payload.zip"
-          cd "$RUNNER_TEMP/forevercore-installer"
-          go mod init forevercoreinstaller
-          GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o "$GITHUB_WORKSPACE/dist/ForeverCore_AllesInEinem_Setup.exe" .
+          routes=()
+          if [ -f "$RUNNER_TEMP/routes/ForeverRoutes-addon.zip" ]; then routes=(--routes-addon "$RUNNER_TEMP/routes/ForeverRoutes-addon.zip"); fi
+          python ForeverCore/package.py --core-exe "$RUNNER_TEMP/ForeverCore.exe" --engine-exe "$RUNNER_TEMP/MythicSim.exe" --lua "$RUNNER_TEMP/questiedb/tools/lua-binary/lua.exe" --engine-source deps/mythicsim --lua-license "$RUNNER_TEMP/questiedb/tools/lua-binary/THIRD_PARTY_NOTICES.txt" "${routes[@]}" --output dist/ForeverCore_0.6.0_Windows_Test.zip
+      - name: The one ForeverCore.exe (window, installer, package built in)
+        run: python ForeverCore/build_app.py --package dist/ForeverCore_0.6.0_Windows_Test.zip --output dist/ForeverCore.exe
       - name: Save Windows package to artifacts branch
         shell: bash
         run: |
           bash .github/scripts/publish-artifacts.sh \
             dist/ForeverCore_0.6.0_Windows_Test.zip::windows/package/ForeverCore_0.6.0_Windows_Test.zip \
-            dist/ForeverCore_AllesInEinem_Setup.exe::windows/package/ForeverCore_AllesInEinem_Setup.exe
+            dist/ForeverCore.exe::windows/package/ForeverCore.exe

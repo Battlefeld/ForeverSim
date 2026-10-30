@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>ForeverCore</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root { --bg:#14161a; --panel:#1d2026; --line:#2c3038; --text:#e6e6e6; --dim:#9aa0aa; --ok:#4cc38a; --warn:#e8b54a; --bad:#e5604f; --accent:#6aa7ff; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:15px/1.45 "Segoe UI",system-ui,sans-serif; }
+header { display:flex; align-items:center; gap:12px; padding:16px 24px; border-bottom:1px solid var(--line); }
+header h1 { margin:0; font-size:20px; font-weight:600; }
+header .ver { color:var(--dim); font-size:13px; }
+main { padding:20px 24px; display:grid; gap:16px; max-width:980px; }
+section { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+h2 { margin:0 0 10px; font-size:16px; }
+.row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.dot { width:11px; height:11px; border-radius:50%; background:var(--dim); flex:none; }
+.ok .dot { background:var(--ok); } .warn .dot { background:var(--warn); } .bad .dot { background:var(--bad); }
+.dim { color:var(--dim); font-size:13px; }
+button { background:var(--accent); color:#0b1220; border:0; border-radius:7px; padding:8px 14px; font:inherit; font-weight:600; cursor:pointer; }
+button.secondary { background:transparent; color:var(--text); border:1px solid var(--line); font-weight:500; }
+button:disabled { opacity:.45; cursor:default; }
+label.choice { display:flex; gap:10px; align-items:flex-start; padding:8px 10px; border:1px solid var(--line); border-radius:8px; margin:6px 0; cursor:pointer; }
+label.choice input { margin-top:4px; }
+input[type=text] { width:100%; background:#101216; color:var(--text); border:1px solid var(--line); border-radius:7px; padding:8px 10px; font:inherit; }
+.msg { padding:10px 12px; border-radius:8px; margin-top:10px; display:none; }
+.msg.show { display:block; } .msg.err { background:#3a1d1a; color:#ffb4a8; } .msg.good { background:#173326; color:#a7f0c9; }
+pre { margin:0; max-height:220px; overflow:auto; background:#101216; border:1px solid var(--line); border-radius:8px; padding:10px; font:12px/1.4 Consolas,monospace; color:#c9ced6; white-space:pre-wrap; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:6px 18px; }
+@media (max-width:700px) { .grid2 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header><h1>ForeverCore</h1><span class="ver" id="ver"></span></header>
+<main>
+  <section id="setup" style="display:none">
+    <h2 id="setupTitle">Einrichten</h2>
+    <p class="dim" id="setupInfo">ForeverCore installiert die Addons ForeverSimBridge, ForeverCoreBridge und ForeverRoutes in deinen WoW-Ordner. Andere Addons und deine Einstellungen (WTF) bleiben unverändert; ältere Versionen unserer Addons werden gesichert.</p>
+    <div id="wowList"></div>
+    <label class="choice"><input type="radio" name="wow" value="__other"><span>Anderer Ordner …<br><input type="text" id="otherPath" placeholder="z. B. D:\Games\World of Warcraft\_classic_beta_\Interface\AddOns"></span></label>
+    <div class="row" style="margin-top:12px"><button id="installBtn">Installieren</button><span class="dim" id="wowHint"></span></div>
+    <div class="msg" id="setupMsg"></div>
+  </section>
+
+  <section id="state">
+    <h2>Status</h2>
+    <div class="grid2">
+      <div class="row" id="stInstall"><span class="dot"></span><span></span></div>
+      <div class="row" id="stBridge"><span class="dot"></span><span></span></div>
+      <div class="row" id="stWow"><span class="dot"></span><span></span></div>
+      <div class="row" id="stRoutes"><span class="dot"></span><span></span></div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button id="bridgeBtn" class="secondary"></button>
+      <button id="repairBtn" class="secondary">Prüfen und reparieren</button>
+      <button id="folderBtn" class="secondary">Ordner öffnen</button>
+      <button id="quitBtn" class="secondary">Beenden</button>
+    </div>
+    <p class="dim" style="margin-top:12px">Das Fenster darf geschlossen werden: ForeverCore rechnet im Hintergrund weiter. Ein erneuter Start von ForeverCore öffnet dieses Fenster wieder. <b>Beenden</b> stoppt ForeverCore ganz.</p>
+    <div class="msg" id="stateMsg"></div>
+  </section>
+
+  <section>
+    <h2>Im Spiel</h2>
+    <p class="dim" style="margin:0">WoW im Fenster- oder Fenster-Vollbildmodus spielen (die obere linke Ecke muss sichtbar sein). Der Punkt am Minimap-Knopf zeigt die Verbindung: grün bereit, gelb rechnet, rot keine Antwort. <code>/fr</code> öffnet die Levelroute, <code>/fc</code> die Übersicht.</p>
+  </section>
+
+  <section>
+    <h2>Protokoll</h2>
+    <pre id="log"></pre>
+  </section>
+</main>
+<script>
+const T = "{{TOKEN}}";
+const $ = id => document.getElementById(id);
+async function call(path, body) {
+  const opt = { headers: { "X-FC-Token": T } };
+  if (body !== undefined) { opt.method = "POST"; opt.headers["Content-Type"] = "application/json"; opt.body = JSON.stringify(body); }
+  const r = await fetch(path, opt);
+  const v = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(v.error || ("Fehler " + r.status));
+  return v;
+}
+function show(el, cls, text) { el.className = "row " + cls; el.lastElementChild.textContent = text; }
+function msg(el, ok, text) { el.textContent = text; el.className = "msg show " + (ok ? "good" : "err"); }
+let state = null, choicesLoaded = false;
+
+async function loadChoices() {
+  const list = await call("/api/wow");
+  const box = $("wowList"); box.innerHTML = "";
+  list.forEach((w, i) => {
+    const l = document.createElement("label"); l.className = "choice";
+    const tag = w.forever ? " – WoW: Forever" : (w.current ? " – bisherige Installation" : "");
+    l.innerHTML = '<input type="radio" name="wow"><span><b></b><br><span class="dim"></span></span>';
+    l.querySelector("input").value = w.addons;
+    if (i === 0) l.querySelector("input").checked = true;
+    l.querySelector("b").textContent = w.flavor + tag;
+    l.querySelector(".dim").textContent = w.addons;
+    box.appendChild(l);
+  });
+  if (!list.length) { document.querySelector('input[value="__other"]').checked = true; $("wowHint").textContent = "Keine WoW-Installation gefunden: bitte den AddOns-Ordner angeben."; }
+  choicesLoaded = true;
+}
+
+async function refresh() {
+  try { state = await call("/api/status"); } catch (e) { return; }
+  $("ver").textContent = "Version " + state.version;
+  const needSetup = !state.installed;
+  $("setup").style.display = needSetup || $("setup").dataset.open ? "" : "none";
+  if (needSetup && !choicesLoaded) loadChoices();
+  $("setupTitle").textContent = state.damaged && state.damaged.length ? "Reparieren" : "Einrichten";
+  if (!state.package) { $("installBtn").disabled = true; $("wowHint").textContent = state.packageInfo; }
+  else { $("installBtn").disabled = !!state.busy || state.wow; $("wowHint").textContent = state.wow ? "WoW läuft: bitte erst WoW vollständig schließen." : (state.busy ? state.busy + " läuft …" : ""); }
+  if (state.installed) show($("stInstall"), "ok", "Installiert in " + state.addons);
+  else if (state.damaged && state.damaged.length) show($("stInstall"), "warn", "Installation unvollständig: " + state.damaged.slice(0, 3).join(", "));
+  else show($("stInstall"), "bad", "Noch nicht installiert");
+  if (state.bridge) show($("stBridge"), "ok", "Verbindung zu WoW läuft");
+  else show($("stBridge"), state.bridgeError ? "bad" : "warn", state.bridgeError ? "Verbindung: " + state.bridgeError : "Verbindung angehalten");
+  show($("stWow"), state.wow ? "ok" : "warn", state.wow ? "WoW läuft" : "WoW ist nicht gestartet");
+  show($("stRoutes"), state.routes ? "ok" : "warn", state.routes ? "Routen " + state.routes.version : "Routen: noch kein Update geladen");
+  $("bridgeBtn").textContent = state.bridge ? "Verbindung anhalten" : "Verbindung starten";
+  $("bridgeBtn").disabled = !state.installed;
+  $("repairBtn").disabled = !state.package;
+  const lines = await call("/api/log").catch(() => []);
+  const pre = $("log"); const atEnd = pre.scrollTop + pre.clientHeight >= pre.scrollHeight - 4;
+  pre.textContent = lines.join("\n"); if (atEnd) pre.scrollTop = pre.scrollHeight;
+}
+
+$("installBtn").onclick = async () => {
+  const sel = document.querySelector('input[name="wow"]:checked');
+  let addons = sel ? sel.value : "";
+  if (addons === "__other") addons = $("otherPath").value;
+  if (!addons) { msg($("setupMsg"), false, "Bitte einen Ordner wählen."); return; }
+  $("installBtn").disabled = true; msg($("setupMsg"), true, "Installiere …");
+  try {
+    const r = await call("/api/install", { addons });
+    msg($("setupMsg"), true, "Fertig: " + r.addonSet.join(", ") + " installiert, " + r.slots + " Antwortslots." + (r.backup ? " Ältere Versionen gesichert." : "") + " Jetzt WoW starten.");
+    delete $("setup").dataset.open;
+  } catch (e) { msg($("setupMsg"), false, e.message); }
+  refresh();
+};
+$("bridgeBtn").onclick = async () => { try { await call("/api/bridge", { on: !state.bridge }); } catch (e) { msg($("stateMsg"), false, e.message); } refresh(); };
+$("repairBtn").onclick = () => { $("setup").dataset.open = "1"; if (!choicesLoaded) loadChoices(); $("setup").style.display = ""; $("setup").scrollIntoView({ behavior: "smooth" }); };
+$("folderBtn").onclick = () => call("/api/folder", {});
+$("quitBtn").onclick = async () => { await call("/api/quit", {}).catch(() => {}); document.body.innerHTML = '<main><section><h2>ForeverCore wurde beendet.</h2><p class="dim">Zum erneuten Starten ForeverCore aus dem Startmenü oder vom Desktop öffnen.</p></section></main>'; };
+refresh(); setInterval(refresh, 2000);
+</script>
+</body>
+</html>

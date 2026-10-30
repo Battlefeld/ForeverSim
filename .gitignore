@@ -19,3 +19,4 @@ ForeverCore/config.json
 
 # Native local build output
 /ForeverCore/forevercore
+ForeverCore/payload.zip

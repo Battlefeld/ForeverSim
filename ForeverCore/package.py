@@ -1,7 +1,7 @@
 """Package the tested simulator (ForeverSim + ForeverCore bridge, engine, core) for installation."""
 import argparse,hashlib,json,shutil,zipfile
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--core-exe',required=True,type=Path);p.add_argument('--engine-exe',required=True,type=Path);p.add_argument('--lua',required=True,type=Path);p.add_argument('--engine-source',required=True,type=Path);p.add_argument('--lua-license',required=True,type=Path);p.add_argument('--output',required=True,type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--core-exe',required=True,type=Path);p.add_argument('--engine-exe',required=True,type=Path);p.add_argument('--lua',required=True,type=Path);p.add_argument('--engine-source',required=True,type=Path);p.add_argument('--lua-license',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--routes-addon',type=Path,help='ForeverRoutes-addon.zip of the ForeverRoutes release: installed with the others');a=p.parse_args()
 core=Path(__file__).resolve().parent
 manifest=json.loads((core/'engine-data.json').read_text())
 from engine_source import read_lock
@@ -22,6 +22,14 @@ shutil.copytree(repo/'ForeverCoreBridge',stage/'AddOns/ForeverCoreBridge')
 # Full matching addon set; the installer backs up existing addon folders.
 for addon in ['ForeverSimBridge']:
  shutil.copytree(repo/addon,stage/'AddOns'/addon,ignore=shutil.ignore_patterns('Development','tools','__pycache__','*.md','CHANGES_*'))
+if a.routes_addon:
+ # the standalone ForeverRoutes HUD from its own release, installed by ForeverCore.exe with the other addons
+ with zipfile.ZipFile(a.routes_addon)as z:
+  for info in z.infolist():
+   name=info.filename.replace('\\','/')
+   if info.is_dir()or not name.startswith('ForeverRoutes/')or '..'in name.split('/'):continue
+   dest=stage/'AddOns'/name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(z.read(info))
+ if not (stage/'AddOns/ForeverRoutes/ForeverRoutes.toc').exists():raise SystemExit('ForeverRoutes-addon.zip has no ForeverRoutes/ForeverRoutes.toc')
 runtime=stage/'Runtime';runtime.mkdir()
 for addon in ['ForeverSimBridge']:
  for src in (repo/addon).rglob('*'):

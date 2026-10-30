@@ -176,12 +176,16 @@ func main() {
 	}
 	exe, _ := os.Executable()
 	base := filepath.Dir(exe)
+	if flag.NFlag() == 0 && appMode(base) {
+		runApp(base)
+		return
+	}
 	if !filepath.IsAbs(*config) {
 		*config = filepath.Join(base, *config)
 	}
-	cfg := Config{Lua: filepath.Join(base, "Lua.exe"), Runtime: filepath.Join(base, "Runtime"), Engine: filepath.Join(base, "MythicSim.exe"), Data: filepath.Join(base, "Data"), Routes: filepath.Join("ForeverRoutes", "foreverroutes.exe"), RoutesData: filepath.Join("ForeverRoutes", "routes-data.json.gz")}
-	if e := loadJSON(*config, &cfg); e != nil && !os.IsNotExist(e) {
-		log.Fatal(e)
+	cfg, err := loadConfig(base, *config)
+	if err != nil {
+		log.Fatal(err)
 	}
 	if *root != "" {
 		cfg.Runtime = *root
@@ -189,25 +193,7 @@ func main() {
 	if *addons != "" {
 		cfg.Addons = *addons
 	}
-	if !filepath.IsAbs(cfg.Lua) {
-		cfg.Lua = filepath.Join(base, cfg.Lua)
-	}
-	if !filepath.IsAbs(cfg.Engine) {
-		cfg.Engine = filepath.Join(base, cfg.Engine)
-	}
-	if !filepath.IsAbs(cfg.Runtime) {
-		cfg.Runtime = filepath.Join(base, cfg.Runtime)
-	}
-	if !filepath.IsAbs(cfg.Data) {
-		cfg.Data = filepath.Join(base, cfg.Data)
-	}
-	if !filepath.IsAbs(cfg.Routes) {
-		cfg.Routes = filepath.Join(base, cfg.Routes)
-	}
-	if !filepath.IsAbs(cfg.RoutesData) {
-		cfg.RoutesData = filepath.Join(base, cfg.RoutesData)
-	}
-	s := &Service{cfg: cfg, routes: &RouteService{Root: cfg.Runtime, Lua: cfg.Lua}, sim: &SimService{Config: cfg}}
+	s := newService(cfg)
 	ctx := context.Background()
 	if *syncOnly {
 		r, e := syncSources(ctx, cfg)
@@ -250,4 +236,23 @@ func main() {
 		log.Fatal(e)
 	}
 }
+
+// loadConfig reads the configuration below base: paths that are not absolute are relative to base.
+func loadConfig(base, path string) (Config, error) {
+	cfg := Config{Lua: "Lua.exe", Runtime: "Runtime", Engine: "MythicSim.exe", Data: "Data", Routes: filepath.Join("ForeverRoutes", "foreverroutes.exe"), RoutesData: filepath.Join("ForeverRoutes", "routes-data.json.gz")}
+	if e := loadJSON(path, &cfg); e != nil && !os.IsNotExist(e) {
+		return cfg, e
+	}
+	for _, p := range []*string{&cfg.Lua, &cfg.Engine, &cfg.Runtime, &cfg.Data, &cfg.Routes, &cfg.RoutesData} {
+		if !filepath.IsAbs(*p) {
+			*p = filepath.Join(base, *p)
+		}
+	}
+	return cfg, nil
+}
+
+func newService(cfg Config) *Service {
+	return &Service{cfg: cfg, routes: &RouteService{Root: cfg.Runtime, Lua: cfg.Lua}, sim: &SimService{Config: cfg}}
+}
+
 func decodeJob(b []byte) (Job, error) { var j Job; e := json.Unmarshal(b, &j); return j, e }
