@@ -174,7 +174,7 @@ func githubToken() string {
 			return token
 		}
 	}
-	return ""
+	return storedToken()
 }
 func githubHost(raw string) bool {
 	u, err := url.Parse(raw)

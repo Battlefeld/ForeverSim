@@ -15,8 +15,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -31,8 +29,12 @@ var Build = ""
 // FOREVERCORE_SIGNING_KEY. Empty: updates are off.
 var updatePublicKey = "mY8688LGM2UeoA7sDo3FXy80c7qnwLYbDOe7hrcl3Hs="
 
-// updateManifestURL: the manifest beside the program on the artifacts branch.
-var updateManifestURL = "https://raw.githubusercontent.com/Battlefeld/ForeverSim/artifacts/windows/package/forevercore-update.json"
+// updateManifestURL: the manifest beside the program on the artifacts branch of the private repository (read with
+// the GitHub access, token.go).
+var updateManifestURL = "https://api.github.com/repos/Battlefeld/ForeverSim/contents/windows/package/forevercore-update.json?ref=artifacts"
+
+// updateProgramURL: where the workflow puts the program (the manifest names it).
+const updateProgramURL = "https://api.github.com/repos/Battlefeld/ForeverSim/contents/windows/package/ForeverCore.exe?ref=artifacts"
 
 // updateManifest says which program is the newest.
 type updateManifest struct {
@@ -90,21 +92,12 @@ func checkUpdate(ctx context.Context, appDir string) (string, *updateManifest, e
 	if updatePublicKey == "" || Build == "" {
 		return "", nil, nil
 	}
+	if githubHost(updateManifestURL) && githubToken() == "" {
+		return "", nil, fmt.Errorf("GitHub-Zugang fehlt (im Fenster eintragen)")
+	}
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()
-	get := func(url string, limit int64) ([]byte, error) {
-		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-		r, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return nil, err
-		}
-		defer r.Body.Close()
-		if r.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf("%s: %s", url, r.Status)
-		}
-		return io.ReadAll(io.LimitReader(r.Body, limit))
-	}
-	b, err := get(updateManifestURL, 1<<16)
+	b, err := fetchBounded(ctx, updateManifestURL, 1<<16)
 	if err != nil {
 		return "", nil, err
 	}
@@ -122,7 +115,7 @@ func checkUpdate(ctx context.Context, appDir string) (string, *updateManifest, e
 	if sum, err := fileSHA(dst); err == nil && sum == m.SHA256 {
 		return dst, &m, nil
 	}
-	exe, err := get(m.URL, m.Size+1)
+	exe, err := fetchBounded(ctx, m.URL, m.Size)
 	if err != nil {
 		return "", nil, err
 	}

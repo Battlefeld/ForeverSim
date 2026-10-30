@@ -96,6 +96,7 @@ func runApp(base string) {
 		}
 	}
 	a := &app{dir: dir, token: randomToken(), payload: embeddedPayload(), log: ring}
+	setTokenDir(dir)
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		log.Fatal(err)
@@ -292,6 +293,20 @@ func (a *app) routes() http.Handler {
 		}
 		return map[string]bool{"restarting": true}, a.applyUpdate()
 	})
+	api("/api/github", http.MethodPost, func(r *http.Request) (any, error) {
+		var req struct {
+			Token string `json:"token"`
+		}
+		if err := json.NewDecoder(io.LimitReader(r.Body, 1<<12)).Decode(&req); err != nil {
+			return nil, err
+		}
+		if err := saveToken(a.dir, req.Token); err != nil {
+			return nil, err
+		}
+		setTokenDir(a.dir)
+		log.Printf("GitHub-Zugang %s", map[bool]string{true: "gespeichert", false: "entfernt"}[strings.TrimSpace(req.Token) != ""])
+		return a.status(), nil
+	})
 	api("/api/log", http.MethodGet, func(*http.Request) (any, error) { return a.log.lines(), nil })
 	api("/api/folder", http.MethodPost, func(*http.Request) (any, error) { openFolder(a.dir); return map[string]bool{"ok": true}, nil })
 	api("/api/quit", http.MethodPost, func(*http.Request) (any, error) {
@@ -320,6 +335,7 @@ type appStatus struct {
 	Routes      *routesStatus `json:"routes,omitempty"`
 	Update      updateState   `json:"update"`
 	Pending     bool          `json:"addonsPending"` // the addons of this version wait for WoW to close
+	GitHub      bool          `json:"github"`        // a GitHub access is there (updates of the private repositories)
 }
 
 type routesStatus struct {
@@ -354,6 +370,7 @@ func (a *app) status() appStatus {
 	_, err = os.Stat(filepath.Join(a.dir, "ForeverCore.old.exe"))
 	st.Update.Previous = err == nil
 	st.Pending = a.addonsPending()
+	st.GitHub = githubToken() != ""
 	return st
 }
 

@@ -84,7 +84,7 @@ jobs:
         run: |
           if [ -z "$FOREVERCORE_SIGNING_KEY" ]; then echo "::warning::FOREVERCORE_SIGNING_KEY not set: installed programs will not update"; exit 0; fi
           (cd ForeverCore && go run . -sign-update ../dist/ForeverCore.exe -update-build "$BUILD" \
-            -update-url https://raw.githubusercontent.com/Battlefeld/ForeverSim/artifacts/windows/package/ForeverCore.exe \
+            -update-url "https://api.github.com/repos/Battlefeld/ForeverSim/contents/windows/package/ForeverCore.exe?ref=artifacts" \
             -update-out ../dist/forevercore-update.json)
       - name: Save Windows package to artifacts branch
         shell: bash

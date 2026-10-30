@@ -43,6 +43,9 @@ func fetchBounded(ctx context.Context, url string, max int64) ([]byte, error) {
 		if strings.Contains(url, "/releases/assets/") {
 			req.Header.Set("Accept", "application/octet-stream")
 		}
+		if strings.Contains(url, "/contents/") {
+			req.Header.Set("Accept", "application/vnd.github.raw") // the file itself, up to 100 MB
+		}
 	}
 	client := &http.Client{Timeout: 90 * time.Second}
 	r, e := client.Do(req)

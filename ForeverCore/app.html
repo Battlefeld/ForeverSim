@@ -64,6 +64,13 @@ pre { margin:0; max-height:220px; overflow:auto; background:#101216; border:1px 
     <div class="msg" id="stateMsg"></div>
   </section>
 
+  <section id="ghBox">
+    <h2>GitHub-Zugang für Updates</h2>
+    <p class="dim" id="ghInfo">ForeverCore und die Routen liegen in privaten GitHub-Repositories. Für Updates braucht ForeverCore einmal einen Zugangsschlüssel (Fine-grained Personal Access Token mit Lesezugriff auf die Repositories ForeverSim und ForeverRoutes). Er wird verschlüsselt nur für deinen Windows-Benutzer gespeichert.</p>
+    <div class="row"><input type="password" id="ghToken" placeholder="github_pat_…" style="flex:1"><button id="ghSave">Speichern</button><button id="ghRemove" class="secondary">Entfernen</button></div>
+    <div class="msg" id="ghMsg"></div>
+  </section>
+
   <section>
     <h2>Im Spiel</h2>
     <p class="dim" style="margin:0">WoW im Fenster- oder Fenster-Vollbildmodus spielen (die obere linke Ecke muss sichtbar sein). Der Punkt am Minimap-Knopf zeigt die Verbindung: grün bereit, gelb rechnet, rot keine Antwort. <code>/fr</code> öffnet die Levelroute, <code>/fc</code> die Übersicht.</p>
@@ -130,6 +137,9 @@ async function refresh() {
   else show($("stUpdate"), "ok", "Aktuell" + (u.checked ? " (geprüft " + u.checked + ")" : ""));
   $("updateBtn").style.display = u.available ? "" : "none";
   $("backBtn").style.display = u.previous ? "" : "none";
+  $("ghInfo").dataset.set = state.github ? "1" : "";
+  $("ghRemove").style.display = state.github ? "" : "none";
+  $("ghToken").placeholder = state.github ? "gespeichert – zum Ändern neuen Schlüssel eingeben" : "github_pat_…";
   $("bridgeBtn").textContent = state.bridge ? "Verbindung anhalten" : "Verbindung starten";
   $("bridgeBtn").disabled = !state.installed;
   $("repairBtn").disabled = !state.package;
@@ -155,6 +165,8 @@ $("bridgeBtn").onclick = async () => { try { await call("/api/bridge", { on: !st
 $("repairBtn").onclick = () => { $("setup").dataset.open = "1"; if (!choicesLoaded) loadChoices(); $("setup").style.display = ""; $("setup").scrollIntoView({ behavior: "smooth" }); };
 $("updateBtn").onclick = async () => { try { await call("/api/update", {}); msg($("stateMsg"), true, "ForeverCore startet mit der neuen Version neu …"); } catch (e) { msg($("stateMsg"), false, e.message); } };
 $("backBtn").onclick = async () => { try { await call("/api/update", { back: true }); msg($("stateMsg"), true, "ForeverCore startet mit der vorherigen Version neu …"); } catch (e) { msg($("stateMsg"), false, e.message); } };
+$("ghSave").onclick = async () => { try { await call("/api/github", { token: $("ghToken").value }); $("ghToken").value = ""; msg($("ghMsg"), true, "Gespeichert. Updates werden beim nächsten Prüfen geladen."); } catch (e) { msg($("ghMsg"), false, e.message); } refresh(); };
+$("ghRemove").onclick = async () => { try { await call("/api/github", { token: "" }); msg($("ghMsg"), true, "Entfernt."); } catch (e) { msg($("ghMsg"), false, e.message); } refresh(); };
 $("folderBtn").onclick = () => call("/api/folder", {});
 $("quitBtn").onclick = async () => { await call("/api/quit", {}).catch(() => {}); document.body.innerHTML = '<main><section><h2>ForeverCore wurde beendet.</h2><p class="dim">Zum erneuten Starten ForeverCore aus dem Startmenü oder vom Desktop öffnen.</p></section></main>'; };
 refresh(); setInterval(refresh, 2000);

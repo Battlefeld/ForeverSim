@@ -14,6 +14,11 @@ Spiel an. Zwei Addons gehören dazu: **ForeverSimBridge** (liest Charakter und I
    ältere Versionen dieser Addons und legt sich ins Startmenü und auf den Desktop. Andere Addons und WTF bleiben
    unverändert. Die Programmdateien liegen unter `%LOCALAPPDATA%\ForeverCore`.
 
+4. **GitHub-Zugang für Updates** (einmal): Die Repositories sind privat. Auf github.com unter Settings → Developer
+   settings → Personal access tokens → Fine-grained tokens einen Schlüssel anlegen (Repository access: ForeverSim
+   und ForeverRoutes; Permissions: Contents „Read-only“) und im ForeverCore-Fenster unter „GitHub-Zugang für Updates“
+   eintragen. Er wird verschlüsselt nur für deinen Windows-Benutzer gespeichert. Ohne ihn läuft alles, nur ohne Updates.
+
 ## Jedes Mal
 
 1. ForeverCore aus dem Startmenü oder vom Desktop starten. Die Verbindung zu WoW startet von selbst; das Fenster darf
