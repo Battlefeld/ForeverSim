@@ -367,9 +367,19 @@ def main():
     ap.add_argument('--dry-run', action='store_true', help='check only, leave lock and level data alone')
     ap.add_argument('--windows-exe', type=Path, help='also build the overlay engine for Windows here')
     ap.add_argument('--report', type=Path, default=CORE / 'engine-update-report.json')
+    ap.add_argument('--check-only', action='store_true',
+                    help='only say whether upstream has a newer base than the lock (changed=true|false, for $GITHUB_OUTPUT)')
     a = ap.parse_args()
 
     lock = json.loads(lock_path().read_text())
+    if a.check_only:
+        # cheap: a blob-less fetch of the branch tips, no build; the weekly run stops here when nothing is new
+        repo = a.work.resolve() / 'upstream.git-work'
+        fetch_upstream(repo, lock['repository'])
+        branch, base, _ = pick_base(repo, lock['commit'], a.branch)
+        print(f'changed={"true" if base != lock["commit"] else "false"}')
+        print(f'base={branch} {base}', file=sys.stderr)
+        return 0
     work = a.work.resolve()
     work.mkdir(parents=True, exist_ok=True)
     repo = work / 'upstream.git-work'

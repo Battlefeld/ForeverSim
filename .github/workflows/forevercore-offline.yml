@@ -1,14 +1,24 @@
 name: ForeverCore integration
 on:
+  # main and pull requests only (work on other branches costs no Actions minutes), not for documentation
   push:
-    branches: [main, claude/focused-lovelace-hqyfx4]
+    branches: [main]
     paths:
       - 'ForeverCore/**'
       - 'ForeverCoreBridge/**'
       - 'ForeverSimBridge/**'
+      - '_dev/harness/**'
+      - '!**.md'
       - '.github/workflows/forevercore-offline.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'ForeverCore/**'
+      - 'ForeverCoreBridge/**'
+      - 'ForeverSimBridge/**'
+      - '_dev/harness/**'
+      - '!**.md'
+      - '.github/workflows/forevercore-offline.yml'
   workflow_dispatch:
 permissions:
   contents: read

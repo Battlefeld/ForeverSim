@@ -30,7 +30,23 @@ env:
   ENGINE_BRANCH: main
 
 jobs:
+  # A few seconds: is there a newer MythicSim base than the lock? The hour-long update runs only then (or by hand).
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      changed: ${{ steps.upstream.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.ENGINE_BRANCH }}
+          fetch-depth: 1
+      - id: upstream
+        run: python3 ForeverCore/engine_update.py --check-only --work "$RUNNER_TEMP/engine" >> "$GITHUB_OUTPUT"
+
   update:
+    needs: check
+    if: needs.check.outputs.changed == 'true' || github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:

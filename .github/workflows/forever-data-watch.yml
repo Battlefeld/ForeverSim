@@ -8,6 +8,7 @@ on:
       - 'tools/data-watch/**'
       - '.github/workflows/forever-data-watch.yml'
   pull_request:
+    branches: [main]
     paths:
       - 'tools/data-watch/**'
       - '.github/workflows/forever-data-watch.yml'

@@ -2,7 +2,8 @@ name: ForeverCore Windows test package
 on:
   push:
     branches: [main]
-    paths: ['ForeverCore/**', 'ForeverCoreBridge/**', 'ForeverRoutes/**', 'ForeverSimBridge/**', '.github/workflows/forevercore-package.yml']
+    # what goes into ForeverCore.exe; documentation and tests alone build nothing
+    paths: ['ForeverCore/**', 'ForeverCoreBridge/**', 'ForeverSimBridge/**', '!**.md', '!ForeverCore/tests/**', '!ForeverCore/**_test.go', '.github/workflows/forevercore-package.yml']
   workflow_dispatch:
 permissions:
   contents: write
