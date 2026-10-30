@@ -7,15 +7,24 @@ Spiel an. Zwei Addons gehören dazu: **ForeverSimBridge** (liest Charakter und I
 ## Einrichten (einmal)
 
 1. WoW vollständig schließen.
-2. `Installieren.cmd` starten und den AddOns-Ordner des Forever-Clients angeben
-   (`…\World of Warcraft\_classic_beta_\Interface\AddOns`).
+2. `ForeverCore.exe` starten. Es öffnet sich das ForeverCore-Fenster (keine Konsole).
+3. Die gefundene WoW-Installation wählen (WoW: Forever steht oben; sonst „Anderer Ordner …“ mit
+   `…\World of Warcraft\_classic_beta_\Interface\AddOns`) und **Installieren** klicken.
+   ForeverCore installiert ForeverSimBridge, ForeverCoreBridge und ForeverRoutes, legt die Antwortslots an, sichert
+   ältere Versionen dieser Addons und legt sich ins Startmenü und auf den Desktop. Andere Addons und WTF bleiben
+   unverändert. Die Programmdateien liegen unter `%LOCALAPPDATA%\ForeverCore`.
 
 ## Jedes Mal
 
-1. `Starten.cmd` starten und das Konsolenfenster offen lassen.
+1. ForeverCore aus dem Startmenü oder vom Desktop starten. Die Verbindung zu WoW startet von selbst; das Fenster darf
+   geschlossen werden, ForeverCore läuft weiter. Ein erneuter Start öffnet das Fenster wieder, **Beenden** stoppt es.
 2. WoW im Fenster- oder Fenster-Vollbildmodus starten (die obere linke Ecke muss sichtbar sein).
 3. Im Spiel zeigt der Punkt am **Minimap-Knopf** den Zustand: grün bereit, gelb rechnet, rot ForeverCore.exe
    antwortet nicht. Linksklick öffnet die Übersicht, Rechtsklick das kopierbare Protokoll.
+
+**Prüfen und reparieren** im Fenster spielt das Paket erneut ein, wenn Dateien fehlen oder beschädigt sind. Das alte
+ZIP-Paket mit `Installieren.cmd` und `Starten.cmd` funktioniert weiterhin: ForeverCore.exe in diesem Ordner nutzt
+dann dessen `config.json`.
 
 ## Was automatisch passiert
 
