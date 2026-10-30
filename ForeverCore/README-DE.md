@@ -29,6 +29,10 @@ dann dessen `config.json`.
 ## Was automatisch passiert
 
 - **Hover:** Item ansehen → Zeile im Tooltip mit Pfeil und „+x % DPS" (Details mit Shift).
+- **Vorausberechnung:** Nach jeder Änderung an Ausrüstung, Talenten oder Stufe und wenn sich Questlog oder Taschen
+  ändern, rechnet ForeverCore die Belohnungen der Quests im Log und die tragbaren Items in den Taschen schon vorab
+  (höchstens 48 je Stand, nie im Kampf). Beim Ansehen, Annehmen oder Abgeben steht das Ergebnis dann sofort im
+  Tooltip. `/fc prefetch aus` schaltet das ab, `/fc prefetch an` wieder ein.
 - **Dungeon:** Beim Betreten erscheint das Dungeon-Fenster mit den Drops, die dich verbessern.
 - **Levelroute:** Das Addon ForeverRoutes zeigt die beste Route für dein Volk und deine Klasse bis Level 20, mit
   Pfeil (TomTom, sonst die Kartenmarkierung des Spiels) und Death-Skip-Hinweisen. Es läuft auch ohne ForeverCore; mit

@@ -37,6 +37,7 @@ jobs:
           export FC_TEST_LUA=/usr/bin/lua5.1
           (cd ForeverCore && go test -v ./... && go vet ./...)
           lua5.1 ForeverCore/tests/bridge_test.lua .
+          lua5.1 ForeverCore/tests/prefetch_test.lua .
           lua5.1 ForeverCore/tests/integration_test.lua .
           lua5.1 ForeverCore/tests/hunter_capture_test.lua .
           lua5.1 ForeverCore/tests/route_next_test.lua .

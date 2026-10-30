@@ -315,6 +315,10 @@ SlashCmdList.FOREVERCORE=function(msg)
  elseif msg=='status' then
   if C.window then C.window:Show();C.Say(C.status)end
  elseif msg=='ping'then C.Request('ping',{},receivePing)
+ elseif(msg=='prefetch an'or msg=='prefetch aus')and C.Prefetch then
+  ForeverCoreBridgeDB.prefetch=(msg=='prefetch an')and true or false
+  C.Say(ForeverCoreBridgeDB.prefetch and'Vorausberechnung an: Questbelohnungen und Taschen werden vorab verglichen'or'Vorausberechnung aus: Items werden erst beim Ansehen verglichen')
+  if ForeverCoreBridgeDB.prefetch then C.Prefetch.Schedule()end
  elseif msg=='route'then C.RequestRoute()
  elseif(msg=='route an'or msg=='route aus')and C.Route then
   ForeverCoreBridgeDB.routeNext=(msg=='route an')or nil
