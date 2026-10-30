@@ -112,3 +112,11 @@ func placeProgram(dir string) error {
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: windows.CREATE_NO_WINDOW}
 	return cmd.Run()
 }
+
+// startProgram starts a program detached from this one (the updated ForeverCore after this one quits).
+func startProgram(path string) {
+	cmd := exec.Command(path)
+	cmd.Dir = filepath.Dir(path)
+	cmd.SysProcAttr = &syscall.SysProcAttr{CreationFlags: windows.DETACHED_PROCESS | windows.CREATE_NEW_PROCESS_GROUP}
+	cmd.Start()
+}

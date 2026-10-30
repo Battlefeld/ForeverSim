@@ -167,7 +167,18 @@ func main() {
 	syncOnly := flag.Bool("sync", false, "Quellen aktualisieren")
 	noCapture := flag.Bool("keine-aufnahme", false, "keine Bildschirmaufnahme: nur Auktionshaus-Auftraege aus der SavedVariables-Datei")
 	captureTest := flag.Bool("capturetest", false, "Bildschirmaufnahme testen (ohne WoW), nur Zahlen, keine Bilder")
+	signExe := flag.String("sign-update", "", "Release: das Programm, fuer das ein signiertes Update-Manifest geschrieben wird (Schluessel in FOREVERCORE_SIGNING_KEY)")
+	signBuild := flag.String("update-build", "", "Release: Baunummer des Programms")
+	signVersion := flag.String("update-version", Version, "Release: Version des Programms")
+	signURL := flag.String("update-url", "", "Release: Adresse, unter der das Programm liegt")
+	signOut := flag.String("update-out", "", "Release: Manifest-Datei")
 	flag.Parse()
+	if *signExe != "" {
+		if e := writeUpdateManifest(*signExe, *signBuild, *signVersion, *signURL, *signOut, os.Getenv("FOREVERCORE_SIGNING_KEY")); e != nil {
+			log.Fatal(e)
+		}
+		return
+	}
 	if *captureTest {
 		if e := captureSelfTest(); e != nil {
 			log.Fatal(e)

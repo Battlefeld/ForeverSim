@@ -14,3 +14,5 @@ func openFolder(string) {}
 func wowRoots() []string { return nil }
 
 func placeProgram(string) error { return nil }
+
+func startProgram(string) {}

@@ -66,6 +66,9 @@ type app struct {
 	bridgeErr string
 	busy      string // an installation running
 	quit      func()
+	update    updateState
+	ready     string // a downloaded program, checked, to swap in
+	restart   string // the program to start after quitting (an update or going back)
 }
 
 // runApp serves the window and keeps the connection running until the window says to quit.
@@ -103,17 +106,110 @@ func runApp(base string) {
 	log.Printf("ForeverCore %s gestartet (%s)", Version, dir)
 	srv := &http.Server{Handler: a.routes()}
 	quit := make(chan struct{})
-	a.quit = func() { close(quit) }
+	var once sync.Once
+	a.quit = func() { once.Do(func() { close(quit) }) }
 	go srv.Serve(ln)
 	if bad, err := verifyInstall(dir); err == nil && len(bad) == 0 {
 		a.startBridge()
 	}
+	bg, stop := context.WithCancel(context.Background())
+	go a.keepUpToDate(bg)
 	openWindow(url)
 	<-quit
+	stop()
 	a.stopBridge()
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	srv.Shutdown(ctx)
+	os.Remove(filepath.Join(dir, appInfoName))
+	if a.restart != "" {
+		log.Printf("Neustart: %s", a.restart)
+		startProgram(a.restart)
+	}
+}
+
+// installedLabel: the version an installation records (the build number with it, for a release).
+func installedLabel() string {
+	if Build != "" {
+		return Version + "+" + Build
+	}
+	return Version
+}
+
+// keepUpToDate looks for a new program after the start and then every six hours, and installs the addons this
+// program carries once WoW is closed, when the installation has those of an older program.
+func (a *app) keepUpToDate(ctx context.Context) {
+	a.mu.Lock()
+	a.update.Enabled = updatePublicKey != "" && Build != ""
+	a.mu.Unlock()
+	next := time.Now().Add(20 * time.Second)
+	for {
+		if a.addonsPending() && !wowRunning() {
+			var m installManifest
+			if loadJSON(filepath.Join(a.dir, installManifestName), &m) == nil {
+				log.Printf("Addons dieser Version werden eingespielt (WoW ist geschlossen)")
+				a.install(m.Addons)
+			}
+		}
+		if time.Now().After(next) {
+			next = time.Now().Add(6 * time.Hour)
+			path, m, err := checkUpdate(ctx, a.dir)
+			a.mu.Lock()
+			a.update.Checked = time.Now().Format("02.01. 15:04")
+			a.update.Error = ""
+			if err != nil {
+				a.update.Error = err.Error()
+			} else if path != "" && m != nil {
+				if a.ready != path {
+					log.Printf("Update %s (%s) bereit", m.Version, m.Build)
+				}
+				a.ready, a.update.Available = path, m.Version+" ("+m.Build+")"
+			}
+			a.mu.Unlock()
+		}
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(30 * time.Second):
+		}
+	}
+}
+
+// addonsPending: the installation holds the addons of another program than this one.
+func (a *app) addonsPending() bool {
+	if checkPayload(a.payload) != nil {
+		return false
+	}
+	var m installManifest
+	if loadJSON(filepath.Join(a.dir, installManifestName), &m) != nil || m.Addons == "" {
+		return false
+	}
+	return m.Version != installedLabel()
+}
+
+// applyUpdate swaps the downloaded program in and restarts with it; goBackUpdate starts the previous one again.
+func (a *app) applyUpdate() error {
+	a.mu.Lock()
+	ready := a.ready
+	a.mu.Unlock()
+	if ready == "" {
+		return fmt.Errorf("kein Update bereit")
+	}
+	if err := swapProgram(a.dir, ready); err != nil {
+		return err
+	}
+	a.restart = filepath.Join(a.dir, "ForeverCore.exe")
+	go func() { time.Sleep(300 * time.Millisecond); a.quit() }()
+	return nil
+}
+
+func (a *app) goBackUpdate() error {
+	if err := goBack(a.dir); err != nil {
+		return err
+	}
+	a.restart = filepath.Join(a.dir, "ForeverCore.exe")
+	go func() { time.Sleep(300 * time.Millisecond); a.quit() }()
+	return nil
 }
 
 func randomToken() string {
@@ -184,6 +280,18 @@ func (a *app) routes() http.Handler {
 		}
 		return a.status(), nil
 	})
+	api("/api/update", http.MethodPost, func(r *http.Request) (any, error) {
+		var req struct {
+			Back bool `json:"back"`
+		}
+		if err := json.NewDecoder(io.LimitReader(r.Body, 1<<10)).Decode(&req); err != nil {
+			return nil, err
+		}
+		if req.Back {
+			return map[string]bool{"restarting": true}, a.goBackUpdate()
+		}
+		return map[string]bool{"restarting": true}, a.applyUpdate()
+	})
 	api("/api/log", http.MethodGet, func(*http.Request) (any, error) { return a.log.lines(), nil })
 	api("/api/folder", http.MethodPost, func(*http.Request) (any, error) { openFolder(a.dir); return map[string]bool{"ok": true}, nil })
 	api("/api/quit", http.MethodPost, func(*http.Request) (any, error) {
@@ -210,6 +318,8 @@ type appStatus struct {
 	Backup      string        `json:"backup,omitempty"`
 	Installs    []WoWInstall  `json:"installs,omitempty"`
 	Routes      *routesStatus `json:"routes,omitempty"`
+	Update      updateState   `json:"update"`
+	Pending     bool          `json:"addonsPending"` // the addons of this version wait for WoW to close
 }
 
 type routesStatus struct {
@@ -217,7 +327,7 @@ type routesStatus struct {
 }
 
 func (a *app) status() appStatus {
-	st := appStatus{Version: Version, Dir: a.dir, WoW: wowRunning()}
+	st := appStatus{Version: installedLabel(), Dir: a.dir, WoW: wowRunning()}
 	bad, err := verifyInstall(a.dir)
 	st.Installed = err == nil && len(bad) == 0
 	if err == nil {
@@ -239,8 +349,11 @@ func (a *app) status() appStatus {
 		st.Routes = &routesStatus{Version: man.Version}
 	}
 	a.mu.Lock()
-	st.Bridge, st.BridgeError, st.Busy = a.cancel != nil, a.bridgeErr, a.busy
+	st.Bridge, st.BridgeError, st.Busy, st.Update = a.cancel != nil, a.bridgeErr, a.busy, a.update
 	a.mu.Unlock()
+	_, err = os.Stat(filepath.Join(a.dir, "ForeverCore.old.exe"))
+	st.Update.Previous = err == nil
+	st.Pending = a.addonsPending()
 	return st
 }
 
@@ -263,7 +376,7 @@ func (a *app) install(addons string) (any, error) {
 	a.mu.Unlock()
 	defer func() { a.mu.Lock(); a.busy = ""; a.mu.Unlock() }()
 	running := a.stopBridge()
-	rep, err := install(a.payload, addons, a.dir, Version, time.Now())
+	rep, err := install(a.payload, addons, a.dir, installedLabel(), time.Now())
 	if err != nil {
 		log.Printf("Installation fehlgeschlagen: %v", err)
 		if running {

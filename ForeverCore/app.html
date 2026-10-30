@@ -50,9 +50,12 @@ pre { margin:0; max-height:220px; overflow:auto; background:#101216; border:1px 
       <div class="row" id="stBridge"><span class="dot"></span><span></span></div>
       <div class="row" id="stWow"><span class="dot"></span><span></span></div>
       <div class="row" id="stRoutes"><span class="dot"></span><span></span></div>
+      <div class="row" id="stUpdate"><span class="dot"></span><span></span></div>
     </div>
     <div class="row" style="margin-top:14px">
       <button id="bridgeBtn" class="secondary"></button>
+      <button id="updateBtn" style="display:none">Update installieren und neu starten</button>
+      <button id="backBtn" class="secondary" style="display:none">Vorherige Version</button>
       <button id="repairBtn" class="secondary">Prüfen und reparieren</button>
       <button id="folderBtn" class="secondary">Ordner öffnen</button>
       <button id="quitBtn" class="secondary">Beenden</button>
@@ -119,6 +122,14 @@ async function refresh() {
   else show($("stBridge"), state.bridgeError ? "bad" : "warn", state.bridgeError ? "Verbindung: " + state.bridgeError : "Verbindung angehalten");
   show($("stWow"), state.wow ? "ok" : "warn", state.wow ? "WoW läuft" : "WoW ist nicht gestartet");
   show($("stRoutes"), state.routes ? "ok" : "warn", state.routes ? "Routen " + state.routes.version : "Routen: noch kein Update geladen");
+  const u = state.update || {};
+  if (u.available) show($("stUpdate"), "warn", "Update bereit: " + u.available);
+  else if (state.addonsPending) show($("stUpdate"), "warn", "Neue Addon-Versionen werden eingespielt, sobald WoW geschlossen ist");
+  else if (!u.enabled) show($("stUpdate"), "", "Updates: in dieser Testversion aus");
+  else if (u.error) show($("stUpdate"), "bad", "Update-Prüfung: " + u.error);
+  else show($("stUpdate"), "ok", "Aktuell" + (u.checked ? " (geprüft " + u.checked + ")" : ""));
+  $("updateBtn").style.display = u.available ? "" : "none";
+  $("backBtn").style.display = u.previous ? "" : "none";
   $("bridgeBtn").textContent = state.bridge ? "Verbindung anhalten" : "Verbindung starten";
   $("bridgeBtn").disabled = !state.installed;
   $("repairBtn").disabled = !state.package;
@@ -142,6 +153,8 @@ $("installBtn").onclick = async () => {
 };
 $("bridgeBtn").onclick = async () => { try { await call("/api/bridge", { on: !state.bridge }); } catch (e) { msg($("stateMsg"), false, e.message); } refresh(); };
 $("repairBtn").onclick = () => { $("setup").dataset.open = "1"; if (!choicesLoaded) loadChoices(); $("setup").style.display = ""; $("setup").scrollIntoView({ behavior: "smooth" }); };
+$("updateBtn").onclick = async () => { try { await call("/api/update", {}); msg($("stateMsg"), true, "ForeverCore startet mit der neuen Version neu …"); } catch (e) { msg($("stateMsg"), false, e.message); } };
+$("backBtn").onclick = async () => { try { await call("/api/update", { back: true }); msg($("stateMsg"), true, "ForeverCore startet mit der vorherigen Version neu …"); } catch (e) { msg($("stateMsg"), false, e.message); } };
 $("folderBtn").onclick = () => call("/api/folder", {});
 $("quitBtn").onclick = async () => { await call("/api/quit", {}).catch(() => {}); document.body.innerHTML = '<main><section><h2>ForeverCore wurde beendet.</h2><p class="dim">Zum erneuten Starten ForeverCore aus dem Startmenü oder vom Desktop öffnen.</p></section></main>'; };
 refresh(); setInterval(refresh, 2000);
