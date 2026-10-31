@@ -215,16 +215,16 @@ Alles liegt in ForeverSimBridge; es wird kein anderes Addon gebraucht.
 
 | Datei | Inhalt |
 |---|---|
-| `DungeonCatalogData.lua` (erzeugt) | 31 Dungeons mit Levelbereich, Instanz-IDs, Bossen (Name, NPC-ID, Level), Trash-Gruppen und Items: 1.291 Zeilen, davon 950 mit Drop-Chance in %, dazu das Mindestlevel bestätigter Drops |
+| `DungeonCatalogData.lua` (erzeugt) | 29 Dungeons mit Levelbereich, Instanz-IDs, Bossen (Name, NPC-ID, Level), Trash-Beute und Items: 1.462 Einträge, davon 1.001 mit Drop-Chance in %, dazu das Mindestlevel der Items |
 | `DungeonCatalog.lua` | Schnittstelle `ForeverSimDungeonAPI`: Dungeonliste, Bosse, Kontext des aktuellen Dungeons, Loot-Kandidaten, Drop-Chance-Text |
 | Engine-Datenbank (MythicSim) | 10.769 Items mit Werten; deckt ca. 82–93 % der Dungeon-Drops ab |
 
-Quellen: Dungeon-Journal (bisheriger FDQ-Stand) und **Forever Guide 1.35.1**, verwendet mit Erlaubnis des
-Datenautors (der Guide stützt sich auf ForeverChanges, Wowhead Forever/Classic und cmangos). Die Quelle
-steht im Dateikopf von `DungeonCatalogData.lua`. Neu erzeugen (die Ordner werden nur gelesen):
+Quelle: **NorgannonDB** (https://github.com/zmarotrix/NorgannonDB, GPL-3.0): Instanzen mit Stufen, Bossen und
+Beute (dort aus DungeonJournal by Exehn), Drop-Chancen je Gegner, Itemnamen und Mindeststufen. Die Quelle steht im
+Dateikopf von `DungeonCatalogData.lua`. Neu erzeugen (der Ordner wird nur gelesen, nur Datendateien geladen):
 
 ```
-Lua.exe _dev/tools/build_dungeon_catalog.lua "<FDQ-Ordner oder -Archiv>" "<Forever-Guide-Ordner>" > ForeverSimBridge/DungeonCatalogData.lua
+lua5.1 _dev/tools/build_dungeon_catalog.lua "<NorgannonDB-Ordner>" > ForeverSimBridge/DungeonCatalogData.lua
 ```
 
 ### 6.2 Was beim Betreten eines Dungeons passiert
@@ -692,13 +692,13 @@ Stufe 1/5/49/50/59/60. Diese Mock-Prüfungen ersetzen keine Ingame-Abnahme.
 - ForeverDB: <https://foreverdb.net>
 - cmangos classic-db: <https://github.com/cmangos/classic-db> (GPL-3.0): Leerwandler-Werte pro Level in
   `warlock-demons.json` (Kampfprofil)
-- Guide-Loot: Forever Guide 1.35.1 (mit Erlaubnis des Datenautors)
+- Dungeon-Katalog: NorgannonDB <https://github.com/zmarotrix/NorgannonDB> (GPL-3.0; Instanzen aus DungeonJournal by Exehn)
 - Lizenztexte: Ordner `Lizenzen\`
 
 **Lizenz:** Der eigene Code dieses Repositorys (ForeverCore, ForeverCoreBridge, ForeverSimBridge, Werkzeuge) steht
 unter der MIT-Lizenz (`LICENSE`). Übernommene Teile behalten ihre Lizenz: MythicSim/WoWSims-Werte MIT
 (`ForeverSimBridge/THIRD_PARTY_LICENSES.txt`), aus cmangos classic-db abgeleitete Werte (`warlock-demons.json`)
-GPL-3.0, der Guide-Loot nach der Erlaubnis seines Datenautors. Das mitgelieferte ForeverRoutes-Addon und seine Routen
+GPL-3.0, der Dungeon-Katalog aus NorgannonDB (`ForeverSimBridge/DungeonCatalogData.lua`) GPL-3.0. Das mitgelieferte ForeverRoutes-Addon und seine Routen
 stehen unter den Lizenzen von ForeverRoutes (Code MIT, Datensatz GPL-3.0, RestedXP-Routen CC BY-NC-SA 4.0).
 
 Die Bridge-Addons sind unabhängige Fan-Werkzeuge und stehen in keiner Verbindung zu Blizzard

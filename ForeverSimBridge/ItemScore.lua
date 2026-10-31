@@ -185,7 +185,7 @@ local function addTooltip(tt, link)
         if more then for _, e in ipairs(extra) do tt:AddLine(e[1], e[2], e[3], e[4], true) end
         else hidden = #extra > 0 end
     end
-    -- Drop chance from the dungeon catalog (Dungeon Journal + Forever Guide), if the item drops in a known dungeon.
+    -- Drop chance from the dungeon catalog (NorgannonDB), if the item drops in a known dungeon.
     local api = _G.ForeverSimDungeonAPI
     local itemId = tonumber(tostring(link):match('item:(%d+)'))
     local chance = api and api.ChanceText and itemId and api.ChanceText(itemId)

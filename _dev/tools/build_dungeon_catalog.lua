@@ -2,137 +2,129 @@
 -- simulator needs (dungeon picker, boss benchmarks, pre-calculation when entering a dungeon).
 --
 -- Usage:
---   Lua.exe ForeverSimBridge/tools/build_dungeon_catalog.lua "<FDQ folder>" "<Forever Guide folder>" > ForeverSimBridge/DungeonCatalogData.lua
+--   lua5.1 _dev/tools/build_dungeon_catalog.lua "<NorgannonDB folder>" > ForeverSimBridge/DungeonCatalogData.lua
 --
--- Sources (the FDQ folder is only read; it does not have to be installed):
---   * Dungeon Journal (FDQ, DungeonJournal/Data/Dungeons.lua + Bosses.lua): bosses, npc ids, boss levels, boss loot
---   * Forever Guide 1.35.1 (DungeonData/DungeonLoot/BossData), used with the permission of the data's author:
---     dungeon list with level ranges, loot groups with drop chances, trash groups
---   * DUNGEON-LOOT-AUDIT-0.15.0.csv (FDQ): required level and item class of confirmed boss drops
-local fdq, guide = assert(arg[1], "FDQ folder"), assert(arg[2], "Forever Guide folder")
-if not fdq:find("[/\\]$") then fdq = fdq .. "/" end
-if not guide:find("[/\\]$") then guide = guide .. "/" end
+-- Source: NorgannonDB (https://github.com/zmarotrix/NorgannonDB, GPL-3.0), read only, no code of it is run but its
+-- data files: the instances (level range, bosses with their loot, trash loot; collected from DungeonJournal by Exehn),
+-- the creatures (name, level, drop chances) and the items (name, class, required level).
+local root = assert(arg[1], "NorgannonDB folder")
+if not root:find("[/\\]$") then root = root .. "/" end
 
--- Journal ------------------------------------------------------------------------------------------------
-local FDJ = setmetatable({ Constants = setmetatable({}, { __index = function() return {} end }) }, {})
-assert(loadfile(fdq .. "DungeonJournal/Data/Dungeons.lua"))("x", FDJ)
-assert(loadfile(fdq .. "DungeonJournal/Data/Bosses.lua"))("x", FDJ)
-local function norm(s) return (tostring(s or ""):lower():gsub("^the ", ""):gsub("[^%a]", "")) end
-local journalKey = {}
-for name in pairs(FDJ.DB) do journalKey[norm(name)] = name end
-
--- Guide --------------------------------------------------------------------------------------------------
-local g = {}
-assert(loadfile(guide .. "DungeonData.lua"))("x", g)
-assert(loadfile(guide .. "DungeonLoot.lua"))("x", g)
-assert(loadfile(guide .. "BossData.lua"))("x", g)
-local version = "unknown"
-for line in io.lines(guide .. "ForeverGuide.toc") do local v = line:match("^## Version:%s*(.-)%s*$") if v then version = v end end
-
--- Audit CSV (required level / class of confirmed drops) -------------------------------------------------
-local req = {}
-local csv = io.open(fdq .. "DUNGEON-LOOT-AUDIT-0.15.0.csv", "rb")
-if csv then
-  local first = true
-  for line in csv:lines() do
-    if first then first = false else
-      local cols = {}
-      for c in (line:gsub("\r", "") .. ","):gmatch("([^,]*),") do cols[#cols + 1] = c end
-      local id, class, minLevel = tonumber(cols[2]), tonumber(cols[5]), tonumber(cols[7])
-      if id then req[id] = { minLevel = minLevel, class = class } end
-    end
-  end
-  csv:close()
+-- NorgannonDB's data files call NorgannonDB:_PackedLoader(kind) for a function R(id, name, fields) and fill
+-- NorgannonDB.instances; the fields are a Lua table literal.
+local store = {}
+NorgannonDB = {}
+function NorgannonDB:_PackedLoader(kind)
+  store[kind] = store[kind] or {}
+  local t = store[kind]
+  return function(id, name, body) t[id] = { name = name, body = body } end
 end
+for _, f in ipairs({ "items", "npcs", "world" }) do assert(loadfile(root .. "data/" .. f .. ".lua"))() end
+local function fields(kind, id)
+  local r = store[kind] and store[kind][id]
+  if not r then return nil end
+  if not r.f then r.f = assert(loadstring("return {" .. (r.body or "") .. "}"))() end
+  return r.f, r.name
+end
+local version = "unknown"
+for line in io.lines(root .. "NorgannonDB.toc") do local v = line:match("^## Version:%s*(.-)%s*$") if v then version = v end end
 
--- Instance ids (Forever uses the classic ids for classic dungeons; unknown ones fall back to the English name)
-local INSTANCE_IDS = {
-  rfc = { 389 }, dm = { 36 }, wc = { 43 }, sfk = { 33 }, stocks = { 34 }, bfd = { 48 }, gnomer = { 90 }, rfk = { 47 },
-  smgy = { 189 }, smlib = { 189 }, smarm = { 189 }, smcath = { 189 },
-  lordaeron = { 2999 }, dalaran = { 2959 }, excavation = { 2998 }, thanes = { 3065 },
-  rfd = { 129 }, ulda = { 70 }, zf = { 209 }, mara = { 349 }, st = { 109 }, brd = { 230 }, lbrs = { 229 }, ubrs = { 229 },
-  scholo = { 289 }, stratlive = { 329 }, stratdead = { 329 }, dme = { 429 }, dmn = { 429 }, dmw = { 429 },
+-- NorgannonDB's instances under the keys the simulator has always used, with the client's instance ids
+-- (Forever keeps the Classic ids for Classic dungeons) and the map of a Scarlet Monastery wing.
+local DUNGEONS = {
+  { "ragefire-chasm", "rfc", { 389 } }, { "hall-of-thanes", "thanes", { 3065 } }, { "ruins-of-lordaeron", "lordaeron", { 2999 } },
+  { "wailing-caverns", "wc", { 43 } }, { "deadmines", "dm", { 36 } }, { "shadowfang-keep", "sfk", { 33 } },
+  { "excavation-site-wetlands", "excavation", { 2998 } }, { "blackfathom-deeps", "bfd", { 48 } }, { "stockade", "stocks", { 34 } },
+  { "city-of-dalaran", "dalaran", { 2959 } }, { "gnomeregan", "gnomer", { 90 } }, { "razorfen-kraul", "rfk", { 47 } },
+  { "sm-graveyard", "smgy", { 189 }, 302 }, { "sm-library", "smlib", { 189 }, 303 }, { "sm-armory", "smarm", { 189 } },
+  { "sm-cathedral", "smcath", { 189 } }, { "razorfen-downs", "rfd", { 129 } }, { "uldaman", "ulda", { 70 } },
+  { "zulfarrak", "zf", { 209 } }, { "maraudon", "mara", { 349 } }, { "sunken-temple", "st", { 109 } },
+  { "blackrock-depths", "brd", { 230 } }, { "lbrs", "lbrs", { 229 } }, { "ubrs", "ubrs", { 229 } },
+  { "scholomance", "scholo", { 289 } }, { "stratholme", "strat", { 329 } }, { "dm-east", "dme", { 429 } },
+  { "dm-north", "dmn", { 429 } }, { "dm-west", "dmw", { 429 } },
 }
-local SM_WING_MAPS = { smgy = 302, smlib = 303 }
+-- English names where NorgannonDB keeps only the key (the client's names, as the instance reports them)
+local NAMES = {
+  ["ragefire-chasm"] = "Ragefire Chasm", ["wailing-caverns"] = "Wailing Caverns", deadmines = "The Deadmines",
+  ["shadowfang-keep"] = "Shadowfang Keep", ["blackfathom-deeps"] = "Blackfathom Deeps", stockade = "The Stockade",
+  gnomeregan = "Gnomeregan", ["razorfen-kraul"] = "Razorfen Kraul", ["sm-graveyard"] = "Scarlet Monastery: Graveyard",
+  ["sm-library"] = "Scarlet Monastery: Library", ["sm-armory"] = "Scarlet Monastery: Armory",
+  ["sm-cathedral"] = "Scarlet Monastery: Cathedral", ["razorfen-downs"] = "Razorfen Downs", uldaman = "Uldaman",
+  zulfarrak = "Zul'Farrak", maraudon = "Maraudon", ["sunken-temple"] = "The Temple of Atal'Hakkar", ["blackrock-depths"] = "Blackrock Depths",
+  lbrs = "Lower Blackrock Spire", ubrs = "Upper Blackrock Spire", scholomance = "Scholomance", stratholme = "Stratholme",
+  ["dm-east"] = "Dire Maul: East", ["dm-north"] = "Dire Maul: North", ["dm-west"] = "Dire Maul: West",
+  ["excavation-site-wetlands"] = "Excavation Site: Wetlands", ["city-of-dalaran"] = "City of Dalaran",
+  ["hall-of-thanes"] = "Hall of Thanes", ["ruins-of-lordaeron"] = "Ruins of Lordaeron",
+}
+-- What an item is (the first word is the slot the loot list sorts by when the client cannot say)
+local WEAPON = { [0] = "One-Hand, Axe", [1] = "Two-Hand, Axe", [2] = "Ranged, Bow", [3] = "Ranged, Gun", [4] = "One-Hand, Mace",
+  [5] = "Two-Hand, Mace", [6] = "Two-Hand, Polearm", [7] = "One-Hand, Sword", [8] = "Two-Hand, Sword", [10] = "Two-Hand, Staff",
+  [13] = "One-Hand, Fist Weapon", [15] = "One-Hand, Dagger", [16] = "Thrown", [18] = "Ranged, Crossbow", [19] = "Wand" }
+local ARMOR = { [0] = "Armor, Miscellaneous", [1] = "Armor, Cloth", [2] = "Armor, Leather", [3] = "Armor, Mail", [4] = "Armor, Plate",
+  [6] = "Shield", [7] = "Relic", [8] = "Relic", [9] = "Relic" }
+local function kindOf(f)
+  if not f then return nil end
+  if f.class == 2 then return WEAPON[f.subClass] or "Weapon" end
+  if f.class == 4 then return ARMOR[f.subClass] or "Armor" end
+  if f.class == 9 then return "Recipe" end
+  return nil
+end
+-- The drop chance of an item from a creature in percent (0 in NorgannonDB means seen, chance unknown: nil)
+local function chance(npc, item)
+  local nf = fields("npcs", npc)
+  local c = nf and nf.drops and nf.drops[item]
+  if not c or c == 0 then
+    local itf = fields("items", item)
+    c = itf and itf.drops and itf.drops.npcs and itf.drops.npcs[npc]
+  end
+  if c and c > 0 then return c end
+end
 
 local function q(s) return string.format("%q", tostring(s or "")) end
 local function num(v) return v and string.format("%.4g", v) or "nil" end
 local out = {}
 local function w(s) out[#out + 1] = s end
-
-w("-- GENERATED by ForeverSimBridge/tools/build_dungeon_catalog.lua. Do not edit by hand.")
-w("-- Source: Dungeon Journal (FDQ) and Forever Guide " .. version .. " (used with the permission of the data's author).")
-w("-- Drop chances are percent values; boss=true marks groups that are bosses (Forever Guide boss table).")
+w("-- GENERATED by _dev/tools/build_dungeon_catalog.lua. Do not edit by hand.")
+w("-- Source: NorgannonDB " .. version .. " (github.com/zmarotrix/NorgannonDB, GPL-3.0; instances from DungeonJournal by Exehn).")
+w("-- Drop chances are percent values (nil: the drop is known, its chance is not); boss=false marks the trash loot.")
 w("FUSLiveDungeonData = {")
-w("  source = " .. q("Dungeon Journal + Forever Guide " .. version) .. ",")
+w("  source = " .. q("NorgannonDB " .. version) .. ",")
 w("  dungeons = {")
-
-local totalItems, withChance, nDungeons = 0, 0, 0
-for _, d in ipairs(g.DUNGEONS) do
-  local groups = g.LOOT[d.key] or {}
-  local jk = journalKey[norm(d.en)]
-  local jdb = jk and FDJ.DB[jk] or nil
-  local levels = jk and FDJ.BOSS_LEVELS and FDJ.BOSS_LEVELS[jk] or {}
-
-  -- chance by item id inside this dungeon (guide)
-  local chanceOf = {}
-  for _, grp in ipairs(groups) do for _, it in ipairs(grp.items or {}) do if it.id and it.p then chanceOf[it.id] = chanceOf[it.id] or it.p end end end
-
-  local seenGroupNames = {}
-  local entries = {}
-  -- journal bosses first (names, npc ids, levels, loot)
-  for _, boss in ipairs(jdb and jdb.bosses or {}) do
-    local names = { [norm(boss.name)] = true }
-    for _, a in ipairs(boss.aliases or {}) do names[norm(a)] = true end
-    local items = {}
-    local have = {}
-    for _, drop in ipairs(boss.loot or {}) do
-      local id = tonumber(drop[1] or drop.id)
-      if id and not have[id] then have[id] = true; items[#items + 1] = { id = id, name = drop[2], slot = drop[3], chance = chanceOf[id] } end
-    end
-    -- add guide drops of the matching group that the journal misses
-    for _, grp in ipairs(groups) do
-      if names[norm(grp.n)] then
-        seenGroupNames[grp] = true
-        for _, it in ipairs(grp.items or {}) do
-          if it.id and not have[it.id] then have[it.id] = true; items[#items + 1] = { id = it.id, name = it.n, slot = it.se, chance = it.p } end
-        end
-      end
-    end
-    local level = tonumber(levels[boss.name]) or tonumber(levels[(boss.aliases or {})[1] or ""] or nil)
-    entries[#entries + 1] = { name = boss.name, npcID = boss.npcID, level = level, boss = true, items = items }
-  end
-  -- remaining guide groups: boss (known in the guide's boss table) or trash
-  for _, grp in ipairs(groups) do
-    if not seenGroupNames[grp] then
-      local items = {}
-      for _, it in ipairs(grp.items or {}) do if it.id then items[#items + 1] = { id = it.id, name = it.n, slot = it.se, chance = it.p } end end
-      local isBoss = grp.id and g.BOSS_INFO and g.BOSS_INFO[grp.id] ~= nil
-      entries[#entries + 1] = { name = grp.n, npcID = grp.id, level = tonumber(grp.lv), boss = isBoss and true or false, items = items }
-    end
-  end
-  -- journal loot that belongs to no boss entry (e.g. journal dungeons without bosses table)
-  if #entries > 0 or jdb then
-  nDungeons = nDungeons + 1
-  w(string.format("    { key = %s, name = %s, journal = %s, min = %s, max = %s, new = %s, instanceIDs = {%s}, scarletMap = %s,",
-    q(d.key), q(d.en), jk and q(jk) or "nil", num(d.min), num(d.max), d.new and "true" or "false",
-    table.concat(INSTANCE_IDS[d.key] or {}, ","), SM_WING_MAPS[d.key] and tostring(SM_WING_MAPS[d.key]) or "nil"))
-  w("      groups = {")
-  for _, e in ipairs(entries) do
-    local items = {}
-    for _, it in ipairs(e.items) do
+local nDungeons, totalItems, withChance = 0, 0, 0
+local inst = assert(NorgannonDB.instances, "NorgannonDB.instances missing")
+for _, row in ipairs(DUNGEONS) do
+  local nkey, key, ids, smap = row[1], row[2], row[3], row[4]
+  local d = inst[nkey]
+  if d and d.levels and d.levels.min and d.levels.max then
+    nDungeons = nDungeons + 1
+    local name = NAMES[nkey] or d.name or nkey
+    w(string.format("    { key = %s, name = %s, journal = %s, min = %d, max = %d, new = %s, instanceIDs = {%s}, scarletMap = %s,",
+      q(key), q(name), q(nkey == "sunken-temple" and "Sunken Temple" or name), d.levels.min, d.levels.max, tostring(d.forever == true), table.concat(ids, ","), smap and tostring(smap) or "nil"))
+    w("      groups = {")
+    local function item(id, npc)
+      local f, iname = fields("items", id)
+      local c = npc and chance(npc, id)
       totalItems = totalItems + 1
-      if it.chance then withChance = withChance + 1 end
-      local r = req[it.id]
-      items[#items + 1] = string.format("{%d,%s,%s,%s,%s}", it.id, q(it.name), q(it.slot), num(it.chance), r and r.minLevel and tostring(r.minLevel) or "nil")
+      if c then withChance = withChance + 1 end
+      return string.format("{%d,%s,%s,%s,%s}", id, q(iname or ("Item " .. id)), kindOf(f) and q(kindOf(f)) or "nil", num(c), f and f.requiredLevel and tostring(f.requiredLevel) or "nil")
     end
-    w(string.format("        { name = %s, npcID = %s, level = %s, boss = %s, items = { %s } },",
-      q(e.name), e.npcID and tostring(e.npcID) or "nil", num(e.level), e.boss and "true" or "false", table.concat(items, ", ")))
-  end
-  w("      } },")
+    for _, b in ipairs(d.bosses or {}) do
+      local nf, bname = fields("npcs", b.id)
+      local items = {}
+      for _, id in ipairs(b.loot or {}) do items[#items + 1] = item(id, b.id) end
+      local level = nf and (nf.maxLevel or nf.minLevel)
+      w(string.format("        { name = %s, npcID = %d, level = %s, boss = true, items = { %s } },", q(bname or ("NPC " .. b.id)), b.id,
+        level and tostring(level) or "nil", table.concat(items, ", ")))
+    end
+    if d.trash and #d.trash > 0 then
+      local items = {}
+      for _, id in ipairs(d.trash) do items[#items + 1] = item(id, nil) end
+      w(string.format("        { name = %s, npcID = nil, level = nil, boss = false, items = { %s } },", q("Trash"), table.concat(items, ", ")))
+    end
+    w("      } },")
   end
 end
 w("  },")
 w("}")
 io.write(table.concat(out, "\n"), "\n")
-io.stderr:write(string.format("%d dungeons, %d item rows, %d with drop chance\n", nDungeons, totalItems, withChance))
+io.stderr:write(string.format("%d dungeons, %d items, %d with a drop chance\n", nDungeons, totalItems, withChance))
