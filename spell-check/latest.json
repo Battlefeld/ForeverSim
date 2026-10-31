@@ -1,0 +1,1120 @@
+{
+ "summary": {
+  "ranksChecked": 823,
+  "apiCalls": 240,
+  "findings": {
+   "value": 53,
+   "missing": 35,
+   "level": 29
+  },
+  "maxLevel": 30
+ },
+ "findings": [
+  {
+   "class": "druid",
+   "ability": "Efflorescence",
+   "rank": "",
+   "spellId": 417148,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 16 or 17, the tooltip has [15, 30, 33]",
+   "tooltip": "Heals all party members within 15 yards of the target for 33. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "druid",
+   "ability": "Enhanced Restoration",
+   "rank": "",
+   "spellId": 417123,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "druid",
+   "ability": "Lifebloom",
+   "rank": "",
+   "spellId": 408124,
+   "level": 1,
+   "kind": "value",
+   "what": "periodic: the values predict 28 or 35, the tooltip has [3, 7, 30, 58, 119]",
+   "tooltip": "Heals the target for 58 over 7 sec.  When Lifebloom completes its duration or is dispelled, the target instantly heals for 119 and the Druid regains half the cost of the spell.  This effect can stack up to 3 times on the same target. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "druid",
+   "ability": "Living Seed",
+   "rank": "",
+   "spellId": 414683,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "druid",
+   "ability": "Nourish",
+   "rank": "",
+   "spellId": 408247,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 161/189 or 162/190, the tooltip has [20, 30, 335, 393]",
+   "tooltip": "Heals a friendly target for 335 to 393. Heals for an additional 20% if you have a Rejuvenation, Regrowth, Lifebloom, or Wild Growth effect active on the target. This spell benefits from and triggers all effects associated with Healing Touch or Regrowth. (Numbers at level 30; they grow with your leve"
+  },
+  {
+   "class": "druid",
+   "ability": "Starsurge",
+   "rank": "",
+   "spellId": 417157,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 248/304 or 249/305, the tooltip has [1, 15, 30, 80, 132, 162]",
+   "tooltip": "Launch surging stellar energies that cause 132 to 162 Arcane damage, and increases the damage done by your next 1 Starfire cast by 80% for 15 sec.\n\nStarsurge benefits from and triggers most talents and effects that trigger or benefit from Wrath or Starfire.\n(Numbers at level 30; they grow with your "
+  },
+  {
+   "class": "druid",
+   "ability": "Sunfire",
+   "rank": "",
+   "spellId": 414684,
+   "level": 1,
+   "kind": "value",
+   "what": "periodic: the values predict 260 or 264, the tooltip has [12, 30, 69, 81, 139]",
+   "tooltip": "Burns the enemy for 69 to 81 Nature damage and then an additional 139 Nature damage over 12 sec. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "druid",
+   "ability": "Sunfire",
+   "rank": "",
+   "spellId": 414684,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 130/152 or 131/153, the tooltip has [12, 30, 69, 81, 139]",
+   "tooltip": "Burns the enemy for 69 to 81 Nature damage and then an additional 139 Nature damage over 12 sec. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "druid",
+   "ability": "Sunfire",
+   "rank": "Bear",
+   "spellId": 414687,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "druid",
+   "ability": "Sunfire",
+   "rank": "Cat",
+   "spellId": 414689,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "druid",
+   "ability": "Tiger's Fury",
+   "rank": "",
+   "spellId": 417045,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "druid",
+   "ability": "Rip",
+   "rank": "Rank 1",
+   "spellId": 1079,
+   "level": 20,
+   "kind": "value",
+   "what": "periodic: the values predict 18 or 24, the tooltip has [1, 2, 3, 4, 5, 12, 44, 71, 97, 124, 150]",
+   "tooltip": "Finishing move that causes damage over time.  Damage increases per combo point and by your Attack Power:\n   1 point  : 44 damage over 12 sec.\n   2 points: 71 damage over 12 sec.\n   3 points: 97 damage over 12 sec.\n   4 points: 124 damage over 12 sec.\n   5 points: 150 damage over 12 sec."
+  },
+  {
+   "class": "druid",
+   "ability": "Rip",
+   "rank": "Rank 2",
+   "spellId": 9492,
+   "level": 28,
+   "kind": "value",
+   "what": "periodic: the values predict 24 or 30, the tooltip has [1, 2, 3, 4, 5, 12, 67, 110, 154, 197, 240]",
+   "tooltip": "Finishing move that causes damage over time.  Damage increases per combo point and by your Attack Power:\n   1 point  : 67 damage over 12 sec.\n   2 points: 110 damage over 12 sec.\n   3 points: 154 damage over 12 sec.\n   4 points: 197 damage over 12 sec.\n   5 points: 240 damage over 12 sec."
+  },
+  {
+   "class": "druid",
+   "ability": "Deeper Wilds",
+   "rank": "",
+   "spellId": 436956,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Cobra Slayer",
+   "rank": "",
+   "spellId": 410115,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "hunter",
+   "ability": "Kill Command",
+   "rank": "",
+   "spellId": 409379,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "hunter",
+   "ability": "Natural Armor",
+   "rank": "Rank 1",
+   "spellId": 24547,
+   "level": 10,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "hunter",
+   "ability": "Natural Armor",
+   "rank": "Rank 2",
+   "spellId": 24556,
+   "level": 12,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "hunter",
+   "ability": "Natural Armor",
+   "rank": "Rank 3",
+   "spellId": 24557,
+   "level": 18,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "hunter",
+   "ability": "Natural Armor",
+   "rank": "Rank 4",
+   "spellId": 24558,
+   "level": 24,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "hunter",
+   "ability": "Natural Armor",
+   "rank": "Rank 5",
+   "spellId": 24559,
+   "level": 30,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "hunter",
+   "ability": "Mend Pet",
+   "rank": "Rank 1",
+   "spellId": 136,
+   "level": 12,
+   "kind": "value",
+   "what": "periodic: the values predict 100 or 105, the tooltip has [5, 20]",
+   "tooltip": "Heals your pet 20 health every second while you focus.  Lasts 5 sec."
+  },
+  {
+   "class": "hunter",
+   "ability": "Mend Pet",
+   "rank": "Rank 2",
+   "spellId": 3111,
+   "level": 20,
+   "kind": "value",
+   "what": "periodic: the values predict 190 or 195, the tooltip has [5, 38]",
+   "tooltip": "Heals your pet 38 health every second while you focus.  Lasts 5 sec."
+  },
+  {
+   "class": "hunter",
+   "ability": "Mend Pet",
+   "rank": "Rank 3",
+   "spellId": 3661,
+   "level": 28,
+   "kind": "value",
+   "what": "periodic: the values predict 340 or 345, the tooltip has [5, 68]",
+   "tooltip": "Heals your pet 68 health every second while you focus.  Lasts 5 sec."
+  },
+  {
+   "class": "hunter",
+   "ability": "Harass",
+   "rank": "Rank 1",
+   "spellId": 23163,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Harass",
+   "rank": "Rank 2",
+   "spellId": 23166,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Harass",
+   "rank": "Rank 3",
+   "spellId": 23167,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Melee Specialization",
+   "rank": "Rank 1",
+   "spellId": 19381,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Melee Specialization",
+   "rank": "Rank 2",
+   "spellId": 19382,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Melee Specialization",
+   "rank": "Rank 3",
+   "spellId": 19383,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Melee Specialization",
+   "rank": "Rank 4",
+   "spellId": 19384,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Melee Specialization",
+   "rank": "Rank 5",
+   "spellId": 19385,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "hunter",
+   "ability": "Readiness",
+   "rank": "",
+   "spellId": 23989,
+   "level": 0,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "mage",
+   "ability": "Arcane Barrage",
+   "rank": "",
+   "spellId": 400610,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 358/438 or 359/439, the tooltip has [30, 50, 194, 237]",
+   "tooltip": "Launches several missiles at the enemy target, causing 194 to 237 Arcane damage. This spell also has a 50% to trigger Missile Barrage. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "mage",
+   "ability": "Arcane Surge",
+   "rank": "",
+   "spellId": 425124,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 226/264 or 227/265, the tooltip has [8, 30, 122, 143, 300]",
+   "tooltip": "Unleash all of your remaining mana in a surge of energy focused at the target dealing 122 to 143 Arcane damage, increased by up to 300% based on your mana remaining. Afterward, your normal mana regeneration is activated and increased by 300% for 8 sec. (Numbers at level 30; they grow with your level"
+  },
+  {
+   "class": "mage",
+   "ability": "Balefire Bolt",
+   "rank": "",
+   "spellId": 428878,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 280/420 or 281/421, the tooltip has [0, 5, 20, 30, 151, 227]",
+   "tooltip": "Unleash a reality-distorting burst of raw magic at your enemy, dealing 151 to 227 Chimeric damage.\n\nIncreasing your Balefire Bolt and Pyroblast damage by 20%, decreasing your Spirit by 20%, and stacking up to 5 times for 30 sec. If your Spirit reaches 0, you die.\n\nThis spell will be checked against "
+  },
+  {
+   "class": "mage",
+   "ability": "Living Bomb",
+   "rank": "",
+   "spellId": 400613,
+   "level": 1,
+   "kind": "value",
+   "what": "periodic: the values predict 340 or 344, the tooltip has [10, 12, 30, 93, 184]",
+   "tooltip": "The target becomes a Living Bomb, taking 184 Fire damage over 12 sec.  After 12 sec or when the spell is dispelled, the target explodes dealing 93 Fire damage to all enemies within 10 yards.\n\nLiving Bomb benefits from all talents and effects that trigger from or modify Scorch.\n(Numbers at level 30; "
+  },
+  {
+   "class": "mage",
+   "ability": "Mass Regeneration",
+   "rank": "",
+   "spellId": 412510,
+   "level": 1,
+   "kind": "value",
+   "what": "periodic: the values predict 126 or 129, the tooltip has [3, 15, 30, 43.5, 50, 80, 265]",
+   "tooltip": "Heals all of target player's party members within 43.5 yards of target player for 265 health over 3 sec and applies Temporal Beacon to each target for 15 sec.\n\nTemporal Beacon\n\nRecords the subject's space-time position. 80% of all Arcane damage done by the caster will be converted to chronomantic he"
+  },
+  {
+   "class": "mage",
+   "ability": "Spellfrost Bolt",
+   "rank": "",
+   "spellId": 412532,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 305/355 or 306/356, the tooltip has [9, 30, 40, 165, 192]",
+   "tooltip": "Launches a bolt of spellfrost at the enemy, causing 165 to 192 Spellfrost damage and slowing movement speed by 40% for 9 sec. This spell will be checked against the lower of the target's Frost and Arcane resists and counts as both Frost and Arcane damage. (Numbers at level 30; they grow with your le"
+  },
+  {
+   "class": "mage",
+   "ability": "Expanded Intellect",
+   "rank": "",
+   "spellId": 436949,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "mage",
+   "ability": "Fire Vulnerability",
+   "rank": "",
+   "spellId": 22959,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "mage",
+   "ability": "Living Flame",
+   "rank": "",
+   "spellId": 401558,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "mage",
+   "ability": "Living Flame",
+   "rank": "",
+   "spellId": 401558,
+   "level": 0,
+   "kind": "value",
+   "what": "periodic: the values predict 200 or 202, the tooltip has [1, 30, 54]",
+   "tooltip": "Deals 54 Fire damage every 1 sec. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "paladin",
+   "ability": "Divine Light",
+   "rank": "",
+   "spellId": 458856,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 355/393 or 356/394, the tooltip has [15, 30, 50, 748, 828]",
+   "tooltip": "Heals a friendly target for 748 to 828. 50% of any excess healing on the target is converted into an absorption shield that lasts 15 sec. Multiple casts of Divine Light do not accumulate this shield.\n\nDivine Light benefits from all talents and effects that trigger from or modify Holy Light.\n(Numbers"
+  },
+  {
+   "class": "paladin",
+   "ability": "Divine Sacrifice",
+   "rank": "",
+   "spellId": 407804,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "paladin",
+   "ability": "Horn of Lordaeron",
+   "rank": "",
+   "spellId": 425600,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "paladin",
+   "ability": "Judgement of Martyrdom",
+   "rank": "",
+   "spellId": 407803,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "paladin",
+   "ability": "Judgement of Righteousness",
+   "rank": "Rank 1",
+   "spellId": 20187,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 14/16 or 15/17, the tooltip has []",
+   "tooltip": ""
+  },
+  {
+   "class": "paladin",
+   "ability": "Judgement of Righteousness",
+   "rank": "Rank 2",
+   "spellId": 20280,
+   "level": 10,
+   "kind": "value",
+   "what": "direct: the values predict 25/27 or 26/28, the tooltip has []",
+   "tooltip": ""
+  },
+  {
+   "class": "paladin",
+   "ability": "Judgement of Righteousness",
+   "rank": "Rank 3",
+   "spellId": 20281,
+   "level": 18,
+   "kind": "value",
+   "what": "direct: the values predict 39/43 or 40/44, the tooltip has []",
+   "tooltip": ""
+  },
+  {
+   "class": "paladin",
+   "ability": "Judgement of Righteousness",
+   "rank": "Rank 4",
+   "spellId": 20282,
+   "level": 26,
+   "kind": "value",
+   "what": "direct: the values predict 57/63 or 58/64, the tooltip has []",
+   "tooltip": ""
+  },
+  {
+   "class": "paladin",
+   "ability": "Righteous Judgement",
+   "rank": "",
+   "spellId": 440677,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "paladin",
+   "ability": "Shield of Righteousness",
+   "rank": "",
+   "spellId": 440658,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 179 or 180, the tooltip has [30, 84]",
+   "tooltip": "Slam the target with your shield, causing Holy damage based on your block value plus an additional 84. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "paladin",
+   "ability": "Righteous Fury",
+   "rank": "",
+   "spellId": 25780,
+   "level": 10,
+   "kind": "level",
+   "what": "engine teaches it at 16, the API at 10"
+  },
+  {
+   "class": "paladin",
+   "ability": "Judgement of Fury",
+   "rank": "Rank 3",
+   "spellId": 20183,
+   "level": 25,
+   "kind": "value",
+   "what": "direct: the values predict 51/57 or 52/58, the tooltip has []",
+   "tooltip": "Judge the target, dealing Holy damage."
+  },
+  {
+   "class": "paladin",
+   "ability": "Enhanced Blessings",
+   "rank": "",
+   "spellId": 435984,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "paladin",
+   "ability": "Exorcist",
+   "rank": "",
+   "spellId": 415076,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "paladin",
+   "ability": "Improved Flash of Light",
+   "rank": "Rank 1",
+   "spellId": 20249,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "paladin",
+   "ability": "Improved Flash of Light",
+   "rank": "Rank 2",
+   "spellId": 20250,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "paladin",
+   "ability": "Improved Flash of Light",
+   "rank": "Rank 3",
+   "spellId": 20251,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "paladin",
+   "ability": "Seal of Martyrdom",
+   "rank": "",
+   "spellId": 407799,
+   "level": 0,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "priest",
+   "ability": "Circle of Healing",
+   "rank": "",
+   "spellId": 401946,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 130/144 or 131/145, the tooltip has [30, 43.5, 274, 303]",
+   "tooltip": "Heals all of target player's party members within 43.5 yards of target player for 274 to 303. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "priest",
+   "ability": "Mind Spike",
+   "rank": "",
+   "spellId": 431655,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 122/142 or 123/143, the tooltip has [3, 30, 78, 90]",
+   "tooltip": "Blasts the target for 78 to 90 Shadowfrost damage, and increases the critical strike chance of your next Mind Blast on the target by 30%, stacking up to 3 times. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "priest",
+   "ability": "Vampiric Touch",
+   "rank": "",
+   "spellId": 402668,
+   "level": 1,
+   "kind": "value",
+   "what": "periodic: the values predict 325 or 330, the tooltip has [2, 15, 30, 207]",
+   "tooltip": "Applies your Vampiric Embrace talent to your target, causes 207 Shadow damage over 15 sec to your target, and causes all party members to gain mana equal to 2% of any Shadow spell damage you deal to the target. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "priest",
+   "ability": "Void Plague",
+   "rank": "",
+   "spellId": 425204,
+   "level": 1,
+   "kind": "value",
+   "what": "periodic: the values predict 774 or 780, the tooltip has [18, 30, 493]",
+   "tooltip": "Afflicts the target with a disease that causes 493 Shadow damage over 18 sec. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "priest",
+   "ability": "Holy Fire",
+   "rank": "Rank 1",
+   "spellId": 14914,
+   "level": 20,
+   "kind": "value",
+   "what": "direct: the values predict 51/65 or 52/66, the tooltip has [10, 20, 48, 60]",
+   "tooltip": "Consumes the enemy in holy flames that cause 48 to 60 Holy damage and an additional 20 Holy damage over 10 sec."
+  },
+  {
+   "class": "priest",
+   "ability": "Focused Casting",
+   "rank": "",
+   "spellId": 27828,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "priest",
+   "ability": "Increased Fortitude",
+   "rank": "",
+   "spellId": 436951,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "priest",
+   "ability": "Secrets of Elune",
+   "rank": "",
+   "spellId": 424036,
+   "level": 0,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "priest",
+   "ability": "Secrets of Undeath",
+   "rank": "",
+   "spellId": 424041,
+   "level": 0,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "priest",
+   "ability": "Secrets of the Light",
+   "rank": "",
+   "spellId": 424035,
+   "level": 0,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "priest",
+   "ability": "Secrets of the Loa",
+   "rank": "",
+   "spellId": 424037,
+   "level": 0,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "rogue",
+   "ability": "Between the Eyes",
+   "rank": "",
+   "spellId": 400009,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 53/81 or 54/82, the tooltip has [1, 2, 3, 4, 5, 30, 37, 57, 60, 83, 92, 106]",
+   "tooltip": "Ranged Finishing move that causes damage per combo point, increased by Attack Power, and Stuns the target:\n\n   1 point:   37 to 57 damage, 1 sec Stun\n   2 points: 60 to 92 damage, 2 sec Stun\n   3 points: 83 to 127 damage, 3 sec Stun\n   4 points: 106 to 162 damage, 4 sec Stun\n   5 points: 129 to 197 "
+  },
+  {
+   "class": "rogue",
+   "ability": "Eviscerate",
+   "rank": "Rank 2",
+   "spellId": 6760,
+   "level": 8,
+   "kind": "value",
+   "what": "direct: the values predict 3/11 or 3/13, the tooltip has [1, 2, 3, 4, 5, 14, 22, 25, 33, 36, 44, 47]",
+   "tooltip": "Finishing move that causes damage per combo point, increased by Attack Power:\n   1 point  : 14-22 damage\n   2 points: 25-33 damage\n   3 points: 36-44 damage\n   4 points: 47-55 damage\n   5 points: 58-66 damage"
+  },
+  {
+   "class": "rogue",
+   "ability": "Eviscerate",
+   "rank": "Rank 3",
+   "spellId": 6761,
+   "level": 16,
+   "kind": "value",
+   "what": "direct: the values predict 6/20 or 6/22, the tooltip has [1, 2, 3, 4, 5, 25, 39, 44, 58, 63, 77, 82]",
+   "tooltip": "Finishing move that causes damage per combo point, increased by Attack Power:\n   1 point  : 25-39 damage\n   2 points: 44-58 damage\n   3 points: 63-77 damage\n   4 points: 82-96 damage\n   5 points: 101-115 damage"
+  },
+  {
+   "class": "rogue",
+   "ability": "Eviscerate",
+   "rank": "Rank 4",
+   "spellId": 6762,
+   "level": 24,
+   "kind": "value",
+   "what": "direct: the values predict 10/30 or 10/32, the tooltip has [1, 2, 3, 4, 5, 41, 61, 72, 92, 103, 123, 134]",
+   "tooltip": "Finishing move that causes damage per combo point, increased by Attack Power:\n   1 point  : 41-61 damage\n   2 points: 72-92 damage\n   3 points: 103-123 damage\n   4 points: 134-154 damage\n   5 points: 165-185 damage"
+  },
+  {
+   "class": "rogue",
+   "ability": "Saber Slash",
+   "rank": "",
+   "spellId": 424785,
+   "level": 1,
+   "kind": "value",
+   "what": "periodic: the values predict 30 or 36, the tooltip has [1, 2, 3, 5, 12, 33, 100]",
+   "tooltip": "Viciously slash an enemy for 100% weapon damage, and cause the target to bleed for 5% of attack power damage every 2 sec for 12 sec, stacking up to 3 times. Each stack also increases damage done by your Saber Slash and Sinister Strike by 33%. Awards 1 combo point.\n\nSaber Slash benefits from all tale"
+  },
+  {
+   "class": "rogue",
+   "ability": "Shiv",
+   "rank": "",
+   "spellId": 424799,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "rogue",
+   "ability": "Rupture",
+   "rank": "Rank 1",
+   "spellId": 1943,
+   "level": 20,
+   "kind": "value",
+   "what": "periodic: the values predict 15 or 18, the tooltip has [1, 2, 3, 4, 5, 8, 10, 12, 14, 16, 25, 37]",
+   "tooltip": "Finishing move that causes damage over time, increased by your Attack Power.  Lasts longer per combo point:\n   1 point  : 25 damage over 8 secs\n   2 points: 37 damage over 10 secs\n   3 points: 51 damage over 12 secs\n   4 points: 68 damage over 14 secs\n   5 points: 87 damage over 16 secs"
+  },
+  {
+   "class": "rogue",
+   "ability": "Rupture",
+   "rank": "Rank 2",
+   "spellId": 8639,
+   "level": 28,
+   "kind": "value",
+   "what": "periodic: the values predict 21 or 24, the tooltip has [1, 2, 3, 4, 5, 8, 10, 12, 14, 16, 35, 53]",
+   "tooltip": "Finishing move that causes damage over time, increased by your Attack Power.  Lasts longer per combo point:\n   1 point  : 35 damage over 8 secs\n   2 points: 53 damage over 10 secs\n   3 points: 74 damage over 12 secs\n   4 points: 99 damage over 14 secs\n   5 points: 127 damage over 16 secs"
+  },
+  {
+   "class": "rogue",
+   "ability": "Detect Traps",
+   "rank": "Passive",
+   "spellId": 2836,
+   "level": 24,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "rogue",
+   "ability": "Main Gauche",
+   "rank": "",
+   "spellId": 424919,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "rogue",
+   "ability": "Vanished",
+   "rank": "Rank 1",
+   "spellId": 14093,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "shaman",
+   "ability": "Molten Blast",
+   "rank": "",
+   "spellId": 425339,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 72/108 or 73/109, the tooltip has [5, 10, 30, 39, 59]",
+   "tooltip": "Blast up to 10 enemies in a cone in front of you for 39 to 59 (+5% of attack power) Fire damage. This ability generates a high amount of threat. Flame Shock periodic damage has a 10% chance to reset the cooldown on Molten Blast. (Numbers at level 30; they grow with your level.)"
+  },
+  {
+   "class": "shaman",
+   "ability": "Reincarnation",
+   "rank": "Passive",
+   "spellId": 20608,
+   "level": 30,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "shaman",
+   "ability": "Ancestral Fortitude",
+   "rank": "",
+   "spellId": 16177,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "shaman",
+   "ability": "Healing Rain",
+   "rank": "",
+   "spellId": 415236,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "warlock",
+   "ability": "Chaos Bolt",
+   "rank": "",
+   "spellId": 403629,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 522/662 or 523/663, the tooltip has [4, 30, 289, 366]",
+   "tooltip": "Sends a bolt of chaotic fire at the enemy, dealing 289 to 366 Chaos damage.  Chaos Bolt always hits, cannot be resisted, and its knowledge causes all your Fire spells to pierce through absorption effects. Chaos Bolt gains a high chance to be resisted when used against monsters 4 or more levels above"
+  },
+  {
+   "class": "warlock",
+   "ability": "Fel Armor",
+   "rank": "",
+   "spellId": 403619,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Invocation",
+   "rank": "",
+   "spellId": 426241,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Metamorphosis : Demonic Howl",
+   "rank": "",
+   "spellId": 412784,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Shadow Cleave",
+   "rank": "Rank 4",
+   "spellId": 403841,
+   "level": 20,
+   "kind": "value",
+   "what": "direct: the values predict 23/37 or 24/38, the tooltip has [10, 24, 36]",
+   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 24 to 36 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers."
+  },
+  {
+   "class": "warlock",
+   "ability": "Shadowflame",
+   "rank": "",
+   "spellId": 426320,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 173 or 174, the tooltip has [15, 26, 30, 96, 177]",
+   "tooltip": "Burns the enemy for 96 Shadowflame damage and then an additional 177 Shadowflame damage over 15 sec.\n\nShadowflame triggers and benefits from all effects that modify or interact with Immolate, or with Affliction, Destruction, Fire, or Shadow spells, but only one of Immolate or Shadowflame per Warlock"
+  },
+  {
+   "class": "warlock",
+   "ability": "Shadowflame",
+   "rank": "",
+   "spellId": 426320,
+   "level": 1,
+   "kind": "value",
+   "what": "periodic: the values predict 320 or 325, the tooltip has [15, 26, 30, 96, 177]",
+   "tooltip": "Burns the enemy for 96 Shadowflame damage and then an additional 177 Shadowflame damage over 15 sec.\n\nShadowflame triggers and benefits from all effects that modify or interact with Immolate, or with Affliction, Destruction, Fire, or Shadow spells, but only one of Immolate or Shadowflame per Warlock"
+  },
+  {
+   "class": "warlock",
+   "ability": "Summon Imp",
+   "rank": "Summon",
+   "spellId": 688,
+   "level": 1,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Summon Voidwalker",
+   "rank": "Summon",
+   "spellId": 697,
+   "level": 10,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Health Funnel",
+   "rank": "Rank 1",
+   "spellId": 755,
+   "level": 12,
+   "kind": "value",
+   "what": "periodic: the values predict 120 or 130, the tooltip has [10, 12]",
+   "tooltip": "Gives 12 health to the caster's pet every second for 10 sec as long as the caster channels. Generates reduced threat."
+  },
+  {
+   "class": "warlock",
+   "ability": "Health Funnel",
+   "rank": "Rank 1",
+   "spellId": 755,
+   "level": 12,
+   "kind": "value",
+   "what": "periodic: the values predict 54 or 64, the tooltip has [10, 12]",
+   "tooltip": "Gives 12 health to the caster's pet every second for 10 sec as long as the caster channels. Generates reduced threat."
+  },
+  {
+   "class": "warlock",
+   "ability": "Health Funnel",
+   "rank": "Rank 2",
+   "spellId": 3698,
+   "level": 20,
+   "kind": "value",
+   "what": "periodic: the values predict 240 or 250, the tooltip has [10, 24]",
+   "tooltip": "Gives 24 health to the caster's pet every second for 10 sec as long as the caster channels. Generates reduced threat."
+  },
+  {
+   "class": "warlock",
+   "ability": "Health Funnel",
+   "rank": "Rank 2",
+   "spellId": 3698,
+   "level": 20,
+   "kind": "value",
+   "what": "periodic: the values predict 105 or 115, the tooltip has [10, 24]",
+   "tooltip": "Gives 24 health to the caster's pet every second for 10 sec as long as the caster channels. Generates reduced threat."
+  },
+  {
+   "class": "warlock",
+   "ability": "Health Funnel",
+   "rank": "Rank 3",
+   "spellId": 3699,
+   "level": 28,
+   "kind": "value",
+   "what": "periodic: the values predict 430 or 440, the tooltip has [10, 43]",
+   "tooltip": "Gives 43 health to the caster's pet every second for 10 sec as long as the caster channels. Generates reduced threat."
+  },
+  {
+   "class": "warlock",
+   "ability": "Health Funnel",
+   "rank": "Rank 3",
+   "spellId": 3699,
+   "level": 28,
+   "kind": "value",
+   "what": "periodic: the values predict 170 or 180, the tooltip has [10, 43]",
+   "tooltip": "Gives 43 health to the caster's pet every second for 10 sec as long as the caster channels. Generates reduced threat."
+  },
+  {
+   "class": "warlock",
+   "ability": "Summon Incubus",
+   "rank": "Summon",
+   "spellId": 713,
+   "level": 20,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Summon Succubus",
+   "rank": "Summon",
+   "spellId": 712,
+   "level": 20,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Eye of Kilrogg",
+   "rank": "Summon",
+   "spellId": 126,
+   "level": 22,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Hellfire",
+   "rank": "Rank 1",
+   "spellId": 1949,
+   "level": 30,
+   "kind": "value",
+   "what": "periodic: the values predict 1230 or 1245, the tooltip has [1, 15, 82]",
+   "tooltip": "Ignites the area surrounding the caster, causing 82 Fire damage to himself/herself and 82 Fire damage to all nearby enemies every 1 sec.  Lasts 15 sec."
+  },
+  {
+   "class": "warlock",
+   "ability": "Summon Felhunter",
+   "rank": "Summon",
+   "spellId": 691,
+   "level": 30,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warlock",
+   "ability": "Dance of the Wicked",
+   "rank": "",
+   "spellId": 412798,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "warlock",
+   "ability": "Demonic Grace",
+   "rank": "",
+   "spellId": 425463,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "warrior",
+   "ability": "Shockwave",
+   "rank": "",
+   "spellId": 440488,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 1 or 2, the tooltip has [4, 10, 50]",
+   "tooltip": "Sends a wave of force in front of the warrior, causing 50% of attack power damage and stunning all enemy targets within 10 yards in a frontal cone for 4 sec."
+  },
+  {
+   "class": "warrior",
+   "ability": "Valor of Azeroth",
+   "rank": "",
+   "spellId": 461475,
+   "level": 2,
+   "kind": "missing",
+   "what": "the engine table has no such spell"
+  },
+  {
+   "class": "warrior",
+   "ability": "Revenge",
+   "rank": "Rank 1",
+   "spellId": 6572,
+   "level": 14,
+   "kind": "value",
+   "what": "direct: the values predict 20/24 or 21/25, the tooltip has []",
+   "tooltip": "Instantly counterattack an enemy for ? to ? damage and a high amount of threat.  Revenge must follow a block, dodge or parry."
+  },
+  {
+   "class": "warrior",
+   "ability": "Revenge",
+   "rank": "Rank 2",
+   "spellId": 6574,
+   "level": 24,
+   "kind": "value",
+   "what": "direct: the values predict 31/37 or 31/39, the tooltip has []",
+   "tooltip": "Instantly counterattack an enemy for ? to ? damage and a high amount of threat.  Revenge must follow a block, dodge or parry."
+  },
+  {
+   "class": "warrior",
+   "ability": "Victory Rush",
+   "rank": "",
+   "spellId": 402927,
+   "level": 20,
+   "kind": "value",
+   "what": "direct: the values predict 1 or 2, the tooltip has [10, 20]",
+   "tooltip": "Instantly attack the target causing ? damage and healing you for 10% of your maximum health.  Only useable within 20 sec after you kill a non-trivial enemy."
+  },
+  {
+   "class": "warrior",
+   "ability": "Improved Intimidating Shout",
+   "rank": "Rank 1",
+   "spellId": 19870,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "warrior",
+   "ability": "Improved Intimidating Shout",
+   "rank": "Rank 2",
+   "spellId": 19871,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  },
+  {
+   "class": "warrior",
+   "ability": "Long Daze",
+   "rank": "Rank 1",
+   "spellId": 12705,
+   "level": 0,
+   "kind": "level",
+   "what": "engine teaches it at 60, the API at 0"
+  }
+ ]
+}
