@@ -2,7 +2,7 @@
 
 Data from [ForeverDB.net](https://foreverdb.net). Only lists; nothing is changed.
 
-Ranks checked (taught at level 30 or lower): **823**, API calls: 240. Findings: level 29, missing 35, value 53.
+Ranks checked (taught at level 30 or lower): **823**, API calls: 240. Findings: level 1, missing 35, value 132.
 
 ## Missing (35)
 
@@ -42,91 +42,142 @@ Ranks checked (taught at level 30 or lower): **823**, API calls: 240. Findings: 
 - **warlock** Summon Felhunter Summon (spell 691, level 30): the engine table has no such spell
 - **warrior** Valor of Azeroth  (spell 461475, level 2): the engine table has no such spell
 
-## Taught at another level (29)
+## Taught at another level (1)
 
-- **druid** Deeper Wilds  (spell 436956, level 0): engine teaches it at 60, the API at 0
-- **hunter** Harass Rank 1 (spell 23163, level 0): engine teaches it at 60, the API at 0
-- **hunter** Harass Rank 2 (spell 23166, level 0): engine teaches it at 60, the API at 0
-- **hunter** Harass Rank 3 (spell 23167, level 0): engine teaches it at 60, the API at 0
-- **hunter** Melee Specialization Rank 1 (spell 19381, level 0): engine teaches it at 60, the API at 0
-- **hunter** Melee Specialization Rank 2 (spell 19382, level 0): engine teaches it at 60, the API at 0
-- **hunter** Melee Specialization Rank 3 (spell 19383, level 0): engine teaches it at 60, the API at 0
-- **hunter** Melee Specialization Rank 4 (spell 19384, level 0): engine teaches it at 60, the API at 0
-- **hunter** Melee Specialization Rank 5 (spell 19385, level 0): engine teaches it at 60, the API at 0
-- **mage** Expanded Intellect  (spell 436949, level 0): engine teaches it at 60, the API at 0
-- **mage** Fire Vulnerability  (spell 22959, level 0): engine teaches it at 60, the API at 0
-- **mage** Living Flame  (spell 401558, level 0): engine teaches it at 60, the API at 0
 - **paladin** Righteous Fury  (spell 25780, level 10): engine teaches it at 16, the API at 10
-- **paladin** Enhanced Blessings  (spell 435984, level 0): engine teaches it at 60, the API at 0
-- **paladin** Exorcist  (spell 415076, level 0): engine teaches it at 60, the API at 0
-- **paladin** Improved Flash of Light Rank 1 (spell 20249, level 0): engine teaches it at 60, the API at 0
-- **paladin** Improved Flash of Light Rank 2 (spell 20250, level 0): engine teaches it at 60, the API at 0
-- **paladin** Improved Flash of Light Rank 3 (spell 20251, level 0): engine teaches it at 60, the API at 0
-- **priest** Focused Casting  (spell 27828, level 0): engine teaches it at 60, the API at 0
-- **priest** Increased Fortitude  (spell 436951, level 0): engine teaches it at 60, the API at 0
-- **rogue** Main Gauche  (spell 424919, level 0): engine teaches it at 60, the API at 0
-- **rogue** Vanished Rank 1 (spell 14093, level 0): engine teaches it at 60, the API at 0
-- **shaman** Ancestral Fortitude  (spell 16177, level 0): engine teaches it at 60, the API at 0
-- **shaman** Healing Rain  (spell 415236, level 0): engine teaches it at 60, the API at 0
-- **warlock** Dance of the Wicked  (spell 412798, level 0): engine teaches it at 60, the API at 0
-- **warlock** Demonic Grace  (spell 425463, level 0): engine teaches it at 60, the API at 0
-- **warrior** Improved Intimidating Shout Rank 1 (spell 19870, level 0): engine teaches it at 60, the API at 0
-- **warrior** Improved Intimidating Shout Rank 2 (spell 19871, level 0): engine teaches it at 60, the API at 0
-- **warrior** Long Daze Rank 1 (spell 12705, level 0): engine teaches it at 60, the API at 0
 
-## Values differ from the tooltip (53)
+## Values differ from the tooltip (132)
 
 - **druid** Efflorescence  (spell 417148, level 1): direct: the values predict 16 or 17, the tooltip has [15, 30, 33]
-- **druid** Lifebloom  (spell 408124, level 1): periodic: the values predict 28 or 35, the tooltip has [3, 7, 30, 58, 119]
+- **druid** Healing Touch Rank 1 (spell 5185, level 1): direct: the values predict 40/54 or 40/56, the tooltip has [37, 51]
+- **druid** Healing Touch Rank 2 (spell 5186, level 8): direct: the values predict 93/119 or 94/120, the tooltip has [88, 112]
+- **druid** Healing Touch Rank 3 (spell 5187, level 14): direct: the values predict 187/233 or 188/234, the tooltip has [179, 223]
+- **druid** Healing Touch Rank 4 (spell 5188, level 20): direct: the values predict 337/413 or 338/414, the tooltip has [325, 399]
+- **druid** Healing Touch Rank 5 (spell 5189, level 26): direct: the values predict 506/614 or 507/615, the tooltip has [493, 599]
+- **druid** Lifebloom  (spell 408124, level 1): periodic: the values predict 28 or 35 or 4 or 5, the tooltip has [3, 30, 58, 119]
 - **druid** Nourish  (spell 408247, level 1): direct: the values predict 161/189 or 162/190, the tooltip has [20, 30, 335, 393]
-- **druid** Starsurge  (spell 417157, level 1): direct: the values predict 248/304 or 249/305, the tooltip has [1, 15, 30, 80, 132, 162]
-- **druid** Sunfire  (spell 414684, level 1): periodic: the values predict 260 or 264, the tooltip has [12, 30, 69, 81, 139]
-- **druid** Sunfire  (spell 414684, level 1): direct: the values predict 130/152 or 131/153, the tooltip has [12, 30, 69, 81, 139]
-- **druid** Rip Rank 1 (spell 1079, level 20): periodic: the values predict 18 or 24, the tooltip has [1, 2, 3, 4, 5, 12, 44, 71, 97, 124, 150]
-- **druid** Rip Rank 2 (spell 9492, level 28): periodic: the values predict 24 or 30, the tooltip has [1, 2, 3, 4, 5, 12, 67, 110, 154, 197, 240]
-- **hunter** Mend Pet Rank 1 (spell 136, level 12): periodic: the values predict 100 or 105, the tooltip has [5, 20]
-- **hunter** Mend Pet Rank 2 (spell 3111, level 20): periodic: the values predict 190 or 195, the tooltip has [5, 38]
-- **hunter** Mend Pet Rank 3 (spell 3661, level 28): periodic: the values predict 340 or 345, the tooltip has [5, 68]
+- **druid** Starsurge  (spell 417157, level 1): direct: the values predict 248/304 or 249/305, the tooltip has [1, 30, 80, 132, 162]
+- **druid** Sunfire  (spell 414684, level 1): periodic: the values predict 260 or 264 or 65 or 66, the tooltip has [30, 69, 81, 139]
+- **druid** Sunfire  (spell 414684, level 1): direct: the values predict 130/152 or 131/153, the tooltip has [30, 69, 81, 139]
+- **druid** Wrath Rank 2 (spell 5177, level 6): direct: the values predict 20/24 or 21/25, the tooltip has [19, 23]
+- **druid** Wrath Rank 3 (spell 5178, level 14): direct: the values predict 30/36 or 31/37, the tooltip has [27, 33]
+- **druid** Wrath Rank 4 (spell 5179, level 22): direct: the values predict 37/43 or 38/44, the tooltip has [34, 40]
+- **druid** Moonfire Rank 1 (spell 8921, level 4): direct: the values predict 9/11 or 10/12, the tooltip has [7, 9, 12]
+- **druid** Moonfire Rank 2 (spell 8924, level 10): direct: the values predict 15/19 or 16/20, the tooltip has [11, 15, 24]
+- **druid** Moonfire Rank 3 (spell 8925, level 16): direct: the values predict 24/30 or 25/31, the tooltip has [20, 24, 36]
+- **druid** Moonfire Rank 4 (spell 8926, level 22): direct: the values predict 35/43 or 36/44, the tooltip has [29, 35, 52]
+- **druid** Moonfire Rank 5 (spell 8927, level 28): direct: the values predict 46/54 or 46/56, the tooltip has [43, 51, 76]
+- **druid** Regrowth Rank 1 (spell 8936, level 12): direct: the values predict 89/103 or 90/104, the tooltip has [80, 91, 94]
+- **druid** Regrowth Rank 2 (spell 8938, level 18): direct: the values predict 164/188 or 165/189, the tooltip has [153, 154, 175]
+- **druid** Regrowth Rank 3 (spell 8939, level 24): direct: the values predict 233/267 or 234/268, the tooltip has [219, 224, 251]
+- **druid** Starfire Rank 1 (spell 2912, level 20): direct: the values predict 78/96 or 79/97, the tooltip has [73, 89]
+- **druid** Starfire Rank 2 (spell 8949, level 26): direct: the values predict 105/127 or 105/129, the tooltip has [99, 121]
 - **mage** Arcane Barrage  (spell 400610, level 1): direct: the values predict 358/438 or 359/439, the tooltip has [30, 50, 194, 237]
-- **mage** Arcane Surge  (spell 425124, level 1): direct: the values predict 226/264 or 227/265, the tooltip has [8, 30, 122, 143, 300]
+- **mage** Arcane Surge  (spell 425124, level 1): direct: the values predict 226/264 or 227/265, the tooltip has [30, 122, 143, 300]
 - **mage** Balefire Bolt  (spell 428878, level 1): direct: the values predict 280/420 or 281/421, the tooltip has [0, 5, 20, 30, 151, 227]
-- **mage** Living Bomb  (spell 400613, level 1): periodic: the values predict 340 or 344, the tooltip has [10, 12, 30, 93, 184]
-- **mage** Mass Regeneration  (spell 412510, level 1): periodic: the values predict 126 or 129, the tooltip has [3, 15, 30, 43.5, 50, 80, 265]
-- **mage** Spellfrost Bolt  (spell 412532, level 1): direct: the values predict 305/355 or 306/356, the tooltip has [9, 30, 40, 165, 192]
-- **mage** Living Flame  (spell 401558, level 0): periodic: the values predict 200 or 202, the tooltip has [1, 30, 54]
-- **paladin** Divine Light  (spell 458856, level 1): direct: the values predict 355/393 or 356/394, the tooltip has [15, 30, 50, 748, 828]
-- **paladin** Judgement of Righteousness Rank 1 (spell 20187, level 1): direct: the values predict 14/16 or 15/17, the tooltip has []
-- **paladin** Judgement of Righteousness Rank 2 (spell 20280, level 10): direct: the values predict 25/27 or 26/28, the tooltip has []
-- **paladin** Judgement of Righteousness Rank 3 (spell 20281, level 18): direct: the values predict 39/43 or 40/44, the tooltip has []
-- **paladin** Judgement of Righteousness Rank 4 (spell 20282, level 26): direct: the values predict 57/63 or 58/64, the tooltip has []
+- **mage** Fireball Rank 2 (spell 143, level 6): direct: the values predict 27/39 or 28/40, the tooltip has [3, 26, 38]
+- **mage** Fireball Rank 3 (spell 145, level 12): direct: the values predict 45/61 or 45/63, the tooltip has [6, 43, 59]
+- **mage** Fireball Rank 4 (spell 3140, level 18): direct: the values predict 67/93 or 68/94, the tooltip has [12, 65, 89]
+- **mage** Fireball Rank 5 (spell 8400, level 24): direct: the values predict 107/143 or 107/145, the tooltip has [16, 102, 138]
+- **mage** Living Bomb  (spell 400613, level 1): periodic: the values predict 340 or 344 or 85 or 86, the tooltip has [10, 30, 93, 184]
+- **mage** Mass Regeneration  (spell 412510, level 1): periodic: the values predict 126 or 129 or 42 or 43, the tooltip has [30, 43.5, 50, 80, 265]
+- **mage** Spellfrost Bolt  (spell 412532, level 1): direct: the values predict 305/355 or 306/356, the tooltip has [30, 40, 165, 192]
+- **mage** Frostbolt Rank 2 (spell 205, level 8): direct: the values predict 28/32 or 29/33, the tooltip has [27, 31, 40]
+- **mage** Frostbolt Rank 3 (spell 837, level 14): direct: the values predict 45/51 or 46/52, the tooltip has [40, 43, 49]
+- **mage** Frostbolt Rank 4 (spell 7322, level 20): direct: the values predict 69/77 or 70/78, the tooltip has [40, 66, 74]
+- **mage** Frostbolt Rank 5 (spell 8406, level 26): direct: the values predict 104/114 or 105/115, the tooltip has [40, 99, 109]
+- **mage** Fire Blast Rank 1 (spell 2136, level 6): direct: the values predict 27/35 or 27/37, the tooltip has [24, 32]
+- **mage** Fire Blast Rank 2 (spell 2137, level 14): direct: the values predict 56/70 or 57/71, the tooltip has [52, 64]
+- **mage** Fire Blast Rank 3 (spell 2138, level 22): direct: the values predict 96/118 or 97/119, the tooltip has [90, 110]
+- **mage** Frost Nova Rank 1 (spell 122, level 10): direct: the values predict 21/23 or 22/24, the tooltip has [19, 21]
+- **mage** Frost Nova Rank 2 (spell 865, level 26): direct: the values predict 34/38 or 35/39, the tooltip has [32, 36]
+- **mage** Arcane Explosion Rank 1 (spell 1449, level 14): direct: the values predict 32/36 or 33/37, the tooltip has [10, 30, 34]
+- **mage** Arcane Explosion Rank 2 (spell 8437, level 22): direct: the values predict 55/61 or 56/62, the tooltip has [10, 52, 58]
+- **mage** Flamestrike Rank 1 (spell 2120, level 16): direct: the values predict 55/71 or 55/73, the tooltip has [44, 52, 68]
+- **mage** Flamestrike Rank 2 (spell 2121, level 24): direct: the values predict 100/126 or 100/128, the tooltip has [84, 96, 122]
+- **mage** Scorch Rank 1 (spell 2948, level 22): direct: the values predict 38/46 or 39/47, the tooltip has [35, 43]
+- **mage** Scorch Rank 2 (spell 8444, level 28): direct: the values predict 52/62 or 53/63, the tooltip has [50, 60]
+- **mage** Frost Blast Rank 1 (spell 1326053, level 24): direct: the values predict 26/28 or 27/29, the tooltip has [25, 27, 40]
+- **mage** Cone of Cold Rank 1 (spell 120, level 26): direct: the values predict 95/105 or 96/106, the tooltip has [4, 10, 40, 92, 102]
+- **mage** Living Flame  (spell 401558, level 0): periodic: the values predict 200 or 202 or 100 or 101, the tooltip has [30, 54]
+- **paladin** Divine Light  (spell 458856, level 1): direct: the values predict 355/393 or 356/394, the tooltip has [30, 50, 748, 828]
+- **paladin** Holy Light Rank 1 (spell 635, level 1): direct: the values predict 42/50 or 43/51, the tooltip has [39, 47]
+- **paladin** Holy Light Rank 2 (spell 639, level 6): direct: the values predict 81/95 or 81/97, the tooltip has [76, 90]
+- **paladin** Holy Light Rank 3 (spell 647, level 14): direct: the values predict 150/176 or 151/177, the tooltip has [142, 168]
+- **paladin** Holy Light Rank 4 (spell 1026, level 22): direct: the values predict 278/320 or 279/321, the tooltip has [267, 307]
 - **paladin** Shield of Righteousness  (spell 440658, level 1): direct: the values predict 179 or 180, the tooltip has [30, 84]
-- **paladin** Judgement of Fury Rank 3 (spell 20183, level 25): direct: the values predict 51/57 or 52/58, the tooltip has []
+- **paladin** Exorcism Rank 1 (spell 879, level 20): direct: the values predict 79/91 or 80/92, the tooltip has [74, 84]
+- **paladin** Exorcism Rank 2 (spell 5614, level 28): direct: the values predict 135/153 or 136/154, the tooltip has [132, 150]
+- **paladin** Flash of Light Rank 1 (spell 19750, level 20): direct: the values predict 47/55 or 48/56, the tooltip has [43, 49]
+- **paladin** Flash of Light Rank 2 (spell 19939, level 26): direct: the values predict 66/76 or 67/77, the tooltip has [62, 70]
 - **priest** Circle of Healing  (spell 401946, level 1): direct: the values predict 130/144 or 131/145, the tooltip has [30, 43.5, 274, 303]
+- **priest** Lesser Heal Rank 2 (spell 2052, level 4): direct: the values predict 88/106 or 89/107, the tooltip has [86, 102]
+- **priest** Lesser Heal Rank 3 (spell 2053, level 10): direct: the values predict 156/182 or 157/183, the tooltip has [151, 175]
 - **priest** Mind Spike  (spell 431655, level 1): direct: the values predict 122/142 or 123/143, the tooltip has [3, 30, 78, 90]
-- **priest** Vampiric Touch  (spell 402668, level 1): periodic: the values predict 325 or 330, the tooltip has [2, 15, 30, 207]
-- **priest** Void Plague  (spell 425204, level 1): periodic: the values predict 774 or 780, the tooltip has [18, 30, 493]
-- **priest** Holy Fire Rank 1 (spell 14914, level 20): direct: the values predict 51/65 or 52/66, the tooltip has [10, 20, 48, 60]
+- **priest** Smite Rank 2 (spell 591, level 6): direct: the values predict 25/31 or 26/32, the tooltip has [24, 30]
+- **priest** Smite Rank 3 (spell 598, level 14): direct: the values predict 44/50 or 45/51, the tooltip has [42, 48]
+- **priest** Smite Rank 4 (spell 984, level 22): direct: the values predict 58/68 or 59/69, the tooltip has [56, 64]
+- **priest** Vampiric Touch  (spell 402668, level 1): periodic: the values predict 325 or 330 or 65 or 66, the tooltip has [2, 30, 207]
+- **priest** Void Plague  (spell 425204, level 1): periodic: the values predict 774 or 780 or 129 or 130, the tooltip has [30, 493]
+- **priest** Desperate Prayer Rank 1 (spell 13908, level 10): direct: the values predict 144/182 or 145/183, the tooltip has [131, 167]
+- **priest** Desperate Prayer Rank 2 (spell 19236, level 18): direct: the values predict 265/327 or 266/328, the tooltip has [247, 305]
+- **priest** Desperate Prayer Rank 3 (spell 19238, level 26): direct: the values predict 430/522 or 431/523, the tooltip has [414, 502]
+- **priest** Divine Grace Rank 1 (spell 1277370, level 10): direct: the values predict 144/182 or 145/183, the tooltip has [50, 131, 167]
+- **priest** Divine Grace Rank 2 (spell 1277371, level 18): direct: the values predict 265/327 or 266/328, the tooltip has [50, 247, 305]
+- **priest** Divine Grace Rank 3 (spell 1277372, level 26): direct: the values predict 430/522 or 431/523, the tooltip has [50, 414, 502]
+- **priest** Mind Blast Rank 1 (spell 8092, level 10): direct: the values predict 40/44 or 41/45, the tooltip has [37, 41]
+- **priest** Mind Blast Rank 2 (spell 8102, level 16): direct: the values predict 69/75 or 70/76, the tooltip has [65, 71]
+- **priest** Mind Blast Rank 3 (spell 8103, level 22): direct: the values predict 102/110 or 103/111, the tooltip has [98, 104]
+- **priest** Mind Blast Rank 4 (spell 8104, level 28): direct: the values predict 149/157 or 150/158, the tooltip has [147, 155]
+- **priest** Heal Rank 1 (spell 2054, level 16): direct: the values predict 260/300 or 261/301, the tooltip has [250, 290]
+- **priest** Heal Rank 2 (spell 2055, level 22): direct: the values predict 363/415 or 364/416, the tooltip has [350, 400]
+- **priest** Heal Rank 3 (spell 6063, level 28): direct: the values predict 498/564 or 499/565, the tooltip has [490, 556]
+- **priest** Flash Heal Rank 1 (spell 2061, level 20): direct: the values predict 182/224 or 183/225, the tooltip has [174, 214]
+- **priest** Flash Heal Rank 2 (spell 9472, level 26): direct: the values predict 232/282 or 233/283, the tooltip has [225, 273]
+- **priest** Holy Fire Rank 1 (spell 14914, level 20): direct: the values predict 56/70 or 57/71, the tooltip has [20, 48, 60]
+- **priest** Holy Fire Rank 2 (spell 15262, level 24): direct: the values predict 63/79 or 64/80, the tooltip has [25, 56, 70]
 - **rogue** Between the Eyes  (spell 400009, level 1): direct: the values predict 53/81 or 54/82, the tooltip has [1, 2, 3, 4, 5, 30, 37, 57, 60, 83, 92, 106]
 - **rogue** Eviscerate Rank 2 (spell 6760, level 8): direct: the values predict 3/11 or 3/13, the tooltip has [1, 2, 3, 4, 5, 14, 22, 25, 33, 36, 44, 47]
 - **rogue** Eviscerate Rank 3 (spell 6761, level 16): direct: the values predict 6/20 or 6/22, the tooltip has [1, 2, 3, 4, 5, 25, 39, 44, 58, 63, 77, 82]
 - **rogue** Eviscerate Rank 4 (spell 6762, level 24): direct: the values predict 10/30 or 10/32, the tooltip has [1, 2, 3, 4, 5, 41, 61, 72, 92, 103, 123, 134]
-- **rogue** Saber Slash  (spell 424785, level 1): periodic: the values predict 30 or 36, the tooltip has [1, 2, 3, 5, 12, 33, 100]
-- **rogue** Rupture Rank 1 (spell 1943, level 20): periodic: the values predict 15 or 18, the tooltip has [1, 2, 3, 4, 5, 8, 10, 12, 14, 16, 25, 37]
-- **rogue** Rupture Rank 2 (spell 8639, level 28): periodic: the values predict 21 or 24, the tooltip has [1, 2, 3, 4, 5, 8, 10, 12, 14, 16, 35, 53]
+- **shaman** Healing Wave Rank 1 (spell 331, level 1): direct: the values predict 36/46 or 37/47, the tooltip has [34, 44]
+- **shaman** Healing Wave Rank 2 (spell 332, level 6): direct: the values predict 69/83 or 69/85, the tooltip has [64, 78]
+- **shaman** Healing Wave Rank 3 (spell 547, level 12): direct: the values predict 125/151 or 126/152, the tooltip has [119, 143]
+- **shaman** Healing Wave Rank 4 (spell 913, level 18): direct: the values predict 245/289 or 246/290, the tooltip has [235, 277]
+- **shaman** Healing Wave Rank 5 (spell 939, level 24): direct: the values predict 327/383 or 328/384, the tooltip has [315, 369]
+- **shaman** Lightning Bolt Rank 3 (spell 548, level 14): direct: the values predict 42/50 or 43/51, the tooltip has [41, 49]
+- **shaman** Lightning Bolt Rank 4 (spell 915, level 20): direct: the values predict 59/67 or 60/68, the tooltip has [57, 65]
+- **shaman** Lightning Bolt Rank 5 (spell 943, level 26): direct: the values predict 78/90 or 79/91, the tooltip has [76, 88]
 - **shaman** Molten Blast  (spell 425339, level 1): direct: the values predict 72/108 or 73/109, the tooltip has [5, 10, 30, 39, 59]
+- **shaman** Earth Shock Rank 1 (spell 8042, level 4): direct: the values predict 19/21 or 20/22, the tooltip has [17, 19]
+- **shaman** Earth Shock Rank 2 (spell 8044, level 8): direct: the values predict 35/37 or 36/38, the tooltip has [32, 34]
+- **shaman** Earth Shock Rank 3 (spell 8045, level 14): direct: the values predict 51/55 or 52/56, the tooltip has [47, 51]
+- **shaman** Earth Shock Rank 4 (spell 8046, level 24): direct: the values predict 83/89 or 84/90, the tooltip has [78, 84]
+- **shaman** Flame Shock Rank 1 (spell 8050, level 10): direct: the values predict 24 or 25, the tooltip has [20, 28]
+- **shaman** Flame Shock Rank 2 (spell 8052, level 18): direct: the values predict 38 or 39, the tooltip has [32, 33]
+- **shaman** Flame Shock Rank 3 (spell 8053, level 28): direct: the values predict 45 or 46, the tooltip has [43, 56]
+- **shaman** Frost Shock Rank 1 (spell 8056, level 20): direct: the values predict 68/72 or 69/73, the tooltip has [50, 64, 68]
+- **shaman** Lesser Healing Wave Rank 1 (spell 8004, level 20): direct: the values predict 150/172 or 151/173, the tooltip has [142, 164]
+- **shaman** Lesser Healing Wave Rank 2 (spell 8008, level 28): direct: the values predict 213/243 or 214/244, the tooltip has [210, 238]
 - **warlock** Chaos Bolt  (spell 403629, level 1): direct: the values predict 522/662 or 523/663, the tooltip has [4, 30, 289, 366]
-- **warlock** Shadow Cleave Rank 4 (spell 403841, level 20): direct: the values predict 23/37 or 24/38, the tooltip has [10, 24, 36]
-- **warlock** Shadowflame  (spell 426320, level 1): direct: the values predict 173 or 174, the tooltip has [15, 26, 30, 96, 177]
-- **warlock** Shadowflame  (spell 426320, level 1): periodic: the values predict 320 or 325, the tooltip has [15, 26, 30, 96, 177]
-- **warlock** Health Funnel Rank 1 (spell 755, level 12): periodic: the values predict 120 or 130, the tooltip has [10, 12]
-- **warlock** Health Funnel Rank 1 (spell 755, level 12): periodic: the values predict 54 or 64, the tooltip has [10, 12]
-- **warlock** Health Funnel Rank 2 (spell 3698, level 20): periodic: the values predict 240 or 250, the tooltip has [10, 24]
-- **warlock** Health Funnel Rank 2 (spell 3698, level 20): periodic: the values predict 105 or 115, the tooltip has [10, 24]
-- **warlock** Health Funnel Rank 3 (spell 3699, level 28): periodic: the values predict 430 or 440, the tooltip has [10, 43]
-- **warlock** Health Funnel Rank 3 (spell 3699, level 28): periodic: the values predict 170 or 180, the tooltip has [10, 43]
-- **warlock** Hellfire Rank 1 (spell 1949, level 30): periodic: the values predict 1230 or 1245, the tooltip has [1, 15, 82]
-- **warrior** Shockwave  (spell 440488, level 1): direct: the values predict 1 or 2, the tooltip has [4, 10, 50]
-- **warrior** Revenge Rank 1 (spell 6572, level 14): direct: the values predict 20/24 or 21/25, the tooltip has []
-- **warrior** Revenge Rank 2 (spell 6574, level 24): direct: the values predict 31/37 or 31/39, the tooltip has []
-- **warrior** Victory Rush  (spell 402927, level 20): direct: the values predict 1 or 2, the tooltip has [10, 20]
+- **warlock** Immolate Rank 1 (spell 348, level 1): direct: the values predict 10 or 11, the tooltip has [8, 15]
+- **warlock** Immolate Rank 2 (spell 707, level 10): direct: the values predict 21 or 22, the tooltip has [17, 30]
+- **warlock** Immolate Rank 3 (spell 1094, level 20): direct: the values predict 38 or 39, the tooltip has [32, 60]
+- **warlock** Shadow Bolt Rank 2 (spell 695, level 6): direct: the values predict 21/27 or 22/28, the tooltip has [20, 26]
+- **warlock** Shadow Bolt Rank 3 (spell 705, level 12): direct: the values predict 40/46 or 41/47, the tooltip has [37, 43]
+- **warlock** Shadow Bolt Rank 4 (spell 1088, level 20): direct: the values predict 58/66 or 59/67, the tooltip has [54, 62]
+- **warlock** Shadow Bolt Rank 5 (spell 1106, level 28): direct: the values predict 75/85 or 76/86, the tooltip has [73, 83]
+- **warlock** Shadow Cleave Rank 2 (spell 403839, level 6): direct: the values predict 6/12 or 7/13, the tooltip has [6, 10]
+- **warlock** Shadow Cleave Rank 3 (spell 403840, level 12): direct: the values predict 14/22 or 15/23, the tooltip has [10, 13, 21]
+- **warlock** Shadow Cleave Rank 4 (spell 403841, level 20): direct: the values predict 25/39 or 26/40, the tooltip has [10, 24, 36]
+- **warlock** Shadow Cleave Rank 5 (spell 403842, level 28): direct: the values predict 40/62 or 41/63, the tooltip has [10, 40, 60]
+- **warlock** Shadowflame  (spell 426320, level 1): direct: the values predict 173 or 174, the tooltip has [26, 30, 96, 177]
+- **warlock** Shadowflame  (spell 426320, level 1): periodic: the values predict 320 or 325 or 64 or 65, the tooltip has [26, 30, 96, 177]
+- **warlock** Health Funnel Rank 1 (spell 755, level 12): periodic: the values predict 50 or 60 or 5 or 6, the tooltip has [12]
+- **warlock** Health Funnel Rank 2 (spell 3698, level 20): periodic: the values predict 100 or 110 or 10 or 11, the tooltip has [24]
+- **warlock** Health Funnel Rank 3 (spell 3699, level 28): periodic: the values predict 170 or 180 or 17 or 18, the tooltip has [43]
+- **warlock** Searing Pain Rank 1 (spell 5676, level 18): direct: the values predict 23/29 or 24/30, the tooltip has [21, 25]
+- **warlock** Searing Pain Rank 2 (spell 17919, level 26): direct: the values predict 32/38 or 33/39, the tooltip has [30, 36]
+- **warrior** Shockwave  (spell 440488, level 1): direct: the values predict 1 or 2, the tooltip has [10, 50]
+- **warrior** Victory Rush  (spell 402927, level 20): direct: the values predict 1 or 2, the tooltip has [10]
 
