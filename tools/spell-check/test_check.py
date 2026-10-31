@@ -107,9 +107,10 @@ class Run(unittest.TestCase):
 
         class Fake:
             def __init__(self, *a):
-                pass
+                self.calls = 0
 
             def get(self, path):
+                self.calls += 1
                 return classes.get(path.rsplit('/', 1)[1]) if path.startswith('/classes/') else {'description': ''}
 
         with tempfile.TemporaryDirectory() as d:
