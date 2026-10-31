@@ -38,10 +38,11 @@ func TestActualAllNineClassesThroughCore(t *testing.T) {
    snap["hunter"]=map[string]any{"ammo":map[string]any{"status":"ok","dps":float64(2)},"quiver":map[string]any{"status":"none"}}
   }
   service:=SimService{Config:Config{Runtime:root,Data:t.TempDir(),Engine:engine,EngineRevision:str(manifestForTest(t),"engineRevision")}}
-  req,e:=service.liveRequest(Job{State:map[string]any{"sim":snap},Payload:map[string]any{}});if e!=nil{t.Fatal(e)}
+  payload:=map[string]any{};if class=="mage"{payload["rotation"]="frost"} // the rotations of a class are chosen by name; this one needs only Frostbolt
+  req,e:=service.liveRequest(Job{State:map[string]any{"sim":snap},Payload:payload});if e!=nil{t.Fatal(e)}
   child(req,"simOptions")["iterations"]=float64(10);child(req,"encounter")["duration"]=float64(20)
   result,e:=service.once(context.Background(),req);if e!=nil{t.Fatal(e)}
   if simDPS(result)<=0{t.Fatalf("no damage: %v",result)}
-  t.Logf("MythicSim %.3f DPS",simDPS(result))
+  t.Logf("Engine %.3f DPS",simDPS(result))
  })}}
 }

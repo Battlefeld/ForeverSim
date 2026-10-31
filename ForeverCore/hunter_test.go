@@ -53,7 +53,13 @@ func TestHunterLiveMapping(t *testing.T) {
 		t.Fatalf("ammo: %v %v", got.options, got.private)
 	}
 	// Forever's quiver spell is not one of the engine's; the client's 10% decides.
-	if num(got.options, "quiverBonus") != 1 {
+	want10 := float64(-1)
+	for _, raw := range array(spec, "quiver") {
+		if row, _ := raw.(map[string]any); num(row, "hastePct") == 10 {
+			want10 = num(row, "value")
+		}
+	}
+	if want10 < 0 || num(got.options, "quiverBonus") != want10 {
 		t.Fatalf("quiver: %v", got.options["quiverBonus"])
 	}
 	// 2.0 s is the engine's "Two" entry.
@@ -124,7 +130,7 @@ func TestHunterLiveRefusesWhatItCannotRepresent(t *testing.T) {
 		return s
 	}
 	for name, s := range map[string]map[string]any{
-		"family the engine lacks": edit(func(h map[string]any) { child(h, "pet")["family"] = "Fuchs" }),
+		"family the engine lacks": edit(func(h map[string]any) { child(h, "pet")["family"] = "Sukkubus" }),
 		"hasted pet speed":        edit(func(h map[string]any) { child(h, "pet")["speed"] = 1.82 }),
 		"protected pet":           edit(func(h map[string]any) { child(h, "pet")["status"] = "unreadable" }),
 		"unreadable ammo":         edit(func(h map[string]any) { h["ammo"] = map[string]any{"status": "unreadable"} }),

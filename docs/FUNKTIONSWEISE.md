@@ -39,7 +39,7 @@ berechnet.
 | **ForeverSimBridge** | WoW-Addon | Liest den Charakter (Gear, Talente, Zauberbuch, Jäger-Daten), zeigt Item-Prozente |
 | **FC3_S0001 … FC3_S2048** | 2.048 winzige Addons | Antwortslots: der PC schreibt hier seine Antworten hinein |
 | **ForeverCore.exe** | PC | Liest den Pixelstreifen, nimmt Aufträge an, startet die Simulation, schreibt Antworten, pflegt Datenquellen |
-| **MythicSim.exe** | PC | Die Kampf-Simulation (WoWSims-Forever-Engine) plus ein Level-Layer für Level 10–60 |
+| **ForeverEngine.exe** | PC | Die Kampf-Simulation (WoWSims-Forever-Engine) plus ein Level-Layer für Level 10–60 |
 | **Lua.exe** | PC | Lua 5.1 für die Routenberechnung auf dem PC |
 | **Data/** | PC | Zwischengespeicherte Quellen (QuestieDB, RestedXP, ForeverDB) und geprüfte Datengenerationen; wird im Sim-Paket nicht mehr automatisch aktualisiert (`autoSync = false`) |
 
@@ -60,7 +60,7 @@ Spiel (Addon)                                   PC (ForeverCore.exe)
 3. JSON in Rahmen zu je 238 Byte zerlegen
 4. Rahmen als Schwarz/Grau-Streifen oben links ─► 5. Fenster abfotografieren, Rahmen
    malen (je 0,10 s ein Rahmen, im Kreis)            zusammensetzen, CRC32 prüfen
-                                                  6. Auftrag ausführen, MythicSim rechnen
+                                                  6. Auftrag ausführen, Engine rechnen
 7. Alle 2 s LoadAddOn("FC3_S0001") …   ◄───────── Antwort in Slot FC3_Snnnn schreiben
 8. Antwort prüfen: Sitzung, Auftragsnummer,
    Revision, Art stimmen? sonst verwerfen
@@ -217,7 +217,7 @@ Alles liegt in ForeverSimBridge; es wird kein anderes Addon gebraucht.
 |---|---|
 | `DungeonCatalogData.lua` (erzeugt) | 29 Dungeons mit Levelbereich, Instanz-IDs, Bossen (Name, NPC-ID, Level), Trash-Beute und Items: 1.462 Einträge, davon 1.001 mit Drop-Chance in %, dazu das Mindestlevel der Items |
 | `DungeonCatalog.lua` | Schnittstelle `ForeverSimDungeonAPI`: Dungeonliste, Bosse, Kontext des aktuellen Dungeons, Loot-Kandidaten, Drop-Chance-Text |
-| Engine-Datenbank (MythicSim) | 10.769 Items mit Werten; deckt ca. 82–93 % der Dungeon-Drops ab |
+| Engine-Datenbank (Engine) | 10.769 Items mit Werten; deckt ca. 82–93 % der Dungeon-Drops ab |
 
 Quelle: **NorgannonDB** (https://github.com/zmarotrix/NorgannonDB, GPL-3.0): Instanzen mit Stufen, Bossen und
 Beute (dort aus DungeonJournal by Exehn), Drop-Chancen je Gegner, Itemnamen und Mindeststufen. Die Quelle steht im
@@ -382,7 +382,7 @@ alten Szenario-/Analyseansichten bleiben entfernt. Linksklick auf den Minimap-Kr
 Rechtsklick die ForeverCore-Verbindungsübersicht.
 
 Die Klassenmodule, Talent- und Zauberbucherfassung sowie die Item-Pipeline bleiben gemeinsam nutzbar.
-Auf dem PC sind die in Abschnitt 6.8 beschriebenen Aufträge mit derselben MythicSim-Engine verbunden.
+Auf dem PC sind die in Abschnitt 6.8 beschriebenen Aufträge mit derselben Engine-Engine verbunden.
 
 Der Generator des Dungeon-Katalogs liegt in `_dev/tools`, die Entwicklerdateien der Klassenmodule in
 `_dev/ForeverSimBridge-Development` (nicht im Addon).
@@ -395,8 +395,8 @@ links, ForeverCore-Kristall rechts (blau = `ForeverCore.exe` antwortet, grau = n
 
 | Reiter | Ab Stufe | Inhalt |
 |---|---|---|
-| **Talente** | 60 | bis zu 10 eigene Skillungen speichern, kopieren, umbenennen, teilen (`FSB1:`-Text), Talentbäume mit denselben Regeln wie die Engine, „Simulieren“ (DPS-Vergleich, DPS über Zeit, Mana, Schaden je Zauber, bester Spec für dein Gear), MythicSim-Top-Skillungen mit eigenem Gear, „Beste Skillung finden“ (Suche im Hintergrund: einzelne Punkte verschieben, solange der Schaden steigt) |
-| **Rotation** | 50 (HUD-Einstellungen immer) | alle Rotationen der Engine für die gewählte Skillung im Vergleich, „Beste Rota simmen“, „Eigene Rota verfeinern“ (MythicSim probiert Zeilen an anderer Stelle, behält nur Bestätigtes), Prioritätenliste, Einstellungen des Kampf-HUDs, Schalter „Beim Anmelden neu rechnen“ |
+| **Talente** | 60 | bis zu 10 eigene Skillungen speichern, kopieren, umbenennen, teilen (`FSB1:`-Text), Talentbäume mit denselben Regeln wie die Engine, „Simulieren“ (DPS-Vergleich, DPS über Zeit, Mana, Schaden je Zauber, bester Spec für dein Gear), Engine-Top-Skillungen mit eigenem Gear, „Beste Skillung finden“ (Suche im Hintergrund: einzelne Punkte verschieben, solange der Schaden steigt) |
+| **Rotation** | 50 (HUD-Einstellungen immer) | alle Rotationen der Engine für die gewählte Skillung im Vergleich, „Beste Rota simmen“, „Eigene Rota verfeinern“ (Engine probiert Zeilen an anderer Stelle, behält nur Bestätigtes), Prioritätenliste, Einstellungen des Kampf-HUDs, Schalter „Beim Anmelden neu rechnen“ |
 | **Beute** | 50 | Pre-BiS auf einer Charakterpuppe (bester Drop je Platz mit Quelle und Gewinn), Quellen-Filter, Stat-Gewichte, Alternativen und „Wo farmen?“ (Gewinn je Lauf), zweite Ansicht „Verzauberungen & Buffs“ |
 
 **Eine Rotation für alles:** Die beste Rotation der aktuell gespielten Skillung (`Sim.Rotation()`) geht in jeden Auftrag, auch
@@ -431,12 +431,12 @@ zusätzlich prüfen `builds_live_test.go` und die Integrations-CI diese Aufträg
 `talent_search`, `login_check`, `loot`.
 
 **Noch nicht im Spiel bestätigt:** das ganze Fenster und vor allem das HUD (Procs über die Aktivierungs-Ereignisse,
-Tastenanzeige, Aktionsleisten-Rahmen). Die Beute-Quellen sind der Dungeon-Katalog, deine Taschen und die MythicSim-Liste;
+Tastenanzeige, Aktionsleisten-Rahmen). Die Beute-Quellen sind der Dungeon-Katalog, deine Taschen und die Engine-Liste;
 Quest-, Handwerks-, Ruf-, Auktions- und Raid-Quellen brauchen weitere Daten. Für Verzauberungen und Buff-Food gibt es nun den unten beschriebenen vorläufigen Vergleich. Der „Pre-BiS gesamt“-Wert ist die Summe der Einzelwerte (eine Näherung).
 
 ### Verzauberungen & Buff-Food: DPS-Empfehlungen (vorläufig)
 
-Im Tab **Beute → Verzauberungen & Buffs → VZ & Food simmen** berechnet ForeverCore mit der gepinnten MythicSim-Engine die beste bekannte VZ pro getragenem Ausrüstungsplatz und die besten bekannten Buff-Foods. Rechts stehen die Änderungen nach einzelnem DPS-Gewinn sortiert, mit Prozent und DPS. Bei Gleichstand oder schlechteren Alternativen bleibt die aktuelle VZ die Empfehlung.
+Im Tab **Beute → Verzauberungen & Buffs → VZ & Food simmen** berechnet ForeverCore mit der gepinnten Engine-Engine die beste bekannte VZ pro getragenem Ausrüstungsplatz und die besten bekannten Buff-Foods. Rechts stehen die Änderungen nach einzelnem DPS-Gewinn sortiert, mit Prozent und DPS. Bei Gleichstand oder schlechteren Alternativen bleibt die aktuelle VZ die Empfehlung.
 
 Die Referenz enthält **alle aktuell getragenen VZ, ohne Food**. Jeder Kandidat ersetzt genau eine VZ beziehungsweise fügt genau ein Food hinzu; Rotation, Charakter und Seed bleiben gleich. Diese Einzelgewinne dürfen nicht addiert werden. Der normale Itemvergleich bleibt ohne VZ und Buff-Food; dieser Tab verwendet einen eigenen Ergebnisstand, der auch bei einer geänderten VZ veraltet.
 
@@ -465,7 +465,7 @@ jeder Änderung neu geplant.
 - **Was ForeverCore tut** (`routenext.go`): Es ruft `foreverroutes.exe next` mit dem Datensatz, dem Kampfprofil deiner
   Klasse und der besten Route deines Volks und deiner Klasse auf (`routes/<volk>-<klasse>.json` neben dem Datensatz, bei
   den Skyborne je Fraktion). Die Route wird ab deinem Stand weitergegangen; ist von ihr nichts mehr übrig, plant
-  ForeverRoutes frei. Das Kampfprofil kommt aus `profiles/<klasse>.json` neben dem Datensatz. Das Kampfprofil rechnet MythicSim beim ersten Mal im Hintergrund, etwa eine Minute lang, und
+  ForeverRoutes frei. Das Kampfprofil kommt aus `profiles/<klasse>.json` neben dem Datensatz. Das Kampfprofil rechnet Engine beim ersten Mal im Hintergrund, etwa eine Minute lang, und
   speichert es unter `Data\Profiles`. Bis dahin wird mit der Schätzung geplant, und das Fenster zeigt das an. Eine
   Planung dauert unter einer Sekunde.
 - **Was du siehst:** Ein verschiebbares Fenster mit den nächsten acht Schritten (Annehmen, Erledigen, Abgeben, Grinden)
@@ -679,7 +679,7 @@ Stufe 1/5/49/50/59/60. Diese Mock-Prüfungen ersetzen keine Ingame-Abnahme.
 
 ## 15. Quellen und Lizenzen
 
-- MythicSim / WoWSims Forever: <https://github.com/sage3648/mythicsim-forever-engine-go> ·
+- Engine / WoWSims Forever: <https://github.com/wowsims/forever> ·
   <https://github.com/wowsims/forever> (MIT)
 - QuestieDB: <https://github.com/Questie/QuestieDB> · RestedXP: <https://github.com/RestedXP/RXPGuides>
 - ForeverDB: <https://foreverdb.net>
@@ -689,7 +689,7 @@ Stufe 1/5/49/50/59/60. Diese Mock-Prüfungen ersetzen keine Ingame-Abnahme.
 - Lizenztexte: Ordner `Lizenzen\` im Programmordner; alle Quellen in [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)
 
 **Lizenz:** Der eigene Code dieses Repositorys (ForeverCore, ForeverCoreBridge, ForeverSimBridge, Werkzeuge) steht
-unter der MIT-Lizenz (`LICENSE`). Übernommene Teile behalten ihre Lizenz: MythicSim/WoWSims-Werte MIT
+unter der MIT-Lizenz (`LICENSE`). Übernommene Teile behalten ihre Lizenz: Engine/WoWSims-Werte MIT
 (`ForeverSimBridge/THIRD_PARTY_LICENSES.txt`), aus cmangos classic-db abgeleitete Werte (`warlock-demons.json`)
 GPL-3.0, der Dungeon-Katalog aus NorgannonDB (`ForeverSimBridge/DungeonCatalogData.lua`) GPL-3.0. Das mitgelieferte ForeverRoutes-Addon und seine Routen
 stehen unter den Lizenzen von ForeverRoutes (Code MIT, Datensatz GPL-3.0, RestedXP-Routen CC BY-NC-SA 4.0).

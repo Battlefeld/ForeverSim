@@ -1,311 +1,263 @@
 {
- "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+5d65aca1bbaef2e8c5d49009",
- "base": "bcdda5184aa68466f407e3727f99abf7d5454a27",
- "branch": "mythicsim/client70425",
- "clientBuild": "1.60.1.70425",
+ "previous": "eca41cc7ce8fa2061e4e08d7b246c3d97f738fc4+7ad88775f89380485d5c59e1",
  "ok": true,
- "validation": "Native engines; level-60 parity; all upstream suites; complete two-pass level goldens; mana-boundary fix",
- "cli": [
-  {
-   "request": "kerani.request.json",
-   "level": 10,
-   "dps": 49.8
-  },
-  {
-   "request": "kerani.request.json",
-   "level": 20,
-   "dps": 108.4
-  },
-  {
-   "request": "kerani.request.json",
-   "level": 30,
-   "dps": 143.4
-  },
-  {
-   "request": "kerani.request.json",
-   "level": 45,
-   "dps": 274.9
-  },
-  {
-   "request": "kerani.request.json",
-   "level": 59,
-   "dps": 485.9
-  },
-  {
-   "request": "kerani.request.json",
-   "level": 60,
-   "dps": 514.2
-  },
-  {
-   "request": "lights_vigil_request.json",
-   "level": 10,
-   "dps": 135.4
-  },
-  {
-   "request": "lights_vigil_request.json",
-   "level": 20,
-   "dps": 195.4
-  },
-  {
-   "request": "lights_vigil_request.json",
-   "level": 30,
-   "dps": 229.7
-  },
-  {
-   "request": "lights_vigil_request.json",
-   "level": 45,
-   "dps": 270.5
-  },
-  {
-   "request": "lights_vigil_request.json",
-   "level": 59,
-   "dps": 388.3
-  },
-  {
-   "request": "lights_vigil_request.json",
-   "level": 60,
-   "dps": 409.7
-  }
+ "branch": "master",
+ "base": "eca41cc7ce8fa2061e4e08d7b246c3d97f738fc4",
+ "descendsFromLock": true,
+ "clientBuild": "1.60.1.70707",
+ "levelData": "refreshed from PlayerExpectedStat 1.60.1.70707",
+ "creatureFamilies": "refreshed from CreatureFamily 1.60.1.70707",
+ "overlay": {
+  "overlay": "c20bd8a136f5fff0",
+  "applied": [
+   "character-level-variable",
+   "mechanics-mirror-test-float",
+   "ladder-highest-known-rank",
+   "ladder-each-known-rank",
+   "apl-rank-fallback",
+   "cancast-unlearned",
+   "cast-unlearned",
+   "queue-unlearned",
+   "aura-rank-fallback",
+   "apl-live-known-rank",
+   "level-mana-affordability",
+   "level-mana-rounding-clamp",
+   "hunter-live-ammo",
+   "hunter-live-pet-stats",
+   "hunter-live-pet-damage-min",
+   "hunter-live-pet-damage-max",
+   "warlock-live-demon-stats",
+   "warlock-live-demon-melee",
+   "warlock-live-firebolt-damage",
+   "warlock-live-firebolt-cost",
+   "warlock-live-firebolt-minmana",
+   "warlock-live-lash-damage",
+   "warlock-live-lash-cost",
+   "warlock-live-lash-minmana",
+   "rogue-poison-rank-lookup",
+   "ladder-rank-known",
+   "ladder-byid-known",
+   "register-spell-no-duplicate",
+   "shaman-min-rank-level",
+   "register-aura-no-duplicate",
+   "cli-strict-request"
+  ],
+  "skipped": [],
+  "files": [
+   "sim/core/zz_forevercore_level.go",
+   "sim/core/zz_forevercore_level_test.go",
+   "sim/core/spelldata/zz_forevercore_ladder.go",
+   "sim/core/zz_forevercore_spellbook.go",
+   "sim/core/zz_forevercore_spellbook_test.go",
+   "sim/core/zz_forevercore_mana.go",
+   "sim/core/zz_forevercore_mana_test.go",
+   "sim/hunter/zz_forevercore_hunter.go",
+   "sim/hunter/zz_forevercore_hunter_test.go",
+   "sim/warlock/zz_forevercore_warlock.go",
+   "sim/warlock/zz_forevercore_warlock_test.go",
+   "cmd/wowsimcli/cmd/zz_forevercore_strict.go",
+   "sim/core/zz_forevercore_leveldata.go"
+  ],
+  "levelLiterals": [
+   "sim/core/target.go:214: if target.Level == 63 && options.SuppressDodge {",
+   "sim/core/weapon_test_fixture.go:86: Targets:  []*proto.Target{{Name: \"target\", Level: 63, MobType: proto.MobType_MobTypeHumanoid}},"
+  ]
+ },
+ "notes": [
+  "reference request sim/warlock/testdata/imp-brand/kerani.request.json missing upstream",
+  "reference request sim/paladin/retribution/testdata/lights_vigil_request.json missing upstream"
  ],
+ "cli": [],
  "specDps": {
   "TestAffliction": {
-   "60": 207.2,
-   "10": 47.5,
-   "20": 57.3,
-   "30": 75.8,
-   "45": 118.6,
-   "59": 191.6
+   "60": 522.6,
+   "10": 413.0,
+   "20": 421.3,
+   "30": 423.3,
+   "45": 441.7,
+   "59": 491.5
+  },
+  "TestAfflictionWrack": {
+   "60": 443.1,
+   "10": 365.0,
+   "20": 361.5,
+   "30": 366.8,
+   "45": 375.2,
+   "59": 428.3
   },
   "TestArcane": {
-   "60": 191.2,
-   "10": 24.8,
-   "20": 31.3,
-   "30": 47.0,
-   "45": 94.4,
-   "59": 124.9
-  },
-  "TestArms": {
-   "60": 207.4,
-   "10": 101.8,
-   "20": 129.5,
-   "30": 142.5,
-   "45": 173.6,
-   "59": 206.1
-  },
-  "TestAssassination": {
-   "60": 214.7,
-   "10": 79.6,
-   "20": 93.6,
-   "30": 107.1,
-   "45": 187.4,
-   "59": 213.0
+   "60": 555.5,
+   "10": 47.6,
+   "20": 402.7,
+   "30": 466.1,
+   "45": 485.4,
+   "59": 550.9
   },
   "TestBalance": {
-   "60": 126.4,
-   "10": 27.4,
-   "20": 27.8,
-   "30": 34.8,
-   "45": 62.3,
-   "59": 119.4
+   "60": 586.0,
+   "10": 544.8,
+   "20": 545.4,
+   "30": 540.4,
+   "45": 554.5,
+   "59": 584.4
   },
-  "TestBeastMastery": {
-   "60": 310.4,
-   "10": 147.4,
-   "20": 171.9,
-   "30": 196.0,
-   "45": 225.2,
-   "59": 306.7
+  "TestDemonologyFireBrand": {
+   "60": 618.7,
+   "10": 157.1,
+   "20": 397.5,
+   "30": 433.9,
+   "45": 492.9,
+   "59": 600.2
   },
-  "TestCombat": {
-   "60": 209.5,
-   "10": 73.9,
-   "20": 88.3,
-   "30": 104.0,
-   "45": 174.8,
-   "59": 207.7
+  "TestDemonologyShadowBrand": {
+   "60": 596.0,
+   "10": 445.9,
+   "20": 445.7,
+   "30": 464.0,
+   "45": 503.9,
+   "59": 574.6
   },
   "TestDestruction": {
-   "60": 176.3,
-   "10": 12.5,
-   "20": 20.5,
-   "30": 34.7,
-   "45": 74.7,
-   "59": 148.6
+   "60": 544.3,
+   "10": 181.7,
+   "20": 212.4,
+   "30": 281.2,
+   "45": 451.6,
+   "59": 512.1
+  },
+  "TestDpsWarrior": {
+   "60": 319.7,
+   "10": 188.9,
+   "20": 213.2,
+   "30": 232.9,
+   "45": 271.9,
+   "59": 316.3
   },
   "TestElemental": {
-   "60": 81.9,
-   "10": 12.2,
-   "20": 18.6,
-   "30": 25.7,
-   "45": 47.4,
-   "59": 77.2
+   "60": 360.4,
+   "10": 356.8,
+   "20": 321.7,
+   "30": 331.8,
+   "45": 340.2,
+   "59": 357.8
   },
   "TestEnhancement": {
-   "60": 233.7,
-   "10": 107.4,
-   "20": 137.7,
-   "30": 160.9,
-   "45": 181.7,
-   "59": 223.0
+   "60": 470.6,
+   "10": 225.3,
+   "20": 255.3,
+   "30": 297.5,
+   "45": 378.6,
+   "59": 459.4
+  },
+  "TestFFB": {
+   "60": 543.9,
+   "10": 68.4,
+   "20": 149.4,
+   "30": 237.5,
+   "45": 487.5,
+   "59": 525.9
   },
   "TestFeralBear": {
-   "60": 143.2,
-   "10": 35.0,
-   "20": 48.6,
-   "30": 60.8,
-   "45": 106.4,
-   "59": 142.6
+   "60": 412.1,
+   "10": 170.0,
+   "20": 206.7,
+   "30": 304.8,
+   "45": 349.8,
+   "59": 411.0
+  },
+  "TestFeralBearCoverage": {
+   "60": null
   },
   "TestFeralCat": {
-   "60": 197.8,
-   "10": 17.5,
-   "20": 128.2,
-   "30": 140.8,
-   "45": 163.3,
-   "59": 197.1
+   "60": 485.9,
+   "10": 95.1,
+   "20": 370.7,
+   "30": 411.8,
+   "45": 442.4,
+   "59": 487.8
+  },
+  "TestFeralCatCoverage": {
+   "60": null
   },
   "TestFire": {
-   "60": 137.1,
-   "10": 9.4,
-   "20": 13.8,
-   "30": 29.2,
-   "45": 66.3,
-   "59": 130.0
+   "60": 629.5,
+   "10": 364.2,
+   "20": 348.9,
+   "30": 487.9,
+   "45": 538.8,
+   "59": 616.2
   },
   "TestFrost": {
-   "60": 168.6,
-   "10": 28.8,
-   "20": 47.1,
-   "30": 56.3,
-   "45": 101.1,
-   "59": 157.8
-  },
-  "TestFury": {
-   "60": 206.6,
-   "10": 89.1,
-   "20": 111.4,
-   "30": 125.1,
-   "45": 162.5,
-   "59": 204.8
+   "60": 562.8,
+   "10": 339.9,
+   "20": 295.8,
+   "30": 348.1,
+   "45": 479.7,
+   "59": 561.4
   },
   "TestHealerPriest": {
-   "60": null,
-   "10": null,
-   "20": null,
-   "30": null,
-   "45": null,
-   "59": null
+   "60": null
   },
   "TestHolyPaladin": {
-   "60": null,
-   "10": null,
-   "20": null,
-   "30": null,
-   "45": null,
-   "59": null
+   "60": null
   },
-  "TestMarksmanship": {
-   "60": 246.1,
-   "10": 107.3,
-   "20": 128.1,
-   "30": 148.3,
-   "45": 179.4,
-   "59": 243.5
+  "TestHunter": {
+   "60": 503.3,
+   "10": 469.5,
+   "20": 450.6,
+   "30": 449.1,
+   "45": 470.7,
+   "59": 503.0
+  },
+  "TestHunterPets": {
+   "60": 497.5,
+   "10": 422.0,
+   "20": 428.1,
+   "30": 438.9,
+   "45": 464.9,
+   "59": 495.4
   },
   "TestProtection": {
-   "60": 212.6,
-   "10": 84.1,
-   "20": 103.3,
-   "30": 119.7,
-   "45": 153.8,
-   "59": 206.9
+   "60": 321.9,
+   "10": 164.5,
+   "20": 201.1,
+   "30": 226.6,
+   "45": 267.7,
+   "59": 317.7
   },
   "TestProtectionWarrior": {
-   "60": 237.6,
-   "10": 139.7,
-   "20": 174.8,
-   "30": 196.6,
-   "45": 217.7,
-   "59": 238.3
-  },
-  "TestRestorationDruid": {
-   "60": null,
-   "10": null,
-   "20": null,
-   "30": null,
-   "45": null,
-   "59": null
-  },
-  "TestRestorationShaman": {
-   "60": null,
-   "10": null,
-   "20": null,
-   "30": null,
-   "45": null,
-   "59": null
+   "60": 403.7,
+   "10": 306.8,
+   "20": 337.4,
+   "30": 355.9,
+   "45": 379.7,
+   "59": 401.2
   },
   "TestRetribution": {
-   "60": 247.0,
-   "10": 74.1,
-   "20": 94.6,
-   "30": 115.6,
-   "45": 170.9,
-   "59": 237.9
+   "60": 527.5,
+   "10": 299.4,
+   "20": 347.7,
+   "30": 393.6,
+   "45": 459.9,
+   "59": 517.6
+  },
+  "TestRogue": {
+   "60": 393.7,
+   "10": 232.5,
+   "20": 275.8,
+   "30": 305.6,
+   "45": 353.1,
+   "59": 392.5
   },
   "TestShadowPriest": {
-   "60": 274.3,
-   "10": 18.5,
-   "20": 43.0,
-   "30": 68.6,
-   "45": 150.6,
-   "59": 249.2
-  },
-  "TestSmitePriest": {
-   "60": 104.3,
-   "10": 27.1,
-   "20": 27.1,
-   "30": 31.3,
-   "45": 56.6,
-   "59": 101.0
-  },
-  "TestSubtlety": {
-   "60": 194.7,
-   "10": 130.9,
-   "20": 142.5,
-   "30": 155.6,
-   "45": 170.6,
-   "59": 193.2
-  },
-  "TestSurvival": {
-   "60": 252.1,
-   "10": 104.6,
-   "20": 142.6,
-   "30": 164.4,
-   "45": 193.3,
-   "59": 249.6
-  },
-  "TestSurvivalMelee": {
-   "60": 278.2,
-   "10": 108.5,
-   "20": 150.2,
-   "30": 173.4,
-   "45": 206.8,
-   "59": 275.4
+   "60": 541.6,
+   "10": 222.7,
+   "20": 354.6,
+   "30": 369.8,
+   "45": 444.8,
+   "59": 515.2
   }
  },
  "problems": [],
- "additionalChecks": {
-  "foreverCoreGoRace": "passed with native engine",
-  "goVet": "passed",
-  "luaBridgeAndAddonIntegration": "passed",
-  "pythonRegressions": 7,
-  "windowsCoreAndEngineCrossBuild": "passed",
-  "windowsGameplay": "not tested"
- },
- "overlay": "1ca3389bf0e9eca2",
- "automationSchedule": {
-  "state": "pending-explicit-authorization",
-  "defaultBranchChanged": false,
-  "reason": "Automatic approval review rejected persistent scheduled writes, releases and issues on main without explicit authorization."
- }
+ "buildIdentity": "eca41cc7ce8fa2061e4e08d7b246c3d97f738fc4+7ad88775f89380485d5c59e1"
 }

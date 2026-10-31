@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 // Client captures public equip requirements; the companion evaluates them before
-// asking MythicSim for DPS. Item stats and effects still come from the engine database.
+// asking Engine for DPS. Item stats and effects still come from the engine database.
 func liveItemEligibility(j Job, item map[string]any) error {
 	snap := child(j.State, "sim")
 	if snap == nil {

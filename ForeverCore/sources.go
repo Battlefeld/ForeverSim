@@ -222,7 +222,7 @@ func syncSources(ctx context.Context, cfg Config) (any, error) {
 		roots[repo] = dir
 		report = append(report, state)
 	}
-	result := map[string]any{"sources": report, "activated": false, "engine": "Pinned MythicSim; Datenupdates aendern keine Kampfformeln"}
+	result := map[string]any{"sources": report, "activated": false, "engine": "Pinned Engine; Datenupdates aendern keine Kampfformeln"}
 	_ = atomicWrite(filepath.Join(cfg.Data, "sources.json"), jsonBytes(result))
 	if len(roots) != len(sources) {
 		return result, fmt.Errorf("Nicht alle Routenquellen verfuegbar; letzter funktionierender Stand bleibt aktiv")

@@ -1,7 +1,7 @@
 ## Interface: 16001
 ## X-Target-Build: 1.60.1.70338
 ## Title: Forever Universal SIM
-## Notes: Charakterdaten, Item-Bewertung und Dungeon-Katalog fuer ForeverCore (MythicSim)
+## Notes: Charakterdaten, Item-Bewertung und Dungeon-Katalog fuer ForeverCore (Engine)
 ## Version: 1.16.0-offline-hardening-beta
 ## SavedVariables: ForeverSimBridgeDB
 Classes/warlock.lua

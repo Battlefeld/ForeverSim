@@ -22,7 +22,7 @@ var levelingData []byte
 var warlockDemons []byte
 
 // Kill profile for ForeverRoutes: how much damage a character deals in the first seconds of a fight and how much mana
-// and health that costs, per character level, from MythicSim with the level overlay. ForeverRoutes turns it into the
+// and health that costs, per character level, from Engine with the level overlay. ForeverRoutes turns it into the
 // fight and rest time of every mob in a route (route.TableProfile).
 //
 // The character is synthetic: the given class and race without items and talents, the spell ranks the overlay picks
@@ -36,8 +36,8 @@ var (
 	killWindows = []float64{6, 10, 15, 22, 30} // fight lengths in seconds
 	killOffsets = []int{0, 2}                  // target level minus character level
 	// A rotation for questing mobs: the class's own spell order without raid cooldowns.
-	killRotations = map[string]string{"warlock": "affliction", "mage": "fire", "warrior": "dps_battle", "rogue": "combat_sinister_strike",
-		"paladin": "default", "hunter": "mm", "priest": "smite_lowrank", "shaman": "forever_lowrank", "druid": "launch"}
+	killRotations = map[string]string{"warlock": "sm_ruin", "mage": "deepFire", "warrior": "arms", "rogue": "default",
+		"paladin": "default", "hunter": "mm", "priest": "smite_testing", "shaman": "testing", "druid": "default"}
 	// The warlock fights with the voidwalker, as most do while leveling.
 	killClassOptions = map[string]map[string]any{"warlock": {"summon": float64(2)}}
 )
@@ -95,7 +95,7 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 		return nil, fmt.Errorf("Kill-Profil: class und race angeben")
 	}
 	if _, ok := child(manifest, "races")["Race"+race]; !ok {
-		return nil, fmt.Errorf("Volk nicht in MythicSim: %s", race)
+		return nil, fmt.Errorf("Volk nicht in Engine: %s", race)
 	}
 	if child(child(manifest, "classes"), class) == nil {
 		return nil, fmt.Errorf("Klasse nicht unterstuetzt")
@@ -279,7 +279,7 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 	}
 	sort.Slice(levels, func(a, b int) bool { return levels[a].Level < levels[b].Level })
 	return map[string]any{
-		"schema": killProfileSchema, "source": "ForeverCore " + Version + " / MythicSim " + s.Config.EngineRevision,
+		"schema": killProfileSchema, "source": "ForeverCore " + Version + " / Engine " + s.Config.EngineRevision,
 		"class": class, "race": race, "spec": spec, "rotation": selected, "classOptions": options,
 		"gear": "starter weapon", "talents": "none", "spellbook": "ranks by level", "iterations": iterations,
 		"targetArmorEstimated": true, "levels": levels,

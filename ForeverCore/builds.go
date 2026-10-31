@@ -388,7 +388,7 @@ func (s *SimService) compareBuilds(ctx context.Context, j Job) (any, error) {
 	if resultReq == nil {
 		return nil, fmt.Errorf("Keine Skillung berechenbar: %v", rows[0]["error"])
 	}
-	return withResultContext(map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "builds": out, "best": best,
+	return withResultContext(map[string]any{"engine": "Engine Go", "engineRevision": s.Config.EngineRevision, "builds": out, "best": best,
 		"iterations": float64(full), "comparison": "Gleiche Ausruestung, gleiches Ziel, gleicher Seed; jede Skillung mit ihrer besten Rotation"}, resultReq), nil
 }
 

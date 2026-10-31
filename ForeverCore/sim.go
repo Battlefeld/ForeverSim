@@ -20,7 +20,7 @@ import (
 )
 
 // variantWorkers is the number of engine processes that run at the same time for one job.
-// MythicSim uses several threads itself, so half the logical CPUs is a safe upper bound.
+// Engine uses several threads itself, so half the logical CPUs is a safe upper bound.
 func variantWorkers(n int) int {
 	w := runtime.NumCPU() / 2
 	if w < 1 {
@@ -173,7 +173,7 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 	race = strings.ReplaceAll(race, " ", "")
 	race = "Race" + race
 	if _, ok := child(manifest, "races")[race]; !ok {
-		return nil, fmt.Errorf("Volk nicht in MythicSim: %s", race)
+		return nil, fmt.Errorf("Volk nicht in Engine: %s", race)
 	}
 	var selectedProfile map[string]any
 	if overridden {
@@ -299,7 +299,7 @@ func (s *SimService) liveRequest(j Job) (map[string]any, error) {
 	if approxLevel > 0 {
 		req[engineWarningsKey] = append(array(req, engineWarningsKey), fmt.Sprintf("Stufe %d: Die Engine rechnet erst ab Stufe 10, es wurde mit Stufe 10 genaehert (Items, Talente und Zauberbuch sind echt).", approxLevel))
 	}
-	// Display-only rank mapping; stripped before passing JSON to MythicSim.
+	// Display-only rank mapping; stripped before passing JSON to Engine.
 	// Spell availability still comes exclusively from the real player spellbook.
 	req["foreverCoreSpellRankFamilies"] = child(snap, "spellRankFamilies")
 	return req, nil
@@ -317,7 +317,7 @@ func (s *SimService) once(ctx context.Context, req map[string]any) (map[string]a
 		return nil, fmt.Errorf("Iterationen muessen zwischen 1 und 20000 liegen")
 	}
 	if _, exists := opt["ruleset"]; exists {
-		return nil, fmt.Errorf("Das importierte Profil nutzt eine andere MythicSim-API (ruleset-Feld)")
+		return nil, fmt.Errorf("Das importierte Profil nutzt eine andere Engine-API (ruleset-Feld)")
 	}
 	if opt["randomSeed"] == nil {
 		opt["randomSeed"] = "31211"
@@ -352,7 +352,7 @@ func (s *SimService) once(ctx context.Context, req map[string]any) (map[string]a
 			}
 			id := int(num(it, "id"))
 			if id > 0 && known[strconv.Itoa(id)] != true && !extra[id] {
-				return nil, fmt.Errorf("Item %d fehlt im gepinnten MythicSim-Datenbestand", id)
+				return nil, fmt.Errorf("Item %d fehlt im gepinnten Engine-Datenbestand", id)
 			}
 		}
 	}
@@ -410,7 +410,7 @@ func (s *SimService) once(ctx context.Context, req map[string]any) (map[string]a
 	}
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Minute)
 	defer cancel()
-	cmd := noWindow(exec.CommandContext(ctx, s.Config.Engine, "sim", "--strict", "--infile", in, "--outfile", out))
+	cmd := noWindow(exec.CommandContext(ctx, s.Config.Engine, "sim", "--infile", in, "--outfile", out))
 	cmd.Env = engineEnv(level)
 	if privateBook != nil {
 		bookPath := filepath.Join(dir, "spellbook.json")
@@ -428,13 +428,13 @@ func (s *SimService) once(ctx context.Context, req map[string]any) (map[string]a
 	}
 	logs, e := cmd.CombinedOutput()
 	if e != nil {
-		return nil, fmt.Errorf("MythicSim fehlgeschlagen: %v: %.600s", e, logs)
+		return nil, fmt.Errorf("Engine fehlgeschlagen: %v: %.600s", e, logs)
 	}
 	if e = loadJSON(out, &result); e != nil {
 		return nil, e
 	}
 	if er := child(result, "error"); str(er, "message") != "" {
-		return nil, fmt.Errorf("MythicSim: %s", str(er, "message"))
+		return nil, fmt.Errorf("Engine: %s", str(er, "message"))
 	}
 	if num(child(child(result, "raidMetrics"), "dps"), "avg") < 0 {
 		return nil, fmt.Errorf("Ungueltiges Ergebnis")
@@ -494,7 +494,7 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 	if dps <= 0 {
 		return nil, fmt.Errorf("Referenzrotation erzeugt keinen Schaden; Szenario/Rotation pruefen")
 	}
-	res := map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "baselineDps": dps, "dps": dps, "pct": 100, "selected": "baseline", "scenario": "Explizites MythicSim-Szenario; Live-Buffs werden nicht automatisch rekonstruiert"}
+	res := map[string]any{"engine": "Engine Go", "engineRevision": s.Config.EngineRevision, "baselineDps": dps, "dps": dps, "pct": 100, "selected": "baseline", "scenario": "Explizites Engine-Szenario; Live-Buffs werden nicht automatisch rekonstruiert"}
 	playerForDisplay, _ := playerOf(req)
 	res["priority"] = s.rotationPriorityFor(req, child(playerForDisplay, "rotation"))
 	withResultContext(res, req)
@@ -518,7 +518,7 @@ func (s *SimService) Run(ctx context.Context, j Job) (any, error) {
 		if j.Payload["benchmark"] == true {
 			rating["source"] = str(j.Payload, "benchmarkSource")
 			rating["xpKnown"] = false
-			req[engineWarningsKey] = append(array(req, engineWarningsKey), "Durchsatzmodell aus MythicSim-Referenz-DPS; keine exakte Kurz-Kampf-/Ressourcen-/Erholungssimulation. EP pro Stunde mangels NPC-EP nicht bekannt.")
+			req[engineWarningsKey] = append(array(req, engineWarningsKey), "Durchsatzmodell aus Engine-Referenz-DPS; keine exakte Kurz-Kampf-/Ressourcen-/Erholungssimulation. EP pro Stunde mangels NPC-EP nicht bekannt.")
 		}
 		return withResultContext(rating, req), nil
 	}

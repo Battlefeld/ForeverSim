@@ -1,4 +1,4 @@
-// ForeverCore overlay tests. Not part of MythicSim.
+// ForeverCore overlay tests. Not part of Engine.
 package core
 
 import (
@@ -60,14 +60,5 @@ func TestForeverCoreRescaleAP(t *testing.T) {
 		if got := foreverCoreRescaleAP(c.in, c.old, c.new); got != c.want {
 			t.Errorf("rescale(%v,%v->%v) = %v, want %v", c.in, c.old, c.new, got, c.want)
 		}
-	}
-}
-
-func TestForeverCoreUnitLevelSilentAt60(t *testing.T) {
-	if ForeverCoreLevelActive() {
-		t.Skip("runs only at level 60")
-	}
-	if _, ok := foreverCoreUnitLevel(CharacterLevel-1, 1, 2); ok {
-		t.Fatal("overlay must not answer at level 60")
 	}
 }

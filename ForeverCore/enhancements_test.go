@@ -69,7 +69,7 @@ func TestFoodUsesTooltipStatsAndKeepsXPSeparate(t *testing.T) {
 
 func enhancementSnapshot(t *testing.T, m map[string]any) map[string]any {
 	snap := mageSnapshot(t, m, fireTalents)
-	snap["equipped"] = []any{map[string]any{"slot": "ChestSlot", "id": 10021.0}, map[string]any{"slot": "MainHandSlot", "id": 13937.0}}
+	snap["equipped"] = []any{map[string]any{"slot": "ChestSlot", "id": 10021.0}, map[string]any{"slot": "MainHandSlot", "id": 3446.0}}
 	snap["enhancementEnchants"] = map[string]any{"chest": 24.0, "mainhand": 0.0}
 	return snap
 }

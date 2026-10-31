@@ -59,7 +59,7 @@ func liveClassOptions(snap, payload map[string]any, class string) (map[string]an
 	if class == "hunter" {
 		// The upstream reference has no automatic mapping for all low-level ammunition and pet
 		// training. Refuse incomplete live data instead of silently simulating AmmoNone/PetNone.
-		return nil, fmt.Errorf("Jaeger: Munition und Begleitertraining sind noch nicht vollstaendig zugeordnet; explizite MythicSim-classOptions oder ein vollstaendiges JSON-Szenario erforderlich")
+		return nil, fmt.Errorf("Jaeger: Munition und Begleitertraining sind noch nicht vollstaendig zugeordnet; explizite Engine-classOptions oder ein vollstaendiges JSON-Szenario erforderlich")
 	}
 	return options, nil
 }

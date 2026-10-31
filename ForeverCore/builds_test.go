@@ -16,7 +16,7 @@ func TestTalentStringRoundTripAndValidation(t *testing.T) {
 	if e != nil || text != fireTalents {
 		t.Fatalf("%q %v", text, e)
 	}
-	if pts := treePoints(trees(m), ranks); pts[0] != 19 || pts[1] != 32 || pts[2] != 0 {
+	if pts := treePoints(trees(m), ranks); pts[0] != 16 || pts[1] != 32 || pts[2] != 3 {
 		t.Fatalf("points %v", pts)
 	}
 	if tree, n := largestTreeOf(treePoints(trees(m), ranks)); tree != 1 || n != 32 {
@@ -126,7 +126,7 @@ func TestCompareBuildsPicksTheBestRotationPerBuild(t *testing.T) {
 		map[string]any{"id": "live", "name": "Im Spiel"},
 		map[string]any{"id": "arcane", "name": "Arkan", "talentsString": arcane},
 		map[string]any{"id": "bad", "name": "Kaputt", "talentsString": "99"},
-		map[string]any{"id": "fixed", "name": "Feuer fest", "talentsString": fireTalents, "rotation": "fire"},
+		map[string]any{"id": "fixed", "name": "Feuer fest", "talentsString": fireTalents, "rotation": "deepFire"},
 	}}}
 	got, e := s.Run(t.Context(), job)
 	if e != nil {
@@ -161,7 +161,7 @@ func TestCompareBuildsPicksTheBestRotationPerBuild(t *testing.T) {
 		t.Fatalf("bad build row %v", bad)
 	}
 	fixed := rows[3].(map[string]any)
-	if str(fixed, "rotation") != "fire" || len(array(fixed, "rotations")) != 1 {
+	if str(fixed, "rotation") != "deepFire" || len(array(fixed, "rotations")) != 1 {
 		t.Fatalf("fixed rotation row %v", fixed)
 	}
 	if str(got.(map[string]any), "best") == "" || str(got.(map[string]any), "best") == "bad" {
@@ -174,8 +174,8 @@ func TestCompareBuildsScreenOnlyMeasuresOnce(t *testing.T) {
 		s, m := fakeService(t)
 		snap := mageSnapshot(t, m, fireTalents)
 		payload := map[string]any{"builds": []any{
-			map[string]any{"id": "a", "talentsString": fireTalents, "rotation": "fire"},
-			map[string]any{"id": "b", "talentsString": legalBuild(t, m, 0), "rotation": "fire"},
+			map[string]any{"id": "a", "talentsString": fireTalents, "rotation": "deepFire"},
+			map[string]any{"id": "b", "talentsString": legalBuild(t, m, 0), "rotation": "deepFire"},
 		}}
 		if screenOnly {
 			payload["screenOnly"] = true
@@ -253,7 +253,7 @@ func TestPresetsAreDecodedAndChecked(t *testing.T) {
 		"talents": []any{
 			map[string]any{"name": "Fire DPS", "talentsString": fireTalents},
 			map[string]any{"name": "Arcane", "talentsString": arcane},
-			map[string]any{"name": "Short", "talentsString": "05002252000003-2355000013013503"},
+			map[string]any{"name": "Short", "talentsString": "0502-555"},
 			map[string]any{"name": "Broken", "talentsString": "zz"},
 		},
 		"gear":   []any{map[string]any{"name": "Pre-BiS", "items": []any{map[string]any{"id": float64(647), "enchant": float64(1)}, map[string]any{}, map[string]any{"id": float64(720)}}}},
@@ -290,8 +290,8 @@ func TestPresetsAreDecodedAndChecked(t *testing.T) {
 		t.Fatal("builds lost")
 	}
 	layout := array(r, "layout")
-	if len(layout) != 19+17+18 {
-		t.Fatalf("the current mage tree has 54 talents, layout has %d", len(layout))
+	if len(layout) != 18+17+18 {
+		t.Fatalf("the current mage tree has 53 talents, layout has %d", len(layout))
 	}
 	prereqs := 0
 	for _, raw := range layout {
@@ -567,7 +567,7 @@ func TestEmptyTalentOverrideAndInvalidRotationOrder(t *testing.T) {
 		}
 	}
 	for _, order := range [][]any{{"bad"}, {0.5}, {0.0}} {
-		_, e := s.rotaTune(t.Context(), Job{State: map[string]any{"sim": snap}, Payload: map[string]any{"rotation": "fire", "order": order}})
+		_, e := s.rotaTune(t.Context(), Job{State: map[string]any{"sim": snap}, Payload: map[string]any{"rotation": "deepFire", "order": order}})
 		if e == nil {
 			t.Fatalf("invalid order accepted: %v", order)
 		}

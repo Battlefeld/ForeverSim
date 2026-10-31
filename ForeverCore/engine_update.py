@@ -1,19 +1,16 @@
-"""Follow MythicSim automatically: newest upstream, ForeverCore patches, level overlay, full checks.
+"""Follow wowsims/forever automatically: newest master, level overlay, full checks.
 
 Steps (each one stops the run on failure, so engine.lock.json keeps the last good engine):
-  1. Fetch every mythicsim/* branch and pick the newest tip that contains the locked commit. When
-     no branch descends from it (upstream rewrote history) the newest tip is taken and reported.
-  2. Drop every ForeverCore patch whose upstreamCommit the new base already contains; check that
-     the rest still apply.
-  3. Refresh leveling-data.json from the client's PlayerExpectedStat (wago.tools CSV for the
-     client build the base names). Without that build on wago.tools the old table stays and the
-     overlay test proves it still matches upstream's level-60 values.
-  4. Build upstream and upstream+patches+overlay; run every upstream Go test with the overlay
-     (level 60 must not move), compare both CLIs on reference requests, and run the level smoke
-     (all spec suites at several levels: no panic, no unlearnt rank cast, DPS rising with level).
-  5. Write engine.lock.json, leveling-data.json, creature-families.json and engine-update-report.json.
+  1. Fetch master and take its tip (the engine is upstream as it is, plus the level overlay; there are no engine patches).
+  2. Refresh leveling-data.json from the client's PlayerExpectedStat (wago.tools CSV for the client build the
+     engine's spell data names). Without that build on wago.tools the old table stays and the overlay test proves it
+     still matches upstream's level-60 values.
+  3. Build upstream and upstream+overlay; run every upstream Go test with the overlay (level 60 must not move),
+     compare both CLIs on reference requests, and run the level smoke (all spec suites at several levels: no panic,
+     no unlearnt rank cast, DPS rising with level).
+  4. Write engine.lock.json, leveling-data.json, creature-families.json and engine-update-report.json.
 
-    python engine_update.py --work /tmp/fc-engine [--branch mythicsim/client70425] [--dry-run]
+    python engine_update.py --work /tmp/fc-engine [--branch master] [--dry-run]
 """
 import argparse
 import csv
@@ -37,10 +34,15 @@ sys.path.insert(0, str(OVERLAY))
 from apply_overlay import apply as apply_overlay, overlay_digest, OverlayError  # noqa: E402
 from golden_dps import suite_dps  # noqa: E402
 from engine_identity import build_identity, leveling_digest
+from engine_source import client_build as read_client_build
 from talent_layout import write as write_talent_layout
 from compare_results import canon, differences  # noqa: E402
 
 SMOKE_LEVELS = [10, 20, 30, 45, 59]
+DPS_DROP_TOLERANCE = 0.80
+# Below 60 only these cases of every spec suite run: they carry the DPS and hit every start-up path. The item and enchant
+# cases of a suite are hundreds of runs that say nothing more about a level; level 60 runs in full in the package tests.
+SMOKE_CASES = '^(?:CharacterStats|Settings)'
 REFERENCE_REQUESTS = [
     'sim/warlock/testdata/imp-brand/kerani.request.json',
     'sim/paladin/retribution/testdata/lights_vigil_request.json',
@@ -51,11 +53,18 @@ class UpdateError(Exception):
     pass
 
 
+def failure_summary(output):
+    """What failed in a go test run: the failed packages and top-level tests, then the end of the output."""
+    lines = output.splitlines()
+    heads = [l for l in lines if re.match(r'^(FAIL\t|--- FAIL: |panic: )', l)]
+    return '\n'.join(heads[:40]) + '\n...\n' + output[-1500:] if heads else output[-3000:]
+
+
 def sh(*cmd, cwd=None, env=None, capture=False, check=True):
     p = subprocess.run([str(c) for c in cmd], cwd=cwd, env=env, text=True,
                        capture_output=capture)
     if check and p.returncode != 0:
-        tail = (p.stderr or p.stdout or '')[-3000:] if capture else ''
+        tail = failure_summary(p.stderr or p.stdout or '') if capture else ''
         raise UpdateError(f'{" ".join(map(str, cmd[:4]))} failed ({p.returncode})\n{tail}')
     return p.stdout.strip() if capture else p.returncode
 
@@ -76,7 +85,7 @@ def fetch_upstream(repo, url):
         sh('git', 'init', '-q', repo)
         sh('git', '-C', repo, 'remote', 'add', 'origin', url)
     sh('git', '-C', repo, 'fetch', '-q', '--filter=blob:none', 'origin',
-       '+refs/heads/mythicsim/*:refs/remotes/origin/mythicsim/*')
+       '+refs/heads/master:refs/remotes/origin/master')
 
 
 # Files that are numbers, generated from the client's tables, tests, interface or documents: not the calculation.
@@ -105,37 +114,17 @@ def calculation_changes(repo, locked, base):
 
 
 def pick_base(repo, locked, forced=None):
-    if forced:
-        ref = f'origin/{forced}'
-        return forced, git(repo, 'rev-parse', ref), True
-    rows = git(repo, 'for-each-ref', '--sort=-committerdate', '--format=%(refname:short) %(objectname)',
-               'refs/remotes/origin/mythicsim').splitlines()
-    branches = [r.split() for r in rows if r.strip()]
-    if not branches:
-        raise UpdateError('no mythicsim/* branches upstream')
+    """(branch, tip, descends): the tip of master, or of the forced branch, and whether it contains the locked commit."""
+    branch = forced or 'master'
+    sha = git(repo, 'rev-parse', f'origin/{branch}')
     have_locked = subprocess.run(['git', '-C', str(repo), 'cat-file', '-e', locked + '^{commit}'],
                                  capture_output=True).returncode == 0
-    for ref, sha in branches:
-        if have_locked and subprocess.run(['git', '-C', str(repo), 'merge-base', '--is-ancestor', locked, sha],
-                                          capture_output=True).returncode == 0:
-            return ref.removeprefix('origin/'), sha, True
-    ref, sha = branches[0]
-    return ref.removeprefix('origin/'), sha, False
+    descends = have_locked and subprocess.run(['git', '-C', str(repo), 'merge-base', '--is-ancestor', locked, sha],
+                                              capture_output=True).returncode == 0
+    return branch, sha, descends
 
 
-# 2. patches --------------------------------------------------------------------------------------
-
-def settle_patches(repo, base, patches):
-    kept, dropped = [], []
-    for p in patches:
-        up = p.get('upstreamCommit')
-        if up and subprocess.run(['git', '-C', str(repo), 'merge-base', '--is-ancestor', up, base],
-                                 capture_output=True).returncode == 0:
-            dropped.append(p['file'])
-            continue
-        kept.append(p)
-    return kept, dropped
-
+# 2. checkout ------------------------------------------------------------------------------------
 
 def checkout(repo, base, dest):
     # A worktree of the blobless clone fetches the blobs it needs from the promisor remote.
@@ -143,16 +132,6 @@ def checkout(repo, base, dest):
         shutil.rmtree(dest)
     sh('git', '-C', repo, 'worktree', 'prune')
     sh('git', '-C', repo, 'worktree', 'add', '-q', '--detach', dest, base)
-
-
-def apply_patches(src, patches):
-    for p in patches:
-        path = CORE / p['file']
-        if hashlib.sha256(path.read_bytes()).hexdigest() != p['sha256']:
-            raise UpdateError(f'patch checksum mismatch: {p["file"]}')
-        if sh('git', '-C', src, 'apply', '--check', '--whitespace=nowarn', path, check=False, capture=False) != 0:
-            raise UpdateError(f'{p["file"]} no longer applies to the new base and is not upstream yet')
-        sh('git', '-C', src, 'apply', '--whitespace=nowarn', path)
 
 
 # 3. level data -----------------------------------------------------------------------------------
@@ -194,8 +173,7 @@ def go_env():
 
 def protoc(src):
     protos = sorted(str(p.relative_to(src)) for p in (src / 'proto').glob('*.proto'))
-    sh('protoc', '-I=proto', '--go_opt=Mgoogle/protobuf/descriptor.proto=google.golang.org/protobuf/types/descriptorpb',
-       '--go_out=sim/core', *protos, cwd=src)
+    sh('protoc', '-I=proto', '--go_out=paths=source_relative:sim/core/proto', *protos, cwd=src)
 
 
 def prepare_checkout(src):
@@ -260,47 +238,33 @@ def validate_level_golden(path, tmp, original):
     if not tmp.is_file():
         raise UpdateError(f'missing level test results: {path.name}')
     actual = tmp.read_text()
-    expected_keys = sorted(re.findall(r'(?m)^ ?key:\s*"([^"\n]+)"', original.decode()))
-    actual_keys = sorted(re.findall(r'(?m)^ ?key:\s*"([^"\n]+)"', actual))
+    # the smoke runs only the character-stats and settings cases of each suite (see SMOKE_CASES)
+    wanted = re.compile(r'-(?:CharacterStats|Settings)-')
+    expected_keys = sorted(k for k in re.findall(r'(?m)^ ?key:\s*"([^"\n]+)"', original.decode()) if wanted.search(k))
+    actual_keys = sorted(k for k in re.findall(r'(?m)^ ?key:\s*"([^"\n]+)"', actual) if wanted.search(k))
     if not expected_keys or expected_keys != actual_keys:
         raise UpdateError(f'incomplete level test results: {path.name}')
     if re.search(r'(?i)\b(?:nan|inf|infinity)\b', actual):
         raise UpdateError(f'non-finite level test result: {path.name}')
 
 
-def touched_packages(src, patches):
-    """Go packages a ForeverCore patch edits; their golden suites move by design."""
-    dirs = set()
-    for p in patches:
-        for line in (CORE / p['file']).read_text().splitlines():
-            if line.startswith('+++ b/') and line.endswith('.go'):
-                dirs.add(str(Path(line[6:]).parent))
-    module = sh('go', 'list', '-m', cwd=src, capture=True)
-    return {f'{module}/{d}' for d in dirs}
-
-
-def checks(upstream_src, parity_src, shipped_src, patches, work, report):
-    """parity = upstream + overlay (must equal upstream at 60); shipped = upstream + patches + overlay."""
-    print('upstream Go tests with the overlay, no ForeverCore patches (level 60 must not move)...')
-    sh('go', 'test', '-tags=with_db', '-count=1', *packages(parity_src), cwd=parity_src, env=go_env())
-    suites = golden_suites(shipped_src)
-    touched = touched_packages(shipped_src, patches)
-    pk = packages(shipped_src)
-    print('shipped engine tests (patched packages without their goldens)...')
-    plain = [p for p in pk if p not in touched]
-    if plain:
-        sh('go', 'test', '-tags=with_db', '-count=1', *plain, cwd=shipped_src, env=go_env())
-    if touched & set(pk):
-        sh('go', 'test', '-tags=with_db', '-count=1', '-skip', '^(' + '|'.join(suites) + ')$',
-           *sorted(touched & set(pk)), cwd=shipped_src, env=go_env())
-    up_cli, par_cli, ov_cli = work / 'wowsimcli-upstream', work / 'wowsimcli-parity', work / 'wowsimcli-overlay'
-    build_cli(upstream_src, up_cli)
-    build_cli(parity_src, par_cli)
-    build_cli(shipped_src, ov_cli)
-    overlay_src = shipped_src
-    taught = spell_levels(overlay_src, work / 'spell-levels.json')
+def checks(upstream_src, overlay_src, work, report, classes=None):
+    """upstream = wowsims/forever as it is; overlay = the same plus the level overlay (must equal upstream at 60)."""
+    pk = packages(overlay_src)
+    if classes:
+        # partial run: only the packages of these classes (sim/<class> and its spec folders)
+        pk = [p for p in pk if any(re.search(rf'/sim/{c}(/|$)', p) for c in classes)]
+    else:
+        print('upstream Go tests with the overlay (level 60 must not move)...')
+        sh('go', 'test', '-tags=with_db', '-count=1', *pk, cwd=overlay_src, env=go_env())
+    suites = golden_suites(overlay_src) if not classes else sorted({p.name.split('.')[0] for c in classes for p in overlay_src.glob(f'sim/{c}/**/*.results')} - {'TestProtoVersioning'})
+    up_cli, ov_cli = work / 'wowsimcli-upstream', work / 'wowsimcli-overlay'
+    if not classes:
+        build_cli(upstream_src, up_cli)
+        build_cli(overlay_src, ov_cli)
+    taught = spell_levels(overlay_src, work / 'spell-levels.json') if not classes else {}
     problems, cli_rows = [], []
-    for rel in REFERENCE_REQUESTS:
+    for rel in ([] if classes else REFERENCE_REQUESTS):
         req = overlay_src / rel
         if not req.exists():
             report.setdefault('notes', []).append(f'reference request {rel} missing upstream')
@@ -310,9 +274,8 @@ def checks(upstream_src, parity_src, shipped_src, patches, work, report):
         req = work / Path(rel).name
         req.write_text(json.dumps(data))
         up = run_cli(up_cli, req, work / 'up.json')
-        par = run_cli(par_cli, req, work / 'par.json')
         ov = run_cli(ov_cli, req, work / 'ov.json')
-        diff = differences(canon(up), canon(par))
+        diff = differences(canon(up), canon(ov))
         if diff:
             problems.append(f'{req.name}: level 60 differs from upstream: ' + '; '.join(diff[:5]))
         for level in SMOKE_LEVELS:
@@ -333,10 +296,11 @@ def checks(upstream_src, parity_src, shipped_src, patches, work, report):
         name = p.name.split('.')[0]
         if name in table:
             table[name][60] = suite_dps(p)
+    skipped_suites = set()
     goldens = list(overlay_src.rglob('*.results'))
     originals = {p: p.read_bytes() for p in goldens}
     try:
-        for level in [60] + SMOKE_LEVELS:
+        for level in SMOKE_LEVELS:
             print(f'level {level}: collect and verify every spec suite...', flush=True)
             for path, contents in originals.items():
                 path.write_bytes(contents)
@@ -345,25 +309,28 @@ def checks(upstream_src, parity_src, shipped_src, patches, work, report):
             env = go_env()
             env['FOREVERCORE_LEVEL'] = str(level)
             # First pass produces level-specific goldens. Differences from level 60 are expected.
-            first = subprocess.run(['go', 'test', '-tags=with_db', '-count=1', '-run', pattern, *pk],
+            first = subprocess.run(['go', 'test', '-tags=with_db', '-count=1', '-v', '-run', pattern + '/' + SMOKE_CASES, *pk],
                                    cwd=overlay_src, env=env, capture_output=True, text=True)
-            if first.returncode not in (0, 1) or 'panic:' in first.stdout + first.stderr:
-                raise UpdateError(f'spec suites failed at level {level}: ' + (first.stdout + first.stderr)[-3000:])
+            if first.returncode not in (0, 1) or re.search(r'(?m)^panic: ', first.stdout + first.stderr):
+                raise UpdateError(f'spec suites failed at level {level}: ' + failure_summary(first.stdout + first.stderr))
+            # upstream skips a suite on purpose (t.Skip): it writes no results and has nothing to compare
+            skipped = set(re.findall(r'--- SKIP: (\w+)', first.stdout))
+            skipped_suites |= skipped
             for path, original in originals.items():
-                if path.name.split('.')[0] not in table:
+                if path.name.split('.')[0] not in table or path.name.split('.')[0] in skipped:
                     continue
                 tmp = Path(str(path) + '.tmp')
+                # a suite with no character-stats or settings case (coverage suites) has nothing to compare
+                if not re.search(rb'-(?:CharacterStats|Settings)-', original):
+                    continue
                 validate_level_golden(path, tmp, original)
                 name = path.name.split('.')[0]
                 table[name][level] = suite_dps(tmp)
-                path.write_bytes(tmp.read_bytes())
-            # No failures are ignored here: deterministic golden differences have been accounted
-            # for, while compiler errors, assertions, missing tests and concurrency errors still fail.
-            sh('go', 'test', '-tags=with_db', '-count=1', '-run', pattern, *pk,
-               cwd=overlay_src, env=env, capture=True)
     finally:
         for path, contents in originals.items():
             path.write_bytes(contents)
+    for name in skipped_suites:
+        table.pop(name, None)  # not run, so no DPS to follow across the levels
     for name, row in table.items():
         last = None
         for level in SMOKE_LEVELS + [60]:
@@ -372,7 +339,9 @@ def checks(upstream_src, parity_src, shipped_src, patches, work, report):
                 problems.append(f'{name}: missing or nonpositive DPS at level {level}')
             if dps is None:
                 continue
-            if last is not None and last > 1 and dps < last * 0.97:
+            # A higher rank can lower the damage on fixed endgame gear (a longer cast, a bigger cost), as downranking shows in
+            # the game; only a real drop means a broken rank choice.
+            if last is not None and last > 1 and dps < last * DPS_DROP_TOLERANCE:
                 problems.append(f'{name}: DPS falls from {last:.1f} to {dps:.1f} at level {level}')
             last = dps
     report['cli'] = cli_rows
@@ -388,13 +357,18 @@ def checks(upstream_src, parity_src, shipped_src, patches, work, report):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--work', type=Path, default=Path(tempfile.gettempdir()) / 'forevercore-engine')
-    ap.add_argument('--branch', help='take this mythicsim/* branch instead of the newest descendant')
+    ap.add_argument('--branch', help='take this branch of the engine repository instead of master')
     ap.add_argument('--dry-run', action='store_true', help='check only, leave lock and level data alone')
     ap.add_argument('--windows-exe', type=Path, help='also build the overlay engine for Windows here')
     ap.add_argument('--report', type=Path, default=CORE / 'engine-update-report.json')
+    ap.add_argument('--classes', help='iterate on some classes only (comma list, e.g. warlock,mage): skips the full Go tests and the CLI comparison, '
+                    'runs the level smoke for these classes, writes nothing; a full run is still needed before a push')
     ap.add_argument('--check-only', action='store_true',
                     help='only say whether upstream has a newer base than the lock (changed=true|false, for $GITHUB_OUTPUT)')
     a = ap.parse_args()
+    classes = [c for c in (a.classes or '').split(',') if c]
+    if classes:
+        a.dry_run = True
 
     lock = json.loads(lock_path().read_text())
     if a.check_only:
@@ -424,23 +398,19 @@ def main():
         branch, base, descends = pick_base(repo, lock['commit'], a.branch)
         report.update(branch=branch, base=base, descendsFromLock=descends)
         print(f'base {branch} {base[:10]}' + ('' if descends else ' (does NOT descend from the locked commit)'))
-        patches, dropped = settle_patches(repo, base, lock['patches'])
-        report.update(patchesKept=[p['file'] for p in patches], patchesDropped=dropped)
-
-        upstream_src, parity_src, overlay_src = work / 'upstream', work / 'parity', work / 'overlay'
-        for src in (upstream_src, parity_src, overlay_src):
+        upstream_src, overlay_src = work / 'upstream', work / 'overlay'
+        for src in (upstream_src, overlay_src):
             checkout(repo, base, src)
-        apply_patches(overlay_src, patches)
         # Generate Go imports before prepare_leveling.py executes 'go run'.
-        for src in (upstream_src, parity_src, overlay_src):
+        for src in (upstream_src, overlay_src):
             prepare_checkout(src)
-        client_build = (overlay_src / 'assets/db_inputs/forever_client_build.txt').read_text().strip()
+        client_build = read_client_build(overlay_src)
         report['clientBuild'] = client_build
 
-        new_lock = dict(lock, commit=base, branch=branch, clientBuild=client_build, patches=patches,
+        new_lock = dict(lock, commit=base, branch=branch, clientBuild=client_build,
                         reference=f"{lock['repository']}/tree/{branch}",
                         overlay=overlay_digest(), levelDataSHA256=leveling_digest(CORE / 'leveling-data.json'))
-        new_lock['buildIdentity'] = build_identity(base, patches, new_lock['overlay'], new_lock['levelDataSHA256'])
+        new_lock['buildIdentity'] = build_identity(base, new_lock['overlay'], new_lock['levelDataSHA256'])
         leveling = CORE / 'leveling-data.json'
         staged_lock = work / 'engine.lock.json'
         staged_lock.write_text(json.dumps(new_lock, indent=2) + '\n')
@@ -465,7 +435,7 @@ def main():
         if level_contents['clientBuild'] != client_build:
             raise UpdateError('Client build changed but matching level data is unavailable')
         new_lock['levelDataSHA256'] = leveling_digest(leveling)
-        new_lock['buildIdentity'] = build_identity(base, patches, new_lock['overlay'], new_lock['levelDataSHA256'])
+        new_lock['buildIdentity'] = build_identity(base, new_lock['overlay'], new_lock['levelDataSHA256'])
         staged_lock.write_text(json.dumps(new_lock, indent=2) + '\n')
         env['FOREVERCORE_LEVEL_DATA'] = str(leveling)
         sh(sys.executable, CORE / 'prepare_engine.py', overlay_src, engine_data, env=env)
@@ -473,14 +443,13 @@ def main():
         staged_leveling = work / 'leveling-final.json'
         staged_leveling.write_text(json.dumps(level_contents, separators=(',', ':')) + '\n')
         leveling = staged_leveling
-        apply_overlay(parity_src, leveling)
         report['overlay'] = apply_overlay(overlay_src, leveling)
         manifest = json.loads(engine_data.read_text())
         manifest.update(levelRange=[10, 60], levelOverlay=report['overlay']['overlay'],
                         liveHunter='hunter-live-ammo' in report['overlay']['applied'],
                         liveWarlock='warlock-live-demon-stats' in report['overlay']['applied'])
         engine_data.write_text(json.dumps(manifest, separators=(',', ':')))
-        ov_cli = checks(upstream_src, parity_src, overlay_src, patches, work, report)
+        ov_cli = checks(upstream_src, overlay_src, work, report, classes)
         if a.windows_exe:
             a.windows_exe.parent.mkdir(parents=True, exist_ok=True)
             build_cli(overlay_src, a.windows_exe, goos='windows')

@@ -1,5 +1,5 @@
 """Generate declarative Forever data; all calculations stay in CombatEngine.lua.
-Source facts pinned to MythicSim's MIT licensed client data. Never infer a proc from a dummy.
+Source facts pinned to the engine's MIT licensed client data. Never infer a proc from a dummy.
 """
 from pathlib import Path
 from model_io import write_model

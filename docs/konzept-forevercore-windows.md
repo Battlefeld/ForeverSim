@@ -6,7 +6,7 @@
 >
 > Dieses ergänzende README definiert den angestrebten Umbau. Es ersetzt nicht die bestehende README.md, ändert keine Laufzeitfunktionen und behauptet keine abgeschlossene Ingame-Validierung.
 > Gegenstück: [ForeverRoutes – Windows-Integration](https://github.com/Battlefeld/ForeverRoutes/blob/main/docs/konzept-forevercore-windows.md).
-> **Ziel:** Nutzer lädt **eine** signierte Datei `ForeverCore.exe` herunter, startet sie per Doppelklick und erledigt die gesamte Installation, Einrichtung, Aktualisierung, Simulation und Routenverwaltung grafisch. Kein CMD/PowerShell, keine manuell zu installierende `MythicSim.exe`, `foreverroutes.exe`, `Lua.exe` oder Addon-ZIP.
+> **Ziel:** Nutzer lädt **eine** signierte Datei `ForeverCore.exe` herunter, startet sie per Doppelklick und erledigt die gesamte Installation, Einrichtung, Aktualisierung, Simulation und Routenverwaltung grafisch. Kein CMD/PowerShell, keine manuell zu installierende `ForeverEngine.exe`, `foreverroutes.exe`, `Lua.exe` oder Addon-ZIP.
 
 
 
@@ -108,7 +108,7 @@ Dieser Ablauf ist die **spätere Bedienanleitung**, keine heute bereits ausführ
 ## Umsetzung in ForeverSim: Schritt für Schritt
 
 ### S0 – Ausgangsstand sichern
-1. Aktuelle Hauptbranches beider Repos und MythicSim-Identität erfassen; vollständige Commit-SHAs, Datensatzhash und Buildkompatibilität in einem gemeinsamen Release-Manifest pinnen.
+1. Aktuelle Hauptbranches beider Repos und Engine-Identität erfassen; vollständige Commit-SHAs, Datensatzhash und Buildkompatibilität in einem gemeinsamen Release-Manifest pinnen.
 2. Installer, Bridge, Auth, Quellenstatus, Caches und Exportpfade inventarisieren. Bestehende Installationen/Presets sichern; unveränderte Rechenfälle als Regression festhalten.
 3. GitHub-Actions-Kontingent prüfen. Bei gesperrtem Budget lokal mögliche Prüfungen ausführen und ausstehende CI klar benennen; keine wiederholten erfolglosen Builds starten.
 **Abnahme:** Ausgangsstand reproduzierbar, vorhandene Funktionen dokumentiert, keine Berechnungsänderung.
@@ -175,7 +175,7 @@ Die folgenden Abschnitte liefern Details zu den Schritten S0–S6. Deren früher
 | **ForeverSimBridge / ForeverSim HUD (WoW)** | Bestehende vollständige Ingame-GUI einschließlich vorhandener Reiter, Einstellungen, Talent-/Rotations-/Itemvergleiche, Tooltips und HUD; externe Berechnung über ForeverCore |
 | **ForeverRoutes HUD (WoW)** | Eigenständige Pfeil-/Quest-/Routenanzeige und kleine Live-Aktionen; Routenplanung erfolgt auf Windows |
 | **ForeverRoutes-Engine (Go)** | Routenbaukasten, Timeline, Replays, Datenvalidierung, Export; vom Windows-Core über versionierte API aufgerufen |
-| **MythicSim / ForeverSim Engine** | Offline-Kampfrechnungen, Profilserien, Ausrüstungs-/Talent-/Rotationsoptimierung; niemals im WoW-Addon |
+| **Engine / ForeverSim Engine** | Offline-Kampfrechnungen, Profilserien, Ausrüstungs-/Talent-/Rotationsoptimierung; niemals im WoW-Addon |
 
 **Ein sichtbarer Startpunkt (interne Prozesse sind bei Bedarf erlaubt):** Nur `ForeverCore.exe` wird vom Nutzer gestartet. Bestehende Go-Module bevorzugt als Bibliotheken in den Windows-Host integrieren. Wenn eine Engine technisch als Subprozess nötig bleibt: im einzigen Release-EXE eingebettet, intern versioniert und ohne Konsole in einem privaten App-Verzeichnis entpackt/gestartet; keine zusätzlichen nutzerseitigen Downloads oder CLI-Schritte. „Eine EXE“ bedeutet **ein herunterladbares/gestartetes Produkt**, nicht die unrealistische Zusage, dass WoW-Addons, Daten und Windows-Runtime keine Dateien auf der Festplatte benötigen.
 
@@ -183,7 +183,7 @@ Die folgenden Abschnitte liefern Details zu den Schritten S0–S6. Deren früher
 
 - `ForeverCore/main.go`: bisher Kommandozeilen-Startpunkt, `Config` (u. a. `Engine`, `Lua`, `Routes`, `RoutesData`, `AutoSync`), Job-/Antwort-Schema. **Umbau:** wiederverwendbaren Service/Backend-Kern vom CLI-Start entkoppeln; GUI-Lifecycle, Ein-Instanz-Start und ordentliche Shutdown-/Task-Abbruchregeln.
 - `ForeverCore/routenext.go`: startet derzeit `foreverroutes.exe next` mit Dateipfaden/Prozessaufruf. **Umbau:** versionierte, in-process Routen-API bevorzugen; bis dahin nur interne, mitgelieferte Sidecar-Engine als Zwischenlösung, keinerlei Pfadsuche/CLI für Endnutzer.
-- Existierende `ForeverCore.exe`, `MythicSim.exe`, `Lua.exe`, `ForeverCoreBridge` und `ForeverSimBridge` aus README.md nicht blind neu implementieren: Services, Cache, Transfer und Klassenmodule erhalten und gezielt einkapseln.
+- Existierende `ForeverCore.exe`, `ForeverEngine.exe`, `Lua.exe`, `ForeverCoreBridge` und `ForeverSimBridge` aus README.md nicht blind neu implementieren: Services, Cache, Transfer und Klassenmodule erhalten und gezielt einkapseln.
 - Das bestehende `/fus`-Fenster mit allen vorhandenen Talent-/Rotations-/Beute-Reitern und Engine-Aufträgen ingame erhalten. Nur Berechnung auslagern; Charakterzustand automatisch übertragen. PC-Stat-Szenarien sind eine getrennte zusätzliche Funktion. Favoriten/Presets und akzeptiertes Design bewahren.
 - Das aktuelle Transferdesign nutzt Pixelrahmen, DXGI-Desktopaufnahme und LoadOnDemand-Antwortslots (2.048 Slots/Sitzung). **Vor Erweiterung der Übertragungsmengen echte Client-Tests:** Antwortlimits, Race-Conditions, Vollbild-/Mehrmonitorbetrieb, `/reload`, WoW-/Bridge-Version, Kampfzustand und Wiederverbindung.
 
@@ -219,7 +219,7 @@ Für echte **Ein-Datei-Auslieferung** muss der Release-Build Nutzdaten und benö
 
 ## 5. Windows-Rechenhost und zusätzliche Stat-Szenarien
 
-- **Imports:** MythicSim-Manifest/Engine-Revisionsdaten und eigene ForeverSim-Imports nebeneinander einlesen; Schema prüfen, Quelle/Datum/Berechtigung dokumentieren, Konflikte anzeigen, nur bestätigte Daten freigeben. Keine imaginären Clientdaten auslesen.
+- **Imports:** Engine-Manifest/Engine-Revisionsdaten und eigene ForeverSim-Imports nebeneinander einlesen; Schema prüfen, Quelle/Datum/Berechtigung dokumentieren, Konflikte anzeigen, nur bestätigte Daten freigeben. Keine imaginären Clientdaten auslesen.
 - **Szenarien:** optionale hypothetische Stat-Profile gemäß Bedienentscheidung am Dokumentanfang. Gemeinsamen Simulationskontext explizit setzen, Profile speichern/kopieren/importieren. Bestehende Gear-/Talent-/Rotations-/Buff-/VZ-Bedienung ingame erhalten.
 - **Rechnungen:** DPS/Rotation/Stat-/Itemvergleiche, Pre-BiS, Buff-/Enchant-/Dungeon-Szenarien auf Windows; Baseline, Seed, Modellrevision und ausgeschlossene Effekte je Ergebnis sichtbar.
 - **Vergleichslogik:** Prozentwert im WoW-Tooltip immer gegen passenden Live-Stand und kompatible Revision; keine Addition unabhängiger DPS-Prozentgewinne; nicht modellierte Effekte als unbekannt anzeigen.
@@ -240,7 +240,7 @@ Eine gemeinsame versionierte Spezifikation mit JSON-Schemas oder generierten Go-
 
 ## 7. Themenpakete der Zielarchitektur (Ausführung nach S0–S6)
 
-- **M0 – Architektur-Audit:** Branch/Build/Assets/Go-Versionen, MythicSim-Lizenz, Ressourcen und vorhandenen Installer/Bridge erfassen; unveränderbare Vertragsfixtures festlegen.
+- **M0 – Architektur-Audit:** Branch/Build/Assets/Go-Versionen, Engine-Lizenz, Ressourcen und vorhandenen Installer/Bridge erfassen; unveränderbare Vertragsfixtures festlegen.
 - **M1 – GUI-Shell/Start:** eine Windows-EXE mit Dashboard, Einstellungen, Logging und bestehenden read-only Status-Services, ohne CMD; vorhandener Bridge-Betrieb weiterhin möglich.
 - **M2 – Installer (Mindestumfang bereits S1):** Erststart-Erkennung, Mehrfachinstallationen, Sicherung, überprüfbarer Addon-Install, Reinstall, Offline-Start, Rollback und Update-GUI.
 - **M3 – Rechenhost/Stat-Szenarien:** Ingame-Editoren vollständig erhalten, Engine-Adapter und reproduzierbare Ergebnis-Caches anbinden; Windows um getrennten manuellen Stat-Profilvergleich ergänzen.
@@ -258,7 +258,7 @@ Eine gemeinsame versionierte Spezifikation mit JSON-Schemas oder generierten Go-
 - [ ] Routes-Autobuilder und manueller Editor verwenden dieselbe Daten- und Kampfbasis; veröffentlichte Route im Spiel nutzbar.
 - [ ] Bridge-Verbindung, Live-Zustand, Tooltip/HUD, `/reload`, Gameplay/Combat, Slotlimit und Mehrmonitor/DXGI auf echtem Client geprüft; keine unzulässigen Client-Eingriffe.
 - [ ] Dokumentierte Migrations-/Rollbackstrategie für bisherige `/fus`-Einstellungen, `/fc`-Kommandos und SavedVariables.
-- [ ] Lizenz-/Quellenprüfung sämtlicher eingebetteter MythicSim-/Guide-/Questdaten und externen Assets abgeschlossen.
+- [ ] Lizenz-/Quellenprüfung sämtlicher eingebetteter Engine-/Guide-/Questdaten und externen Assets abgeschlossen.
 - [ ] Windows Release-Pipeline erstellt die eine EXE aus **zueinander kompatiblen, festgelegten** ForeverSim-/ForeverRoutes-Revisionen und testet den Erststart.
 
 ## 9. Nicht-Ziele und wichtige Klarstellungen
@@ -277,7 +277,7 @@ Dieser Abschnitt basiert auf konkreten Dateien aus dem `main`-Branch, nicht auf 
 |---|---|---|
 | `ForeverCore/setup/installer.go.txt` erzeugt `ForeverCore_AllesInEinem_Setup.exe`, entpackt eine ZIP-Datei auf den Desktop, fragt den Addon-Pfad via `stdin` ab und startet `powershell.exe` mit `Install.ps1` | **Keinen zweiten Console-/PowerShell-Installer für Endnutzer** ausliefern. GUI-Erststart/Updater als interne Services der tatsächlich heruntergeladenen `ForeverCore.exe` implementieren | Windows-Erstinstallation, Reparatur und Wiederherstellung vollständig GUI-getestet |
 | `ForeverCore/Install.ps1` installiert derzeit nur `ForeverCoreBridge` und `ForeverSimBridge` und legt 2.048 Antwortslots an | Installer muss drei aktuelle Module (CoreBridge, SimBridge, Routes), kompatible Daten/Antwortslots installieren und nur ihre *verwalteten* Dateien anfassen | TOC-/Addon-Verzeichnis- und Ingame-Tests mit frischer sowie alter Installation |
-| `ForeverCore/package.py` baut eine ZIP mit `ForeverCore.exe`, `MythicSim.exe`, `Lua.exe`, Entwickler-Source/Runtime und Skripten | Release-Bundle manifestbasiert trennen: nur nutzerrelevante, eingebettete Runtime/Engine-/Addon-Assets in eine EXE; Entwicklungsquellen und CI-Tools nicht in den Endnutzer-Payload | Extraktion nach AppData, Offline-Verifikation, Hash- und Lizenztests |
+| `ForeverCore/package.py` baut eine ZIP mit `ForeverCore.exe`, `ForeverEngine.exe`, `Lua.exe`, Entwickler-Source/Runtime und Skripten | Release-Bundle manifestbasiert trennen: nur nutzerrelevante, eingebettete Runtime/Engine-/Addon-Assets in eine EXE; Entwicklungsquellen und CI-Tools nicht in den Endnutzer-Payload | Extraktion nach AppData, Offline-Verifikation, Hash- und Lizenztests |
 | `.github/workflows/forevercore-package.yml` erstellt derzeit ZIP und zusätzliche Setup-EXE unter Ubuntu mit `CGO_ENABLED=0` | Windows-Releasejob mit geeignetem Toolchain-/GUI-Framework-Build, reproduzierbaren Inputs, Packaging- und UI-Starttests einführen; das bisherige Testpaket nicht als fertiges 1.0 ausgeben | Ein validierter Endnutzer-Download und dokumentiertes Release-Manifest |
 | `ForeverCore/main.go` enthält CLI-Service und `routenext.go` startet den externen Planer | GUI-Host/Services von `main` und `os/exec` entkoppeln, langfristig in-process Go-Routenbibliothek, CLI für Entwickler erhalten | Contract- und Regressionstests identischer Ergebnisse |
 | `ForeverCore/routesupdate.go` lädt bereits manifest-/SHA-geprüfte ForeverRoutes-Pakete und tauscht Verzeichnisse | Den Updater wiederverwenden/vereinheitlichen; **kein** blindes „latest“ unabhängig vom gepinnten ForeverSim-Build; mit Paket-Snapshot, Test, Rollback und installer-gesteuerter Aktivierung | Abwärts-/Vorwärts-Kompatibilitätsmatrix, Unterbrechungstests |
@@ -368,8 +368,8 @@ Jede Datenänderung: Quelle -> Roh-Snapshot -> Schema-/Plausibilitätsprüfung -
 ## 16. Verifizierbare Cross-Repo-Release-Pipeline
 
 - **Owner:** `Battlefeld/ForeverSim` bündelt finalen Endnutzer-Download; `Battlefeld/ForeverRoutes` liefert versionierte Go-Engine, Datensatz, Routen-/HUD-Export und Lizenzen. Der alte `Battlefeld/ForeverSim/ForeverRoutes/`-Ordner ist keine Releasequelle.
-- **Revisionsmatrix:** `forevercore_version`, `foreversim_commit`, `foreverroutes_commit`, `mythicsim_engine_identity`, `route_dataset_sha256`, `game_build_compatibility`, `bridge_protocol_version`, `addon_toc_interface`, `manifest_schema`, `asset_hashes`, `license_inventory`. Nur eine vollständig geprüfte Kombination wird als 1.0 veröffentlicht.
-- **Build:** expliziter Windows-Buildjob (bei GUI-Toolchain nicht nur Ubuntu-Crosscompile), Tests von Go-Core, MythicSim-Integration, Routes-Engine und Lua-HUD sowie E2E GUI-/Install-/Rollback-Tests in Windows. JSON-/Asset-/Signature-/Version-Konsistenz prüfen; unabhängig verifizieren, dass EXE und inneres Bundle dieselbe Engine-Revision nutzen.
+- **Revisionsmatrix:** `forevercore_version`, `foreversim_commit`, `foreverroutes_commit`, `engine_identity`, `route_dataset_sha256`, `game_build_compatibility`, `bridge_protocol_version`, `addon_toc_interface`, `manifest_schema`, `asset_hashes`, `license_inventory`. Nur eine vollständig geprüfte Kombination wird als 1.0 veröffentlicht.
+- **Build:** expliziter Windows-Buildjob (bei GUI-Toolchain nicht nur Ubuntu-Crosscompile), Tests von Go-Core, Engine-Integration, Routes-Engine und Lua-HUD sowie E2E GUI-/Install-/Rollback-Tests in Windows. JSON-/Asset-/Signature-/Version-Konsistenz prüfen; unabhängig verifizieren, dass EXE und inneres Bundle dieselbe Engine-Revision nutzen.
 - **Sicherheit:** keine GitHub-Token/CI-Secrets im Bundle, attestierte/vertrauenswürdige Manifestquelle, SHA-256 je Datei und signiertes Endprodukt; alle Dritt-/Addon-/Guide-Lizenzen prüfen (GPL-/CC-BY-NC-SA-Kombination insbesondere vor Distribution). Nicht freigegebene Daten nicht in öffentliche Releases einpacken.
 - **Updates:** kompatible Release-Paare statt zweier unkontrollierter `latest`; atomare Generation mit vollständigem Rollback. Unabhängige Datensatz-Updates nur innerhalb explizit unterstützter Versionsbereiche.
 - **Outputs:** ein Endnutzerartefakt namens `ForeverCore.exe`, optional nur für Entwickler separate Debugsymbole/Tests/Artefakte. GitHub Actions niemals als grün markieren, wenn Integration, Signatur oder Windows-Erststart nicht nachgewiesen ist.

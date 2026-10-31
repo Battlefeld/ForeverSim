@@ -6,7 +6,7 @@ p=argparse.ArgumentParser();p.add_argument('--package',required=True,type=Path);
 core=Path(__file__).resolve().parent
 with zipfile.ZipFile(a.package)as z:
  names=set(n.split('/',1)[1]for n in z.namelist()if '/'in n)
- for need in ['MythicSim.exe','Lua.exe','engine.lock.json','AddOns/ForeverCoreBridge/ForeverCoreBridge.toc','AddOns/ForeverSimBridge/ForeverSimBridge.toc']:
+ for need in ['ForeverEngine.exe','Lua.exe','engine.lock.json','AddOns/ForeverCoreBridge/ForeverCoreBridge.toc','AddOns/ForeverSimBridge/ForeverSimBridge.toc']:
   if need not in names:raise SystemExit('package lacks '+need)
  if 'AddOns/ForeverRoutes/ForeverRoutes.toc'not in names:print('warning: package has no ForeverRoutes addon (--routes-addon of package.py)')
 payload=core/'payload.zip'

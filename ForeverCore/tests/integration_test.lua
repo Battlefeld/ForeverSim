@@ -15,13 +15,13 @@ local s=C.Capture('route');assert(s.level==20 and s.class=='WARLOCK','snapshot m
 local itemSnapshot=C.Capture('item')
 assert(itemSnapshot.sim and itemSnapshot.sim.level==20,'item jobs must capture live simulation data')
 assert(type(itemSnapshot.sim.talents)=='table','talents must still be read for item comparisons')
-assert(type(itemSnapshot.sim.unspentTalentPoints)=='number','talent point budget must be available to MythicSim')
+assert(type(itemSnapshot.sim.unspentTalentPoints)=='number','talent point budget must be available to Engine')
 assert(C.ItemCandidate({id=9001,slot='mainhand'},'item:9001').slot==14,'item slot alias broken')
 assert(C.ItemCandidate({id=9001,slot='HeadSlot'}).slot==0,'equipped slot alias broken')
 local called=false;FUSLive.enqueue(function()called=true end,function()end);assert(not called,'legacy combat engine executed')
 local item=FUSLive.itemScore.Get(MOCK.link(9001));assert(not item or item.state=='busy' or item.state=='unmodeled','low-level item must dispatch or explain unavailability')
 -- /fc sim reports a plain baseline number.
-C.ApplySim({engine='MythicSim Go',baselineDps=100,dps=101,pct=101,candidates={}})
+C.ApplySim({engine='Engine Go',baselineDps=100,dps=101,pct=101,candidates={}})
 assert(C.lastSim and C.lastSim.dps==101,'baseline result not kept')
 
 -- The old ForeverSim window, rotation and talent features are gone, and so are their entry points.

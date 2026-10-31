@@ -128,9 +128,9 @@ func TestWarlockDemonFromLiveState(t *testing.T) {
 	if e != nil || got.options["summon"] != float64(3) || num(d, "meleeMin") != 10 || num(d, "meleeMax") != 14 || num(child(child(d, "spells"), "lashOfPain"), "max") != 33 {
 		t.Fatalf("succubus: %v %v %v", got.options, d, e)
 	}
-	// Felguard has an enum but no engine model.
+	// Felguard has no engine model.
 	pet["family"] = "Teufelswache"
-	if _, e = liveClassState(s, m, f, "warlock", "warlock", 50); e == nil || !strings.Contains(e.Error(), "nicht simuliert") {
+	if _, e = liveClassState(s, m, f, "warlock", "warlock", 50); e == nil || !strings.Contains(e.Error(), "Felguard") {
 		t.Fatalf("felguard: %v", e)
 	}
 	// A demon spell the client does not describe is not guessed.

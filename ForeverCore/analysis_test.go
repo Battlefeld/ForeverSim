@@ -23,7 +23,7 @@ func TestEngineManifestRevisionMustMatch(t *testing.T) {
 		t.Fatal(err)
 	}
 	var job Job
-	if err := loadJSON("tests/mythicsim-request.json", &job); err != nil {
+	if err := loadJSON("tests/engine-request.json", &job); err != nil {
 		t.Fatal(err)
 	}
 	s := SimService{Config: Config{EngineRevision: "different-engine", Runtime: root, Data: t.TempDir()}}
@@ -109,7 +109,7 @@ func TestActualEngineWeightsTalentsAndAnalysis(t *testing.T) {
 		t.Skip("FC_TEST_ENGINE not set")
 	}
 	var original Job
-	if e := loadJSON("tests/mythicsim-request.json", &original); e != nil {
+	if e := loadJSON("tests/engine-request.json", &original); e != nil {
 		t.Fatal(e)
 	}
 	root, e := filepath.Abs("..")
@@ -169,7 +169,7 @@ func TestLiveAdapterUsesActualTalentAndItemIdentities(t *testing.T) {
 		t.Skip("FC_TEST_ENGINE not set")
 	}
 	var original Job
-	if e := loadJSON("tests/mythicsim-request.json", &original); e != nil {
+	if e := loadJSON("tests/engine-request.json", &original); e != nil {
 		t.Fatal(e)
 	}
 	p, _ := playerOf(child(original.Payload, "request"))

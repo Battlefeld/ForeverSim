@@ -94,7 +94,7 @@ local function ruleValue(rule,ranks)
  local n=ranks[rule.talent]or 0
  return rule.values and(rule.values[n]or 0)or n*(rule.perRank or 0)
 end
--- MythicSim cca7ffd: sim/{hunter,rogue,warlock,...} class stat dependencies.
+-- Engine cca7ffd: sim/{hunter,rogue,warlock,...} class stat dependencies.
 local function strengthAP(data)return (data.id=='rogue'or data.id=='hunter'or data.id=='warlock')and 1 or 2 end
 local function agilityAP(data,p)return (data.id=='rogue'or data.id=='hunter'or p.form=='cat')and 1 or 0 end
 function P.applyAttributeTalentDeltas(data,p)

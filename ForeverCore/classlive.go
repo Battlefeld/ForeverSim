@@ -129,10 +129,10 @@ func (live *classLive) warlock(snap, manifest, families map[string]any, sacrific
 	}
 	value, ok := summons[name].(float64)
 	if !ok {
-		return fmt.Errorf("Daemon %s hat keine MythicSim-Entsprechung", name)
+		return fmt.Errorf("Daemon %s hat keine Engine-Entsprechung", name)
 	}
 	if !registered[name] {
-		return fmt.Errorf("Daemon %s wird von MythicSim nicht simuliert", name)
+		return fmt.Errorf("Daemon %s wird von Engine nicht simuliert", name)
 	}
 	live.options["summon"] = value
 	if sacrifice > 0 {

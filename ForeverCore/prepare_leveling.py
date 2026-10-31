@@ -1,4 +1,4 @@
-"""Extract level 10-60 inputs from the same MythicSim snapshot and its client tables.
+"""Extract level 10-60 inputs from the engine snapshot, the client tables and the kept base-stat table.
 
 The engine overlay (engine-overlay/) turns this table into the engine's per-level base stats; the
 level-60 row must equal upstream's own tables, which the overlay test checks.
@@ -19,12 +19,8 @@ STATS = {'0':'mana','1':'health','3':'agility','4':'strength','5':'intellect','6
 def extract(engine, database, output):
     engine, database = Path(engine).resolve(), Path(database).resolve()
     lock = verify_source(engine)
-    planner = engine / 'assets/db_inputs/wowhead_forever_gearplanner.txt'
-    text = planner.read_text()
-    match = re.search(r'WH\.setPageData\("wow\.gearPlanner\.classicplus\.baseStats",\s*', text)
-    if not match:
-        raise ValueError('Pinned gear-planner base stats missing')
-    base = json.JSONDecoder().raw_decode(text[match.end():])[0]
+    planner = Path(__file__).resolve().parent / 'leveling-basestats.json'
+    base = json.loads(planner.read_text())['baseStats']
     with sqlite3.connect('file:' + str(database) + '?mode=ro', uri=True) as conn:
         rows = conn.execute('SELECT ClassID, Level, BaseMana, CritPerAgility, SpellCritPerIntellect FROM PlayerExpectedStat WHERE ContentSetID=0 AND Level BETWEEN 10 AND 60').fetchall()
     expected = {}

@@ -1,10 +1,8 @@
 {
- "_comment": "Spells the ForeverDB class list names that the engine's table does not have, and why that is fine. The spell check lists a missing spell only when it is not in here. Add an entry when a spell is shown to be built (patch) or not in Forever.",
- "implemented": {
-  "409379": "Kill Command: engine patch 143",
-  "424799": "Shiv: engine patch 143"
- },
+ "_comment": "Spells the ForeverDB class list names that the engine's table does not have, and why that is fine. The spell check lists a missing spell only when it is not in here. Add an entry when a spell is shown not to exist in Forever (neither in the trainer's spellbook nor in a talent tree).",
  "notInForever": {
+  "409379": "Kill Command: not in the Forever spellbook or talent trees (an SoD rune; player, 2026-10-31)",
+  "424799": "Shiv: not in the Forever spellbook or talent trees (an SoD rune; player, 2026-10-31)",
   "417045": "Tiger's Fury: replaced by Shifting Power (the engine has it, spell 1322605); player, 2026-10-31",
   "417123": "Enhanced Restoration: not in Forever (player, 2026-10-31; apparently)",
   "407804": "Divine Sacrifice: not in Forever (player; apparently)",

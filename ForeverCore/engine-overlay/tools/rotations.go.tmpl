@@ -1,0 +1,193 @@
+// Run inside an engine checkout (go run <this file> [spell id ...]): the engine's own readings, as JSON.
+//
+//	{"rotations": {"<ui/specs folder>": {"<name>": <APLRotation>}},
+//	 "builds":    {"<ui/specs folder>": {"<name>": {"talents": "<string>", "equipment": <EquipmentSpec>}}},
+//	 "gearSets":  {"<ui/specs folder>": {"<name>": <EquipmentSpec>}},
+//	 "spells":    {"<spell id>": [{"type": n, "aura": n, "base": x}, ...]}}   // for the ids given as arguments
+//
+// A rotation is an apls/<name>.apl.siml or .apl.json, or the rotation of a builds/<name>.siml or .build.json (a build
+// is a whole preset: talents, gear, options and rotation). A file that is only an include for others has no priority
+// list and is left out.
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/wowsims/forever/sim/core"
+	"github.com/wowsims/forever/sim/core/proto"
+	"github.com/wowsims/forever/sim/core/spelldata"
+	"github.com/wowsims/forever/sim/siml"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/reflect/protoreflect"
+)
+
+func load(path string) *proto.APLRotation {
+	switch {
+	case strings.HasSuffix(path, ".siml"):
+		f, err := siml.ReadFile(path)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "skip %s: %v\n", path, err)
+			return nil
+		}
+		return f.Rotation()
+	case strings.HasSuffix(path, ".apl.json"):
+		data, err := os.ReadFile(path)
+		if err != nil {
+			panic(err)
+		}
+		return core.APLRotationFromJsonString(string(data))
+	case strings.HasSuffix(path, ".build.json"):
+		data, err := os.ReadFile(path)
+		if err != nil {
+			panic(err)
+		}
+		settings := &proto.IndividualSimSettings{}
+		if err := protojson.Unmarshal(data, settings); err != nil {
+			fmt.Fprintf(os.Stderr, "skip %s: %v\n", path, err)
+			return nil
+		}
+		return settings.GetPlayer().GetRotation()
+	}
+	return nil
+}
+
+// settings reads a build: talents and equipment of its player.
+func settings(path string) *proto.Player {
+	switch {
+	case strings.HasSuffix(path, ".siml"):
+		f, err := siml.ReadFile(path)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "skip %s: %v\n", path, err)
+			return nil
+		}
+		return f.Settings.GetPlayer()
+	case strings.HasSuffix(path, ".build.json"):
+		data, err := os.ReadFile(path)
+		if err != nil {
+			panic(err)
+		}
+		s := &proto.IndividualSimSettings{}
+		if err := protojson.Unmarshal(data, s); err != nil {
+			fmt.Fprintf(os.Stderr, "skip %s: %v\n", path, err)
+			return nil
+		}
+		return s.GetPlayer()
+	}
+	return nil
+}
+
+func gear(path string) *proto.EquipmentSpec {
+	switch {
+	case strings.HasSuffix(path, ".gear.siml"):
+		f, err := siml.ReadFile(path)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "skip %s: %v\n", path, err)
+			return nil
+		}
+		return f.Equipment()
+	case strings.HasSuffix(path, ".gear.json"):
+		data, err := os.ReadFile(path)
+		if err != nil {
+			panic(err)
+		}
+		return core.EquipmentSpecFromJsonString(string(data))
+	}
+	return nil
+}
+
+func name(file string) string {
+	base := filepath.Base(file)
+	for _, suffix := range []string{".apl.siml", ".apl.json", ".build.json", ".gear.siml", ".gear.json", ".siml"} {
+		if strings.HasSuffix(base, suffix) {
+			return strings.TrimSuffix(base, suffix)
+		}
+	}
+	return base
+}
+
+func main() {
+	out := map[string]map[string]json.RawMessage{}
+	type build struct {
+		Talents   string          `json:"talents"`
+		Equipment json.RawMessage `json:"equipment"`
+	}
+	builds := map[string]map[string]build{}
+	gearSets := map[string]map[string]json.RawMessage{}
+	marshal := func(m interface{ ProtoReflect() protoreflect.Message }) json.RawMessage {
+		data, err := protojson.Marshal(m)
+		if err != nil {
+			panic(err)
+		}
+		return data
+	}
+	specs, _ := filepath.Glob("ui/specs/*/*")
+	for _, dir := range specs {
+		folder := strings.TrimPrefix(dir, "ui/specs/")
+		buildFiles, _ := filepath.Glob(filepath.Join(dir, "builds", "*"))
+		for _, file := range buildFiles {
+			if p := settings(file); p != nil && p.GetTalentsString() != "" {
+				if builds[folder] == nil {
+					builds[folder] = map[string]build{}
+				}
+				b := build{Talents: p.GetTalentsString()}
+				if p.GetEquipment() != nil && len(p.GetEquipment().GetItems()) > 0 {
+					b.Equipment = marshal(p.GetEquipment())
+				}
+				builds[folder][name(file)] = b
+			}
+		}
+		gearFiles, _ := filepath.Glob(filepath.Join(dir, "gear_sets", "*"))
+		for _, file := range gearFiles {
+			if g := gear(file); g != nil && len(g.GetItems()) > 0 {
+				if gearSets[folder] == nil {
+					gearSets[folder] = map[string]json.RawMessage{}
+				}
+				gearSets[folder][name(file)] = marshal(g)
+			}
+		}
+		for _, sub := range []string{"apls", "builds"} {
+			files, _ := filepath.Glob(filepath.Join(dir, sub, "*"))
+			for _, file := range files {
+				rotation := load(file)
+				if rotation == nil || len(rotation.GetPriorityList()) == 0 {
+					continue
+				}
+				if out[folder] == nil {
+					out[folder] = map[string]json.RawMessage{}
+				}
+				if _, taken := out[folder][name(file)]; taken {
+					continue
+				}
+				data, err := protojson.MarshalOptions{UseProtoNames: false, EmitUnpopulated: false}.Marshal(rotation)
+				if err != nil {
+					panic(err)
+				}
+				out[folder][name(file)] = data
+			}
+		}
+	}
+	type fact struct {
+		Type int     `json:"type"`
+		Aura int     `json:"aura"`
+		Base float64 `json:"base"`
+	}
+	spells := map[string][]fact{}
+	for _, arg := range os.Args[1:] {
+		var id int32
+		if _, err := fmt.Sscan(arg, &id); err != nil {
+			panic(err)
+		}
+		row := spelldata.MustFind(id)
+		for _, e := range row.Effects {
+			spells[arg] = append(spells[arg], fact{int(e.Type), int(e.Aura), e.BasePoints})
+		}
+	}
+	enc := json.NewEncoder(os.Stdout)
+	if err := enc.Encode(map[string]any{"rotations": out, "builds": builds, "gearSets": gearSets, "spells": spells}); err != nil {
+		panic(err)
+	}
+}

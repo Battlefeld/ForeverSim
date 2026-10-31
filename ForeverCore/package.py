@@ -13,7 +13,7 @@ if manifest.get('engineSHA256')!=hashlib.sha256(a.engine_exe.read_bytes()).hexdi
 repo=core.parent;stage=a.output.parent/'ForeverCore_0.6.0_Integration_Test'
 if stage.exists():shutil.rmtree(stage)
 stage.mkdir(parents=True)
-for src,name in [(a.core_exe,'ForeverCore.exe'),(a.engine_exe,'MythicSim.exe'),(a.lua,'Lua.exe')]:shutil.copy2(src,stage/name)
+for src,name in [(a.core_exe,'ForeverCore.exe'),(a.engine_exe,'ForeverEngine.exe'),(a.lua,'Lua.exe')]:shutil.copy2(src,stage/name)
 shutil.copy2(core/'engine.lock.json',stage/'engine.lock.json')
 shutil.copytree(repo/'ForeverCoreBridge',stage/'AddOns/ForeverCoreBridge')
 # ForeverRoutes is installed from its own release. Never overwrite it with the
@@ -41,8 +41,8 @@ for name in ['headless.lua','engine-data.json','engine.lock.json']:shutil.copy2(
 if (core/'creature-families.json').exists():shutil.copy2(core/'creature-families.json',runtime/'ForeverCore'/'creature-families.json')
 shutil.copytree(core,stage/'Source/ForeverCore',ignore=shutil.ignore_patterns('*.exe','forevercore','__pycache__'))
 shutil.copytree(repo/'ForeverCoreBridge',stage/'Source/ForeverCoreBridge')
-license_dir=stage/'Lizenzen';license_dir.mkdir();shutil.copy2(repo/'LICENSE',license_dir/'ForeverSim-MIT.txt');shutil.copy2(repo/'LICENSES/GPL-3.0.txt',license_dir/'GPL-3.0.txt');shutil.copy2(repo/'THIRD_PARTY_NOTICES.md',license_dir/'THIRD_PARTY_NOTICES.md');shutil.copy2(a.engine_source/'LICENSE',license_dir/'MythicSim-MIT.txt');shutil.copy2(a.lua_license,license_dir/'Lua.txt')
-notice='MythicSim / WoWSims: https://github.com/sage3648/mythicsim-forever-engine-go\nhttps://github.com/wowsims/forever\nEngine: '+json.loads((core/'engine.lock.json').read_text())['commit']+'\nRestedXP: https://github.com/RestedXP/RXPGuides (CC BY-NC-SA 4.0; routes of ForeverRoutes adapted from its guides are shared under the same licence)\nForeverRoutes: https://github.com/Battlefeld/ForeverRoutes (code MIT; routes and dataset GPL-3.0)\nForeverSim / ForeverCore: https://github.com/Battlefeld/ForeverSim (code MIT)\nNorgannonDB: https://github.com/zmarotrix/NorgannonDB (GPL-3.0; dungeon catalog of ForeverSimBridge)\ncmangos classic-db: https://github.com/cmangos/classic-db (GPL-3.0; warlock pet values, item slots)\nQuestieDB: https://github.com/Questie/QuestieDB (GPL-3.0)\nLua: https://www.lua.org (MIT)\nAll sources: THIRD_PARTY_NOTICES.md\n'
+license_dir=stage/'Lizenzen';license_dir.mkdir();shutil.copy2(repo/'LICENSE',license_dir/'ForeverSim-MIT.txt');shutil.copy2(repo/'LICENSES/GPL-3.0.txt',license_dir/'GPL-3.0.txt');shutil.copy2(repo/'THIRD_PARTY_NOTICES.md',license_dir/'THIRD_PARTY_NOTICES.md');shutil.copy2(a.engine_source/'LICENSE',license_dir/'Engine-MIT.txt');shutil.copy2(a.lua_license,license_dir/'Lua.txt')
+notice='Engine / WoWSims Forever: https://github.com/wowsims/forever\nEngine: '+json.loads((core/'engine.lock.json').read_text())['commit']+'\nRestedXP: https://github.com/RestedXP/RXPGuides (CC BY-NC-SA 4.0; routes of ForeverRoutes adapted from its guides are shared under the same licence)\nForeverRoutes: https://github.com/Battlefeld/ForeverRoutes (code MIT; routes and dataset GPL-3.0)\nForeverSim / ForeverCore: https://github.com/Battlefeld/ForeverSim (code MIT)\nNorgannonDB: https://github.com/zmarotrix/NorgannonDB (GPL-3.0; dungeon catalog of ForeverSimBridge)\ncmangos classic-db: https://github.com/cmangos/classic-db (GPL-3.0; warlock pet values, item slots)\nQuestieDB: https://github.com/Questie/QuestieDB (GPL-3.0)\nLua: https://www.lua.org (MIT)\nAll sources: THIRD_PARTY_NOTICES.md\n'
 (license_dir/'QUELLEN.txt').write_text(notice)
 files={str(f.relative_to(stage)).replace('\\','/'):hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted(stage.rglob('*'))if f.is_file()}
 (stage/'SHA256.json').write_text(json.dumps(files,indent=2))

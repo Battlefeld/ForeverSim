@@ -54,7 +54,7 @@ func presetEntries(trees []any, ranks map[string]int) []any {
 	return out
 }
 
-// presetsFor answers the "presets" job: the talent builds and gear sets MythicSim ships for the class, with every
+// presetsFor answers the "presets" job: the talent builds and gear sets Engine ships for the class, with every
 // talent text checked against the current talent tree. A text that is not a legal 51 point build is kept but marked,
 // so the addon can show "passt nicht ganz zum Baum" instead of offering it as a finished build.
 func (s *SimService) presetsFor(ctx context.Context, j Job) (any, error) {
@@ -133,7 +133,7 @@ func (s *SimService) presetsFor(ctx context.Context, j Job) (any, error) {
 			builds = append(builds, b)
 		}
 	}
-	return map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "class": class, "talents": talents, "gear": gear,
+	return map[string]any{"engine": "Engine Go", "engineRevision": s.Config.EngineRevision, "class": class, "talents": talents, "gear": gear,
 		"builds": builds, "layout": treeLayout(trees)}, nil
 }
 

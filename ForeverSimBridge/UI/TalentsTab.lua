@@ -393,7 +393,7 @@ local function build(page)
  end
  state.topHead=CreateFrame('Frame',nil,state.left);state.topHead:SetSize(lw,22)
  local star=state.topHead:CreateTexture(nil,'ARTWORK');star:SetSize(16,16);star:SetPoint('LEFT',0,0);star:SetTexture('Interface\\Icons\\INV_Misc_Note_01')
- local th=UI.Text(state.topHead,11,COLOR.gold,'body','LEFT');th:SetPoint('LEFT',star,'RIGHT',7,0);th:SetText('MYTHICSIM TOP')
+ local th=UI.Text(state.topHead,11,COLOR.gold,'body','LEFT');th:SetPoint('LEFT',star,'RIGHT',7,0);th:SetText('ENGINE TOP')
  state.message=UI.Text(state.left,11,COLOR.muted,'body','LEFT');state.message:SetPoint('BOTTOMLEFT',state.left,'BOTTOMLEFT',2,50);state.message:SetWidth(lw);state.message:SetWordWrap(true)
  local bw=(lw-8)/2
  state.new=UI.Button(state.left,'+ Neu',{w=bw,h=40,tooltip='Neue Skillung aus deinen jetzigen Talenten'})
@@ -433,7 +433,7 @@ local function build(page)
  -- middle: toolbar and trees
  state.dd=UI.Dropdown(state.mid,200,{onSelect=function(key)state.target=key;UI.talentsRefresh()end});state.dd:SetPoint('TOPLEFT',state.mid,'TOPLEFT',0,0)
  state.bis=UI.Button(state.mid,'Beste Skillung finden',{w=250,h=40,style='buttonActive',color=COLOR.gold,icon='Interface\\Icons\\INV_Misc_Spyglass_03',iconSize=16,tooltip=function()
-  return{'Beste Skillung finden','MythicSim startet bei der besten Vorlage des gewählten Baums und verschiebt Punkte, solange der Schaden steigt. Läuft im Hintergrund auf dem PC; ein Klick bricht ab.'}
+  return{'Beste Skillung finden','Engine startet bei der besten Vorlage des gewählten Baums und verschiebt Punkte, solange der Schaden steigt. Läuft im Hintergrund auf dem PC; ein Klick bricht ab.'}
  end})
  state.bis:SetPoint('LEFT',state.dd,'RIGHT',12,0)
  state.bis:SetScript('OnClick',function()

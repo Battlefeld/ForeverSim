@@ -274,7 +274,7 @@ do
  local keepLevel,keepClass,keepLive,keepData=UnitLevel,UnitClass,FUSLive,FUSLiveData
  UnitClass=function()return 'Shaman','SHAMAN' end
  UnitLevel=function()return 4 end
- assert(tostring(AH.CannotCalculate()):find('Stufe 5',1,true),'level 4: MythicSim starts at level 5')
+ assert(tostring(AH.CannotCalculate()):find('Stufe 5',1,true),'level 4: Engine starts at level 5')
  UnitLevel=function()return 7 end
  assert(AH.CannotCalculate()==nil or not tostring(AH.CannotCalculate()):find('Stufe',1,true),'level 7 is calculated (approximated)')
  UnitLevel=function()return 20 end

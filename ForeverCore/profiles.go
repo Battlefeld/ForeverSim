@@ -56,7 +56,7 @@ func resolveSimProfileFor(manifest map[string]any, cl, form string, tree, larges
 	}
 	profile := child(specs, key)
 	if profile == nil || str(profile, "class") != cl {
-		return nil, fmt.Errorf("MythicSim-Spezialisierung passt nicht: %s / %s", cl, key)
+		return nil, fmt.Errorf("Engine-Spezialisierung passt nicht: %s / %s", cl, key)
 	}
 	return profile, nil
 }

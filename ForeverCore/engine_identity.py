@@ -11,8 +11,7 @@ def leveling_digest(path):
     return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
-def build_identity(commit, patches, overlay, level_data):
-    inputs = dict(commit=commit, patches=[p['sha256'] for p in patches],
-                  overlay=overlay, levelDataSHA256=level_data)
+def build_identity(commit, overlay, level_data):
+    inputs = dict(commit=commit, overlay=overlay, levelDataSHA256=level_data)
     digest = hashlib.sha256(json.dumps(inputs, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
     return commit + '+' + digest[:24]

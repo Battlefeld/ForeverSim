@@ -28,7 +28,7 @@ func enhancementCatalog(manifest map[string]any) (map[string]any, error) {
 	return c, nil
 }
 
-// Eligibility follows MythicSim's item/enchant geometry. Recipe skill is a crafting
+// Eligibility follows Engine's item/enchant geometry. Recipe skill is a crafting
 // requirement, not a recipient level. Unknown recipes/effects never become zero-DPS entries.
 func enhancementFits(e, item map[string]any, slot int) bool {
 	if slot < 0 || slot >= len(enhancementSlots) || num(item, "id") <= 0 {
@@ -292,7 +292,7 @@ func (s *SimService) compareEnhancements(ctx context.Context, j Job) (any, error
 	if len(foods) > 3 {
 		foods = foods[:3]
 	}
-	return withResultContext(map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision,
+	return withResultContext(map[string]any{"engine": "Engine Go", "engineRevision": s.Config.EngineRevision,
 		"baselineDps": before, "recommendations": recommendations, "foods": foods, "tested": len(rows) - errors,
 		"failed": errors, "skipped": skipped, "provisional": true, "sources": catalog["sources"], "asOf": catalog["asOf"],
 		"iterations": iter, "computedAt": time.Now().Unix(), "comparison": "Aktuell getragene VZ, ohne Food; gleiche Rotation/Seed. Jeweils eine Aenderung; Gewinne nicht addieren. Food fuer volle Kampfdauer aktiv; XP-Bonus ist kein DPS-Bonus. VZ-Empfaenger-/Itemlevel-Voraussetzungen im Spiel pruefen."}, req), nil

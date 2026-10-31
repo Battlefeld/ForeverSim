@@ -12,7 +12,7 @@ func TestKillProfile(t *testing.T) {
 		t.Fatal(e)
 	}
 	r := got.(map[string]any)
-	if r["schema"] != killProfileSchema || r["rotation"] != "affliction" || num(child(r, "classOptions"), "summon") != 2 {
+	if r["schema"] != killProfileSchema || r["rotation"] != "sm_ruin" || num(child(r, "classOptions"), "summon") != 2 {
 		t.Fatalf("header %v", r)
 	}
 	levels := r["levels"].([]*killLevel)

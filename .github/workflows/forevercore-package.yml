@@ -29,11 +29,11 @@ jobs:
           sudo apt-get install -y -qq protobuf-compiler lua5.1
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
-      - name: Build and test actual MythicSim integration
+      - name: Build and test actual Engine integration
         run: |
           python ForeverCore/checkout_engine.py
-          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/MythicSim-linux"
-          export FC_TEST_ENGINE="$RUNNER_TEMP/MythicSim-linux"
+          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/ForeverEngine-linux"
+          export FC_TEST_ENGINE="$RUNNER_TEMP/ForeverEngine-linux"
           export FC_TEST_RUNTIME="$GITHUB_WORKSPACE"
           export FC_TEST_LUA=/usr/bin/lua5.1
           (cd ForeverCore && go test -v ./... && go vet ./...)
@@ -48,7 +48,7 @@ jobs:
           GOARCH: amd64
           CGO_ENABLED: '0'
         run: |
-          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/MythicSim.exe"
+          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/ForeverEngine.exe"
           (cd ForeverCore && go build -trimpath -o "$RUNNER_TEMP/ForeverCore.exe" .)
       - name: Pinned Lua runtime
         run: |
@@ -68,7 +68,7 @@ jobs:
         run: |
           mkdir -p dist
           routes=(--routes-addon "$RUNNER_TEMP/routes/ForeverRoutes-addon.zip")
-          python ForeverCore/package.py --core-exe "$RUNNER_TEMP/ForeverCore.exe" --engine-exe "$RUNNER_TEMP/MythicSim.exe" --lua "$RUNNER_TEMP/questiedb/tools/lua-binary/lua.exe" --engine-source deps/mythicsim --lua-license "$RUNNER_TEMP/questiedb/tools/lua-binary/THIRD_PARTY_NOTICES.txt" "${routes[@]}" --output dist/ForeverCore_package.zip
+          python ForeverCore/package.py --core-exe "$RUNNER_TEMP/ForeverCore.exe" --engine-exe "$RUNNER_TEMP/ForeverEngine.exe" --lua "$RUNNER_TEMP/questiedb/tools/lua-binary/lua.exe" --engine-source deps/engine --lua-license "$RUNNER_TEMP/questiedb/tools/lua-binary/THIRD_PARTY_NOTICES.txt" "${routes[@]}" --output dist/ForeverCore_package.zip
       - name: The one ForeverCore.exe (window, installer, package built in)
         run: |
           build="$(date -u +%Y%m%d%H%M%S)"

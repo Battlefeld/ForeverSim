@@ -1,6 +1,6 @@
-// ForeverCore overlay: character level 10-59 on top of the upstream MythicSim engine.
+// ForeverCore overlay: character level 10-59 on top of the upstream Engine engine.
 //
-// This file is not part of MythicSim. ForeverCore copies it into a clean upstream checkout
+// This file is not part of Engine. ForeverCore copies it into a clean upstream checkout
 // (ForeverCore/engine-overlay). Without FOREVERCORE_LEVEL, or with level 60, nothing here changes
 // any value: level 60 stays byte-identical to upstream, which the update pipeline checks.
 //
@@ -13,6 +13,7 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"sync"
 
 	"github.com/wowsims/forever/sim/core/proto"
 	"github.com/wowsims/forever/sim/core/stats"
@@ -108,22 +109,6 @@ func foreverCoreRescaleAP(value, oldLevel, newLevel float64) float64 {
 	return value
 }
 
-// foreverCoreUnitLevel fills the level differences upstream's UnitLevelFloat64 does not list
-// (targets one level below or more than two levels below the character), which only matter while
-// levelling. At level 60 it never answers, so upstream behaviour is unchanged.
-func foreverCoreUnitLevel(unitLevel int32, minus2, plus0 float64) (float64, bool) {
-	if !foreverCoreLevelActive {
-		return 0, false
-	}
-	switch {
-	case unitLevel < CharacterLevel-2:
-		return minus2, true
-	case unitLevel == CharacterLevel-1:
-		return (minus2 + plus0) / 2, true
-	}
-	return 0, false
-}
-
 type foreverCoreLevelRow struct {
 	Health, Mana                                  float64
 	Agility, Strength, Intellect, Spirit, Stamina float64
@@ -150,7 +135,9 @@ func foreverCoreRankFallback(unit *Unit, actionID ActionID) *Spell {
 			}
 		}
 		for _, s := range unit.Spellbook {
-			if s.ActionID.SameAction(want) && !foreverCoreUnlearned(s) {
+			// A proc or passive spell of the same name (the damage a seal deals, the effect a trap leaves) is no rank to press:
+			// casting it uses no time.
+			if s.ActionID.SameAction(want) && !foreverCoreUnlearned(s) && !s.Flags.Matches(SpellFlagProc|SpellFlagPassiveSpell) && foreverCoreConsumes(s) {
 				return s
 			}
 		}
@@ -202,4 +189,36 @@ func foreverCoreAuraKnown(id int32) bool {
 		return false
 	}
 	return !foreverCoreLevelActive || ForeverCoreSpellLevel == nil || ForeverCoreSpellLevel(id) <= CharacterLevel
+}
+
+// The spell ids the rank substitution handed out in place of a rank the character has not been taught.
+var foreverCoreSubstituted sync.Map
+
+// ForeverCoreNoteSubstituted records that a spell id stands in for a rank that is not known yet.
+func ForeverCoreNoteSubstituted(id int32) { foreverCoreSubstituted.Store(id, true) }
+
+// foreverCoreRegistered answers the spell already in the book under the same action id when that id is a stand-in rank.
+// Two fixed ranks (Shadow Bolt rank 9 and 10) both fall back to the one rank the character has been taught; the second
+// registration must not create a duplicate, so it gets the first one back. Any other id is registered as upstream says
+// (a class may register two spells under one id on purpose).
+func foreverCoreRegistered(unit *Unit, id ActionID) *Spell {
+	if !ForeverCoreRankSelectionActive() || id.SpellID == 0 {
+		return nil
+	}
+	if _, standIn := foreverCoreSubstituted.Load(id.SpellID); !standIn {
+		return nil
+	}
+	for _, s := range unit.Spellbook {
+		if s.ActionID == id {
+			return s
+		}
+	}
+	return nil
+}
+
+// foreverCoreConsumes is whether casting the spell uses anything: a global cooldown, a cast time, a cooldown or a cost. A
+// spell that uses nothing (a helper row of the same name) can be "cast" again and again at the same instant, so the
+// rotation would never move on.
+func foreverCoreConsumes(s *Spell) bool {
+	return s.Cost != nil || s.DefaultCast.GCD > 0 || s.DefaultCast.CastTime > 0 || s.CD.Timer != nil || s.SharedCD.Timer != nil
 }

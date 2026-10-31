@@ -155,7 +155,7 @@ def main():
     known = {}
     if os.path.exists(a.known):
         raw = json.load(open(a.known))
-        known = {int(k): v for group in ('implemented', 'notInForever') for k, v in raw.get(group, {}).items()}
+        known = {int(k): v for group in ('notInForever',) for k, v in raw.get(group, {}).items()}
     api = Api(key, a.budget, a.interval)
     findings, checked, build = [], 0, ''
     for cls in a.classes.split(','):

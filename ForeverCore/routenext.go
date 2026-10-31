@@ -17,7 +17,7 @@ import (
 // progress, finished quests), ForeverRoutes plans the next stretch from there (`foreverroutes next`), and the addon
 // shows it. Every quest event plans again from the new state, so the route always fits this character.
 //
-// The fight times come from this character's class and race in MythicSim (kill-profile, cached per engine revision).
+// The fight times come from this character's class and race in Engine (kill-profile, cached per engine revision).
 // While a profile is still being calculated, the route is planned with ForeverRoutes' default estimate and says so.
 
 // routeProfileLevels is the level range of the kill profiles route-next calculates (the levels ForeverRoutes plans).
@@ -140,13 +140,13 @@ func (s *Service) killProfileFor(class, race string) (path, note string) {
 			}
 			if e != nil {
 				log.Printf("Kampfprofil %s %s: %v", class, race, e)
-				profileJobs.Store(file, "kein MythicSim-Kampfprofil ("+e.Error()+")")
+				profileJobs.Store(file, "kein Engine-Kampfprofil ("+e.Error()+")")
 				return
 			}
 			profileJobs.Delete(file)
 		}()
 	}
-	return "", "Kampfzeiten geschaetzt: das MythicSim-Kampfprofil fuer diese Klasse wird gerade berechnet"
+	return "", "Kampfzeiten geschaetzt: das Engine-Kampfprofil fuer diese Klasse wird gerade berechnet"
 }
 
 // routeFile is the best route ForeverRoutes ships for a race and class (routes/<race>-<class>.json beside the dataset;

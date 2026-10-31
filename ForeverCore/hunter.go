@@ -144,7 +144,7 @@ func fetchCreatureFamilies(build, locale string) (map[string]any, error) {
 	return map[string]any{"schema": float64(1), "clientBuild": build, "table": "CreatureFamily", "sources": sources, "families": rows}, nil
 }
 
-// English family name (MythicSim's pet names) for the pet the client reports.
+// English family name (Engine's pet names) for the pet the client reports.
 func hunterFamilyName(pet, families map[string]any) (string, error) {
 	rows := array(families, "families")
 	if len(rows) == 0 {
@@ -194,7 +194,7 @@ func hunterPetSpeed(seconds float64, spec map[string]any) (float64, error) {
 			return num(row, "value"), nil
 		}
 	}
-	return 0, fmt.Errorf("Begleiter-Angriffstempo %.2f s passt zu keinem MythicSim-Wert; ohne Tempo-Buffs und ausserhalb des Kampfes erneut erfassen", seconds)
+	return 0, fmt.Errorf("Begleiter-Angriffstempo %.2f s passt zu keinem Engine-Wert; ohne Tempo-Buffs und ausserhalb des Kampfes erneut erfassen", seconds)
 }
 
 func hunterQuiver(q, spec map[string]any) (float64, error) {
@@ -220,7 +220,7 @@ func hunterQuiver(q, spec map[string]any) (float64, error) {
 				return num(row, "value"), nil
 			}
 		}
-		return 0, fmt.Errorf("Koecher mit %.0f%% Tempo hat keinen MythicSim-Wert", pct)
+		return 0, fmt.Errorf("Koecher mit %.0f%% Tempo hat keinen Engine-Wert", pct)
 	}
 	return 0, fmt.Errorf("Koecherbonus (Zauber %d) unbekannt", int(num(q, "spellId")))
 }
@@ -294,7 +294,7 @@ func liveHunter(snap, manifest, families map[string]any, level int) (*hunterLive
 	}
 	petType, ok := child(spec, "petTypes")[name].(float64)
 	if !ok {
-		return nil, fmt.Errorf("Begleiterfamilie %s wird von MythicSim nicht simuliert", name)
+		return nil, fmt.Errorf("Begleiterfamilie %s wird von Engine nicht simuliert", name)
 	}
 	out.options["petType"] = petType
 	seconds := num(pet, "speed")
@@ -326,7 +326,7 @@ func liveHunter(snap, manifest, families map[string]any, level int) (*hunterLive
 	}
 	values := map[string]any{"attackPower": apTotal, "baseDamageMin": lo, "baseDamageMax": hi}
 	// Preserve other real attributes where available. Never use Strength
-	// to rebuild AP: MythicSim receives the measured total directly.
+	// to rebuild AP: Engine receives the measured total directly.
 	if stats := child(pet, "stats"); stats != nil {
 		for _, k := range []string{"agility", "stamina", "intellect", "spirit"} {
 			if v, ok := stats[k].(float64); ok && v >= 0 && !math.IsNaN(v) && !math.IsInf(v, 0) {
@@ -342,7 +342,7 @@ func liveHunter(snap, manifest, families map[string]any, level int) (*hunterLive
 	if ref := child(spec, "petLevel60Damage"); level == 60 && num(ref, "min") > 0 {
 		want := (num(ref, "min") + num(ref, "max")) / 2 * seconds
 		if dev := math.Abs((lo+hi)/2-want) / want; dev > 0.15 {
-			out.warnings = append(out.warnings, fmt.Sprintf("Gemessener Begleiterschaden weicht %.0f%% vom MythicSim-Referenzwert ab; Messung im Spiel pruefen.", dev*100))
+			out.warnings = append(out.warnings, fmt.Sprintf("Gemessener Begleiterschaden weicht %.0f%% vom Engine-Referenzwert ab; Messung im Spiel pruefen.", dev*100))
 		}
 	}
 	return out, nil

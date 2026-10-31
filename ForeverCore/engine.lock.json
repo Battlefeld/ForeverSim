@@ -1,61 +1,21 @@
 {
-  "repository": "https://github.com/sage3648/mythicsim-forever-engine-go",
-  "commit": "bcdda5184aa68466f407e3727f99abf7d5454a27",
+  "repository": "https://github.com/wowsims/forever",
+  "commit": "eca41cc7ce8fa2061e4e08d7b246c3d97f738fc4",
   "buildTags": [
     "with_db"
   ],
   "cliArguments": [
     "sim",
-    "--strict",
     "--infile",
     "input.json",
     "--outfile",
     "output.json"
   ],
-  "patches": [
-    {
-      "file": "engine-patches/139-fingers-of-frost.patch",
-      "sha256": "ddd406d884420c5c986fd92a2fcf66e73bd3fdc4d44865b739fd54026b410bf5",
-      "upstreamCommit": "ae0ed23d8cd49aa92f19ce2dab7346fff9ee06f8",
-      "reason": "Upstream combat fix on parallel MythicSim branch; remove once included in the base revision."
-    },
-    {
-      "file": "engine-patches/140-stormstrike.patch",
-      "sha256": "91bc75e5c469fbcd1ae813ed806034720b14b4afa6e902c9acace522069f2bec",
-      "upstreamCommit": "dff9d0691810c3319bdc9d6d794a0fc150dba46a",
-      "reason": "Upstream combat fix on parallel MythicSim branch; remove once included in the base revision.",
-      "adaptation": "Test context uses the 70425 remapped DefaultTalents; assertions and source change unchanged."
-    },
-    {
-      "file": "engine-patches/141-windfury-flametongue.patch",
-      "sha256": "b25c062fd9ca54ba5b83f3ca68990d4cdc7dbe7e4a6290513e1279f1ad228c50",
-      "upstreamCommit": "ec0b687da8ba3466b1f1138c0f5e4dccd51000f9",
-      "reason": "Upstream combat fix on parallel MythicSim branch; remove once included in the base revision."
-    },
-    {
-      "file": "engine-patches/142-foreverchanges-client-corrections.patch",
-      "sha256": "68eb1ab43f0603fa05791d0e5362f452dc40583a6a12910a3086895f52e2ddf1",
-      "reason": "Targeted talent layout and enchant 2618 corrections verified against ForeverChanges on 2026-10-28. Base client remains 70425; not a complete 70658 import.",
-      "reference": "https://foreverchanges.pro/talents/mage"
-    },
-    {
-      "file": "engine-patches/143-forever-new-combat-spells.patch",
-      "sha256": "32376529c75a0c8e70d239e68a27a1e2a819587cdad9508b88ab92e06a08183a",
-      "reason": "Forever's new combat spells the pinned base (client 70425) lacks: Kill Command (hunter, spell 409379) and Shiv (rogue, spell 424799), from the tooltips of ForeverDB and Wowhead Forever. Assumptions are in the source comments (Shiv: weapon-speed energy surcharge not modelled; Kill Command is off the global cooldown, as the project player confirmed in the game).",
-      "reference": "https://foreverdb.net/spell/409379"
-    },
-    {
-      "file": "engine-patches/144-forever-level-scaling.patch",
-      "sha256": "62a716ce1e4be6b89e206e7fa11741aa340232f3670b55b61f75a4b997c87827",
-      "reason": "Forever scales its newer spells with the level: the engine kept the coefficient (N) and used it flat at every level (Starsurge 248 to 304 instead of 132 to 162 at level 30). The table of 28 spells with their level polynomial (A + B*L + C*L^2) is read from the Wowhead Forever tooltips and checked against the ForeverDB tooltips (16 spells) and the engine's own coefficients; tools/spell-check/scaling.py regenerates it.",
-      "reference": "https://nether.wowhead.com/tooltip/spell/417157?dataEnv=16"
-    }
-  ],
   "characterLevel": 60,
-  "reference": "https://github.com/sage3648/mythicsim-forever-engine-go/tree/mythicsim/client70425",
-  "branch": "mythicsim/client70425",
-  "clientBuild": "1.60.1.70425",
-  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+aca0f1e7027e23d43d0fdb7d",
-  "overlay": "79a27325d2c024d9",
-  "levelDataSHA256": "2a029563bc2860cd4947e68726a0a40e6ea4cef82f95182c7542b88958819f19"
+  "reference": "https://github.com/wowsims/forever/tree/master",
+  "branch": "master",
+  "clientBuild": "1.60.1.70707",
+  "buildIdentity": "eca41cc7ce8fa2061e4e08d7b246c3d97f738fc4+7ad88775f89380485d5c59e1",
+  "overlay": "c20bd8a136f5fff0",
+  "levelDataSHA256": "d8cab19ff6127cbe61f51656342cac418ad172a766b2c79b9662af863cf82ba8"
 }

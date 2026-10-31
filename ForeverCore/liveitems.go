@@ -7,7 +7,7 @@ import (
  "strings"
 )
 
-// Unknown ordinary items use the client's public base stats via MythicSim's native
+// Unknown ordinary items use the client's public base stats via Engine's native
 // per-player database. Proc/set items are never approximated as plain stat items.
 func liveItemDatabase(item, manifest map[string]any) (map[string]any, error) {
  id := int(num(item,"id"))
@@ -20,8 +20,8 @@ func liveItemDatabase(item, manifest map[string]any) (map[string]any, error) {
  "ITEM_MOD_STRENGTH_SHORT":{"StatStrength"},"ITEM_MOD_AGILITY_SHORT":{"StatAgility"},"ITEM_MOD_STAMINA_SHORT":{"StatStamina"},"ITEM_MOD_INTELLECT_SHORT":{"StatIntellect"},"ITEM_MOD_SPIRIT_SHORT":{"StatSpirit"},
  "ITEM_MOD_ATTACK_POWER_SHORT":{"StatAttackPower"},"ITEM_MOD_RANGED_ATTACK_POWER_SHORT":{"StatRangedAttackPower"},"ITEM_MOD_FERAL_ATTACK_POWER_SHORT":{"StatFeralAttackPower"},"ITEM_MOD_SPELL_PENETRATION_SHORT":{"StatSpellPiercing"},
  "ITEM_MOD_SPELL_POWER_SHORT":{"StatSpellDamage","StatHealingPower"},"ITEM_MOD_SPELL_DAMAGE_DONE_SHORT":{"StatSpellDamage"},"ITEM_MOD_SPELL_HEALING_DONE_SHORT":{"StatHealingPower"},
- "ITEM_MOD_HIT_RATING_SHORT":{"StatMeleeHitRating","StatSpellHitRating"},"ITEM_MOD_CRIT_RATING_SHORT":{"StatMeleeCritRating","StatSpellCritRating"},"ITEM_MOD_HASTE_RATING_SHORT":{"StatMeleeHasteRating","StatSpellHasteRating"},
- "ITEM_MOD_SPELL_HIT_RATING_SHORT":{"StatSpellHitRating"},"ITEM_MOD_SPELL_CRIT_RATING_SHORT":{"StatSpellCritRating"},"ITEM_MOD_SPELL_HASTE_RATING_SHORT":{"StatSpellHasteRating"},
+ "ITEM_MOD_HIT_RATING_SHORT":{"StatHitRating"},"ITEM_MOD_CRIT_RATING_SHORT":{"StatCritRating"},"ITEM_MOD_HASTE_RATING_SHORT":{"StatHasteRating"},
+ "ITEM_MOD_SPELL_HIT_RATING_SHORT":{"StatHitRating"},"ITEM_MOD_SPELL_CRIT_RATING_SHORT":{"StatCritRating"},"ITEM_MOD_SPELL_HASTE_RATING_SHORT":{"StatHasteRating"},
  "ITEM_MOD_HEALTH_SHORT":{"StatHealth"},"ITEM_MOD_MANA_SHORT":{"StatMana"},"ITEM_MOD_MANA_REGENERATION_SHORT":{"StatMP5"},"RESISTANCE0_NAME":{"StatArmor"},"ITEM_MOD_ARMOR_SHORT":{"StatArmor"},
  "ITEM_MOD_HOLY_DAMAGE_SHORT":{"StatHolyDamage"},"ITEM_MOD_FIRE_DAMAGE_SHORT":{"StatFireDamage"},"ITEM_MOD_NATURE_DAMAGE_SHORT":{"StatNatureDamage"},"ITEM_MOD_FROST_DAMAGE_SHORT":{"StatFrostDamage"},"ITEM_MOD_SHADOW_DAMAGE_SHORT":{"StatShadowDamage"},"ITEM_MOD_ARCANE_DAMAGE_SHORT":{"StatArcaneDamage"},
  }

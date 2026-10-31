@@ -1,4 +1,4 @@
-# Checks MythicSim weekly (Wednesday 20:00 Asia/Tokyo): upstream branch + overlays.
+# Checks Engine weekly (Wednesday 20:00 Asia/Tokyo): upstream branch + overlays.
 #
 # Scheduled runs start from the default branch (main); the engine lock is updated there as well.
 # It works on ENGINE_BRANCH (main) and commits the new lock there.
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       upstream_branch:
-        description: 'mythicsim/* branch to use instead of the newest one (optional)'
+        description: 'engine branch to use instead of master (optional)'
         required: false
       dry_run:
         description: 'Check only, do not commit'
@@ -30,7 +30,7 @@ env:
   ENGINE_BRANCH: main
 
 jobs:
-  # A few seconds: did the CALCULATION of MythicSim change since the lock (Go rules, the schema, the build)? Numbers,
+  # A few seconds: did the CALCULATION of Engine change since the lock (Go rules, the schema, the build)? Numbers,
   # generated tables, tests, the interface and documents do not count: we keep the values ourselves. The hour-long
   # update runs only when the calculation changed (or by hand); otherwise this workflow stays green and does nothing.
   check:
@@ -88,7 +88,7 @@ jobs:
           UPSTREAM_BRANCH: ${{ inputs.upstream_branch }}
           DRY_RUN: ${{ github.event_name == 'push' && 'true' || inputs.dry_run }}
         run: |
-          args=(--work "$RUNNER_TEMP/engine" --windows-exe "$RUNNER_TEMP/dist/MythicSim.exe")
+          args=(--work "$RUNNER_TEMP/engine" --windows-exe "$RUNNER_TEMP/dist/ForeverEngine.exe")
           if [ -n "$UPSTREAM_BRANCH" ]; then args+=(--branch "$UPSTREAM_BRANCH"); fi
           if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
           python ForeverCore/engine_update.py "${args[@]}"
@@ -115,7 +115,7 @@ jobs:
             exit 0
           fi
           identity=$(python -c "import json;print(json.load(open('ForeverCore/engine.lock.json'))['buildIdentity'])")
-          git commit -q -m "ForeverCore: MythicSim ${identity} mit Level-Overlay"
+          git commit -q -m "ForeverCore: Engine ${identity} mit Level-Overlay"
           git push origin "HEAD:${ENGINE_BRANCH}"
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "identity=${identity}" >> "$GITHUB_OUTPUT"

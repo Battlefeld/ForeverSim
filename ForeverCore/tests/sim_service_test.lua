@@ -114,7 +114,7 @@ local arc=Sim.Model().talentTrees[1].talents
 local function at(i)return arc[i]end
 local function E(i,n)local node=at(i);return{t=1,r=node.row,c=node.column,n=n}end
 local function find(key)for i,node in ipairs(arc)do if node.key==key then return i end end end
-local focus,wand,chan,sub,absorb,conc,geo,impact,medit=find('arcaneFocus'),find('wandSpecialization'),find('channeling'),find('subtlety'),find('magicAbsorption'),find('concentration'),find('arcaneGeometry'),find('arcaneImpact'),find('meditation')
+local focus,wand,chan,sub,absorb,conc,geo,impact,medit=find('channeling'),find('wandSpecialization'),find('arcaneResilience'),find('subtlety'),find('magicAbsorption'),find('concentration'),find('arcaneGeometry'),find('arcaneImpact'),find('meditation')
 assert(focus and medit,'mage model lookup')
 assert(Sim.Valid({E(focus,5)}))
 local ok,why=Sim.Valid({E(focus,6)});assert(ok==false and why:find('Maximaler',1,true),'above the maximum rank')
@@ -133,7 +133,7 @@ assert(Sim.Change({},1,at(focus).row,at(focus).column,-1)==nil,'nothing to take 
 assert(Sim.Change({E(focus,5),E(sub,1)},1,at(focus).row,at(focus).column,-1)==nil,'taking a point below that the next row needs is refused')
 -- prerequisites come with the engine's layout
 Sim.Store().presets={engine='x',class='mage',talents={},gear={},builds={},layout={{tree=1,row=at(medit).row,col=at(medit).column,max=3,preRow=at(conc).row,preCol=at(conc).column}}}
-local base={E(wand,2),E(focus,5),E(chan,5),E(sub,2),E(absorb,2),E(geo,2),E(impact,3)}
+local base={E(wand,2),E(focus,5),E(chan,3),E(sub,2),E(absorb,2),E(geo,2),E(impact,3)}
 local withConc=function(n)local t={};for _,e in ipairs(base)do t[#t+1]=e end;t[#t+1]=E(conc,n);t[#t+1]=E(medit,1);return t end
 ok,why=Sim.Valid(withConc(4));assert(ok==false and why:find('Benoetigt',1,true),'meditation needs concentration at full rank: '..tostring(why))
 assert(Sim.Valid(withConc(5)),'full rank concentration opens meditation')
@@ -174,7 +174,7 @@ answer('talent-compare',{builds={{id='live',dps=1000,rotation='fire'},{id='spec:
 assert(not finished,'one step left')
 answer('talent-compare',{builds={{id='top:2',dps=1200,rotation='fire'}}})
 assert(finished==true and not Sim.running and Sim.progress==nil,'the run is finished')
-assert(#steps==5 and steps[1]=='Vorlagen laden' and steps[5]=='MythicSim-Top-Skillungen','five steps announced: '..#steps)
+assert(#steps==5 and steps[1]=='Vorlagen laden' and steps[5]=='Engine-Top-Skillungen','five steps announced: '..#steps)
 local lr=Sim.Store().lastRun;assert(lr and lr.context=='ctx-run' and lr.engine=='eng-1' and lr.level==60,'the run is remembered for the login check')
 assert(Sim.Result('top:2').dps==1200 and Sim.Result('spec:2').dps==1100)
 -- a failing step stops the run

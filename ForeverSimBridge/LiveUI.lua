@@ -89,7 +89,7 @@ local function evaluate(item,done,stillValid)
 end
 local rolls={}
 local function requestRoll(id)
- -- With ForeverCore connected the roll value comes from MythicSim (ForeverCoreBridge, UIPanels.lua), the same
+ -- With ForeverCore connected the roll value comes from Engine (ForeverCoreBridge, UIPanels.lua), the same
  -- number the dungeon list shows; the old in-game estimate stays the fallback without ForeverCore.
  local core=_G.ForeverCoreClient
  if core and core.ExternalEnabled and core.ExternalEnabled() and core.UI and core.UI.ShowRoll then

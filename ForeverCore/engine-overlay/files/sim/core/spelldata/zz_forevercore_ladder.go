@@ -1,6 +1,6 @@
 // ForeverCore overlay: a character below level 60 only knows the ranks taught at or below its level.
 //
-// Not part of MythicSim; copied in by ForeverCore/engine-overlay. At level 60 every function here
+// Not part of Engine; copied in by ForeverCore/engine-overlay. At level 60 every function here
 // answers "no change", so upstream behaviour stays byte-identical.
 
 package spelldata
@@ -51,6 +51,33 @@ func foreverCoreHighest(ranks []*Spell) (*Spell, bool) {
 		}
 	}
 	return ranks[0], true
+}
+
+// Rank(n) below 60 when the character has not been taught rank n: the highest rank below it that it has, so a class
+// that registers one fixed rank (Frostbolt rank 10) still casts what it knows.
+func foreverCoreRankAtMost(ranks []*Spell, n int32) (*Spell, bool) {
+	if !core.ForeverCoreRankSelectionActive() || n <= 0 || int(n) > len(ranks) || !foreverCoreTrainedLadder(ranks) || foreverCoreRankKnown(ranks[n-1]) {
+		return nil, false
+	}
+	for i := int(n) - 2; i >= 0; i-- {
+		if foreverCoreRankKnown(ranks[i]) {
+			core.ForeverCoreNoteSubstituted(ranks[i].ID)
+			return ranks[i], true
+		}
+	}
+	core.ForeverCoreNoteSubstituted(ranks[0].ID)
+	return ranks[0], true
+}
+
+// ByID below 60 when the character has not been taught that rank: the highest rank below it that it has (see
+// foreverCoreRankAtMost). A class that names ranks by id (Shadow Bolt rank 9 and 10) still gets something it can cast.
+func foreverCoreByIDAtMost(ranks []*Spell, id int32) (*Spell, bool) {
+	for i, s := range ranks {
+		if s.ID == id {
+			return foreverCoreRankAtMost(ranks, int32(i+1))
+		}
+	}
+	return nil, false
 }
 
 // Whether Each should hand this rank to a registration loop.
@@ -125,3 +152,17 @@ func init() {
 		return s != nil && s.ClassFlags.Family != 0
 	}
 }
+
+// The rank at this position as the ladder holds it, with no substitution for a rank the character has not been taught:
+// a lookup of a rank by its spell id walks these.
+func (l Ladder) RankExact(n int32) *Spell {
+	if n <= 0 || int(n) > len(l.ranks) {
+		return Nil
+	}
+	return l.ranks[n-1]
+}
+
+// ForeverCoreAllRanks is true while the rank selection is on (a level below 60 or a live spellbook): a class that
+// registers only the ranks taught at or after some level (the shaman's damage spells, from 44) must register every rank
+// the character has been taught.
+func ForeverCoreAllRanks() bool { return core.ForeverCoreRankSelectionActive() }

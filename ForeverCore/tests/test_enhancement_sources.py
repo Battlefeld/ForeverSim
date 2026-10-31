@@ -33,7 +33,7 @@ class EnhancementSourceTests(unittest.TestCase):
         self.assertEqual(len({e['itemId'] for e in foods}), 100)
         self.assertEqual(len({e['itemId'] for e in enchants}), 172)
         self.assertEqual(sum(e['supported'] for e in foods), 89)
-        self.assertEqual(sum(e['supported'] for e in enchants), 115)
+        self.assertEqual(sum(e["supported"] for e in enchants), 108)
         for row in enchants:
             if row['supported']:
                 self.assertIn(str(row['effectId']), c['engineEnchants'])

@@ -45,7 +45,7 @@ local function sourceText(src)
   local chance=src.chance and(' · '..(tostring(src.chance):gsub('%.',','))..' %')or''
   return'Dungeon · '..tostring(src.boss or src.dungeon)..chance
  elseif src.kind=='bag'then return'In deinen Taschen'
- elseif src.kind=='star'then return'★ MythicSim '..tostring(src.set or'')end
+ elseif src.kind=='star'then return'★ Engine '..tostring(src.set or'')end
  return''
 end
 
@@ -210,7 +210,7 @@ local function refreshEnchants()
   else r.frame:Hide()end
  end
  local skipped=0;for _,v in pairs(result and result.skipped or{})do skipped=skipped+(tonumber(v)or 0)end
- state.enchNote:SetText(result and('Vorläufig · '..tostring(result.tested or 0)..' Varianten simuliert · '..skipped..' ausgeschlossen · '..tostring(result.failed or 0)..' Fehler. VZ-Voraussetzungen am Item prüfen.')or'Vorläufige Quellen: Wowhead Food-Tooltips und VZ-Rezepte, mit MythicSim abgeglichen.')
+ state.enchNote:SetText(result and('Vorläufig · '..tostring(result.tested or 0)..' Varianten simuliert · '..skipped..' ausgeschlossen · '..tostring(result.failed or 0)..' Fehler. VZ-Voraussetzungen am Item prüfen.')or'Vorläufige Quellen: Wowhead Food-Tooltips und VZ-Rezepte, mit Engine abgeglichen.')
 end
 function UI.lootRefresh()
  local L,S=Loot(),Sim();if not state.page or not L or not S then return end
@@ -264,8 +264,8 @@ local function build(page)
  end
  check('Dungeon-Beute','dungeon',30,'Alle tragbaren Drops der Dungeons ab Stufe 50, mit Boss und Drop-Chance.')
  check('Items in deinen Taschen','bag',56)
- check('MythicSim-Liste ★','star',82,'Die Ausrüstung, die MythicSim für deine Klasse als Top-Set mitbringt.')
- check('Nur MythicSim-Liste ★','onlyStar',108)
+ check('Engine-Liste ★','star',82,'Die Ausrüstung, die Engine für deine Klasse als Top-Set mitbringt.')
+ check('Nur Engine-Liste ★','onlyStar',108)
  state.noSources=UI.Text(state.left,10.5,COLOR.dim,'body','LEFT');state.noSources:SetPoint('TOPLEFT',state.left,'TOPLEFT',2,-136);state.noSources:SetWidth(lw);state.noSources:SetWordWrap(true)
  state.noSources:SetText('Quest, Handwerk, Ruf, Auktion und Raid folgen, sobald es dafür eine Datenquelle gibt.')
  local h2=UI.Heading(state.left,'Simmen',2);h2:SetPoint('TOPLEFT',state.left,'TOPLEFT',0,-190);h2:SetWidth(lw)
@@ -300,7 +300,7 @@ local function build(page)
  state.total=UI.Text(state.gearBox,30,COLOR.good,'title','CENTER');state.total:SetPoint('TOP',state.mid,'TOP',0,-300);state.total:SetWidth(240)
  state.totalNote=UI.Text(state.gearBox,11,COLOR.muted,'body','CENTER');state.totalNote:SetPoint('TOP',state.total,'BOTTOM',0,-2);state.totalNote:SetWidth(240)
  state.legend=UI.Text(state.gearBox,10.5,COLOR.muted,'body','CENTER');state.legend:SetPoint('BOTTOM',state.mid,'BOTTOM',0,0);state.legend:SetWidth(midW)
- state.legend:SetText('Totenkopf = Dungeon · Tasche = schon bei dir · Notiz = MythicSim-Liste · ★ am Item = trägt MythicSim Top')
+ state.legend:SetText('Totenkopf = Dungeon · Tasche = schon bei dir · Notiz = Engine-Liste · ★ am Item = trägt Engine Top')
  -- second view: enchants
  state.enchBox=CreateFrame('Frame',nil,state.mid);state.enchBox:SetAllPoints(state.mid)
  local eh=UI.Heading(state.enchBox,'Beste bekannte Verzauberungen');eh:SetPoint('TOPLEFT',state.mid,'TOPLEFT',0,-52);eh:SetWidth(midW-170)

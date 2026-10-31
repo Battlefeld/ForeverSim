@@ -19,7 +19,7 @@ func liveTalentEntries(snap map[string]any) []any {
 }
 
 // Resolve talents using upstream identifiers. Local addon keys are only a fallback;
-// their abbreviated names are not MythicSim's protobuf field names.
+// their abbreviated names are not Engine's protobuf field names.
 func encodeTalentEntries(trees, entries []any, validate bool, budget int) (string, map[string]int, error) {
 	nodes := map[string]map[string]any{}
 	byID := map[int]string{}
@@ -187,12 +187,12 @@ func (s *SimService) compareTalents(ctx context.Context, req, base map[string]an
 	}
 	before := simDPS(base)
 	after := simDPS(result)
-	return withResultContext(map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "base": before, "cand": after, "pct": 100 * (after - before) / before, "talentsString": encoded, "per": map[string]any{}, "comparison": "Gleiches Szenario, gleiche Rotation, gleicher Seed; keine unabhaengige Optimierung beider Builds"}, req), nil
+	return withResultContext(map[string]any{"engine": "Engine Go", "engineRevision": s.Config.EngineRevision, "base": before, "cand": after, "pct": 100 * (after - before) / before, "talentsString": encoded, "per": map[string]any{}, "comparison": "Gleiches Szenario, gleiche Rotation, gleicher Seed; keine unabhaengige Optimierung beider Builds"}, req), nil
 }
 
  
 // recommendNextTalent compares every currently legal one-point allocation across
-// all three talent trees with the SAME pinned MythicSim scenario and rotation.
+// all three talent trees with the SAME pinned Engine scenario and rotation.
 // No speculative scores: unsupported or invalid talents are reported as errors.
 func (s *SimService) recommendNextTalent(ctx context.Context, req, base map[string]any, j Job) (any, error) {
 	var manifest map[string]any
@@ -240,5 +240,5 @@ func (s *SimService) recommendNextTalent(ctx context.Context, req, base map[stri
 		if valid{status="no-dps-gain"}
 		return withResultContext(map[string]any{"base":startDPS,"rows":rows,"status":status},req),nil
 	}
-	return withResultContext(map[string]any{"base":startDPS,"rows":rows,"best":best,"status":"ok","engine":"MythicSim Go"},req),nil
+	return withResultContext(map[string]any{"base":startDPS,"rows":rows,"best":best,"status":"ok","engine":"Engine Go"},req),nil
 }

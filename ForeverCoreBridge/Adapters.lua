@@ -108,7 +108,7 @@ end
 -- A plain baseline simulation (/fc sim): report the number, nothing else depends on it.
 function C.ApplySim(result,issue)
  C.lastSim=result
- C.Say(issue or(result and string.format('MythicSim: %.2f DPS',result.dps or 0))or'Kein Ergebnis')
+ C.Say(issue or(result and string.format('Engine: %.2f DPS',result.dps or 0))or'Kein Ergebnis')
 end
 function C.InstallAdapters()
  local ns=nsFDQ();local M=ns and ns.Model
@@ -502,13 +502,13 @@ local function coreItem(link,preview)
  if not(P and P.readItem)then return nil end
  -- The item is read and sent without its enchant (enchants never count); the key stays the link that was asked for.
  local plain=C.WithoutEnchant(link)
- local ok,item=pcall(P.readItem,plain,'MythicSim')
+ local ok,item=pcall(P.readItem,plain,'Engine')
  if not ok or not item then return nil end
  local candidate=C.ItemCandidate(item,plain)
  if candidate.slot==nil then return{state='none'}end
  if preview then candidate.ignoreLevel=true end
  local level=read(UnitLevel,'player')
- if not level or level<5 or level>60 then return{state='unmodeled',reason='MythicSim unterstuetzt Stufe 5-60 (5-9 genaehert)'}end
+ if not level or level<5 or level>60 then return{state='unmodeled',reason='Engine unterstuetzt Stufe 5-60 (5-9 genaehert)'}end
  -- A profession or class requirement comes before the cache: an old result must not make such an item look usable
  local requirement=requirementVerdict(item,preview)
  if requirement then local entry={state='blocked',reason=requirement};externalItems[key]=entry;return entry end
@@ -552,6 +552,6 @@ C.InstallAdapters=function()
  local enqueue=P.enqueue
  P.enqueue=function(fn,done,valid,priority)
   if not enabled()then return enqueue(fn,done,valid,priority)end
-  if done then done(nil,'Diese Berechnung ist noch nicht an MythicSim angebunden.')end
+  if done then done(nil,'Diese Berechnung ist noch nicht an Engine angebunden.')end
  end
 end

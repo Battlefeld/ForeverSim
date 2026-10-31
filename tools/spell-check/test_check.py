@@ -116,7 +116,7 @@ class Run(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             dump, known, out = Path(d) / 's.json', Path(d) / 'k.json', Path(d) / 'report'
             dump.write_text(json.dumps(engine))
-            known.write_text(json.dumps({'implemented': {'98': 'built'}, 'notInForever': {}}))
+            known.write_text(json.dumps({'notInForever': {'98': 'not in Forever'}}))
             with mock.patch.object(check, 'Api', Fake), mock.patch.dict(os.environ, {'FOREVERDB_API_KEY': 'x'}):
                 with mock.patch.object(sys, 'argv', ['check', '--dump', str(dump), '--out', str(out), '--classes', 'mage', '--known', str(known)]):
                     self.assertEqual(check.main(), 0)

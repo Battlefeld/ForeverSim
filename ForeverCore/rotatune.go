@@ -216,7 +216,7 @@ func (s *SimService) rotaTune(ctx context.Context, j Job) (any, error) {
 	}
 	wg.Wait()
 	sort.SliceStable(results, func(a, c int) bool { return results[a].dps > results[c].dps })
-	out := map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "rotation": base, "spec": spec,
+	out := map[string]any{"engine": "Engine Go", "engineRevision": s.Config.EngineRevision, "rotation": base, "spec": spec,
 		"rows": float64(rows), "order": intsToAny(order), "dps": current, "tried": float64(len(candidates))}
 	if len(results) > 0 && results[0].dps > current {
 		out["bestOrder"], out["bestDps"] = intsToAny(results[0].order), results[0].dps

@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// Character level for the engine. The MythicSim CLI rejects unknown request fields (--strict), so
+// Character level for the engine. The engine reads the request as protojson and would not know a level field, so
 // the level travels in a ForeverCore-only key and reaches the engine as FOREVERCORE_LEVEL, which the
 // level overlay (engine-overlay/) reads. Level 60 never sets the variable: the engine then runs
 // exactly as upstream.
@@ -44,12 +44,13 @@ func engineRequest(req map[string]any) map[string]any {
 }
 
 func engineEnv(level int) []string {
-	env := make([]string, 0, len(os.Environ())+1)
+	env := make([]string, 0, len(os.Environ())+2)
 	for _, kv := range os.Environ() {
-		if !strings.HasPrefix(kv, "FOREVERCORE_LEVEL=") && !strings.HasPrefix(kv, "FOREVERCORE_SPELLBOOK=") && !strings.HasPrefix(kv, "FOREVERCORE_HUNTER=") && !strings.HasPrefix(kv, "FOREVERCORE_WARLOCK=") {
+		if !strings.HasPrefix(kv, "FOREVERCORE_LEVEL=") && !strings.HasPrefix(kv, "FOREVERCORE_SPELLBOOK=") && !strings.HasPrefix(kv, "FOREVERCORE_HUNTER=") && !strings.HasPrefix(kv, "FOREVERCORE_WARLOCK=") && !strings.HasPrefix(kv, "FOREVERCORE_STRICT=") {
 			env = append(env, kv)
 		}
 	}
+	env = append(env, "FOREVERCORE_STRICT=1") // the engine refuses a request field it does not know
 	if level != 60 {
 		env = append(env, "FOREVERCORE_LEVEL="+strconv.Itoa(level))
 	}
@@ -72,10 +73,10 @@ func levelUnsupported(manifest map[string]any, level int) error {
 		return nil
 	}
 	if level < minEngineLevel || level > 60 {
-		return fmt.Errorf("MYTHICSIM_LEVEL_UNSUPPORTED: Level %d liegt ausserhalb 10-60", level)
+		return fmt.Errorf("ENGINE_LEVEL_UNSUPPORTED: Level %d liegt ausserhalb 10-60", level)
 	}
 	if manifest == nil || !manifestHasLevels(manifest) {
-		return fmt.Errorf("MYTHICSIM_LEVEL_UNSUPPORTED: Die installierte Engine hat kein Level-Overlay. ForeverCore mit der aktuellen Engine neu installieren.")
+		return fmt.Errorf("ENGINE_LEVEL_UNSUPPORTED: Die installierte Engine hat kein Level-Overlay. ForeverCore mit der aktuellen Engine neu installieren.")
 	}
 	return nil
 }
@@ -111,7 +112,7 @@ func validateEngineLevel(req, manifest map[string]any, requireManifest bool) err
 	if raw, exists := req[engineLevelKey]; exists {
 		v, ok := raw.(float64)
 		if !ok || math.IsNaN(v) || math.IsInf(v, 0) || v != math.Trunc(v) || v < 10 || v > 60 {
-			return fmt.Errorf("MYTHICSIM_LEVEL_UNSUPPORTED: ganzzahliges Level 10-60 erforderlich")
+			return fmt.Errorf("ENGINE_LEVEL_UNSUPPORTED: ganzzahliges Level 10-60 erforderlich")
 		}
 	}
 	level := engineLevel(req)

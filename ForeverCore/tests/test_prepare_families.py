@@ -43,7 +43,7 @@ class PrepareFamilies(unittest.TestCase):
 
 class EngineHunterTables(unittest.TestCase):
     """The manifest tables are read from the engine source; they must line up with each other."""
-    ENGINE = CORE.parent / 'deps/mythicsim'
+    ENGINE = CORE.parent / 'deps/engine'
 
     def test_hunter_options_from_engine_source(self):
         if not (self.ENGINE / 'proto/hunter.proto').exists():
@@ -51,12 +51,15 @@ class EngineHunterTables(unittest.TestCase):
         import re
         src = (CORE / 'prepare_engine.py').read_text()
         ns = {'re': re}
-        exec(src[src.index('def hunter_options'):src.index("out['hunter']")], ns)
         exec(src[src.index('def armor_mitigation'):src.index("out['armorMitigation']")], ns)
-        h = ns['hunter_options'](self.ENGINE)
+        # the committed manifest's hunter tables against the engine source it was read from
+        h = json.loads((CORE / 'engine-data.json').read_text())['hunter']
+        families = re.findall(r'^\t"(\w+)":\s*\{Name:\s*"([^"]+)"', (self.ENGINE / 'sim/hunter/pet_families_auto_gen.go').read_text(), re.M)
         self.assertIn('Cat', h['petTypes'])
+        self.assertTrue(set(h['petTypes']) <= {name for _, name in families})
         self.assertTrue(all(q['hastePct'] > 0 for q in h['quiver']))
         self.assertGreater(h['petLevel60Damage']['max'], h['petLevel60Damage']['min'])
+        self.assertEqual(h['petAttackSpeeds'][0]['seconds'], 2.0)
         armor = ns['armor_mitigation'](self.ENGINE)
         self.assertGreater(armor['perLevel'], 0)
 

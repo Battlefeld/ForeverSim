@@ -43,8 +43,8 @@ func main() {
 		row := spell{ID: int(s.ID), Name: s.Name, Rank: s.Rank, SpellLevel: int(s.SpellLevel), CastMs: int(s.CastTimeMs), DurationMs: int(s.DurationMs)}
 		for _, e := range s.Effects {
 			row.Effects = append(row.Effects, effect{Index: int(e.Index), Type: int(e.Type), Aura: int(e.Aura), Base: e.BasePoints, PPL: e.PPL,
-				Variance: e.Variance, SPCoef: e.SPCoef, PeriodMs: int(e.PeriodMs), SpellLevel: int(e.SpellLevel), MaxLevel: int(e.MaxLevel),
-				Avg30: e.Average(30), Avg0: e.Average(0)})
+				Variance: e.Variance, SPCoef: e.SPCoef, PeriodMs: int(e.PeriodMs), SpellLevel: int(e.BaseLevel), MaxLevel: int(e.MaxLevel),
+				Avg30: e.AverageAt(30), Avg0: e.AverageAt(0)})
 		}
 		out = append(out, row)
 	}

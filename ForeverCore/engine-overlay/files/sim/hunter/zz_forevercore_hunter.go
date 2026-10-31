@@ -76,11 +76,12 @@ func parseForeverCoreHunter(b []byte) (*foreverCoreHunterData, error) {
 	return &data, nil
 }
 
-// Called right after upstream's applyAmmoDPS.
-func foreverCoreAmmoDPS(hunter *Hunter) {
+// Wraps the damage per second upstream credits the chosen ammunition with (arrows only).
+func foreverCoreAmmoDPS(upstream float64) float64 {
 	if foreverCoreHunter != nil && foreverCoreHunter.AmmoDPS != nil {
-		hunter.AmmoDPS = *foreverCoreHunter.AmmoDPS
+		return *foreverCoreHunter.AmmoDPS
 	}
+	return upstream
 }
 
 // Replace the upstream AP penalty with the measured total AP and suppress

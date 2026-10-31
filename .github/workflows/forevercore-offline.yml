@@ -87,14 +87,14 @@ jobs:
               lua5.1 ForeverCore/tests/class_ui_test.lua . "$class" "$level"
             done
           done
-      - name: Actual MythicSim build and contract tests
+      - name: Actual Engine build and contract tests
         run: |
           sudo apt-get install -y -qq protobuf-compiler
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
           export PATH="$(go env GOPATH)/bin:$PATH"
           python ForeverCore/checkout_engine.py
-          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/MythicSim-linux"
-          export FC_TEST_ENGINE="$RUNNER_TEMP/MythicSim-linux"
+          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/ForeverEngine-linux"
+          export FC_TEST_ENGINE="$RUNNER_TEMP/ForeverEngine-linux"
           export FC_TEST_RUNTIME="$GITHUB_WORKSPACE"
           export FC_TEST_LUA=/usr/bin/lua5.1
           (cd ForeverCore && go test -v ./...)

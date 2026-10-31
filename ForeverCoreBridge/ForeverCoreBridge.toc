@@ -1,6 +1,6 @@
 ## Interface: 16001
 ## Title: ForeverCore Verbindung
-## Notes: Verbindung zum PC: MythicSim-Berechnung fuer Items, Dungeons und Auktionshaus. /fc
+## Notes: Verbindung zum PC: Engine-Berechnung fuer Items, Dungeons und Auktionshaus. /fc
 ## Version: 0.6.0
 ## OptionalDeps: ForeverSimBridge
 ## SavedVariables: ForeverCoreBridgeDB

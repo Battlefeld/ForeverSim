@@ -12,7 +12,7 @@ import (
 func testPayload() fstest.MapFS {
 	f := func(s string) *fstest.MapFile { return &fstest.MapFile{Data: []byte(s)} }
 	return fstest.MapFS{
-		"MythicSim.exe":                    f("engine"),
+		"ForeverEngine.exe":                    f("engine"),
 		"Lua.exe":                          f("lua"),
 		"engine.lock.json":                 f(`{"buildIdentity":"abc+def"}`),
 		"Runtime/ForeverCore/headless.lua": f("-- headless"),
@@ -43,7 +43,7 @@ func TestInstallFreshAndAgain(t *testing.T) {
 	if rep.Slots != SlotCount || len(rep.AddonSet) != 3 || rep.Backup == "" {
 		t.Fatalf("report %+v", rep)
 	}
-	for _, p := range []string{"MythicSim.exe", "Lua.exe", "Runtime/ForeverCore/headless.lua", "Lizenzen/QUELLEN.txt"} {
+	for _, p := range []string{"ForeverEngine.exe", "Lua.exe", "Runtime/ForeverCore/headless.lua", "Lizenzen/QUELLEN.txt"} {
 		if _, err := os.Stat(filepath.Join(app, p)); err != nil {
 			t.Errorf("%s not installed", p)
 		}

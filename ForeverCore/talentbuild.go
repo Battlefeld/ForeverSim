@@ -121,7 +121,7 @@ func (s *SimService) optimizeTalentBuild(ctx context.Context,req,base map[string
  player,_:=playerOf(req)
  class:=strings.ToLower(strings.TrimPrefix(str(player,"class"),"Class"))
  profile:=child(child(manifest,"classes"),class)
- if profile==nil{return nil,fmt.Errorf("MythicSim: Talentbaum fehlt")}
+ if profile==nil{return nil,fmt.Errorf("Engine: Talentbaum fehlt")}
  trees:=array(profile,"trees")
  nodes,err:=talentNodes(trees);if err!=nil{return nil,err}
  if len(nodes)==0{return nil,fmt.Errorf("Keine Talente im Engine-Modell")}
@@ -139,7 +139,7 @@ func (s *SimService) optimizeTalentBuild(ctx context.Context,req,base map[string
  start:=simDPS(base)
  if start<=0{return nil,fmt.Errorf("Referenzschaden fehlt")}
  // Bounded deterministic search over ALL three trees. 8 points means 8 layers
- // of choices; full allocations are ranked by actual MythicSim DPS.
+ // of choices; full allocations are ranked by actual Engine DPS.
  // The low-iteration search is followed by a full precision final measurement.
  width:=2
  limit:=110
@@ -220,7 +220,7 @@ func (s *SimService) optimizeTalentBuild(ctx context.Context,req,base map[string
  // an unavailable point or claim the plan is usable without a talent reset.
  respec:=false
  for _,n:=range nodes{if current[n.key]>winning.ranks[n.key]{respec=true;break}}
- result:=map[string]any{"engine":"MythicSim Go","status":"ok",
+ result:=map[string]any{"engine":"Engine Go","status":"ok",
   "points":total,"base":start,"dps":dps,"delta":dps-start,"percent":100*(dps-start)/start,
   "build":buildRows(nodes,winning.ranks),"requiresRespec":respec,"tested":count,
   "exhaustive":false,"method":"bounded-beam-search","complete":!partial,"cached":cached,

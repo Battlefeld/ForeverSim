@@ -166,7 +166,7 @@ func (s *SimService) buildDetail(ctx context.Context, j Job) (any, error) {
 	if e != nil {
 		return nil, e
 	}
-	res := map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "dps": simDPS(base), "rotation": row["rotation"],
+	res := map[string]any{"engine": "Engine Go", "engineRevision": s.Config.EngineRevision, "dps": simDPS(base), "rotation": row["rotation"],
 		"rotations": row["rotations"], "priority": row["priority"], "spec": row["spec"], "duration": num(child(req, "encounter"), "duration")}
 	summary := summarizeAnalysis(base, req)
 	res["breakdown"] = damageShares(array(summary, "actions"), 5)

@@ -153,13 +153,13 @@ func TestNativeRouteProgression(t *testing.T) {
 	}
 }
 
-func TestActualMythicSimAndStrictInput(t *testing.T) {
+func TestActualEngineAndStrictInput(t *testing.T) {
 	engine := os.Getenv("FC_TEST_ENGINE")
 	if engine == "" {
 		t.Skip("FC_TEST_ENGINE not set")
 	}
 	var j Job
-	if e := loadJSON("tests/mythicsim-request.json", &j); e != nil {
+	if e := loadJSON("tests/engine-request.json", &j); e != nil {
 		t.Fatal(e)
 	}
 	root, _ := filepath.Abs("..")
@@ -209,10 +209,10 @@ func TestLeanItemCandidates(t *testing.T) {
 		t.Skip("FC_TEST_ENGINE not set")
 	}
 	var j Job
-	if e := loadJSON("tests/mythicsim-request.json", &j); e != nil {
+	if e := loadJSON("tests/engine-request.json", &j); e != nil {
 		t.Fatal(e)
 	}
-	known := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(22267), "enchant": float64(1509)}}
+	known := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(4041), "enchant": float64(1509)}}
 	unknown := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(999999999)}}
 	delete(j.Payload, "variants")
 	j.Payload["items"] = []any{known, unknown}
@@ -266,16 +266,16 @@ func TestVariantOfKnownItemUsesItsOwnStats(t *testing.T) {
 		t.Skip("FC_TEST_ENGINE not set")
 	}
 	var j Job
-	if e := loadJSON("tests/mythicsim-request.json", &j); e != nil {
+	if e := loadJSON("tests/engine-request.json", &j); e != nil {
 		t.Fatal(e)
 	}
-	known := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(22267), "enchant": float64(1509)}}
-	snapshot := map[string]any{"id": float64(22267), "slot": "head", "quality": float64(2), "statsComplete": true, "armorType": "cloth",
+	known := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(4041), "enchant": float64(1509)}}
+	snapshot := map[string]any{"id": float64(4041), "slot": "head", "quality": float64(2), "statsComplete": true, "armorType": "cloth",
 		"rawStats": map[string]any{"ITEM_MOD_INTELLECT_SHORT": float64(400), "ITEM_MOD_STAMINA_SHORT": float64(100)}}
-	variant := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(22267), "enchant": float64(1509)}, "variant": true,
-		"variantKey": "item:22267:0:0:0:0:0:0:0:12:0:0:0:1:12728", "snapshot": snapshot}
-	leanVariant := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(22267), "enchant": float64(1509)}, "variant": true,
-		"variantKey": "item:22267:0:0:0:0:0:0:0:12:0:0:0:1:99999"}
+	variant := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(4041), "enchant": float64(1509)}, "variant": true,
+		"variantKey": "item:4041:0:0:0:0:0:0:0:12:0:0:0:1:12728", "snapshot": snapshot}
+	leanVariant := map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(4041), "enchant": float64(1509)}, "variant": true,
+		"variantKey": "item:4041:0:0:0:0:0:0:0:12:0:0:0:1:99999"}
 	delete(j.Payload, "variants")
 	j.Payload["items"] = []any{known, variant, leanVariant}
 	root, _ := filepath.Abs("..")
@@ -302,8 +302,8 @@ func TestVariantOfKnownItemUsesItsOwnStats(t *testing.T) {
 	// the PC has learned the variant from the full candidate: the id alone is enough from now on
 	learnedRun := j
 	learnedRun.Payload = cloneMap(j.Payload)
-	learnedRun.Payload["items"] = []any{variant, map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(22267), "enchant": float64(1509)}, "variant": true,
-		"variantKey": "item:22267:0:0:0:0:0:0:0:12:0:0:0:1:12728"}}
+	learnedRun.Payload["items"] = []any{variant, map[string]any{"slot": float64(0), "spec": map[string]any{"id": float64(4041), "enchant": float64(1509)}, "variant": true,
+		"variantKey": "item:4041:0:0:0:0:0:0:0:12:0:0:0:1:12728"}}
 	out2, e2 := s.Run(context.Background(), learnedRun)
 	if e2 != nil {
 		t.Fatal(e2)
@@ -312,7 +312,7 @@ func TestVariantOfKnownItemUsesItsOwnStats(t *testing.T) {
 	if rows2[1].(map[string]any)["need"] == true || num(rows2[1].(map[string]any), "pct") != num(rows2[0].(map[string]any), "pct") {
 		t.Fatal("a learned variant must be computed from its id alone, with the same result", rows2)
 	}
-	if variantItemID("a", 22267) < 2000000000 || variantItemID("a", 22267) != variantItemID("a", 22267) || variantItemID("a", 22267) == variantItemID("b", 22267) {
+	if variantItemID("a", 4041) < 2000000000 || variantItemID("a", 4041) != variantItemID("a", 4041) || variantItemID("a", 4041) == variantItemID("b", 4041) {
 		t.Fatal("variant ids must be high, stable and different per variant")
 	}
 }

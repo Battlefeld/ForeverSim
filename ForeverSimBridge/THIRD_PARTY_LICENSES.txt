@@ -1,6 +1,6 @@
 Spell facts, talent curves and reference combat rules derived from:
-https://github.com/sage3648/mythicsim-forever-engine-go
-Commit cca7ffd1e726fbe68dbbe7e016759146cacb95ae
+https://github.com/wowsims/forever
+Commit eca41cc7ce8fa2061e4e08d7b246c3d97f738fc4
 
 MIT License
 

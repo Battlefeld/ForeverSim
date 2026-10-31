@@ -75,7 +75,7 @@ func TestWrongBinaryRejectedBeforeCachedResult(t *testing.T) {
 	engine := filepath.Join(root, "engine")
 	atomicWrite(engine, []byte("old binary"))
 	var job Job
-	loadJSON("tests/mythicsim-request.json", &job)
+	loadJSON("tests/engine-request.json", &job)
 	s := SimService{Config: Config{Runtime: root, Data: t.TempDir(), Engine: engine, EngineRevision: str(m, "engineRevision")}}
 	if _, e := s.once(context.Background(), child(job.Payload, "request")); e == nil || !strings.Contains(e.Error(), "Engine-Datei") {
 		t.Fatal(e)
@@ -90,7 +90,7 @@ func TestActualEngineOnlyCastsLearnedRankAndSeparatesCache(t *testing.T) {
 	root, _ := filepath.Abs("..")
 	s := SimService{Config: Config{Runtime: root, Data: t.TempDir(), Engine: engine, EngineRevision: str(manifestForTest(t), "engineRevision")}}
 	var job Job
-	if e := loadJSON("tests/mythicsim-request.json", &job); e != nil {
+	if e := loadJSON("tests/engine-request.json", &job); e != nil {
 		t.Fatal(e)
 	}
 	req := cloneMap(child(job.Payload, "request"))

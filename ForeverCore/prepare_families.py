@@ -1,7 +1,7 @@
 """Build creature-families.json from the client's CreatureFamily table (wago.tools DB2 export).
 
 The live addon reads the pet family as the client shows it (localized name, and the family ID where
-the client exposes it). MythicSim names its pet types in English. This table connects both from game
+the client exposes it). Engine names its pet types in English. This table connects both from game
 data, so no family name is typed into ForeverCore by hand.
 
 Usage: prepare_families.py <client build> <output.json> [--from-dir DIR]
@@ -40,7 +40,7 @@ def parse(text):
 
 
 def build(build_id, texts):
-    """texts: {locale: (csv text, source url)}. enUS is required: MythicSim's names are English."""
+    """texts: {locale: (csv text, source url)}. enUS is required: Engine's names are English."""
     if 'enUS' not in texts:
         raise ValueError('CreatureFamily enUS export missing')
     english = parse(texts['enUS'][0])

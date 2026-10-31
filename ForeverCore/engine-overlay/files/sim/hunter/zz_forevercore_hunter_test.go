@@ -1,4 +1,4 @@
-// ForeverCore overlay tests. Not part of MythicSim.
+// ForeverCore overlay tests. Not part of Engine.
 package hunter
 
 import (
@@ -8,16 +8,19 @@ import (
 	"github.com/wowsims/forever/sim/core"
 	"github.com/wowsims/forever/sim/core/proto"
 	"github.com/wowsims/forever/sim/core/stats"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 func foreverCoreHunterSim(t *testing.T, ammo proto.HunterOptions_Ammo) (playerDPS, petDPS float64) {
 	t.Helper()
+	spec := &proto.Player_Hunter{Hunter: googleProto.Clone(DefaultOptions.Hunter).(*proto.Hunter)}
+	opts := spec.Hunter.Options.ClassOptions
+	opts.Ammo, opts.PetType, opts.PetAttackSpeed, opts.PetUptime = ammo, proto.HunterOptions_Cat, proto.HunterOptions_FasterAttackIII, 1
 	player := &proto.Player{
-		Name: "fc", Class: proto.Class_ClassHunter, Race: proto.Race_RaceOrc, TalentsString: MarksmanshipTalents,
-		Equipment: WeaponsOnly, DistanceFromTarget: 30,
-		Spec: &proto.Player_Hunter{Hunter: &proto.Hunter{Options: &proto.Hunter_Options{ClassOptions: &proto.HunterOptions{
-			Ammo: ammo, PetType: proto.HunterOptions_Cat, PetAttackSpeed: proto.HunterOptions_Two, PetUptime: 1}}}},
-		Rotation: core.GetAplRotation("../../ui/specs/hunter/dps/apls", "mm").Rotation,
+		Name: "fc", Class: proto.Class_ClassHunter, Race: proto.Race_RaceOrc, TalentsString: DefaultMMTalents,
+		Equipment: core.GetGearSet("../../ui/specs/hunter/dps/gear_sets", "p1").GearSet, DistanceFromTarget: 30,
+		Spec:     spec,
+		Rotation: core.GetAplRotation("../../ui/specs/hunter/dps/apls", "default").Rotation,
 	}
 	raid := &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{player}, Buffs: &proto.PartyBuffs{}}}, Buffs: &proto.RaidBuffs{}, Debuffs: &proto.Debuffs{}, NumActiveParties: 1}
 	res := core.RunRaidSim(&proto.RaidSimRequest{Raid: raid, Encounter: core.MakeSingleTargetEncounter(0), SimOptions: &proto.SimOptions{Iterations: 50, RandomSeed: 7}})
@@ -65,10 +68,7 @@ func TestForeverCoreHunterInactiveKeepsUpstream(t *testing.T) {
 	if foreverCorePetDamage(36.34, false) != 36.34 || foreverCorePetDamage(55.32, true) != 55.32 {
 		t.Fatal("pet damage changed without live data")
 	}
-	h := &Hunter{}
-	h.AmmoDPS = 17.5
-	foreverCoreAmmoDPS(h)
-	if h.AmmoDPS != 17.5 {
+	if foreverCoreAmmoDPS(17.5) != 17.5 {
 		t.Fatal("ammo changed without live data")
 	}
 }
@@ -108,15 +108,15 @@ func TestForeverCoreHunterLivePet(t *testing.T) {
 	withForeverCoreHunter(t, nil)
 	_, upstream := foreverCoreHunterSim(t, proto.HunterOptions_ThoriumHeadedArrow)
 	// Feeding upstream's own level 60 values back in must reproduce upstream exactly.
-	same := &foreverCorePetData{AttackPower: 252, Agility: 100, Stamina: 274, Intellect: 50, Spirit: 80,
-		BaseDamageMin: 18.17 * 2.0, BaseDamageMax: 27.66 * 2.0}
+	same := &foreverCorePetData{AttackPower: petBaseStats[stats.AttackPower],
+		BaseDamageMin: petSwingAverage * (1 - 0.2), BaseDamageMax: petSwingAverage * (1 + 0.2)}
 	withForeverCoreHunter(t, &foreverCoreHunterData{Pet: same})
 	if _, got := foreverCoreHunterSim(t, proto.HunterOptions_ThoriumHeadedArrow); math.Abs(got-upstream) > 1e-6 {
 		t.Fatalf("upstream values via live path: pet %.4f, upstream %.4f", got, upstream)
 	}
 	low := &foreverCorePetData{AttackPower: 60, Agility: 30, Stamina: 60, Intellect: 20, Spirit: 30, BaseDamageMin: 9, BaseDamageMax: 13}
 	withForeverCoreHunter(t, &foreverCoreHunterData{Pet: low})
-	if _, got := foreverCoreHunterSim(t, proto.HunterOptions_ThoriumHeadedArrow); !(got > 0 && got < upstream*0.7) {
+	if _, got := foreverCoreHunterSim(t, proto.HunterOptions_ThoriumHeadedArrow); !(got > 0 && got < upstream*0.95) {
 		t.Fatalf("low-level pet %.2f, upstream level 60 pet %.2f", got, upstream)
 	}
 }

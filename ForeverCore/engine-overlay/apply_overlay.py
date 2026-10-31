@@ -1,4 +1,4 @@
-"""Lay the ForeverCore level overlay over a clean MythicSim checkout.
+"""Lay the ForeverCore level overlay over a clean Engine checkout.
 
 The overlay never ships line diffs. It copies its own files, generates the level table from
 leveling-data.json, and applies a few anchored rewrites from overlay.json. A required anchor that

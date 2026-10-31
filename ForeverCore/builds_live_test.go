@@ -66,7 +66,7 @@ func TestDefaultWeightsIncludePhysicalStats(t *testing.T) {
 	for _, raw := range array(result.(map[string]any), "rows") {
 		found[str(raw.(map[string]any), "key")] = true
 	}
-	for _, key := range []string{"StatRangedAttackPower", "StatFeralAttackPower", "StatMeleeHitRating", "StatMeleeCritRating", "StatMeleeHasteRating"} {
+	for _, key := range []string{"StatRangedAttackPower", "StatFeralAttackPower", "StatHitRating", "StatCritRating", "StatHasteRating"} {
 		if !found[key] {
 			t.Fatalf("missing physical weight: %s", key)
 		}

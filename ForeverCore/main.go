@@ -114,7 +114,7 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 				go s.checkClientData(ctx, true)
 			}
 		}
-		r.Result = map[string]any{"version": Version, "engineRevision": s.cfg.EngineRevision, "engine": "MythicSim Go", "stateRefs": true, "clientDataSync": true, "dataStatus": s.dataStatus()}
+		r.Result = map[string]any{"version": Version, "engineRevision": s.cfg.EngineRevision, "engine": "Engine Go", "stateRefs": true, "clientDataSync": true, "dataStatus": s.dataStatus()}
 	case "data-status":
 		if s.cfg.Addons != "" && s.cfg.Data != "" && s.dataStatus().Status == "error" {
 			go s.checkClientData(ctx)
@@ -234,7 +234,7 @@ func main() {
 	if cfg.Addons == "" {
 		log.Fatal("Installation.ps1 ausfuehren oder -addons angeben")
 	}
-	log.Printf("ForeverCore %s | MythicSim %s | %s", Version, cfg.EngineRevision, cfg.Addons)
+	log.Printf("ForeverCore %s | Engine %s | %s", Version, cfg.EngineRevision, cfg.Addons)
 	if *noCapture {
 		log.Printf("Bildschirmaufnahme AUS: nur Auktionshaus-Auftraege aus der SavedVariables-Datei (im Spiel /fc pixel aus; nach FC Berechnen /reload). Es wird nichts vom Bildschirm gelesen.")
 		s.startClientData(ctx)
@@ -250,7 +250,7 @@ func main() {
 
 // loadConfig reads the configuration below base: paths that are not absolute are relative to base.
 func loadConfig(base, path string) (Config, error) {
-	cfg := Config{Lua: "Lua.exe", Runtime: "Runtime", Engine: "MythicSim.exe", Data: "Data", Routes: filepath.Join("ForeverRoutes", "foreverroutes.exe"), RoutesData: filepath.Join("ForeverRoutes", "routes-data.json.gz")}
+	cfg := Config{Lua: "Lua.exe", Runtime: "Runtime", Engine: "ForeverEngine.exe", Data: "Data", Routes: filepath.Join("ForeverRoutes", "foreverroutes.exe"), RoutesData: filepath.Join("ForeverRoutes", "routes-data.json.gz")}
 	if e := loadJSON(path, &cfg); e != nil && !os.IsNotExist(e) {
 		return cfg, e
 	}

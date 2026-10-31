@@ -100,7 +100,7 @@ for i=2,#farm do assert(farm[i-1].perRun>=farm[i].perRun,'sorted by gain per run
 local sent;C.Request=function(kind,payload,cb)sent={kind=kind,cb=cb};return true end
 local got;Loot.LoadWeights(function(w)got=w end)
 assert(sent.kind=='weights')
-sent.cb({rows={{key='StatSpellDamage',perPoint=1.0},{key='StatSpellCritRating',perPoint=0.5},{key='StatIntellect',perPoint=0.25},{key='StatSpellHitRating',perPoint=-0.1}}})
+sent.cb({rows={{key='StatSpellDamage',perPoint=1.0},{key='StatCritRating',perPoint=0.5},{key='StatIntellect',perPoint=0.25},{key='StatHitRating',perPoint=-0.1}}})
 assert(got and #got.rows==4 and got.rows[1].key=='StatSpellDamage' and got.rows[1].weight==1 and got.rows[2].weight==.5 and got.rows[4].weight==0,'weights relative to the best: '..tostring(got and got.rows[4].weight))
 assert(got.rows[1].label=='Zauberschaden')
 sent=nil;Loot.LoadWeights(function(w)got=w end);assert(sent==nil,'cached for the same character state')

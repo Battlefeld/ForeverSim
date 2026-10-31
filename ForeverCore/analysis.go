@@ -26,7 +26,7 @@ func (s *SimService) statSensitivity(ctx context.Context, req, base map[string]a
 	}
 	list := array(j.Payload, "stats")
 	if len(list) == 0 {
-		for _, key := range []string{"StatSpellDamage", "StatSpellHitRating", "StatSpellCritRating", "StatSpellHasteRating", "StatIntellect", "StatAgility", "StatStrength", "StatAttackPower", "StatRangedAttackPower", "StatFeralAttackPower", "StatMeleeHitRating", "StatMeleeCritRating", "StatMeleeHasteRating", "StatExpertiseRating", "StatArmorPenetration"} {
+		for _, key := range []string{"StatSpellDamage", "StatHitRating", "StatCritRating", "StatHasteRating", "StatIntellect", "StatAgility", "StatStrength", "StatAttackPower", "StatRangedAttackPower", "StatFeralAttackPower", "StatExpertiseRating", "StatArmorPenetration"} {
 			list = append(list, map[string]any{"key": key, "increment": float64(10)})
 		}
 	}
@@ -68,10 +68,10 @@ func (s *SimService) statSensitivity(ctx context.Context, req, base map[string]a
 			return nil, e
 		}
 		dps := simDPS(got)
-		rows = append(rows, map[string]any{"key": key, "increment": step, "perPoint": (dps - before) / step, "dps": dps, "delta": dps - before, "unit": "DPS pro rohem MythicSim-Statpunkt"})
+		rows = append(rows, map[string]any{"key": key, "increment": step, "perPoint": (dps - before) / step, "dps": dps, "delta": dps - before, "unit": "DPS pro rohem Engine-Statpunkt"})
 	}
 	player, _ := playerOf(req)
-	return withResultContext(map[string]any{"engine": "MythicSim Go", "engineRevision": s.Config.EngineRevision, "base": before, "class": strings.ToLower(strings.TrimPrefix(str(player, "class"), "Class")), "level": engineLevel(req), "rows": rows, "comparison": "Gleiche Rotation und gleicher Seed; lokale Stat-Sensitivitaet, keine allgemeinen BiS-Gewichte"}, req), nil
+	return withResultContext(map[string]any{"engine": "Engine Go", "engineRevision": s.Config.EngineRevision, "base": before, "class": strings.ToLower(strings.TrimPrefix(str(player, "class"), "Class")), "level": engineLevel(req), "rows": rows, "comparison": "Gleiche Rotation und gleicher Seed; lokale Stat-Sensitivitaet, keine allgemeinen BiS-Gewichte"}, req), nil
 }
 
 // Aggregate engine metrics, preserving actor and spell IDs. This is not a fabricated event trace.
@@ -111,7 +111,7 @@ func summarizeAnalysis(base, req map[string]any) map[string]any {
 	sort.Slice(actions, func(i, j int) bool {
 		return num(actions[i].(map[string]any), "damage") > num(actions[j].(map[string]any), "damage")
 	})
-	return map[string]any{"dps": simDPS(base), "duration": num(child(req, "encounter"), "duration"), "actions": actions, "comparison": "MythicSim-Mittelwerte pro Kampf ueber alle Iterationen; kein zeitlicher Kampfverlauf"}
+	return map[string]any{"dps": simDPS(base), "duration": num(child(req, "encounter"), "duration"), "actions": actions, "comparison": "Engine-Mittelwerte pro Kampf ueber alle Iterationen; kein zeitlicher Kampfverlauf"}
 }
 
 // Resolve spell references inside APL conditions as well: a level-60
@@ -146,7 +146,7 @@ func resolvePriorityCondition(value any, resolve func(int)int) any {
 
 // Display the selected APL using the player's truly learned rank IDs.
 // Upstream APLs use level-60 rank IDs even at level 11. The rank families
-// come from MythicSim's own generated client spell data, not display names.
+// come from Engine's own generated client spell data, not display names.
 func rotationPriority(rotation map[string]any, knownIDs []any, families map[string]any, class string) []any {
  rows := []any{}
  seen := map[int]bool{}
@@ -190,7 +190,7 @@ func rotationPriority(rotation map[string]any, knownIDs []any, families map[stri
  for _, raw := range array(rotation, "priorityList") {
   if row, ok := raw.(map[string]any); ok { walk(child(row, "action"), 0) }
  }
- // Auto Shot (75) is not an APL cast action: MythicSim fires it automatically.
+ // Auto Shot (75) is not an APL cast action: Engine fires it automatically.
  // Expose it as a distinct, clearly marked passive action for hunters.
  if class == "hunter" && known[75] && !seen[75] {
   rows = append(rows, map[string]any{"spellId":75, "automatic":true})

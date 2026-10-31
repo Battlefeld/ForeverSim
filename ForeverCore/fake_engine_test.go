@@ -9,9 +9,9 @@ import (
 	"testing"
 )
 
-// The tests in this package cannot run the real MythicSim engine (it is built from an upstream repository in CI).
+// The tests in this package cannot run the real Engine engine (it is built from an upstream repository in CI).
 // For the jobs that only orchestrate engine runs, the test binary itself acts as a stand-in engine: it is started
-// as "<test binary> sim --strict --infile in --outfile out" and writes a result whose DPS depends on exactly the
+// as "<test binary> sim --infile in --outfile out" and writes a result whose DPS depends on exactly the
 // inputs a job is supposed to change (talents, rotation, gear, iterations), so a test can tell they arrived.
 func TestMain(m *testing.M) {
 	if len(os.Args) > 1 && os.Args[1] == "sim" {
@@ -168,7 +168,7 @@ func fakeService(t *testing.T) (*SimService, map[string]any) {
 	return &SimService{Config: Config{Engine: exe, EngineRevision: str(m, "engineRevision"), Runtime: runtime, Data: t.TempDir()}}, m
 }
 
-const fireTalents = "05002252000003-23550000130135031-"
+const fireTalents = "0502052001001-55500001230133031-003"
 
 func TestFakeEngineRunsALiveRequest(t *testing.T) {
 	s, m := fakeService(t)
@@ -178,7 +178,7 @@ func TestFakeEngineRunsALiveRequest(t *testing.T) {
 		t.Fatal(e)
 	}
 	r := got.(map[string]any)
-	if num(r, "dps") < 1000 || !strings.HasPrefix(str(r, "engine"), "MythicSim") {
+	if num(r, "dps") < 1000 || !strings.HasPrefix(str(r, "engine"), "Engine") {
 		t.Fatalf("unexpected result %v", r)
 	}
 	if _, e = os.Stat(filepath.Join(s.Config.Data, "Sims")); e != nil {

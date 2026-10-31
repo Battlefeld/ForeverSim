@@ -202,7 +202,7 @@ function Sim.Import(text)
  return out
 end
 
--- Engine presets ("MythicSim Top") ---------------------------------------------------------------------------------
+-- Engine presets ("Engine Top") ---------------------------------------------------------------------------------
 function Sim.Presets()return Sim.Store().presets end
 local function presetBuildEntries(p)
  local out={};for _,e in ipairs(p.entries or{})do out[#out+1]={t=e.tree,r=e.row,c=e.col,n=e.rank}end;return out
@@ -227,7 +227,7 @@ end
 local function findByName(list,name)
  for _,x in ipairs(list or{})do if x.name==name then return x end end
 end
--- One MythicSim build per tree: the builds the engine pairs up (talents + gear), else its legal talent builds.
+-- One Engine build per tree: the builds the engine pairs up (talents + gear), else its legal talent builds.
 -- Returns {{id,name,talentsString,gearPreset,tree,entries,spec}}.
 function Sim.TopBuilds()
  local p=Sim.Presets();if not p then return{}end
@@ -385,7 +385,7 @@ function Sim.RunAll(opts,progress,done)
    {'Skillungen vergleichen',function(n)Sim.CompareOwn(n)end},
    {'Ergebnis berechnen',function(n)local spec=Sim.BuildSpec(opts.selected)or Sim.BuildSpec('live');Sim.Detail(spec,n)end},
    {'Bester Spec fuer dein Gear',function(n)Sim.CompareSpecs(n)end},
-   {'MythicSim-Top-Skillungen',function(n)Sim.CompareTop(n)end},
+   {'Engine-Top-Skillungen',function(n)Sim.CompareTop(n)end},
   }
   -- last, because every comparison above sets the engine's own best rotation again
   if Sim.Store().refine and Sim.Tune then

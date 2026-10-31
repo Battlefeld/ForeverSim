@@ -1,4 +1,4 @@
--- The search for the best talents of a tree ("Beste Skillung finden"): starts from the build MythicSim ships for the tree
+-- The search for the best talents of a tree ("Beste Skillung finden"): starts from the build Engine ships for the tree
 -- and moves single points while the engine says the damage rises. ForeverCore.exe only measures builds (talent-compare,
 -- quick measurement); which builds to try comes from the editor rules in Sim.lua, so a build proposed here is always legal.
 -- It runs in the background: the window stays usable and every step is one job; a click on the button cancels it.

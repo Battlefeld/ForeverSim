@@ -69,11 +69,11 @@ local function store()
  return s
 end
 AH.Store=store
--- MythicSim calculates levels 10 to 60 and needs ForeverSimBridge (item reading, class data). Returns a reason text
+-- Engine calculates levels 10 to 60 and needs ForeverSimBridge (item reading, class data). Returns a reason text
 -- when this character cannot be calculated, nil when everything is there.
 function AH.CannotCalculate()
  local level=tonumber(UnitLevel and UnitLevel('player'))
- if level and level<5 then return string.format('MythicSim rechnet ab Stufe 5 (aktuell Stufe %d).',level)end
+ if level and level<5 then return string.format('Engine rechnet ab Stufe 5 (aktuell Stufe %d).',level)end
  if not(FUSLive and FUSLive.readItem)then return 'ForeverSimBridge ist fuer diesen Charakter nicht geladen (Addon-Liste der Charakterauswahl pruefen).'end
  local _,token=UnitClass('player')
  local data=FUSLiveData and(FUSLiveData[token]or FUSLiveData[tostring(token):lower()])
@@ -468,7 +468,7 @@ end
 local function usable(key)
  local P=FUSLive
  if not(P and P.readItem and C.RequirementVerdict)then return true end
- local ok,item=pcall(P.readItem,key,'MythicSim')
+ local ok,item=pcall(P.readItem,key,'Engine')
  if not ok or type(item)~='table' then return true end
  local okVerdict,verdict=pcall(C.RequirementVerdict,item)
  return not(okVerdict and verdict),item
@@ -648,7 +648,7 @@ function AH.Command(arg)
   for slot=1,19 do
    local link=GetInventoryItemLink and GetInventoryItemLink('player',slot)
    if link then
-    local ok,item=pcall(P.readItem,link,'MythicSim')
+    local ok,item=pcall(P.readItem,link,'Engine')
     if ok and type(item)=='table' and (item.itemClass==2 or item.weaponClass==2) then
      local w=item.weapon
      say(string.format('Slot %d %s (%s): vollstaendig=%s Waffenwerte=%s Spezialeffekt=%s',slot,tostring(item.name),tostring(item.id),tostring(item.statsComplete),
@@ -692,7 +692,7 @@ function AH.Command(arg)
   step()
  elseif cmd=='item' then
   -- /fc ah item <item link>: what the addon reads from this item and what it concludes from it
-  local P=FUSLive;local ok,item=pcall(P.readItem,rest,'MythicSim')
+  local P=FUSLive;local ok,item=pcall(P.readItem,rest,'Engine')
   if not ok or type(item)~='table' then say('Item nicht lesbar (Link nach /fc ah item einfuegen, Shift-Klick)');return end
   local stats={};for k,v in pairs(item.rawStats or{})do stats[#stats+1]=tostring(k):gsub('^ITEM_MOD_',''):gsub('_SHORT$','')..'='..tostring(v)end
   table.sort(stats)
@@ -727,7 +727,7 @@ function AH.Command(arg)
   say(string.format('Urteil: %s | gespeichertes Ergebnis: %s',why and('KEINE passenden Werte fuer deine Klasse ('..why..')')or'Werte sind relevant',entry and string.format('%+.2f %% (%+.2f DPS)',entry.pct or 0,entry.delta or 0)or'keins'))
  elseif cmd=='key' then
   -- /fc ah key <item link>: shows the cache key of this link and whether a stored result exists
-  local P=FUSLive;local ok,item=pcall(P.readItem,rest,'MythicSim')
+  local P=FUSLive;local ok,item=pcall(P.readItem,rest,'Engine')
   if not ok or not item then say('Item nicht lesbar (Link nach /fc ah key einfuegen, Shift-Klick)');return end
   local candidate=C.ItemCandidate(item,rest)
   local entry,context,key=C.CachedItemComparison(item,candidate,rest)

@@ -35,7 +35,7 @@ type installManifest struct {
 const installManifestName = "installed.json"
 
 // payloadRequired: an installation package without these is incomplete.
-var payloadRequired = []string{"MythicSim.exe", "Lua.exe", "engine.lock.json", "AddOns/ForeverCoreBridge/ForeverCoreBridge.toc",
+var payloadRequired = []string{"ForeverEngine.exe", "Lua.exe", "engine.lock.json", "AddOns/ForeverCoreBridge/ForeverCoreBridge.toc",
 	"AddOns/ForeverSimBridge/ForeverSimBridge.toc"}
 
 // payloadSkip: parts of the package that are not installed (the sources; the program is placed by placeProgram).
@@ -233,6 +233,8 @@ func install(p fs.FS, addons, appDir, version string, now time.Time) (InstallRep
 		return rep, fmt.Errorf("Programmdateien: %w", err)
 	}
 	rep.Files = len(files)
+	// the engine was MythicSim.exe in earlier versions; nothing uses that file any more
+	os.Remove(filepath.Join(appDir, "MythicSim.exe"))
 	// the addons: each staged complete, the old one moved to the backup, the staged one renamed into place
 	backup := filepath.Join(appDir, "Backups", now.Format("20060102-150405"))
 	staging := filepath.Join(addons, ".forevercore-neu")
@@ -279,7 +281,7 @@ func install(p fs.FS, addons, appDir, version string, now time.Time) (InstallRep
 	if b, err := fs.ReadFile(p, "engine.lock.json"); err == nil {
 		json.Unmarshal(b, &lock)
 	}
-	cfg["addons"], cfg["engine"], cfg["engineRevision"] = addons, "MythicSim.exe", lock.BuildIdentity
+	cfg["addons"], cfg["engine"], cfg["engineRevision"] = addons, "ForeverEngine.exe", lock.BuildIdentity
 	cfg["runtime"], cfg["data"], cfg["lua"] = "Runtime", "Data", "Lua.exe"
 	if _, ok := cfg["autoSync"]; !ok {
 		cfg["autoSync"] = true

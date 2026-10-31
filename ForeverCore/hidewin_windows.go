@@ -7,7 +7,7 @@ import (
 	"syscall"
 )
 
-// noWindow keeps a console program (Lua, MythicSim, the route planner) from opening a console window: ForeverCore
+// noWindow keeps a console program (Lua, Engine, the route planner) from opening a console window: ForeverCore
 // itself has none, so Windows would give each child its own.
 func noWindow(cmd *exec.Cmd) *exec.Cmd {
 	if cmd.SysProcAttr == nil {

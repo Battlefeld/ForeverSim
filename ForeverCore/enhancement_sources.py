@@ -111,15 +111,60 @@ def generate(food_html, enchant_html, tooltip_dir, engine, lock):
             'engineEnchants': {str(e['effectId']): e['name'] for e in database['enchants']}}
 
 
+def refresh(catalog, engine, lock):
+    """The catalog again against another engine checkout, without the saved Wowhead pages: the foods stay as they are;
+    each enchanting recipe is matched with the engine's enchants again, and the item geometry and the engine's enchant
+    list come from the checkout. The engine update runs this, so a new engine never leaves the catalog on the old one."""
+    database_path = Path(engine) / 'assets/database/db.json'
+    database = json.loads(database_path.read_text())
+    by_recipe = {}
+    for entry in database['enchants']:
+        if entry.get('itemId'):
+            by_recipe.setdefault(entry['itemId'], []).append(entry)
+    foods = [e for e in catalog['entries'] if e['kind'] == 'food']
+    recipes = {}
+    for e in catalog['entries']:
+        if e['kind'] == 'enchant':
+            recipes.setdefault(e['itemId'], {'id': e['itemId'], 'name': e['name'], 'skill': e.get('skill')})
+    enchants = []
+    for rid, recipe in recipes.items():
+        matches = by_recipe.get(rid, [])
+        if not matches:
+            enchants.append({'key': f'recipe:{rid}', 'kind': 'enchant', 'itemId': rid,
+                             'name': recipe['name'], 'skill': recipe.get('skill'),
+                             'provisional': True, 'supported': False, 'source': ENCHANT_URL,
+                             'reason': 'Rezept noch keiner Verzauberung der gepinnten Engine zugeordnet'})
+        for entry in matches:
+            row = {k: v for k, v in entry.items() if k in ['effectId', 'spellId', 'itemId', 'type', 'extraTypes', 'enchantType', 'requiredProfession']}
+            row.update(key=f"enchant:{rid}:{entry['effectId']}", kind='enchant',
+                       name=recipe['name'].removeprefix('Formel: '), engineName=entry['name'],
+                       skill=recipe.get('skill'), provisional=True, supported=True, source=ENCHANT_URL)
+            enchants.append(row)
+    geometry = {str(i['id']): {k: i[k] for k in ['type', 'weaponType', 'handType', 'rangedWeaponType'] if k in i}
+                for i in database['items']}
+    result = dict(catalog)
+    result.update(upstreamRevision=lock['commit'], databaseSHA256=hashlib.sha256(database_path.read_bytes()).hexdigest(),
+                  entries=foods + enchants, itemGeometry=geometry,
+                  engineEnchants={str(e['effectId']): e['name'] for e in database['enchants']})
+    return result
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--food-html', required=True, type=Path)
-    p.add_argument('--enchant-html', required=True, type=Path)
-    p.add_argument('--tooltip-dir', required=True, type=Path)
-    p.add_argument('--engine-source', required=True, type=Path)
+    p.add_argument('--refresh', type=Path, metavar='ENGINE', help='match the committed catalog against this engine checkout again (no saved pages needed)')
+    p.add_argument('--food-html', type=Path)
+    p.add_argument('--enchant-html', type=Path)
+    p.add_argument('--tooltip-dir', type=Path)
+    p.add_argument('--engine-source', type=Path)
     p.add_argument('--output', type=Path, default=Path(__file__).with_name('enhancements-data.json'))
     args = p.parse_args()
     lock = json.loads(Path(__file__).with_name('engine.lock.json').read_text())
+    if args.refresh:
+        result = refresh(json.loads(args.output.read_text()), args.refresh, lock)
+        args.output.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':')) + '\n')
+        return
+    if not (args.food_html and args.enchant_html and args.tooltip_dir and args.engine_source):
+        p.error('--food-html, --enchant-html, --tooltip-dir and --engine-source are required without --refresh')
     result = generate(args.food_html.read_text(), args.enchant_html.read_text(), args.tooltip_dir, args.engine_source, lock)
     args.output.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':')) + '\n')
 

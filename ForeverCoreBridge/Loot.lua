@@ -1,5 +1,5 @@
 -- What the "Beute" tab knows: every wearable item from the sources the addon has data for (dungeon drops with their chances,
--- the items in the bags, the MythicSim top gear), what each would change in the damage (the same values as the tooltips
+-- the items in the bags, the Engine top gear), what each would change in the damage (the same values as the tooltips
 -- and the dungeon list: C.ItemResult), the best item per slot and where to get the upgrades. No frames here.
 local C=ForeverCoreClient
 local Loot={};C.Loot=Loot
@@ -250,9 +250,9 @@ function Loot.Farm(prebis,limit)
 end
 
 -- Stat weights (the engine's own sensitivity of the damage to each stat) ----------------------------------------------------------
-local STAT_LABEL={StatSpellDamage='Zauberschaden',StatSpellHitRating='Trefferwertung',StatSpellCritRating='Kritische Zauberwertung',StatSpellHasteRating='Zaubertempo',
+local STAT_LABEL={StatSpellDamage='Zauberschaden',StatHitRating='Trefferwertung',StatCritRating='Kritische Wertung',StatHasteRating='Tempowertung',
  StatIntellect='Intelligenz',StatAgility='Beweglichkeit',StatStrength='Stärke',StatAttackPower='Angriffskraft',
- StatRangedAttackPower='Fernkampfangriffskraft',StatFeralAttackPower='Wilde Angriffskraft',StatMeleeHitRating='Trefferwertung',StatMeleeCritRating='Kritische Trefferwertung',StatMeleeHasteRating='Angriffstempo',StatExpertiseRating='Waffenkunde',StatArmorPenetration='Rüstungsdurchschlag'}
+ StatRangedAttackPower='Fernkampfangriffskraft',StatFeralAttackPower='Wilde Angriffskraft',StatExpertiseRating='Waffenkunde',StatArmorPenetration='Rüstungsdurchschlag'}
 function Loot.LoadWeights(cb,force)
  local s=store();local ctx=C.SimCacheContext and C.SimCacheContext()
  if s.weights and s.weights.context==ctx and not force then if cb then cb(s.weights)end;return true end

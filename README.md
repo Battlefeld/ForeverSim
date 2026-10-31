@@ -2,7 +2,7 @@
 
 Ausrüstung, Talente und Rotation für **WoW Forever**, berechnet mit einer echten Kampf-Simulation, angezeigt direkt im
 Spiel. Gerechnet wird nicht im Spiel, sondern auf deinem PC: Die Addons lesen deinen Charakter, `ForeverCore.exe`
-simuliert mit der MythicSim-Engine (WoWSims Forever) und schickt das Ergebnis zurück, ohne `/reload`.
+simuliert mit der Engine-Engine (WoWSims Forever) und schickt das Ergebnis zurück, ohne `/reload`.
 
 ForeverSim ist ein inoffizielles Fan-Projekt und steht in keiner Verbindung zu Blizzard Entertainment.
 
@@ -76,7 +76,7 @@ die EXE und veröffentlicht sie im [Release „forevercore“](https://github.co
 - **Eigener Code und Grafiken:** MIT, siehe [`LICENSE`](LICENSE).
 - **Dungeon-Katalog** (aus NorgannonDB) und **Hexenmeister-Begleiterwerte** (aus cmangos classic-db): GPL-3.0, siehe
   [`LICENSES/GPL-3.0.txt`](LICENSES/GPL-3.0.txt).
-- **MythicSim / WoWSims:** MIT, siehe [`ForeverSimBridge/THIRD_PARTY_LICENSES.txt`](ForeverSimBridge/THIRD_PARTY_LICENSES.txt).
+- **Engine / WoWSims:** MIT, siehe [`ForeverSimBridge/THIRD_PARTY_LICENSES.txt`](ForeverSimBridge/THIRD_PARTY_LICENSES.txt).
 - Das mitgelieferte **ForeverRoutes** hat eigene Lizenzen (Code MIT, Routen GPL-3.0, RestedXP-Abschnitte CC BY-NC-SA 4.0).
 
 Alle Quellen, ihre Lizenzen und Hinweise: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Im installierten Programm

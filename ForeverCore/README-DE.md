@@ -1,6 +1,6 @@
 # ForeverCore – Start
 
-ForeverCore berechnet auf dem PC mit MythicSim, wie viel Schaden dir ein Item bringt, und zeigt das Ergebnis im
+ForeverCore berechnet auf dem PC mit Engine, wie viel Schaden dir ein Item bringt, und zeigt das Ergebnis im
 Spiel an. Zwei Addons gehören dazu: **ForeverSimBridge** (liest Charakter und Items) und **ForeverCoreBridge**
 (Verbindung zum PC, Fenster, Auktionshaus, Dungeon-Liste).
 

@@ -29,13 +29,13 @@ assert(S.slots.chest and S.slots.finger2 and S.slots.ranged,'a widget for every 
 -- the weights were asked for when the tab opened
 local wj;for _,j in ipairs(jobs)do if j.kind=='weights'then wj=j end end
 assert(wj,'weights job sent')
-wj.cb({rows={{key='StatSpellDamage',perPoint=1},{key='StatSpellCritRating',perPoint=.5},{key='StatIntellect',perPoint=.25}}})
+wj.cb({rows={{key='StatSpellDamage',perPoint=1},{key='StatCritRating',perPoint=.5},{key='StatIntellect',perPoint=.25}}})
 assert(S.weightRows[1].frame:IsShown() and S.weightRows[1].name:GetText()=='Zauberschaden' and S.weightRows[4].frame:IsShown()==false,'weights shown')
 -- values arrive by polling
 MOCK.Advance(.1,.05);Loot.Poll(10000);UI.lootRefresh()
 local chest=S.slots.chest
 assert(chest.name:GetText()~='' and chest.gain:GetText()=='+3,9 %','the best chest item and its gain: '..tostring(chest.gain:GetText()))
-assert(chest.star:IsShown(),'a star for the MythicSim item')
+assert(chest.star:IsShown(),'a star for the Engine item')
 assert(S.total:GetText():find('%%')and S.totalNote:GetText():find('Upgrade',1,true),'total: '..S.total:GetText()..' / '..S.totalNote:GetText())
 -- a slot without an upgrade shows what is worn
 local head=S.slots.head
@@ -44,7 +44,7 @@ assert(head.gain:GetText()=='schon bestes' or head.gain:GetText():find('%%'),'he
 chest.__scripts.OnClick(chest)
 assert(S.sel=='chest' and S.detailTitle:GetText()=='BRUST','detail title: '..S.detailTitle:GetText())
 assert(S.itemGain:GetText():find('3,9',1,true) and S.itemWorn:GetText():find('Getragen',1,true),'detail: '..S.itemGain:GetText()..' / '..S.itemWorn:GetText())
-assert(S.itemSources:GetText():find('MythicSim',1,true),'sources: '..S.itemSources:GetText())
+assert(S.itemSources:GetText():find('Engine',1,true),'sources: '..S.itemSources:GetText())
 assert(S.farmRows[1].frame:IsShown() and S.farmRows[1].value:GetText():find('/Lauf',1,true),'a place to farm: '..tostring(S.farmRows[1].value:GetText()))
 -- filters
 local function check(label)for _,c in ipairs(S.checks)do if c.text:GetText()==label then return c end end;error('no check '..label)end

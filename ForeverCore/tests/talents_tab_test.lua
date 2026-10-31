@@ -41,12 +41,12 @@ local pj;for _,j in ipairs(jobs)do if j.kind=='presets'then pj=j end end
 assert(pj,'presets job sent')
 pj.cb({engineRevision='eng-1',class='mage',talents={
  {name='Arcane DPS',talentsString='a',valid=true,tree=1,entries={{tree=1,row=0,col=1,rank=5}}},
- {name='Fire DPS',talentsString='f',valid=true,tree=2,entries={{tree=2,row=0,col=0,rank=2}}},
+ {name='Fire DPS',talentsString='f',valid=true,tree=2,entries={{tree=2,row=0,col=1,rank=2}}},
  {name='Frost DPS',talentsString='z',valid=true,tree=3,entries={}},
 },gear={{name='Pre-BiS',items={}}},builds={},layout={}})
 local shown=0;for _,r in ipairs(S.rows)do if r:IsShown()then shown=shown+1 end end
 assert(shown==4,'live + three top builds: '..shown)
-assert(S.topHead:IsShown(),'MythicSim top heading')
+assert(S.topHead:IsShown(),'Engine top heading')
 
 -- selecting a top build shows it read-only ---------------------------------------------------------------------------
 local topRow;for _,r in ipairs(S.rows)do if r:IsShown() and r.id=='top:2'then topRow=r end end

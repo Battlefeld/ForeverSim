@@ -99,7 +99,7 @@ local function refreshRotations()
   local item=list[i];local r=rotRow(i)
   r:ClearAllPoints();r:SetPoint('TOPLEFT',state.mid,'TOPLEFT',0,-112-(i-1)*34);r:SetPoint('TOPRIGHT',state.mid,'TOPRIGHT',0,-112-(i-1)*34)
   r.name:SetText(UI.RotationLabel(item.name))
-  r.tag:ClearAllPoints();r.tag:SetPoint('LEFT',r.name,'RIGHT',8,0);r.tag:SetText((item.custom or tostring(item.name):find('^eigen:'))and'EIGEN'or'MYTHICSIM')
+  r.tag:ClearAllPoints();r.tag:SetPoint('LEFT',r.name,'RIGHT',8,0);r.tag:SetText((item.custom or tostring(item.name):find('^eigen:'))and'EIGEN'or'ENGINE')
   local top=item.name==(res.rotation)
   UI.Show(r.star,top);r.name:SetTextColor((top and COLOR.gold or COLOR.text)[1],(top and COLOR.gold or COLOR.text)[2],(top and COLOR.gold or COLOR.text)[3],1)
   r.bar:SetFraction(best>0 and(item.dps/best)or 0,top and COLOR.gold or{1,.54,.24})
@@ -122,7 +122,7 @@ local function refreshResult()
   for _,r in ipairs(list)do if r.custom then custom=r end end
   local mythic;for _,r in ipairs(list)do if not r.custom then mythic=mythic or r end end
   if custom and mythic and mythic.dps>0 and res.rotation==custom.name then
-   local p=100*(custom.dps/mythic.dps-1);state.delta:SetText((p>=0 and'▲ 'or'▼ ')..UI.FormatPct(p));state.vs:SetText('gegenüber der MythicSim-Rota')
+   local p=100*(custom.dps/mythic.dps-1);state.delta:SetText((p>=0 and'▲ 'or'▼ ')..UI.FormatPct(p));state.vs:SetText('gegenüber der Engine-Rota')
   else state.delta:SetText('');state.vs:SetText(res.rotation and'beste Rotation der Engine'or'')end
  else state.dps:SetText('–');state.unit:SetText('noch nicht berechnet');state.delta:SetText('');state.vs:SetText('Beste Rota simmen drücken')end
 end
@@ -205,7 +205,7 @@ local function build(page)
  local h1=UI.Heading(state.left,'Skillung',1);h1:SetPoint('TOPLEFT',state.left,'TOPLEFT',0,0);h1:SetWidth(lw)
  state.topHead=CreateFrame('Frame',nil,state.left);state.topHead:SetSize(lw,22)
  local star=state.topHead:CreateTexture(nil,'ARTWORK');star:SetSize(16,16);star:SetPoint('LEFT',0,0);star:SetTexture('Interface\\Icons\\INV_Misc_Note_01')
- local th=UI.Text(state.topHead,11,COLOR.gold,'body','LEFT');th:SetPoint('LEFT',star,'RIGHT',7,0);th:SetText('MYTHICSIM TOP')
+ local th=UI.Text(state.topHead,11,COLOR.gold,'body','LEFT');th:SetPoint('LEFT',star,'RIGHT',7,0);th:SetText('ENGINE TOP')
  -- middle: simulate
  state.simBox=CreateFrame('Frame',nil,state.mid);state.simBox:SetPoint('TOPLEFT',state.mid,'TOPLEFT',0,0);state.simBox:SetPoint('TOPRIGHT',state.mid,'TOPRIGHT',0,0);state.simBox:SetHeight(110)
  local h2=UI.Heading(state.simBox,'Rota simmen',2);h2:SetPoint('TOPLEFT',state.simBox,'TOPLEFT',0,0);h2:SetWidth(300)
@@ -213,7 +213,7 @@ local function build(page)
  state.simulate:SetPoint('TOPLEFT',state.simBox,'TOPLEFT',0,-28)
  state.refine=UI.Check(state.simBox,'Eigene Rota verfeinern',function()return S.Store().refine==true end,function(on)S.Store().refine=on and true or false end,230)
  state.refine:SetPoint('LEFT',state.simulate,'RIGHT',24,0)
- UI.Tooltip(state.refine,{'Eigene Rota verfeinern','MythicSim probiert kleine Änderungen an der besten Rotation aus und behält, was mehr Schaden macht. Läuft im Hintergrund auf dem PC.'})
+ UI.Tooltip(state.refine,{'Eigene Rota verfeinern','Engine probiert kleine Änderungen an der besten Rotation aus und behält, was mehr Schaden macht. Läuft im Hintergrund auf dem PC.'})
  state.message=UI.Text(state.simBox,11,COLOR.muted,'body','LEFT');state.message:SetPoint('TOPLEFT',state.simulate,'BOTTOMLEFT',2,-6);state.message:SetWidth(midW-4)
  state.simulate:SetScript('OnClick',function()
   if S.running or state.busy then return end
@@ -298,7 +298,7 @@ function UI.rotaTune(spec)
  state.busy=true
  local ok,why=S.Tune(spec,function()UI.rotationRefresh()end,function(rec,info)
   state.busy=false
-  if rec then say('Verfeinert: '..UI.FormatPct(info)..' gegenüber der MythicSim-Rota.',COLOR.good)
+  if rec then say('Verfeinert: '..UI.FormatPct(info)..' gegenüber der Engine-Rota.',COLOR.good)
   else say(tostring(info or'Keine Verbesserung gefunden.'),COLOR.muted)end
   UI.rotationRefresh()
  end)

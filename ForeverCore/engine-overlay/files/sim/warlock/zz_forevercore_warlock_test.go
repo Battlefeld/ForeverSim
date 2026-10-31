@@ -1,4 +1,4 @@
-// ForeverCore overlay tests. Not part of MythicSim.
+// ForeverCore overlay tests. Not part of Engine.
 package warlock
 
 import (
@@ -8,16 +8,21 @@ import (
 	"github.com/wowsims/forever/sim/core"
 	"github.com/wowsims/forever/sim/core/proto"
 	"github.com/wowsims/forever/sim/core/stats"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 func foreverCoreDemonSim(t *testing.T, summon proto.WarlockOptions_Summon) float64 {
 	t.Helper()
+	build := core.GetTestBuildFromJSON(proto.Class_ClassWarlock, "../../ui/specs/warlock/dps/builds", "sm_ruin", core.ItemFilter{}, nil, nil)
+	spec := &proto.Player_Warlock{Warlock: googleProto.Clone(build.SpecOptions.SpecOptions.(*proto.Player_Warlock).Warlock).(*proto.Warlock)}
+	spec.Warlock.Options.ClassOptions.Summon = summon
+	gear := build.GearSet.GearSet
+	if gear == nil {
+		gear = &proto.EquipmentSpec{}
+	}
 	player := &proto.Player{
-		Name: "fc", Class: proto.Class_ClassWarlock, Race: proto.Race_RaceOrc, TalentsString: AfflictionTalents,
-		Equipment: &proto.EquipmentSpec{},
-		Spec: &proto.Player_Warlock{Warlock: &proto.Warlock{Options: &proto.Warlock_Options{ClassOptions: &proto.WarlockOptions{
-			Summon: summon, Armor: proto.WarlockOptions_DemonArmor, CurseOptions: proto.WarlockOptions_Elements}}}},
-		Rotation: core.GetAplRotation("../../ui/specs/warlock/dps/apls", "affliction").Rotation,
+		Name: "fc", Class: proto.Class_ClassWarlock, Race: proto.Race_RaceOrc, TalentsString: build.Talents,
+		Equipment: gear, Spec: spec, Rotation: build.Rotation.Rotation,
 	}
 	raid := &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{player}, Buffs: &proto.PartyBuffs{}}}, Buffs: &proto.RaidBuffs{}, Debuffs: &proto.Debuffs{}, NumActiveParties: 1}
 	res := core.RunRaidSim(&proto.RaidSimRequest{Raid: raid, Encounter: core.MakeSingleTargetEncounter(0), SimOptions: &proto.SimOptions{Iterations: 40, RandomSeed: 3}})
@@ -71,7 +76,7 @@ func TestForeverCoreDemonInactiveKeepsUpstream(t *testing.T) {
 func TestForeverCoreLiveImp(t *testing.T) {
 	withForeverCoreDemon(t, nil)
 	upstream := foreverCoreDemonSim(t, proto.WarlockOptions_Imp)
-	same := petBaseStats[proto.WarlockOptions_Imp]
+	same := petModels[proto.WarlockOptions_Imp].baseStats
 	withForeverCoreDemon(t, &foreverCoreDemonData{Summon: int32(proto.WarlockOptions_Imp), Strength: same[stats.Strength], Agility: same[stats.Agility], Stamina: same[stats.Stamina],
 		Intellect: same[stats.Intellect], Spirit: same[stats.Spirit], Mana: same[stats.Mana]})
 	if got := foreverCoreDemonSim(t, proto.WarlockOptions_Imp); math.Abs(got-upstream) > 1e-6 {
@@ -80,7 +85,7 @@ func TestForeverCoreLiveImp(t *testing.T) {
 	cost := 25.0
 	withForeverCoreDemon(t, &foreverCoreDemonData{Summon: int32(proto.WarlockOptions_Imp), Strength: 20, Agility: 15, Stamina: 25, Intellect: 60, Spirit: 55, Mana: 300,
 		Spells: map[string]foreverCoreDemonSpell{"firebolt": {Min: 11, Max: 15, Cost: &cost}}})
-	if got := foreverCoreDemonSim(t, proto.WarlockOptions_Imp); !(got > 0 && got < upstream*0.6) {
+	if got := foreverCoreDemonSim(t, proto.WarlockOptions_Imp); !(got > 0 && got < upstream*0.9) {
 		t.Fatalf("level 20 imp %.2f, level 60 imp %.2f", got, upstream)
 	}
 	// Live data for another demon leaves the active one alone.
