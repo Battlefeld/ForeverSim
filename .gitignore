@@ -1,6 +1,10 @@
 /*
 !/.gitignore
 !/README.md
+!/LICENSE
+!/LICENSES/
+!/THIRD_PARTY_NOTICES.md
+!/docs/
 !/.github/
 !/ForeverSimBridge/
 !/ForeverCore/
