@@ -83,7 +83,7 @@ jobs:
           (cd ForeverCore && go run . -sign-update ../dist/ForeverCore.exe -update-build "$BUILD" \
             -update-url "https://github.com/Battlefeld/ForeverSim/releases/download/forevercore/ForeverCore.exe" \
             -update-out ../dist/forevercore-update.json)
-      - name: Publish ForeverCore.exe (release "forevercore": the download of the README and of the updates)
+      - name: Publish ForeverCore.exe in the release forevercore
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
