@@ -37,13 +37,19 @@
       "sha256": "68eb1ab43f0603fa05791d0e5362f452dc40583a6a12910a3086895f52e2ddf1",
       "reason": "Targeted talent layout and enchant 2618 corrections verified against ForeverChanges on 2026-10-28. Base client remains 70425; not a complete 70658 import.",
       "reference": "https://foreverchanges.pro/talents/mage"
+    },
+    {
+      "file": "engine-patches/143-forever-new-combat-spells.patch",
+      "sha256": "3865e4c560a7514b60cf18b55b4a3fc97ae430405556e75d5e8d3f3479da5cd9",
+      "reason": "Forever's new combat spells the pinned base (client 70425) lacks: Kill Command (hunter, spell 409379) and Shiv (rogue, spell 424799), from the tooltips of ForeverDB and Wowhead Forever. Assumptions are in the source comments (Shiv: weapon-speed energy surcharge not modelled; Kill Command: global cooldown assumed).",
+      "reference": "https://foreverdb.net/spell/409379"
     }
   ],
   "characterLevel": 60,
   "reference": "https://github.com/sage3648/mythicsim-forever-engine-go/tree/mythicsim/client70425",
   "branch": "mythicsim/client70425",
   "clientBuild": "1.60.1.70425",
-  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+b36fe44f767de2b3c0d06558",
+  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+c4b2c53b09eff5ca2fb5fb32",
   "overlay": "79a27325d2c024d9",
   "levelDataSHA256": "2a029563bc2860cd4947e68726a0a40e6ea4cef82f95182c7542b88958819f19"
 }
