@@ -1,5 +1,5 @@
 {
- "previous": "bcdda5184aa68466f407e3727f99abf7d5454a27+c4b2c53b09eff5ca2fb5fb32",
+ "previous": "bcdda5184aa68466f407e3727f99abf7d5454a27+aca0f1e7027e23d43d0fdb7d",
  "ok": true,
  "branch": "mythicsim/client70425",
  "base": "bcdda5184aa68466f407e3727f99abf7d5454a27",
@@ -9,7 +9,8 @@
   "engine-patches/140-stormstrike.patch",
   "engine-patches/141-windfury-flametongue.patch",
   "engine-patches/142-foreverchanges-client-corrections.patch",
-  "engine-patches/143-forever-new-combat-spells.patch"
+  "engine-patches/143-forever-new-combat-spells.patch",
+  "engine-patches/144-forever-level-scaling.patch"
  ],
  "patchesDropped": [],
  "clientBuild": "1.60.1.70425",
@@ -352,5 +353,5 @@
   }
  },
  "problems": [],
- "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+d2f403ecfc5c7cf20f056051"
+ "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+be1f9170156ac99fc8111936"
 }
