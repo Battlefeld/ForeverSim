@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "checkedAt": "2026-10-31T04:21:58.880690Z",
+  "products": {
+    "wowf": {
+      "source": "https://us.version.battle.net/wowf/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "7feb61f3c994bcb168526b8db521514a",
+        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
+        "KeyRing": "",
+        "BuildId": "70707",
+        "VersionsName": "1.60.1.70707",
+        "ProductConfig": "2ced73c17301c297ca062bc7c3583420"
+      },
+      "responseSHA256": "d51725456e8f187791ca2ae25cb641877087dd5889d63dca9bd7dd47618ddfa4"
+    },
+    "wow_classic_beta": {
+      "source": "https://us.version.battle.net/wow_classic_beta/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      },
+      "responseSHA256": "cdaa3aaeb8a962c0294b223b49db9e7753078a2d76eba55d41e6603a225fb4fa"
+    }
+  },
+  "effectiveBuild": null,
+  "hotfixCoverage": "downloaded_not_applied",
+  "exportedCacheSHA256": null,
+  "clientExtraction": {
+    "status": "failed",
+    "previousDataRetained": true
+  }
+}

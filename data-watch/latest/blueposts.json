@@ -1,0 +1,363 @@
+{
+  "schema": 1,
+  "feed": "https://theforeverera.com/en/blue.xml",
+  "posts": {
+    "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-6-all-about-tech-ft-%E2%80%AAshobek/638462/1": {
+      "title": "Kaivax: The WoW: Forever Podcast: Episode 6 - All About Tech ft. \u202a@Shobek",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-6-all-about-tech-ft-%E2%80%AAshobek/638462/1",
+      "sha256": "cbe1d35e7c3ba646cc4059243daec602f47ee00b5a3c32a541b672c16b77a56e",
+      "published": "Thu, 29 Oct 2026 16:18:25 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-6-all-about-tech-ft-%E2%80%AAshobek/2395799/1": {
+      "title": "Kaivax: The WoW: Forever Podcast: Episode 6 - All About Tech ft. \u202a@Shobek",
+      "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-6-all-about-tech-ft-%E2%80%AAshobek/2395799/1",
+      "sha256": "3f19588f928964069a1d13745bc7801c20f71968ba9f5ff56a86539c031f1bb6",
+      "published": "Thu, 29 Oct 2026 16:17:57 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/new-player%E2%80%99s-starter-guide-welcome-to-world-of-warcraft-forever/2394974/1": {
+      "title": "Blizzard Entertainment: New Player\u2019s Starter Guide: Welcome to World of Warcraft: Forever",
+      "url": "https://us.forums.blizzard.com/en/wow/t/new-player%E2%80%99s-starter-guide-welcome-to-world-of-warcraft-forever/2394974/1",
+      "sha256": "3ba5875843ce3df84c6acfe77fb303f54681aeabd985945439faf2b4fad16879",
+      "published": "Wed, 28 Oct 2026 17:00:10 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/overly-restrictive-name-check-and-fix-incoming-28-october/638147/1": {
+      "title": "Kaivax: Overly Restrictive Name Check and Fix Incoming - 28 October",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/overly-restrictive-name-check-and-fix-incoming-28-october/638147/1",
+      "sha256": "689c20c7b13cb63f0775a6bf51ef614ed9c94ce7a88e4957602996db280588e6",
+      "published": "Wed, 28 Oct 2026 01:28:55 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/overly-restrictive-name-check-and-fix-incoming-october-27/2394467/1": {
+      "title": "Kaivax: Overly Restrictive Name Check and Fix Incoming - October 27",
+      "url": "https://us.forums.blizzard.com/en/wow/t/overly-restrictive-name-check-and-fix-incoming-october-27/2394467/1",
+      "sha256": "a6de758c504f6aad0495e5cd50e126fb7b532131636e58e2c69c5096f0eda513",
+      "published": "Wed, 28 Oct 2026 01:28:41 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/name-reservation-issue-for-oceanic-players/2393431/1": {
+      "title": "Kaivax: Name Reservation Issue for Oceanic Players",
+      "url": "https://us.forums.blizzard.com/en/wow/t/name-reservation-issue-for-oceanic-players/2393431/1",
+      "sha256": "308dceeee83a9b93bf575c4451e9990a8dc08b392a1f43e34f57ee12ec5aa238",
+      "published": "Tue, 27 Oct 2026 20:02:47 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/your-next-adventure-in-wow-forever-starts-in-the-wow-portal-room/2393349/1": {
+      "title": "Blizzard Entertainment: Your Next Adventure in WoW: Forever Starts in the WoW Portal Room",
+      "url": "https://us.forums.blizzard.com/en/wow/t/your-next-adventure-in-wow-forever-starts-in-the-wow-portal-room/2393349/1",
+      "sha256": "f1084da9063c712ccb455858976c4c230275607ddaf7fb3fc03c749e8399e89a",
+      "published": "Tue, 27 Oct 2026 19:00:06 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-26-october/631316/8": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 26 October (#8)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-26-october/631316/8",
+      "sha256": "d698c3537eb91adf8862a327b0be527ac0a172582872a0d79f29b760de65e5cb",
+      "published": "Tue, 27 Oct 2026 15:37:57 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/8": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated October 26 (#8)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/8",
+      "sha256": "1a1ec35e4628851483401817b62e51727e2d43bd9a86430e1b32d0b1eb1becc7",
+      "published": "Tue, 27 Oct 2026 15:37:37 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-26-october/631316/7": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 26 October (#7)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-26-october/631316/7",
+      "sha256": "899f083f028bbb27f4f23dcd8829dab92a1fd264cc0a91ff51bcf626d0f90cdd",
+      "published": "Mon, 26 Oct 2026 20:35:53 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/7": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated October 26 (#7)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/7",
+      "sha256": "88b62d976b87c4979a53f7e9ab3be32415c2caf4c5e8e8bf49f3b795c097f656",
+      "published": "Mon, 26 Oct 2026 20:35:27 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/watch-the-wow-forever-short-story-%E2%80%9Cunbowed%E2%80%9D/2392363/1": {
+      "title": "Blizzard Entertainment: Watch the WoW: Forever Short Story, \u201cUnbowed\u201d",
+      "url": "https://us.forums.blizzard.com/en/wow/t/watch-the-wow-forever-short-story-%E2%80%9Cunbowed%E2%80%9D/2392363/1",
+      "sha256": "4eaca94b3cf1d934b9fc8922be21dfb37b19b8649302cd2a63589a72c5fa131f",
+      "published": "Mon, 26 Oct 2026 17:01:29 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/637228/1": {
+      "title": "Kaivax: Thank You For Testing the WoW Forever Beta",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/637228/1",
+      "sha256": "a8eb0a594b38b0fa7da2eaf1b9a78844edbb7684a885f09b795460bba3f4f2ce",
+      "published": "Fri, 23 Oct 2026 17:01:38 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/2390466/1": {
+      "title": "Kaivax: Thank You For Testing the WoW Forever Beta",
+      "url": "https://us.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/2390466/1",
+      "sha256": "c7b3b7d6b2e1216539f832e4e427567576079159481b93b342ed803d244a10d7",
+      "published": "Fri, 23 Oct 2026 17:01:12 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/637227/1": {
+      "title": "Kaivax: Thank You For Testing the WoW Forever Beta",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/637227/1",
+      "sha256": "9eb8f8caf4bf47fdf007126dfbb82e37c788f7d77d392bfeea24a4dda36b80dd",
+      "published": "Fri, 23 Oct 2026 17:00:44 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/2390465/1": {
+      "title": "Kaivax: Thank You For Testing the WoW Forever Beta",
+      "url": "https://us.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/2390465/1",
+      "sha256": "1e3c15f4df76ec5b02dd3b149899de0b5d6f0befb42562aac54736eef4b888c1",
+      "published": "Fri, 23 Oct 2026 17:00:41 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/beta-realm-restart-today-at-2300-cest/637088/1": {
+      "title": "Kaivax: Beta Realm Restart Today At 23:00 CEST",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/beta-realm-restart-today-at-2300-cest/637088/1",
+      "sha256": "74fec59579667ee029906ca7a8324182f117252d4fed8c0d70ef8b7a20c089e5",
+      "published": "Thu, 22 Oct 2026 20:20:36 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/beta-realm-restart-today-at-200-pm-pdt/2389801/1": {
+      "title": "Kaivax: Beta Realm Restart Today At 2:00 p.m. PDT",
+      "url": "https://us.forums.blizzard.com/en/wow/t/beta-realm-restart-today-at-200-pm-pdt/2389801/1",
+      "sha256": "bf8347c69268e2c8d5e8c239278b7654c02a160ace5254c7c2f86ba00d648aa4",
+      "published": "Thu, 22 Oct 2026 20:19:58 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-beta-celebration-is-underway/2389633/1": {
+      "title": "Kaivax: The WoW Forever Beta Celebration is Underway",
+      "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-beta-celebration-is-underway/2389633/1",
+      "sha256": "6430bbad020ab113ff6dc7e1aac10286420b19f9d9d02eae2ba9a350ddfe4623",
+      "published": "Thu, 22 Oct 2026 17:00:00 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-beta-celebration-is-underway/637055/1": {
+      "title": "Kaivax: The WoW Forever Beta Celebration is Underway",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-beta-celebration-is-underway/637055/1",
+      "sha256": "bbbf57bf7df2d883670c741cda972b0433f12374b73499fe34bcd1b64119dcf9",
+      "published": "Thu, 22 Oct 2026 17:00:00 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-5-end-of-beta-special/637043/1": {
+      "title": "Kaivax: The WoW: Forever Podcast: Episode 5 - End of Beta Special",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-5-end-of-beta-special/637043/1",
+      "sha256": "05851101dcb99b4bf178882318fc101181bdf9b012dc642d62be6d261c5f417e",
+      "published": "Thu, 22 Oct 2026 16:22:03 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-5-end-of-beta-special/2389565/1": {
+      "title": "Kaivax: The WoW: Forever Podcast: Episode 5 - End of Beta Special",
+      "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-5-end-of-beta-special/2389565/1",
+      "sha256": "9bc66285da921c0760224fc1c7d701b6ac862065ad27a6e77ef317437e2dec1c",
+      "published": "Thu, 22 Oct 2026 16:21:16 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/the-roleplay-pvp-ruleset-is-coming-to-wow-forever/2389502/1": {
+      "title": "Aggrend: The Roleplay-PvP Ruleset is Coming to WoW Forever",
+      "url": "https://us.forums.blizzard.com/en/wow/t/the-roleplay-pvp-ruleset-is-coming-to-wow-forever/2389502/1",
+      "sha256": "0a125308ad63f2768c0c44739ca884130f1ab07ad17e109e3f4a4726f908202f",
+      "published": "Thu, 22 Oct 2026 15:33:08 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/the-roleplay-pvp-ruleset-is-coming-to-wow-forever/637031/1": {
+      "title": "Aggrend: The Roleplay-PvP Ruleset is Coming to WoW Forever",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/the-roleplay-pvp-ruleset-is-coming-to-wow-forever/637031/1",
+      "sha256": "bda87e68da7cf9ba68ffd4ad5bfbafe28391ffb7bea1e169140d1434ef1b5e6d",
+      "published": "Thu, 22 Oct 2026 15:30:54 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/forever-beta-will-return-shortly/2389150/1": {
+      "title": "Zorbrix: Forever Beta Will Return Shortly",
+      "url": "https://us.forums.blizzard.com/en/wow/t/forever-beta-will-return-shortly/2389150/1",
+      "sha256": "5209ec9a5c4d56fe762ea7432cf4e7223173059317cf28c06bde071b8bf644e9",
+      "published": "Thu, 22 Oct 2026 01:46:44 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/testing-wow-forever-today-21-october/636859/131": {
+      "title": "Kaivax: Testing WoW Forever Today - 21 October (#131)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/testing-wow-forever-today-21-october/636859/131",
+      "sha256": "d61323010acd62167f37be3e5b0715b7e69728cdcaf0ac3ae823f9280086fab0",
+      "published": "Wed, 21 Oct 2026 18:39:42 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/testing-wow-forever-today-october-21/2388547/1": {
+      "title": "Kaivax: Testing WoW Forever Today - October 21",
+      "url": "https://us.forums.blizzard.com/en/wow/t/testing-wow-forever-today-october-21/2388547/1",
+      "sha256": "a4e136bcd5c70884ff9bc29b7efbbe43be719aa95256f5aafb3eb75f7121584c",
+      "published": "Wed, 21 Oct 2026 16:28:54 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-early-name-reservations-are-now-live/636753/1": {
+      "title": "Blizzard Entertainment: World of Warcraft: Forever Early Name Reservations Are Now Live!",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-early-name-reservations-are-now-live/636753/1",
+      "sha256": "8e33caf69cd74b03aa9e593da1723fa224adc66a820b8efa1fb58063681823b4",
+      "published": "Tue, 20 Oct 2026 21:00:15 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/claim-your-world-of-warcraft-forever-character-names/2387945/1": {
+      "title": "Blizzard Entertainment: Claim Your World of Warcraft: Forever Character Names",
+      "url": "https://us.forums.blizzard.com/en/wow/t/claim-your-world-of-warcraft-forever-character-names/2387945/1",
+      "sha256": "5e034eb2cdfcdc4671266f622081b3286206bb43d406a1c7ef66354f0d2749cb",
+      "published": "Tue, 20 Oct 2026 21:00:12 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/heads-up-wow-forever-stress-test-on-21-october/636749/1": {
+      "title": "Kaivax: Heads Up -- WoW Forever Stress Test on 21 October",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/heads-up-wow-forever-stress-test-on-21-october/636749/1",
+      "sha256": "4dbb489b5f8b7b26ffb982d1d5b471addcb89896a9499045fa38837b444b6e52",
+      "published": "Tue, 20 Oct 2026 20:31:37 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/heads-up-wow-forever-stress-test-on-october-21/2387920/1": {
+      "title": "Kaivax: Heads Up -- WoW Forever Stress Test on October 21",
+      "url": "https://us.forums.blizzard.com/en/wow/t/heads-up-wow-forever-stress-test-on-october-21/2387920/1",
+      "sha256": "d81d61e563135cc02200401c464b205adae0c561f482475b38a44aea8c0138ca",
+      "published": "Tue, 20 Oct 2026 20:30:35 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-raid-overview%E2%80%94locations-raid-sizes-and-attunement/636735/1": {
+      "title": "Blizzard Entertainment: World of Warcraft: Forever Raid Overview\u2014Locations, Raid Sizes, and Attunement",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-raid-overview%E2%80%94locations-raid-sizes-and-attunement/636735/1",
+      "sha256": "8d79774a93a6da40e598ebda060aac7708de3198a83914ff680cb6ec2cbbba9b",
+      "published": "Tue, 20 Oct 2026 19:00:16 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-raid-overview%E2%80%94locations-raid-sizes-and-attunement/2387821/1": {
+      "title": "Blizzard Entertainment: World of Warcraft: Forever Raid Overview\u2014Locations, Raid Sizes, and Attunement",
+      "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-raid-overview%E2%80%94locations-raid-sizes-and-attunement/2387821/1",
+      "sha256": "f88c0dda5d715d7a76986a037613f904c317e3991e38469058b4ee646cfda519",
+      "published": "Tue, 20 Oct 2026 19:00:16 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-raid-overview%E2%80%94locations-raid-sizes-and-attunement/2387820/1": {
+      "title": "Blizzard Entertainment: World of Warcraft: Forever Raid Overview\u2014Locations, Raid Sizes, and Attunement",
+      "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-raid-overview%E2%80%94locations-raid-sizes-and-attunement/2387820/1",
+      "sha256": "db7355f17297b44bdd8762da0ed66a5e9e27f5fa4009d04249a6788a79ea30f5",
+      "published": "Tue, 20 Oct 2026 19:00:15 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/explore-the-new-dungeons-of-world-of-warcraft-forever/636727/1": {
+      "title": "Blizzard Entertainment: Explore the New Dungeons of World of Warcraft: Forever",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/explore-the-new-dungeons-of-world-of-warcraft-forever/636727/1",
+      "sha256": "739e5b7e59e397c6c32f22d15c3e6a8aba07e47b44c31b0a93b49898765b8bb3",
+      "published": "Tue, 20 Oct 2026 17:00:17 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/explore-the-new-dungeons-of-world-of-warcraft-forever/2387658/1": {
+      "title": "Blizzard Entertainment: Explore the New Dungeons of World of Warcraft: Forever",
+      "url": "https://us.forums.blizzard.com/en/wow/t/explore-the-new-dungeons-of-world-of-warcraft-forever/2387658/1",
+      "sha256": "eb9ba94fbd077f87851b90f09e7795f2177936b6ffc253ce74c00a7068377c2f",
+      "published": "Tue, 20 Oct 2026 17:00:14 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-stress-test-21-october/635831/19": {
+      "title": "Kaivax: WoW Forever Stress Test 21 October (#19)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-stress-test-21-october/635831/19",
+      "sha256": "7efd93b757392b470519cffeb542ce894a087a31666434c21ec8ee20fb15e901",
+      "published": "Fri, 16 Oct 2026 22:40:08 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617/39": {
+      "title": "Kaivax: WoW Forever Stress Test October 21 (#39)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617/39",
+      "sha256": "78160e02e0398c1cea71b299e77d37bec9f06ba476a6e33d6ad113a84d8d8d0d",
+      "published": "Fri, 16 Oct 2026 22:39:55 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/datamined-in-the-latest-beta-build/636148/1": {
+      "title": "Kaivax: Datamined in the Latest Beta Build",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/datamined-in-the-latest-beta-build/636148/1",
+      "sha256": "2387c3170f1bbcaebfe6e787d599f7db48aef0f14fe61e2cf03d61e453997422",
+      "published": "Fri, 16 Oct 2026 22:05:30 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/datamined-in-the-latest-beta-build/2385060/1": {
+      "title": "Kaivax: Datamined in the Latest Beta Build",
+      "url": "https://us.forums.blizzard.com/en/wow/t/datamined-in-the-latest-beta-build/2385060/1",
+      "sha256": "b13f1340b931ec6d7f97503cc9bd01017036d429b338daa4407fa9c388ecbf92",
+      "published": "Fri, 16 Oct 2026 22:05:24 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/druid-cat-form-quest/636086/3": {
+      "title": "Kaivax: Druid cat form quest (#3)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/druid-cat-form-quest/636086/3",
+      "sha256": "cd100a91af7e2f1f6f9c482dab2173fb1841e6716f4d5a4e2bf7462ebed6f10c",
+      "published": "Fri, 16 Oct 2026 17:58:39 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/druid-cat-form-quest/2384010/56": {
+      "title": "Kaivax: Druid cat form quest (#56)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/druid-cat-form-quest/2384010/56",
+      "sha256": "c8879a45a5a41cbd97cae1fdb81770b35960527bf40317d7ada316bdce2ad314",
+      "published": "Fri, 16 Oct 2026 17:56:38 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/beta-realm-maintenance-october-15/2383475/1169": {
+      "title": "Zorbrix: Beta Realm Maintenance - October 15 (#1169)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/beta-realm-maintenance-october-15/2383475/1169",
+      "sha256": "b98a46f3783c08e80b95c218043504cf86915c9369648b0f96a3df056625c5be",
+      "published": "Fri, 16 Oct 2026 01:06:44 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-15-october/631316/6": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 15 October (#6)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-15-october/631316/6",
+      "sha256": "69a0d513d7147bdf2d71dc04e61f836aabfd7328fa50a0224af8a428acb23470",
+      "published": "Fri, 16 Oct 2026 00:16:31 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/6": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated October 26 (#6)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/6",
+      "sha256": "ecdde53c576ee732498132ada79815d6a6e33c51f66c7e55f35f6fa751caafde",
+      "published": "Fri, 16 Oct 2026 00:15:23 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-stress-test-19-october/635831/1": {
+      "title": "Kaivax: WoW Forever Stress Test 19 October",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-stress-test-19-october/635831/1",
+      "sha256": "b6ab316f8eaa78b6306f162304349cfed3c9eef8daca39c0e5aa5e365d2841f0",
+      "published": "Thu, 15 Oct 2026 21:25:58 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617/1": {
+      "title": "Kaivax: WoW Forever Stress Test October 21",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617/1",
+      "sha256": "a4256e137e408c24180d9dba60e089c72d5122ec478bbb299d7ba30001637715",
+      "published": "Thu, 15 Oct 2026 21:24:41 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/beta-realm-maintenance-15-october/635803/1": {
+      "title": "Kaivax: Beta Realm Maintenance - 15 October",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/beta-realm-maintenance-15-october/635803/1",
+      "sha256": "095ab923614b00b98597e9b03105f3f99b91be1d9f7a29a730b8a5d62478d0d3",
+      "published": "Thu, 15 Oct 2026 20:01:36 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/beta-realm-maintenance-october-15/2383475/1": {
+      "title": "Kaivax: Beta Realm Maintenance - October 15",
+      "url": "https://us.forums.blizzard.com/en/wow/t/beta-realm-maintenance-october-15/2383475/1",
+      "sha256": "12f7337422148cb037e63db57c4c689ec07b495623b557c5899e23bb5bba0e73",
+      "published": "Thu, 15 Oct 2026 20:00:23 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-class-deep-dives-%E2%80%94-paladin/635789/1": {
+      "title": "Blizzard Entertainment: World of Warcraft: Forever Class Deep Dives \u2014 Paladin",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-class-deep-dives-%E2%80%94-paladin/635789/1",
+      "sha256": "cbdaebf9287e9998646d35f0495ea24c5c51b6fc84859a30ad2512cd13e35682",
+      "published": "Thu, 15 Oct 2026 19:00:09 GMT",
+      "relevant": true
+    }
+  },
+  "lastCheck": {
+    "status": "available",
+    "source": "https://theforeverera.com/en/blue.xml",
+    "baseline": true,
+    "changes": [],
+    "relevantChanges": 0
+  }
+}

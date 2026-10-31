@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "products": {
+    "wowf": {
+      "source": "https://us.version.battle.net/wowf/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "7feb61f3c994bcb168526b8db521514a",
+        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
+        "KeyRing": "",
+        "BuildId": "70707",
+        "VersionsName": "1.60.1.70707",
+        "ProductConfig": "2ced73c17301c297ca062bc7c3583420"
+      },
+      "responseSHA256": "d51725456e8f187791ca2ae25cb641877087dd5889d63dca9bd7dd47618ddfa4"
+    },
+    "wow_classic_beta": {
+      "source": "https://us.version.battle.net/wow_classic_beta/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      },
+      "responseSHA256": "cdaa3aaeb8a962c0294b223b49db9e7753078a2d76eba55d41e6603a225fb4fa"
+    }
+  },
+  "buildChanges": {
+    "wowf": {
+      "before": null,
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "7feb61f3c994bcb168526b8db521514a",
+        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
+        "KeyRing": "",
+        "BuildId": "70707",
+        "VersionsName": "1.60.1.70707",
+        "ProductConfig": "2ced73c17301c297ca062bc7c3583420"
+      }
+    },
+    "wow_classic_beta": {
+      "before": null,
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      }
+    }
+  },
+  "tables": {},
+  "documentationStatus": "not_assessed",
+  "hotfixCoverage": "downloaded_not_applied",
+  "limitations": [
+    "Server-only changes invisible to client data require in-game measurements.",
+    "A data delta without matching release notes is a candidate undocumented change, not proof."
+  ],
+  "raidbots": {
+    "wowf": {
+      "format": 9,
+      "build": 70707,
+      "records": 29347,
+      "bytes": 1768957,
+      "sha256": "cdbca7d10ef2b8304d6910094eebe26140fd0905bbaed1ae48477e51de91b112",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70707/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    },
+    "wow_classic_beta": {
+      "format": 9,
+      "build": 70532,
+      "records": 55213,
+      "bytes": 4237177,
+      "sha256": "07b22580aba86a03fa69f864b9ceb9137f5d3bb3294e36ce88cb7f5abcc1f0ab",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70532/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    }
+  },
+  "extractionRequired": true,
+  "effectiveBuild": null,
+  "exportedCacheSHA256": null,
+  "blueposts": {
+    "status": "available",
+    "source": "https://theforeverera.com/en/blue.xml",
+    "baseline": true,
+    "changes": [],
+    "relevantChanges": 0
+  },
+  "checkedAt": "2026-10-31T04:21:58.880690Z",
+  "clientExtraction": {
+    "status": "failed",
+    "previousDataRetained": true
+  }
+}
