@@ -9,7 +9,7 @@ def engine_facts(engine,spell_ids=()):
  if not list((engine/'sim/core/proto').glob('*.pb.go')):
   protos=sorted(str(p.relative_to(engine)) for p in (engine/'proto').glob('*.proto'))
   subprocess.run(['protoc','-I=proto','--go_out=paths=source_relative:sim/core/proto',*protos],cwd=engine,check=True)
- env=dict(os.environ);[env.pop(k,None) for k in ('FOREVERCORE_LEVEL','FOREVERCORE_SPELLBOOK','FOREVERCORE_HUNTER','FOREVERCORE_WARLOCK')]
+ env=dict(os.environ);[env.pop(k,None) for k in ('FOREVERCORE_LEVEL','FOREVERCORE_SPELLBOOK','FOREVERCORE_HUNTER','FOREVERCORE_WARLOCK','GOOS','GOARCH','CGO_ENABLED')]  # the helper runs here, whatever the engine is built for
  with tempfile.TemporaryDirectory() as t:
   main=Path(t)/'main.go';shutil.copyfile(Path(__file__).resolve().parent/'engine-overlay/tools/rotations.go.tmpl',main)
   out=subprocess.run(['go','run','-tags=with_db',str(main),*map(str,spell_ids)],cwd=engine,env=env,check=True,capture_output=True,text=True).stdout
