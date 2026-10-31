@@ -18,6 +18,9 @@ type effect struct {
 	Variance float64 `json:"variance"`
 	SPCoef   float64 `json:"spCoef"`
 	PeriodMs int     `json:"periodMs"`
+	// the owning spell's levels, as Average(level) uses them
+	SpellLevel int `json:"spellLevel"`
+	MaxLevel   int `json:"maxLevel"`
 }
 
 type spell struct {
@@ -36,7 +39,7 @@ func main() {
 		row := spell{ID: int(s.ID), Name: s.Name, Rank: s.Rank, SpellLevel: int(s.SpellLevel), CastMs: int(s.CastTimeMs), DurationMs: int(s.DurationMs)}
 		for _, e := range s.Effects {
 			row.Effects = append(row.Effects, effect{Index: int(e.Index), Type: int(e.Type), Aura: int(e.Aura), Base: e.BasePoints, PPL: e.PPL,
-				Variance: e.Variance, SPCoef: e.SPCoef, PeriodMs: int(e.PeriodMs)})
+				Variance: e.Variance, SPCoef: e.SPCoef, PeriodMs: int(e.PeriodMs), SpellLevel: int(e.SpellLevel), MaxLevel: int(e.MaxLevel)})
 		}
 		out = append(out, row)
 	}

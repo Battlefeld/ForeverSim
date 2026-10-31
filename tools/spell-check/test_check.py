@@ -11,7 +11,7 @@ import check
 
 FROSTFIRE = {'id': 401502, 'name': 'Frostfire Bolt', 'rank': 'Rank 1', 'spellLevel': 40, 'castMs': 3000, 'durationMs': 9000,
              'effects': [{'index': 0, 'type': 6, 'aura': 33, 'base': -40, 'ppl': 0, 'variance': 0, 'spCoef': 0, 'periodMs': 0},
-                         {'index': 1, 'type': 2, 'aura': 0, 'base': 100, 'ppl': 1.3, 'variance': 0.1534, 'spCoef': 0.814, 'periodMs': 0},
+                         {'index': 1, 'type': 2, 'aura': 0, 'base': 100, 'ppl': 1.3, 'spellLevel': 40, 'maxLevel': 48, 'variance': 0.1534, 'spCoef': 0.814, 'periodMs': 0},
                          {'index': 2, 'type': 6, 'aura': 3, 'base': 9, 'ppl': 0, 'variance': 0, 'spCoef': 0, 'periodMs': 3000}]}
 TEXT = ("Launches a bolt of frostfire at the enemy, causing 92 to 108 Frostfire damage, slowing movement speed by 40% and "
         "causing an additional 27 Frostfire damage over 9 sec.")
@@ -36,6 +36,23 @@ class Values(unittest.TestCase):
         self.assertEqual(check.check_values(heal, 'Heals a friendly target for 70 health.'), [])
         self.assertEqual(check.check_values(heal, 'Heals a friendly target for 69 health.'), [])
         self.assertEqual(len(check.check_values(heal, 'Heals a friendly target for 80 health.')), 1)
+
+    def test_the_tooltip_is_written_for_a_level(self):
+        # 100 at spell level 10, 2 more per level, capped at level 40: 120 at level 20, and at 30 the same as 100 + 2 * 20
+        spell = {'durationMs': 0, 'effects': [{'type': check.E_SCHOOL_DAMAGE, 'aura': 0, 'base': 100, 'ppl': 2.0, 'variance': 0,
+                                                'periodMs': 0, 'spellLevel': 10, 'maxLevel': 40}]}
+        self.assertEqual(check.check_values(spell, 'Deals 140 damage. (Numbers at level 30.)', 30), [])
+        self.assertEqual(check.check_values(spell, 'Deals 120 damage.', 20), [])
+        self.assertEqual(len(check.check_values(spell, 'Deals 100 damage.', 30)), 1)
+
+    def test_a_periodic_effect_may_be_shown_per_tick(self):
+        mend = {'durationMs': 5000, 'effects': [{'type': check.E_APPLY_AURA, 'aura': check.A_PERIODIC_HEAL, 'base': 19, 'ppl': 0,
+                                                  'variance': 0, 'periodMs': 1000, 'spellLevel': 1, 'maxLevel': 0}]}
+        self.assertEqual(check.check_values(mend, 'Heals your pet 20 health every second. Lasts 5 sec.'), [])
+        self.assertEqual(check.check_values(mend, 'Heals your pet 100 health over 5 sec.'), [])
+
+    def test_a_tooltip_without_numbers_is_not_compared(self):
+        self.assertEqual(check.check_values(FROSTFIRE, 'Judge the target, dealing Holy damage.'), [])
 
     def test_other_effects_are_not_guessed(self):
         buff = {'durationMs': 1000, 'effects': [{'type': check.E_APPLY_AURA, 'aura': 33, 'base': -40, 'variance': 0, 'periodMs': 0}]}

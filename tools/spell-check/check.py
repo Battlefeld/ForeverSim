@@ -20,8 +20,10 @@ environment (FOREVERDB_API_KEY), is never printed and never written.
 """
 import argparse
 import json
+import math
 import os
 import re
+import struct
 import sys
 import time
 import urllib.error
@@ -66,17 +68,32 @@ class Api:
 
 
 def numbers(text):
-    """Every number in a tooltip, thousands separators and decimals read."""
-    return {float(n.replace(',', '')) for n in re.findall(r'\d[\d,]*\.?\d*', text or '')}
+    """Every number in a tooltip that is not a time ("over 9 sec", "5 min"), thousands separators and decimals read."""
+    text = re.sub(r'\d[\d,]*\.?\d*\s*(?:sec|seconds|min|minutes)\b', ' ', text or '')
+    return {float(n.replace(',', '')) for n in re.findall(r'\d[\d,]*\.?\d*', text)}
 
 
-def expected_values(spell):
-    """The tooltip numbers the engine's values predict, per effect, as lists of alternatives that must all be present:
-    [(label, [[alternative sets]...])]. The client states a base one lower than the tooltip shows, so base and base+1
-    are both accepted."""
+def f32(x):
+    return struct.unpack('f', struct.pack('f', x))[0]
+
+
+def average(e, level):
+    """The engine's Effect.Average(level): the base plus the gain per level between the spell's level and the caster's
+    (capped at the effect's MaxLevel), as float32, floored."""
+    lvl = level
+    if e.get('maxLevel', 0) > 0 and e['maxLevel'] < lvl:
+        lvl = e['maxLevel']
+    delta = max(0, lvl - e.get('spellLevel', 0))
+    return math.floor(f32(f32(e['base']) + f32(f32(delta) * f32(e.get('ppl', 0)))))
+
+
+def expected_values(spell, level=30):
+    """The tooltip numbers the engine's values predict at the tooltip's level, per effect, as alternatives of which one
+    must be fully present: [(label, [set, ...])]. The client states a base one lower than the tooltip shows, so the
+    average and average+1 are both accepted; a periodic effect may be shown per tick or as the total."""
     out = []
     for e in spell.get('effects') or []:
-        base, var = e['base'], e['variance']
+        base, var = average(e, level), e['variance']
         is_direct = e['type'] in (E_SCHOOL_DAMAGE, E_HEAL)
         is_periodic = e['type'] == E_APPLY_AURA and e['aura'] in (A_PERIODIC_DAMAGE, A_PERIODIC_HEAL) and e['periodMs'] > 0
         if is_direct and base > 0:
@@ -89,15 +106,17 @@ def expected_values(spell):
             out.append(('direct', alts))
         elif is_periodic and base > 0 and spell['durationMs'] > 0:
             ticks = spell['durationMs'] // e['periodMs']
-            alts = [{round(b * ticks)} for b in (base, base + 1)]
+            alts = [{round(b * ticks)} for b in (base, base + 1)] + [{round(b)} for b in (base, base + 1)]
             out.append(('periodic', alts))
     return out
 
 
-def check_values(spell, text):
+def check_values(spell, text, level=30):
     nums = numbers(text)
+    if not nums:
+        return []  # a tooltip without a number ("Judge the target, dealing Holy damage") says nothing to compare
     problems = []
-    for label, alts in expected_values(spell):
+    for label, alts in expected_values(spell, level):
         if not any(all(float(v) in nums for v in alt) for alt in alts):
             shown = ' or '.join('/'.join(str(v) for v in sorted(alt)) for alt in alts)
             problems.append(f'{label}: the values predict {shown}, the tooltip has {sorted(int(n) if n == int(n) else n for n in nums)[:12]}')
@@ -109,6 +128,7 @@ def main():
     ap.add_argument('--dump', required=True, help='spells.json from spelldump')
     ap.add_argument('--out', required=True, help='path without extension: writes .json and .md')
     ap.add_argument('--max-level', type=int, default=30, help='only ranks taught at this level or lower')
+    ap.add_argument('--tooltip-level', type=int, default=30, help='the level the API tooltips are written for ("Numbers at level 30")')
     ap.add_argument('--budget', type=int, default=900, help='most API calls')
     ap.add_argument('--interval', type=float, default=1.2, help='seconds between calls (the API allows 60 a minute)')
     ap.add_argument('--classes', default=','.join(CLASSES))
@@ -139,15 +159,16 @@ def main():
                     continue
                 if spell['name'] != ability['name'] or (spell['rank'] or '') != (rank.get('rank') or ''):
                     findings.append({**where, 'kind': 'name', 'what': f'engine: {spell["name"]!r} {spell["rank"]!r}'})
-                if spell['spellLevel'] != rank.get('level') and spell['spellLevel'] != 0:
+                # level 0 is a passive without one, 60 the engine's "no level": neither says anything
+                if rank.get('level') and spell['spellLevel'] not in (0, 60) and spell['spellLevel'] != rank.get('level'):
                     findings.append({**where, 'kind': 'level', 'what': f'engine teaches it at {spell["spellLevel"]}, the API at {rank.get("level")}'})
-                if not expected_values(spell):
+                if not expected_values(spell, a.tooltip_level):
                     continue
                 full = api.get(f'/spells/{sid}')
                 if full is None:
                     findings.append({**where, 'kind': 'missing', 'what': 'the API has no tooltip for this spell'})
                     continue
-                for p in check_values(spell, full.get('description', '')):
+                for p in check_values(spell, full.get('description', ''), a.tooltip_level):
                     findings.append({**where, 'kind': 'value', 'what': p, 'tooltip': (full.get('description') or '')[:300]})
         print(f'{cls}: {api.calls} calls, {len(findings)} findings so far', flush=True)
 
