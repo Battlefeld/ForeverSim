@@ -2,7 +2,7 @@ package main
 
 // The installation ForeverCore.exe does itself, without PowerShell: the WoW folder found and confirmed in the window,
 // the program files in the user's app folder, the addons staged and swapped in with a backup of the old ones, the
-// reply slots, the configuration. Install.ps1 did the same from a console; it stays for the old ZIP package.
+// reply slots, the configuration.
 
 import (
 	"bufio"
@@ -38,8 +38,8 @@ const installManifestName = "installed.json"
 var payloadRequired = []string{"MythicSim.exe", "Lua.exe", "engine.lock.json", "AddOns/ForeverCoreBridge/ForeverCoreBridge.toc",
 	"AddOns/ForeverSimBridge/ForeverSimBridge.toc"}
 
-// payloadSkip: parts of the package that are not installed (the sources and the old console installer).
-var payloadSkip = []string{"Source/", "Install.ps1", "Installieren.cmd", "Starten.cmd", "Restore.ps1", "ForeverCore.exe"}
+// payloadSkip: parts of the package that are not installed (the sources; the program is placed by placeProgram).
+var payloadSkip = []string{"Source/", "ForeverCore.exe"}
 
 // userData: what belongs to the user in the app folder and is never replaced by an installation.
 var userData = map[string]bool{"config.json": true, "Data": true, "Backups": true, "ForeverRoutes": true, installManifestName: true,

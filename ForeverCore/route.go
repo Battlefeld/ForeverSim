@@ -125,7 +125,7 @@ func (s *RouteService) Build(ctx context.Context, state map[string]any) (map[str
 		}
 		ctx, cancel := context.WithTimeout(ctx, 90*time.Second)
 		defer cancel()
-		cmd := exec.CommandContext(ctx, s.Lua, file)
+		cmd := noWindow(exec.CommandContext(ctx, s.Lua, file))
 		logs, e := cmd.CombinedOutput()
 		if e != nil {
 			return nil, fmt.Errorf("Routenlauf: %v: %.1000s", e, logs)

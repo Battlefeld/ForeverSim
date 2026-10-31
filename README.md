@@ -21,8 +21,8 @@ ForeverSim ist ein inoffizielles Fan-Projekt und steht in keiner Verbindung zu B
 
 ## Installation
 
-1. **[ForeverCore.exe herunterladen](https://github.com/Battlefeld/ForeverSim/raw/artifacts/windows/package/ForeverCore.exe)**
-   (eine Datei, alles enthalten).
+1. **[ForeverCore.exe herunterladen](https://github.com/Battlefeld/ForeverSim/releases/download/forevercore/ForeverCore.exe)**
+   (eine Datei, alles enthalten: beide Addons, die Simulation, die Routen). Mehr brauchst du nicht herunterzuladen.
 2. WoW vollständig schließen und `ForeverCore.exe` starten. Es öffnet sich das ForeverCore-Fenster.
 3. Die gefundene WoW-Installation wählen (WoW: Forever steht oben) und **Installieren** klicken. ForeverCore installiert
    ForeverSimBridge, ForeverCoreBridge und ForeverRoutes, sichert ältere Versionen dieser Addons und legt sich ins
@@ -68,8 +68,8 @@ Bei schwarzen Bildschirmen zuerst die Grafik-API in WoW auf DirectX 11 stellen
 | `_dev/` | Test-Harness, Werkzeuge für Katalog und Grafiken, Entwicklungsdaten |
 | `docs/` | [Funktionsweise im Detail](docs/FUNKTIONSWEISE.md), [ursprüngliches Konzept der EXE](docs/konzept-forevercore-windows.md), [Review](docs/review-2026-10-20.md) |
 
-Bauen und testen: Workflows unter `.github/workflows` (`forevercore-offline` für alle Tests, `forevercore-package` für
-die EXE). Lokal: `cd ForeverCore && go test ./...` und die Lua-Tests unter `ForeverCore/tests`.
+Bauen und testen: Workflows unter `.github/workflows` (`forevercore-offline` für alle Tests, `forevercore-package` baut
+die EXE und veröffentlicht sie im [Release „forevercore“](https://github.com/Battlefeld/ForeverSim/releases/tag/forevercore)). Lokal: `cd ForeverCore && go test ./...` und die Lua-Tests unter `ForeverCore/tests`.
 
 ## Lizenz
 

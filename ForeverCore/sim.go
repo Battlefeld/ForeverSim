@@ -410,7 +410,7 @@ func (s *SimService) once(ctx context.Context, req map[string]any) (map[string]a
 	}
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Minute)
 	defer cancel()
-	cmd := exec.CommandContext(ctx, s.Config.Engine, "sim", "--strict", "--infile", in, "--outfile", out)
+	cmd := noWindow(exec.CommandContext(ctx, s.Config.Engine, "sim", "--strict", "--infile", in, "--outfile", out))
 	cmd.Env = engineEnv(level)
 	if privateBook != nil {
 		bookPath := filepath.Join(dir, "spellbook.json")

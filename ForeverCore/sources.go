@@ -135,7 +135,7 @@ func copyTree(src, dst string) error {
 func luaProgram(ctx context.Context, cfg Config, cwd, script string, args []string, env map[string]string) error {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()
-	cmd := exec.CommandContext(ctx, cfg.Lua, append([]string{script}, args...)...)
+	cmd := noWindow(exec.CommandContext(ctx, cfg.Lua, append([]string{script}, args...)...))
 	cmd.Dir = cwd
 	cmd.Env = os.Environ()
 	for k, v := range env {

@@ -1,4 +1,4 @@
-name: ForeverCore Windows test package
+name: ForeverCore.exe
 on:
   push:
     branches: [main]
@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: forevercore-test-package
+  group: forevercore-exe
   cancel-in-progress: true
 jobs:
   package:
@@ -62,33 +62,34 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p "$RUNNER_TEMP/routes"
-          gh release download --repo Battlefeld/ForeverRoutes --pattern ForeverRoutes-addon.zip --dir "$RUNNER_TEMP/routes" \
-            || echo "::warning::ForeverRoutes-addon.zip not found; the package installs without the routes HUD"
+          # the one ForeverCore.exe installs both addons: no routes addon, no program
+          gh release download --repo Battlefeld/ForeverRoutes --pattern ForeverRoutes-addon.zip --dir "$RUNNER_TEMP/routes"
       - name: Package
         run: |
           mkdir -p dist
-          routes=()
-          if [ -f "$RUNNER_TEMP/routes/ForeverRoutes-addon.zip" ]; then routes=(--routes-addon "$RUNNER_TEMP/routes/ForeverRoutes-addon.zip"); fi
-          python ForeverCore/package.py --core-exe "$RUNNER_TEMP/ForeverCore.exe" --engine-exe "$RUNNER_TEMP/MythicSim.exe" --lua "$RUNNER_TEMP/questiedb/tools/lua-binary/lua.exe" --engine-source deps/mythicsim --lua-license "$RUNNER_TEMP/questiedb/tools/lua-binary/THIRD_PARTY_NOTICES.txt" "${routes[@]}" --output dist/ForeverCore_0.6.0_Windows_Test.zip
+          routes=(--routes-addon "$RUNNER_TEMP/routes/ForeverRoutes-addon.zip")
+          python ForeverCore/package.py --core-exe "$RUNNER_TEMP/ForeverCore.exe" --engine-exe "$RUNNER_TEMP/MythicSim.exe" --lua "$RUNNER_TEMP/questiedb/tools/lua-binary/lua.exe" --engine-source deps/mythicsim --lua-license "$RUNNER_TEMP/questiedb/tools/lua-binary/THIRD_PARTY_NOTICES.txt" "${routes[@]}" --output dist/ForeverCore_package.zip
       - name: The one ForeverCore.exe (window, installer, package built in)
         run: |
           build="$(date -u +%Y%m%d%H%M%S)"
           echo "BUILD=$build" >> "$GITHUB_ENV"
-          python ForeverCore/build_app.py --package dist/ForeverCore_0.6.0_Windows_Test.zip --output dist/ForeverCore.exe --build "$build"
-          # the artifacts branch splits files over 40 MiB; the updater downloads the program in one piece
-          [ "$(stat -c%s dist/ForeverCore.exe)" -lt 41943040 ] || { echo "::error::ForeverCore.exe is over 40 MiB"; exit 1; }
+          python ForeverCore/build_app.py --package dist/ForeverCore_package.zip --output dist/ForeverCore.exe --build "$build"
+          [ "$(stat -c%s dist/ForeverCore.exe)" -lt 104857600 ] || { echo "::error::ForeverCore.exe is over 100 MiB"; exit 1; }
       - name: Signed update manifest
         env:
           FOREVERCORE_SIGNING_KEY: ${{ secrets.FOREVERCORE_SIGNING_KEY }}
         run: |
           if [ -z "$FOREVERCORE_SIGNING_KEY" ]; then echo "::warning::FOREVERCORE_SIGNING_KEY not set: installed programs will not update"; exit 0; fi
           (cd ForeverCore && go run . -sign-update ../dist/ForeverCore.exe -update-build "$BUILD" \
-            -update-url "https://api.github.com/repos/Battlefeld/ForeverSim/contents/windows/package/ForeverCore.exe?ref=artifacts" \
+            -update-url "https://github.com/Battlefeld/ForeverSim/releases/download/forevercore/ForeverCore.exe" \
             -update-out ../dist/forevercore-update.json)
-      - name: Save Windows package to artifacts branch
-        shell: bash
+      - name: Publish ForeverCore.exe (release "forevercore": the download of the README and of the updates)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          bash .github/scripts/publish-artifacts.sh \
-            dist/ForeverCore_0.6.0_Windows_Test.zip::windows/package/ForeverCore_0.6.0_Windows_Test.zip \
-            dist/ForeverCore.exe::windows/package/ForeverCore.exe \
-            $( [ -f dist/forevercore-update.json ] && echo dist/forevercore-update.json::windows/package/forevercore-update.json )
+          gh release view forevercore >/dev/null 2>&1 || gh release create forevercore --target main --title "ForeverCore.exe" \
+            --notes "The one program that installs ForeverSim and ForeverRoutes and keeps them up to date: download ForeverCore.exe and start it. Rebuilt on every change by the workflow ForeverCore.exe."
+          assets=(dist/ForeverCore.exe)
+          if [ -f dist/forevercore-update.json ]; then assets+=(dist/forevercore-update.json); fi
+          gh release upload forevercore "${assets[@]}" --clobber
+          gh release edit forevercore --notes "Build $BUILD: the one program that installs ForeverSim and ForeverRoutes and keeps them up to date. Download ForeverCore.exe and start it."

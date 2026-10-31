@@ -29,12 +29,9 @@ var Build = ""
 // FOREVERCORE_SIGNING_KEY. Empty: updates are off.
 var updatePublicKey = "mY8688LGM2UeoA7sDo3FXy80c7qnwLYbDOe7hrcl3Hs="
 
-// updateManifestURL: the manifest beside the program on the artifacts branch (public; a GitHub access, token.go,
-// is used when there is one: it lifts GitHub's limit of 60 requests an hour).
-var updateManifestURL = "https://api.github.com/repos/Battlefeld/ForeverSim/contents/windows/package/forevercore-update.json?ref=artifacts"
-
-// updateProgramURL: where the workflow puts the program (the manifest names it).
-const updateProgramURL = "https://api.github.com/repos/Battlefeld/ForeverSim/contents/windows/package/ForeverCore.exe?ref=artifacts"
+// updateManifestURL: the manifest beside the program in the release "forevercore" (public; downloads of release
+// assets have no request limit; the manifest names the program's URL).
+var updateManifestURL = "https://github.com/Battlefeld/ForeverSim/releases/download/forevercore/forevercore-update.json"
 
 // updateManifest says which program is the newest.
 type updateManifest struct {

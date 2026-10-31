@@ -5,7 +5,7 @@ on:
     paths: ['ForeverCore/**', '!**.md', '.github/workflows/forevercore-windows.yml']
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
   bridge:
     runs-on: windows-latest
@@ -24,11 +24,5 @@ jobs:
           python-version: '3.12'
       - name: Exercise window polling beyond callback table capacity
         run: go test -v -run '^(TestWowOriginCallbackReuse|TestPixelCalibration.*)$' -count=1 -timeout=3m .
-      - name: Build replacement executable
-        run: go build -trimpath -o ../hotfix/ForeverCore.exe .
-      - name: Save Windows bridge hotfix to artifacts branch
-        shell: bash
-        working-directory: .
-        run: |
-          bash .github/scripts/publish-artifacts.sh \
-            hotfix/ForeverCore.exe::windows/hotfix/ForeverCore.exe
+      - name: Build the executable
+        run: go build -trimpath -o "$RUNNER_TEMP/ForeverCore.exe" .

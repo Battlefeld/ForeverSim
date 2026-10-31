@@ -25,9 +25,11 @@ falls ein Repository privat ist.
 3. Im Spiel zeigt der Punkt am **Minimap-Knopf** den Zustand: grün bereit, gelb rechnet, rot ForeverCore.exe
    antwortet nicht. Linksklick öffnet die Übersicht, Rechtsklick das kopierbare Protokoll.
 
-**Prüfen und reparieren** im Fenster spielt das Paket erneut ein, wenn Dateien fehlen oder beschädigt sind. Das alte
-ZIP-Paket mit `Installieren.cmd` und `Starten.cmd` funktioniert weiterhin: ForeverCore.exe in diesem Ordner nutzt
-dann dessen `config.json`.
+**Prüfen und reparieren** im Fenster spielt das Paket erneut ein, wenn Dateien fehlen oder beschädigt sind.
+
+**Liegt WoW unter „Programme“** und Windows verweigert das Schreiben, erscheint im Fenster der Knopf „Als Administrator neu
+starten“: Windows fragt einmal nach, danach klappt die Installation. Ein Konsolen- oder PowerShell-Fenster öffnet
+ForeverCore nie.
 
 ## Was automatisch passiert
 

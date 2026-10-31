@@ -39,7 +39,7 @@ pre { margin:0; max-height:220px; overflow:auto; background:#101216; border:1px 
     <p class="dim" id="setupInfo">ForeverCore installiert die Addons ForeverSimBridge, ForeverCoreBridge und ForeverRoutes in deinen WoW-Ordner. Andere Addons und deine Einstellungen (WTF) bleiben unverändert; ältere Versionen unserer Addons werden gesichert.</p>
     <div id="wowList"></div>
     <label class="choice"><input type="radio" name="wow" value="__other"><span>Anderer Ordner …<br><input type="text" id="otherPath" placeholder="z. B. D:\Games\World of Warcraft\_classic_beta_\Interface\AddOns"></span></label>
-    <div class="row" style="margin-top:12px"><button id="installBtn">Installieren</button><span class="dim" id="wowHint"></span></div>
+    <div class="row" style="margin-top:12px"><button id="installBtn">Installieren</button><button id="elevBtn" class="ghost" style="display:none">Als Administrator neu starten</button><span class="dim" id="wowHint"></span></div>
     <div class="msg" id="setupMsg"></div>
   </section>
 
@@ -158,9 +158,14 @@ $("installBtn").onclick = async () => {
     const r = await call("/api/install", { addons });
     msg($("setupMsg"), true, "Fertig: " + r.addonSet.join(", ") + " installiert, " + r.slots + " Antwortslots." + (r.backup ? " Ältere Versionen gesichert." : "") + " Jetzt WoW starten.");
     delete $("setup").dataset.open;
-  } catch (e) { msg($("setupMsg"), false, e.message); }
+  } catch (e) {
+    const denied = /denied|verweigert|permission|Zugriff|Berechtigung/i.test(e.message);
+    msg($("setupMsg"), false, denied ? "Windows erlaubt das Schreiben in diesen Ordner nicht (WoW liegt vermutlich unter „Programme“). Mit „Als Administrator neu starten“ klappt es: Windows fragt einmal nach." : e.message);
+    $("elevBtn").style.display = denied ? "" : "none";
+  }
   refresh();
 };
+$("elevBtn").onclick = async () => { try { await call("/api/elevate", {}); msg($("setupMsg"), true, "ForeverCore startet mit Administratorrechten neu …"); } catch (e) { msg($("setupMsg"), false, e.message); } };
 $("bridgeBtn").onclick = async () => { try { await call("/api/bridge", { on: !state.bridge }); } catch (e) { msg($("stateMsg"), false, e.message); } refresh(); };
 $("repairBtn").onclick = () => { $("setup").dataset.open = "1"; if (!choicesLoaded) loadChoices(); $("setup").style.display = ""; $("setup").scrollIntoView({ behavior: "smooth" }); };
 $("updateBtn").onclick = async () => { try { await call("/api/update", {}); msg($("stateMsg"), true, "ForeverCore startet mit der neuen Version neu …"); } catch (e) { msg($("stateMsg"), false, e.message); } };

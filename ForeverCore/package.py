@@ -14,8 +14,7 @@ repo=core.parent;stage=a.output.parent/'ForeverCore_0.6.0_Integration_Test'
 if stage.exists():shutil.rmtree(stage)
 stage.mkdir(parents=True)
 for src,name in [(a.core_exe,'ForeverCore.exe'),(a.engine_exe,'MythicSim.exe'),(a.lua,'Lua.exe')]:shutil.copy2(src,stage/name)
-for name in ['Install.ps1','Restore.ps1','Installieren.cmd','Starten.cmd','config.example.json','engine.lock.json']:shutil.copy2(core/name,stage/name)
-shutil.copy2(core/'README-DE.md',stage/'START-HIER.md')
+shutil.copy2(core/'engine.lock.json',stage/'engine.lock.json')
 shutil.copytree(repo/'ForeverCoreBridge',stage/'AddOns/ForeverCoreBridge')
 # ForeverRoutes is installed from its own release. Never overwrite it with the
 # obsolete HUD copy in this simulator repository.

@@ -71,7 +71,7 @@ function UI.State()
  local d=db()
  if d.enabled==false then return 'off','Pausiert (/fc on)' end
  local overdue=UI.Overdue()
- if overdue then return 'error',string.format('Keine Antwort von ForeverCore.exe seit %d s - laeuft sie? (Starten.cmd)',overdue)end
+ if overdue then return 'error',string.format('Keine Antwort von ForeverCore.exe seit %d s - laeuft ForeverCore? (Startmenue oder Desktop)',overdue)end
  local AH=C.AH
  if C.pending or #(C.queue or{})>0 or(AH and(AH.calculating or AH.scanning or AH.reading))then return 'busy',tostring(C.status or'rechnet ...') end
  if UI.lastError and now()-(UI.lastErrorAt or 0)<300 then return 'error',UI.lastError end
@@ -304,7 +304,7 @@ if CreateFrame then
   local p=C.pending
   if p and UI.warned~=p and UI.Overdue() then
    UI.warned=p
-   C.Chat('Keine Antwort von ForeverCore.exe - laeuft sie? Starten.cmd im ForeverCore-Ordner starten; der Auftrag wartet weiter.')
+   C.Chat('Keine Antwort von ForeverCore.exe - laeuft es? ForeverCore aus dem Startmenue oder vom Desktop starten; der Auftrag wartet weiter.')
   end
   UI.Refresh()
  end)

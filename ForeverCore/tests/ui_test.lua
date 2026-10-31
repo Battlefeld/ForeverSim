@@ -138,7 +138,7 @@ do
  MOCK.Advance(1,.1)
  local state,text=UI.State()
  assert(state=='error' and text:find('ForeverCore.exe',1,true),'overdue job: the status names ForeverCore.exe: '..tostring(text))
- assert(printed()==n+1 and MOCK.prints[#MOCK.prints]:find('Starten.cmd',1,true),'one chat line tells what to do')
+ assert(printed()==n+1 and MOCK.prints[#MOCK.prints]:find('Desktop',1,true),'one chat line tells what to do')
  MOCK.Advance(2,.1)
  assert(printed()==n+1,'only once per job')
  C.pending={kind='item',elapsed=30,resumed=true,timeout=600,noPaint=true,part=0,frames=1,message='',id=0}

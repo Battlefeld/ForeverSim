@@ -69,6 +69,7 @@ type app struct {
 	update    updateState
 	ready     string // a downloaded program, checked, to swap in
 	restart   string // the program to start after quitting (an update or going back)
+	elevate   bool   // start it with administrator rights (Windows asks once; WoW in Program Files)
 }
 
 // runApp serves the window and keeps the connection running until the window says to quit.
@@ -125,7 +126,11 @@ func runApp(base string) {
 	os.Remove(filepath.Join(dir, appInfoName))
 	if a.restart != "" {
 		log.Printf("Neustart: %s", a.restart)
-		startProgram(a.restart)
+		if a.elevate {
+			startElevated(a.restart)
+		} else {
+			startProgram(a.restart)
+		}
 	}
 }
 
@@ -266,6 +271,15 @@ func (a *app) routes() http.Handler {
 			return nil, err
 		}
 		return a.install(strings.Trim(strings.TrimSpace(req.Addons), `"`))
+	})
+	api("/api/elevate", http.MethodPost, func(*http.Request) (any, error) {
+		self, err := os.Executable()
+		if err != nil {
+			return nil, err
+		}
+		a.restart, a.elevate = self, true
+		go func() { time.Sleep(300 * time.Millisecond); a.quit() }()
+		return map[string]bool{"restarting": true}, nil
 	})
 	api("/api/bridge", http.MethodPost, func(r *http.Request) (any, error) {
 		var req struct {

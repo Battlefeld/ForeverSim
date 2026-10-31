@@ -113,6 +113,14 @@ func placeProgram(dir string) error {
 	return cmd.Run()
 }
 
+// startElevated starts a program with administrator rights: Windows asks the user once (UAC); no console window.
+func startElevated(path string) {
+	verb, _ := syscall.UTF16PtrFromString("runas")
+	file, _ := syscall.UTF16PtrFromString(path)
+	dir, _ := syscall.UTF16PtrFromString(filepath.Dir(path))
+	windows.ShellExecute(0, verb, file, nil, dir, windows.SW_NORMAL)
+}
+
 // startProgram starts a program detached from this one (the updated ForeverCore after this one quits).
 func startProgram(path string) {
 	cmd := exec.Command(path)

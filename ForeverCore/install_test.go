@@ -22,7 +22,6 @@ func testPayload() fstest.MapFS {
 		"AddOns/ForeverRoutes/ForeverRoutes.toc":         f("## Interface: 16001\n"),
 		"AddOns/ForeverRoutes/Data/Routes.lua":           f("-- routes"),
 		"Source/ForeverCore/main.go":                     f("package main"),
-		"Install.ps1":                                    f("ps"),
 		"Lizenzen/QUELLEN.txt":                           f("licences"),
 	}
 }
@@ -49,7 +48,7 @@ func TestInstallFreshAndAgain(t *testing.T) {
 			t.Errorf("%s not installed", p)
 		}
 	}
-	for _, p := range []string{"Install.ps1", "Source"} {
+	for _, p := range []string{"Source"} {
 		if _, err := os.Stat(filepath.Join(app, p)); err == nil {
 			t.Errorf("%s installed", p)
 		}

@@ -93,7 +93,7 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	}
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
-	logs, e := exec.CommandContext(ctx, exe, args...).CombinedOutput()
+	logs, e := noWindow(exec.CommandContext(ctx, exe, args...)).CombinedOutput()
 	if e != nil {
 		return nil, fmt.Errorf("Route: %v: %.600s", e, logs)
 	}
