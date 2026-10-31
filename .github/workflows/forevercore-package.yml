@@ -42,7 +42,6 @@ jobs:
           lua5.1 ForeverCore/tests/integration_test.lua .
           lua5.1 ForeverCore/tests/hunter_capture_test.lua .
           lua5.1 ForeverCore/tests/route_next_test.lua .
-          lua5.1 ForeverCore/tests/foreverroutes_addon_test.lua .
       - name: Windows binaries
         env:
           GOOS: windows

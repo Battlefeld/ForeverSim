@@ -10,7 +10,6 @@
 !/ForeverCore/
 !/tools/
 !/ForeverCoreBridge/
-!/ForeverRoutes/
 !/_dev/
 _dev/out_*.txt
 _dev/guides/cache/
