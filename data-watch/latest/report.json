@@ -28,32 +28,7 @@
       "responseSHA256": "cdaa3aaeb8a962c0294b223b49db9e7753078a2d76eba55d41e6603a225fb4fa"
     }
   },
-  "buildChanges": {
-    "wowf": {
-      "before": null,
-      "after": {
-        "Region": "eu",
-        "BuildConfig": "7feb61f3c994bcb168526b8db521514a",
-        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
-        "KeyRing": "",
-        "BuildId": "70707",
-        "VersionsName": "1.60.1.70707",
-        "ProductConfig": "2ced73c17301c297ca062bc7c3583420"
-      }
-    },
-    "wow_classic_beta": {
-      "before": null,
-      "after": {
-        "Region": "eu",
-        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
-        "KeyRing": "",
-        "BuildId": "70532",
-        "VersionsName": "1.60.1.70532",
-        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
-      }
-    }
-  },
+  "buildChanges": {},
   "tables": {},
   "documentationStatus": "not_assessed",
   "hotfixCoverage": "downloaded_not_applied",
@@ -93,11 +68,11 @@
   "blueposts": {
     "status": "available",
     "source": "https://theforeverera.com/en/blue.xml",
-    "baseline": true,
+    "baseline": false,
     "changes": [],
     "relevantChanges": 0
   },
-  "checkedAt": "2026-10-31T04:21:58.880690Z",
+  "checkedAt": "2026-10-31T04:26:33.246132Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true

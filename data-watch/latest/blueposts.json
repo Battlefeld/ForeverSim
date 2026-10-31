@@ -356,7 +356,7 @@
   "lastCheck": {
     "status": "available",
     "source": "https://theforeverera.com/en/blue.xml",
-    "baseline": true,
+    "baseline": false,
     "changes": [],
     "relevantChanges": 0
   }
