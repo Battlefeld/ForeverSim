@@ -11,29 +11,33 @@ import (
 	"github.com/wowsims/forever/sim/core"
 )
 
-// A talent ladder is one spell copied per rank (same ID); its ranks are points, not trained ranks.
+// Whether the ladder is one spell trained in ranks. A talent ladder is one spell copied per rank (same ID): its ranks are
+// points. A ladder of different spells (Demonic Sacrifice's effect of each demon, the marks of Light's Vigil) is no
+// ladder of ranks either: the ranks of a spell all carry its name and count up.
 func foreverCoreTrainedLadder(ranks []*Spell) bool {
 	if len(ranks) < 2 {
 		return len(ranks) == 1
 	}
+	previous := ranks[0].RankNumber()
+	if previous <= 0 {
+		return false
+	}
 	for _, s := range ranks[1:] {
-		if s.ID == ranks[0].ID {
+		if s.ID == ranks[0].ID || s.Name != ranks[0].Name || s.RankNumber() <= previous {
 			return false
 		}
+		previous = s.RankNumber()
 	}
 	return true
 }
 
-// SpellLevel 60 with MaxLevel 0 is the generator's "no SpellLevels row": the level is unknown, so the
-// rank stays available rather than vanishing.
+// A rank is known once the character's level has reached the level it is taught at. A rank taught at 60 (the last rank
+// of most ladders, Backstab rank 8) is known at 60 only: the client data has no "level unknown" case any more.
 func foreverCoreRankKnown(s *Spell) bool {
 	if known, constrained := core.ForeverCoreKnownRank(s.ID); constrained {
 		return known && (!core.ForeverCoreLevelActive() || int32(s.SpellLevel) <= core.CharacterLevel)
 	}
 	if !core.ForeverCoreLevelActive() {
-		return true
-	}
-	if s.SpellLevel == 60 && s.MaxLevel == 0 {
 		return true
 	}
 	return int32(s.SpellLevel) <= core.CharacterLevel
@@ -136,7 +140,7 @@ func init() {
 		once.Do(func() {
 			levels = map[int32]int32{}
 			for _, s := range All() {
-				if s.ClassFlags.Family == 0 || s.RankNumber() <= 0 || (s.SpellLevel == 60 && s.MaxLevel == 0) {
+				if s.ClassFlags.Family == 0 || s.RankNumber() <= 0 {
 					continue
 				}
 				levels[s.ID] = int32(s.SpellLevel)

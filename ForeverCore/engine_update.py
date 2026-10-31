@@ -309,7 +309,7 @@ def checks(upstream_src, overlay_src, work, report, classes=None):
             env = go_env()
             env['FOREVERCORE_LEVEL'] = str(level)
             # First pass produces level-specific goldens. Differences from level 60 are expected.
-            first = subprocess.run(['go', 'test', '-tags=with_db', '-count=1', '-v', '-run', pattern + '/' + SMOKE_CASES, *pk],
+            first = subprocess.run(['go', 'test', '-tags=with_db', '-count=1', '-timeout', '6m', '-v', '-run', pattern + '/' + SMOKE_CASES, *pk],
                                    cwd=overlay_src, env=env, capture_output=True, text=True)
             if first.returncode not in (0, 1) or re.search(r'(?m)^panic: ', first.stdout + first.stderr):
                 raise UpdateError(f'spec suites failed at level {level}: ' + failure_summary(first.stdout + first.stderr))
