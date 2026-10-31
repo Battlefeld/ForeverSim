@@ -3,7 +3,7 @@
   "ranksChecked": 823,
   "apiCalls": 240,
   "findings": {
-   "value": 132,
+   "value": 34,
    "missing": 35,
    "level": 1
   },
@@ -28,56 +28,6 @@
    "level": 1,
    "kind": "missing",
    "what": "the engine table has no such spell"
-  },
-  {
-   "class": "druid",
-   "ability": "Healing Touch",
-   "rank": "Rank 1",
-   "spellId": 5185,
-   "level": 1,
-   "kind": "value",
-   "what": "direct: the values predict 40/54 or 40/56, the tooltip has [37, 51]",
-   "tooltip": "Heals a friendly target for 37 to 51."
-  },
-  {
-   "class": "druid",
-   "ability": "Healing Touch",
-   "rank": "Rank 2",
-   "spellId": 5186,
-   "level": 8,
-   "kind": "value",
-   "what": "direct: the values predict 93/119 or 94/120, the tooltip has [88, 112]",
-   "tooltip": "Heals a friendly target for 88 to 112."
-  },
-  {
-   "class": "druid",
-   "ability": "Healing Touch",
-   "rank": "Rank 3",
-   "spellId": 5187,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 187/233 or 188/234, the tooltip has [179, 223]",
-   "tooltip": "Heals a friendly target for 179 to 223."
-  },
-  {
-   "class": "druid",
-   "ability": "Healing Touch",
-   "rank": "Rank 4",
-   "spellId": 5188,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 337/413 or 338/414, the tooltip has [325, 399]",
-   "tooltip": "Heals a friendly target for 325 to 399."
-  },
-  {
-   "class": "druid",
-   "ability": "Healing Touch",
-   "rank": "Rank 5",
-   "spellId": 5189,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 506/614 or 507/615, the tooltip has [493, 599]",
-   "tooltip": "Heals a friendly target for 493 to 599."
   },
   {
    "class": "druid",
@@ -164,136 +114,6 @@
    "level": 1,
    "kind": "missing",
    "what": "the engine table has no such spell"
-  },
-  {
-   "class": "druid",
-   "ability": "Wrath",
-   "rank": "Rank 2",
-   "spellId": 5177,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 20/24 or 21/25, the tooltip has [19, 23]",
-   "tooltip": "Causes 19 to 23 Nature damage to the target."
-  },
-  {
-   "class": "druid",
-   "ability": "Wrath",
-   "rank": "Rank 3",
-   "spellId": 5178,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 30/36 or 31/37, the tooltip has [27, 33]",
-   "tooltip": "Causes 27 to 33 Nature damage to the target."
-  },
-  {
-   "class": "druid",
-   "ability": "Wrath",
-   "rank": "Rank 4",
-   "spellId": 5179,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 37/43 or 38/44, the tooltip has [34, 40]",
-   "tooltip": "Causes 34 to 40 Nature damage to the target."
-  },
-  {
-   "class": "druid",
-   "ability": "Moonfire",
-   "rank": "Rank 1",
-   "spellId": 8921,
-   "level": 4,
-   "kind": "value",
-   "what": "direct: the values predict 9/11 or 10/12, the tooltip has [7, 9, 12]",
-   "tooltip": "Burns the enemy for 7 to 9 Arcane damage and then an additional 12 Arcane damage over 9 sec."
-  },
-  {
-   "class": "druid",
-   "ability": "Moonfire",
-   "rank": "Rank 2",
-   "spellId": 8924,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 15/19 or 16/20, the tooltip has [11, 15, 24]",
-   "tooltip": "Burns the enemy for 11 to 15 Arcane damage and then an additional 24 Arcane damage over 12 sec."
-  },
-  {
-   "class": "druid",
-   "ability": "Moonfire",
-   "rank": "Rank 3",
-   "spellId": 8925,
-   "level": 16,
-   "kind": "value",
-   "what": "direct: the values predict 24/30 or 25/31, the tooltip has [20, 24, 36]",
-   "tooltip": "Burns the enemy for 20 to 24 Arcane damage and then an additional 36 Arcane damage over 12 sec."
-  },
-  {
-   "class": "druid",
-   "ability": "Moonfire",
-   "rank": "Rank 4",
-   "spellId": 8926,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 35/43 or 36/44, the tooltip has [29, 35, 52]",
-   "tooltip": "Burns the enemy for 29 to 35 Arcane damage and then an additional 52 Arcane damage over 12 sec."
-  },
-  {
-   "class": "druid",
-   "ability": "Moonfire",
-   "rank": "Rank 5",
-   "spellId": 8927,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 46/54 or 46/56, the tooltip has [43, 51, 76]",
-   "tooltip": "Burns the enemy for 43 to 51 Arcane damage and then an additional 76 Arcane damage over 12 sec."
-  },
-  {
-   "class": "druid",
-   "ability": "Regrowth",
-   "rank": "Rank 1",
-   "spellId": 8936,
-   "level": 12,
-   "kind": "value",
-   "what": "direct: the values predict 89/103 or 90/104, the tooltip has [80, 91, 94]",
-   "tooltip": "Heals a friendly target for 80 to 94 and another 91 over 21 sec."
-  },
-  {
-   "class": "druid",
-   "ability": "Regrowth",
-   "rank": "Rank 2",
-   "spellId": 8938,
-   "level": 18,
-   "kind": "value",
-   "what": "direct: the values predict 164/188 or 165/189, the tooltip has [153, 154, 175]",
-   "tooltip": "Heals a friendly target for 153 to 175 and another 154 over 21 sec."
-  },
-  {
-   "class": "druid",
-   "ability": "Regrowth",
-   "rank": "Rank 3",
-   "spellId": 8939,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 233/267 or 234/268, the tooltip has [219, 224, 251]",
-   "tooltip": "Heals a friendly target for 219 to 251 and another 224 over 21 sec."
-  },
-  {
-   "class": "druid",
-   "ability": "Starfire",
-   "rank": "Rank 1",
-   "spellId": 2912,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 78/96 or 79/97, the tooltip has [73, 89]",
-   "tooltip": "Causes 73 to 89 Arcane damage to the target."
-  },
-  {
-   "class": "druid",
-   "ability": "Starfire",
-   "rank": "Rank 2",
-   "spellId": 8949,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 105/127 or 105/129, the tooltip has [99, 121]",
-   "tooltip": "Causes 99 to 121 Arcane damage to the target."
   },
   {
    "class": "hunter",
@@ -399,46 +219,6 @@
   },
   {
    "class": "mage",
-   "ability": "Fireball",
-   "rank": "Rank 2",
-   "spellId": 143,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 27/39 or 28/40, the tooltip has [3, 26, 38]",
-   "tooltip": "Hurls a fiery ball that causes 26 to 38 Fire damage and an additional 3 Fire damage over 6 sec."
-  },
-  {
-   "class": "mage",
-   "ability": "Fireball",
-   "rank": "Rank 3",
-   "spellId": 145,
-   "level": 12,
-   "kind": "value",
-   "what": "direct: the values predict 45/61 or 45/63, the tooltip has [6, 43, 59]",
-   "tooltip": "Hurls a fiery ball that causes 43 to 59 Fire damage and an additional 6 Fire damage over 6 sec."
-  },
-  {
-   "class": "mage",
-   "ability": "Fireball",
-   "rank": "Rank 4",
-   "spellId": 3140,
-   "level": 18,
-   "kind": "value",
-   "what": "direct: the values predict 67/93 or 68/94, the tooltip has [12, 65, 89]",
-   "tooltip": "Hurls a fiery ball that causes 65 to 89 Fire damage and an additional 12 Fire damage over 8 sec."
-  },
-  {
-   "class": "mage",
-   "ability": "Fireball",
-   "rank": "Rank 5",
-   "spellId": 8400,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 107/143 or 107/145, the tooltip has [16, 102, 138]",
-   "tooltip": "Hurls a fiery ball that causes 102 to 138 Fire damage and an additional 16 Fire damage over 8 sec."
-  },
-  {
-   "class": "mage",
    "ability": "Living Bomb",
    "rank": "",
    "spellId": 400613,
@@ -469,176 +249,6 @@
   },
   {
    "class": "mage",
-   "ability": "Frostbolt",
-   "rank": "Rank 2",
-   "spellId": 205,
-   "level": 8,
-   "kind": "value",
-   "what": "direct: the values predict 28/32 or 29/33, the tooltip has [27, 31, 40]",
-   "tooltip": "Launches a bolt of frost at the enemy, causing 27 to 31  Frost damage and slowing movement speed by 40% for 6 sec."
-  },
-  {
-   "class": "mage",
-   "ability": "Frostbolt",
-   "rank": "Rank 3",
-   "spellId": 837,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 45/51 or 46/52, the tooltip has [40, 43, 49]",
-   "tooltip": "Launches a bolt of frost at the enemy, causing 43 to 49  Frost damage and slowing movement speed by 40% for 6 sec."
-  },
-  {
-   "class": "mage",
-   "ability": "Frostbolt",
-   "rank": "Rank 4",
-   "spellId": 7322,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 69/77 or 70/78, the tooltip has [40, 66, 74]",
-   "tooltip": "Launches a bolt of frost at the enemy, causing 66 to 74  Frost damage and slowing movement speed by 40% for 7 sec."
-  },
-  {
-   "class": "mage",
-   "ability": "Frostbolt",
-   "rank": "Rank 5",
-   "spellId": 8406,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 104/114 or 105/115, the tooltip has [40, 99, 109]",
-   "tooltip": "Launches a bolt of frost at the enemy, causing 99 to 109  Frost damage and slowing movement speed by 40% for 7 sec."
-  },
-  {
-   "class": "mage",
-   "ability": "Fire Blast",
-   "rank": "Rank 1",
-   "spellId": 2136,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 27/35 or 27/37, the tooltip has [24, 32]",
-   "tooltip": "Blasts the enemy for 24 to 32 Fire damage."
-  },
-  {
-   "class": "mage",
-   "ability": "Fire Blast",
-   "rank": "Rank 2",
-   "spellId": 2137,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 56/70 or 57/71, the tooltip has [52, 64]",
-   "tooltip": "Blasts the enemy for 52 to 64 Fire damage."
-  },
-  {
-   "class": "mage",
-   "ability": "Fire Blast",
-   "rank": "Rank 3",
-   "spellId": 2138,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 96/118 or 97/119, the tooltip has [90, 110]",
-   "tooltip": "Blasts the enemy for 90 to 110 Fire damage."
-  },
-  {
-   "class": "mage",
-   "ability": "Frost Nova",
-   "rank": "Rank 1",
-   "spellId": 122,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 21/23 or 22/24, the tooltip has [19, 21]",
-   "tooltip": "Blasts enemies near the caster for 19 to 21 Frost damage and freezes them in place for up to 8 sec.  Damage caused may interrupt the effect."
-  },
-  {
-   "class": "mage",
-   "ability": "Frost Nova",
-   "rank": "Rank 2",
-   "spellId": 865,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 34/38 or 35/39, the tooltip has [32, 36]",
-   "tooltip": "Blasts enemies near the caster for 32 to 36 Frost damage and freezes them in place for up to 8 sec.  Damage caused may interrupt the effect."
-  },
-  {
-   "class": "mage",
-   "ability": "Arcane Explosion",
-   "rank": "Rank 1",
-   "spellId": 1449,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 32/36 or 33/37, the tooltip has [10, 30, 34]",
-   "tooltip": "Causes an explosion of arcane magic around the caster, causing 30 to 34 Arcane damage to all targets within 10 yards."
-  },
-  {
-   "class": "mage",
-   "ability": "Arcane Explosion",
-   "rank": "Rank 2",
-   "spellId": 8437,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 55/61 or 56/62, the tooltip has [10, 52, 58]",
-   "tooltip": "Causes an explosion of arcane magic around the caster, causing 52 to 58 Arcane damage to all targets within 10 yards."
-  },
-  {
-   "class": "mage",
-   "ability": "Flamestrike",
-   "rank": "Rank 1",
-   "spellId": 2120,
-   "level": 16,
-   "kind": "value",
-   "what": "direct: the values predict 55/71 or 55/73, the tooltip has [44, 52, 68]",
-   "tooltip": "Calls down a pillar of fire, burning all enemies within the area for 52 to 68 Fire damage and an additional 44 Fire damage over 8 sec. Only one Flamestrike can be active per Mage at a time."
-  },
-  {
-   "class": "mage",
-   "ability": "Flamestrike",
-   "rank": "Rank 2",
-   "spellId": 2121,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 100/126 or 100/128, the tooltip has [84, 96, 122]",
-   "tooltip": "Calls down a pillar of fire, burning all enemies within the area for 96 to 122 Fire damage and an additional 84 Fire damage over 8 sec. Only one Flamestrike can be active per Mage at a time."
-  },
-  {
-   "class": "mage",
-   "ability": "Scorch",
-   "rank": "Rank 1",
-   "spellId": 2948,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 38/46 or 39/47, the tooltip has [35, 43]",
-   "tooltip": "Scorch the enemy for 35 to 43 Fire damage."
-  },
-  {
-   "class": "mage",
-   "ability": "Scorch",
-   "rank": "Rank 2",
-   "spellId": 8444,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 52/62 or 53/63, the tooltip has [50, 60]",
-   "tooltip": "Scorch the enemy for 50 to 60 Fire damage."
-  },
-  {
-   "class": "mage",
-   "ability": "Frost Blast",
-   "rank": "Rank 1",
-   "spellId": 1326053,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 26/28 or 27/29, the tooltip has [25, 27, 40]",
-   "tooltip": "Quickly launch a weak blast of frost at the enemy, causing 25 to 27 Frost damage and slowing movement speed by 40% for 9 sec."
-  },
-  {
-   "class": "mage",
-   "ability": "Cone of Cold",
-   "rank": "Rank 1",
-   "spellId": 120,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 95/105 or 96/106, the tooltip has [4, 10, 40, 92, 102]",
-   "tooltip": "Targets in a cone in front of the caster take 92 to 102  Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec."
-  },
-  {
-   "class": "mage",
    "ability": "Living Flame",
    "rank": "",
    "spellId": 401558,
@@ -665,46 +275,6 @@
    "level": 1,
    "kind": "missing",
    "what": "the engine table has no such spell"
-  },
-  {
-   "class": "paladin",
-   "ability": "Holy Light",
-   "rank": "Rank 1",
-   "spellId": 635,
-   "level": 1,
-   "kind": "value",
-   "what": "direct: the values predict 42/50 or 43/51, the tooltip has [39, 47]",
-   "tooltip": "Heals a friendly target for 39 to 47."
-  },
-  {
-   "class": "paladin",
-   "ability": "Holy Light",
-   "rank": "Rank 2",
-   "spellId": 639,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 81/95 or 81/97, the tooltip has [76, 90]",
-   "tooltip": "Heals a friendly target for 76 to 90."
-  },
-  {
-   "class": "paladin",
-   "ability": "Holy Light",
-   "rank": "Rank 3",
-   "spellId": 647,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 150/176 or 151/177, the tooltip has [142, 168]",
-   "tooltip": "Heals a friendly target for 142 to 168."
-  },
-  {
-   "class": "paladin",
-   "ability": "Holy Light",
-   "rank": "Rank 4",
-   "spellId": 1026,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 278/320 or 279/321, the tooltip has [267, 307]",
-   "tooltip": "Heals a friendly target for 267 to 307."
   },
   {
    "class": "paladin",
@@ -754,46 +324,6 @@
   },
   {
    "class": "paladin",
-   "ability": "Exorcism",
-   "rank": "Rank 1",
-   "spellId": 879,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 79/91 or 80/92, the tooltip has [74, 84]",
-   "tooltip": "Causes 74 to 84 Holy damage to an Undead or Demon target."
-  },
-  {
-   "class": "paladin",
-   "ability": "Exorcism",
-   "rank": "Rank 2",
-   "spellId": 5614,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 135/153 or 136/154, the tooltip has [132, 150]",
-   "tooltip": "Causes 132 to 150 Holy damage to an Undead or Demon target."
-  },
-  {
-   "class": "paladin",
-   "ability": "Flash of Light",
-   "rank": "Rank 1",
-   "spellId": 19750,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 47/55 or 48/56, the tooltip has [43, 49]",
-   "tooltip": "Heals a friendly target for 43 to 49."
-  },
-  {
-   "class": "paladin",
-   "ability": "Flash of Light",
-   "rank": "Rank 2",
-   "spellId": 19939,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 66/76 or 67/77, the tooltip has [62, 70]",
-   "tooltip": "Heals a friendly target for 62 to 70."
-  },
-  {
-   "class": "paladin",
    "ability": "Seal of Martyrdom",
    "rank": "",
    "spellId": 407799,
@@ -813,26 +343,6 @@
   },
   {
    "class": "priest",
-   "ability": "Lesser Heal",
-   "rank": "Rank 2",
-   "spellId": 2052,
-   "level": 4,
-   "kind": "value",
-   "what": "direct: the values predict 88/106 or 89/107, the tooltip has [86, 102]",
-   "tooltip": "Heal your target for 86 to 102."
-  },
-  {
-   "class": "priest",
-   "ability": "Lesser Heal",
-   "rank": "Rank 3",
-   "spellId": 2053,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 156/182 or 157/183, the tooltip has [151, 175]",
-   "tooltip": "Heal your target for 151 to 175."
-  },
-  {
-   "class": "priest",
    "ability": "Mind Spike",
    "rank": "",
    "spellId": 431655,
@@ -840,36 +350,6 @@
    "kind": "value",
    "what": "direct: the values predict 122/142 or 123/143, the tooltip has [3, 30, 78, 90]",
    "tooltip": "Blasts the target for 78 to 90 Shadowfrost damage, and increases the critical strike chance of your next Mind Blast on the target by 30%, stacking up to 3 times. (Numbers at level 30; they grow with your level.)"
-  },
-  {
-   "class": "priest",
-   "ability": "Smite",
-   "rank": "Rank 2",
-   "spellId": 591,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 25/31 or 26/32, the tooltip has [24, 30]",
-   "tooltip": "Smite an enemy for 24 to 30 Holy damage."
-  },
-  {
-   "class": "priest",
-   "ability": "Smite",
-   "rank": "Rank 3",
-   "spellId": 598,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 44/50 or 45/51, the tooltip has [42, 48]",
-   "tooltip": "Smite an enemy for 42 to 48 Holy damage."
-  },
-  {
-   "class": "priest",
-   "ability": "Smite",
-   "rank": "Rank 4",
-   "spellId": 984,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 58/68 or 59/69, the tooltip has [56, 64]",
-   "tooltip": "Smite an enemy for 56 to 64 Holy damage."
   },
   {
    "class": "priest",
@@ -893,173 +373,13 @@
   },
   {
    "class": "priest",
-   "ability": "Desperate Prayer",
-   "rank": "Rank 1",
-   "spellId": 13908,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 144/182 or 145/183, the tooltip has [131, 167]",
-   "tooltip": "Instantly heals the caster for 131 to 167."
-  },
-  {
-   "class": "priest",
-   "ability": "Desperate Prayer",
-   "rank": "Rank 2",
-   "spellId": 19236,
-   "level": 18,
-   "kind": "value",
-   "what": "direct: the values predict 265/327 or 266/328, the tooltip has [247, 305]",
-   "tooltip": "Instantly heals the caster for 247 to 305."
-  },
-  {
-   "class": "priest",
-   "ability": "Desperate Prayer",
-   "rank": "Rank 3",
-   "spellId": 19238,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 430/522 or 431/523, the tooltip has [414, 502]",
-   "tooltip": "Instantly heals the caster for 414 to 502."
-  },
-  {
-   "class": "priest",
-   "ability": "Divine Grace",
-   "rank": "Rank 1",
-   "spellId": 1277370,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 144/182 or 145/183, the tooltip has [50, 131, 167]",
-   "tooltip": "Instantly heals a friendly target below 50% Health for 131 to 167 and removes Weakened Soul from that target. Cannot be cast on self."
-  },
-  {
-   "class": "priest",
-   "ability": "Divine Grace",
-   "rank": "Rank 2",
-   "spellId": 1277371,
-   "level": 18,
-   "kind": "value",
-   "what": "direct: the values predict 265/327 or 266/328, the tooltip has [50, 247, 305]",
-   "tooltip": "Instantly heals a friendly target below 50% Health for 247 to 305 and removes Weakened Soul from that target. Cannot be cast on self."
-  },
-  {
-   "class": "priest",
-   "ability": "Divine Grace",
-   "rank": "Rank 3",
-   "spellId": 1277372,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 430/522 or 431/523, the tooltip has [50, 414, 502]",
-   "tooltip": "Instantly heals a friendly target below 50% Health for 414 to 502 and removes Weakened Soul from that target. Cannot be cast on self."
-  },
-  {
-   "class": "priest",
-   "ability": "Mind Blast",
-   "rank": "Rank 1",
-   "spellId": 8092,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 40/44 or 41/45, the tooltip has [37, 41]",
-   "tooltip": "Blasts the target for 37 to 41 Shadow damage, but causes a high amount of threat."
-  },
-  {
-   "class": "priest",
-   "ability": "Mind Blast",
-   "rank": "Rank 2",
-   "spellId": 8102,
-   "level": 16,
-   "kind": "value",
-   "what": "direct: the values predict 69/75 or 70/76, the tooltip has [65, 71]",
-   "tooltip": "Blasts the target for 65 to 71 Shadow damage, but causes a high amount of threat."
-  },
-  {
-   "class": "priest",
-   "ability": "Mind Blast",
-   "rank": "Rank 3",
-   "spellId": 8103,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 102/110 or 103/111, the tooltip has [98, 104]",
-   "tooltip": "Blasts the target for 98 to 104 Shadow damage, but causes a high amount of threat."
-  },
-  {
-   "class": "priest",
-   "ability": "Mind Blast",
-   "rank": "Rank 4",
-   "spellId": 8104,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 149/157 or 150/158, the tooltip has [147, 155]",
-   "tooltip": "Blasts the target for 147 to 155 Shadow damage, but causes a high amount of threat."
-  },
-  {
-   "class": "priest",
-   "ability": "Heal",
-   "rank": "Rank 1",
-   "spellId": 2054,
-   "level": 16,
-   "kind": "value",
-   "what": "direct: the values predict 260/300 or 261/301, the tooltip has [250, 290]",
-   "tooltip": "Heal your target for 250 to 290."
-  },
-  {
-   "class": "priest",
-   "ability": "Heal",
-   "rank": "Rank 2",
-   "spellId": 2055,
-   "level": 22,
-   "kind": "value",
-   "what": "direct: the values predict 363/415 or 364/416, the tooltip has [350, 400]",
-   "tooltip": "Heal your target for 350 to 400."
-  },
-  {
-   "class": "priest",
-   "ability": "Heal",
-   "rank": "Rank 3",
-   "spellId": 6063,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 498/564 or 499/565, the tooltip has [490, 556]",
-   "tooltip": "Heal your target for 490 to 556."
-  },
-  {
-   "class": "priest",
-   "ability": "Flash Heal",
-   "rank": "Rank 1",
-   "spellId": 2061,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 182/224 or 183/225, the tooltip has [174, 214]",
-   "tooltip": "Heals a friendly target for 174 to 214."
-  },
-  {
-   "class": "priest",
-   "ability": "Flash Heal",
-   "rank": "Rank 2",
-   "spellId": 9472,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 232/282 or 233/283, the tooltip has [225, 273]",
-   "tooltip": "Heals a friendly target for 225 to 273."
-  },
-  {
-   "class": "priest",
    "ability": "Holy Fire",
    "rank": "Rank 1",
    "spellId": 14914,
    "level": 20,
    "kind": "value",
-   "what": "direct: the values predict 56/70 or 57/71, the tooltip has [20, 48, 60]",
+   "what": "direct: the values predict 51/65 or 52/66, the tooltip has [20, 48, 60]",
    "tooltip": "Consumes the enemy in holy flames that cause 48 to 60 Holy damage and an additional 20 Holy damage over 10 sec."
-  },
-  {
-   "class": "priest",
-   "ability": "Holy Fire",
-   "rank": "Rank 2",
-   "spellId": 15262,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 63/79 or 64/80, the tooltip has [25, 56, 70]",
-   "tooltip": "Consumes the enemy in holy flames that cause 56 to 70 Holy damage and an additional 25 Holy damage over 10 sec."
   },
   {
    "class": "priest",
@@ -1157,86 +477,6 @@
   },
   {
    "class": "shaman",
-   "ability": "Healing Wave",
-   "rank": "Rank 1",
-   "spellId": 331,
-   "level": 1,
-   "kind": "value",
-   "what": "direct: the values predict 36/46 or 37/47, the tooltip has [34, 44]",
-   "tooltip": "Heals a friendly target for 34 to 44."
-  },
-  {
-   "class": "shaman",
-   "ability": "Healing Wave",
-   "rank": "Rank 2",
-   "spellId": 332,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 69/83 or 69/85, the tooltip has [64, 78]",
-   "tooltip": "Heals a friendly target for 64 to 78."
-  },
-  {
-   "class": "shaman",
-   "ability": "Healing Wave",
-   "rank": "Rank 3",
-   "spellId": 547,
-   "level": 12,
-   "kind": "value",
-   "what": "direct: the values predict 125/151 or 126/152, the tooltip has [119, 143]",
-   "tooltip": "Heals a friendly target for 119 to 143."
-  },
-  {
-   "class": "shaman",
-   "ability": "Healing Wave",
-   "rank": "Rank 4",
-   "spellId": 913,
-   "level": 18,
-   "kind": "value",
-   "what": "direct: the values predict 245/289 or 246/290, the tooltip has [235, 277]",
-   "tooltip": "Heals a friendly target for 235 to 277."
-  },
-  {
-   "class": "shaman",
-   "ability": "Healing Wave",
-   "rank": "Rank 5",
-   "spellId": 939,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 327/383 or 328/384, the tooltip has [315, 369]",
-   "tooltip": "Heals a friendly target for 315 to 369."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lightning Bolt",
-   "rank": "Rank 3",
-   "spellId": 548,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 42/50 or 43/51, the tooltip has [41, 49]",
-   "tooltip": "Casts a bolt of lightning at the target for 41 to 49 Nature damage."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lightning Bolt",
-   "rank": "Rank 4",
-   "spellId": 915,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 59/67 or 60/68, the tooltip has [57, 65]",
-   "tooltip": "Casts a bolt of lightning at the target for 57 to 65 Nature damage."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lightning Bolt",
-   "rank": "Rank 5",
-   "spellId": 943,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 78/90 or 79/91, the tooltip has [76, 88]",
-   "tooltip": "Casts a bolt of lightning at the target for 76 to 88 Nature damage."
-  },
-  {
-   "class": "shaman",
    "ability": "Molten Blast",
    "rank": "",
    "spellId": 425339,
@@ -1244,106 +484,6 @@
    "kind": "value",
    "what": "direct: the values predict 72/108 or 73/109, the tooltip has [5, 10, 30, 39, 59]",
    "tooltip": "Blast up to 10 enemies in a cone in front of you for 39 to 59 (+5% of attack power) Fire damage. This ability generates a high amount of threat. Flame Shock periodic damage has a 10% chance to reset the cooldown on Molten Blast. (Numbers at level 30; they grow with your level.)"
-  },
-  {
-   "class": "shaman",
-   "ability": "Earth Shock",
-   "rank": "Rank 1",
-   "spellId": 8042,
-   "level": 4,
-   "kind": "value",
-   "what": "direct: the values predict 19/21 or 20/22, the tooltip has [17, 19]",
-   "tooltip": "Instantly shocks the target with concussive force, causing 17 to 19 Nature damage.  It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec.  Causes a high amount of threat."
-  },
-  {
-   "class": "shaman",
-   "ability": "Earth Shock",
-   "rank": "Rank 2",
-   "spellId": 8044,
-   "level": 8,
-   "kind": "value",
-   "what": "direct: the values predict 35/37 or 36/38, the tooltip has [32, 34]",
-   "tooltip": "Instantly shocks the target with concussive force, causing 32 to 34 Nature damage.  It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec.  Causes a high amount of threat."
-  },
-  {
-   "class": "shaman",
-   "ability": "Earth Shock",
-   "rank": "Rank 3",
-   "spellId": 8045,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 51/55 or 52/56, the tooltip has [47, 51]",
-   "tooltip": "Instantly shocks the target with concussive force, causing 47 to 51 Nature damage.  It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec.  Causes a high amount of threat."
-  },
-  {
-   "class": "shaman",
-   "ability": "Earth Shock",
-   "rank": "Rank 4",
-   "spellId": 8046,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 83/89 or 84/90, the tooltip has [78, 84]",
-   "tooltip": "Instantly shocks the target with concussive force, causing 78 to 84 Nature damage.  It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec.  Causes a high amount of threat."
-  },
-  {
-   "class": "shaman",
-   "ability": "Flame Shock",
-   "rank": "Rank 1",
-   "spellId": 8050,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 24 or 25, the tooltip has [20, 28]",
-   "tooltip": "Instantly sears the target with fire, causing 20 Fire damage immediately and 28 Fire damage over 12 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Flame Shock",
-   "rank": "Rank 2",
-   "spellId": 8052,
-   "level": 18,
-   "kind": "value",
-   "what": "direct: the values predict 38 or 39, the tooltip has [32, 33]",
-   "tooltip": "Instantly sears the target with fire, causing 33 Fire damage immediately and 32 Fire damage over 12 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Flame Shock",
-   "rank": "Rank 3",
-   "spellId": 8053,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 45 or 46, the tooltip has [43, 56]",
-   "tooltip": "Instantly sears the target with fire, causing 43 Fire damage immediately and 56 Fire damage over 12 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Frost Shock",
-   "rank": "Rank 1",
-   "spellId": 8056,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 68/72 or 69/73, the tooltip has [50, 64, 68]",
-   "tooltip": "Instantly shocks the target with frost, causing 64 to 68 Frost damage and slowing movement speed by 50%.  Lasts 8 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lesser Healing Wave",
-   "rank": "Rank 1",
-   "spellId": 8004,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 150/172 or 151/173, the tooltip has [142, 164]",
-   "tooltip": "Heals a friendly target for 142 to 164."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lesser Healing Wave",
-   "rank": "Rank 2",
-   "spellId": 8008,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 213/243 or 214/244, the tooltip has [210, 238]",
-   "tooltip": "Heals a friendly target for 210 to 238."
   },
   {
    "class": "shaman",
@@ -1375,36 +515,6 @@
   },
   {
    "class": "warlock",
-   "ability": "Immolate",
-   "rank": "Rank 1",
-   "spellId": 348,
-   "level": 1,
-   "kind": "value",
-   "what": "direct: the values predict 10 or 11, the tooltip has [8, 15]",
-   "tooltip": "Burns the enemy for 8 Fire damage and then an additional 15 Fire damage over 15 sec."
-  },
-  {
-   "class": "warlock",
-   "ability": "Immolate",
-   "rank": "Rank 2",
-   "spellId": 707,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 21 or 22, the tooltip has [17, 30]",
-   "tooltip": "Burns the enemy for 17 Fire damage and then an additional 30 Fire damage over 15 sec."
-  },
-  {
-   "class": "warlock",
-   "ability": "Immolate",
-   "rank": "Rank 3",
-   "spellId": 1094,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 38 or 39, the tooltip has [32, 60]",
-   "tooltip": "Burns the enemy for 32 Fire damage and then an additional 60 Fire damage over 15 sec."
-  },
-  {
-   "class": "warlock",
    "ability": "Invocation",
    "rank": "",
    "spellId": 426241,
@@ -1423,83 +533,13 @@
   },
   {
    "class": "warlock",
-   "ability": "Shadow Bolt",
-   "rank": "Rank 2",
-   "spellId": 695,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 21/27 or 22/28, the tooltip has [20, 26]",
-   "tooltip": "Sends a shadowy bolt at the enemy, causing 20 to 26 Shadow damage."
-  },
-  {
-   "class": "warlock",
-   "ability": "Shadow Bolt",
-   "rank": "Rank 3",
-   "spellId": 705,
-   "level": 12,
-   "kind": "value",
-   "what": "direct: the values predict 40/46 or 41/47, the tooltip has [37, 43]",
-   "tooltip": "Sends a shadowy bolt at the enemy, causing 37 to 43 Shadow damage."
-  },
-  {
-   "class": "warlock",
-   "ability": "Shadow Bolt",
-   "rank": "Rank 4",
-   "spellId": 1088,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 58/66 or 59/67, the tooltip has [54, 62]",
-   "tooltip": "Sends a shadowy bolt at the enemy, causing 54 to 62 Shadow damage."
-  },
-  {
-   "class": "warlock",
-   "ability": "Shadow Bolt",
-   "rank": "Rank 5",
-   "spellId": 1106,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 75/85 or 76/86, the tooltip has [73, 83]",
-   "tooltip": "Sends a shadowy bolt at the enemy, causing 73 to 83 Shadow damage."
-  },
-  {
-   "class": "warlock",
-   "ability": "Shadow Cleave",
-   "rank": "Rank 2",
-   "spellId": 403839,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 6/12 or 7/13, the tooltip has [6, 10]",
-   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 6 to 10 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers."
-  },
-  {
-   "class": "warlock",
-   "ability": "Shadow Cleave",
-   "rank": "Rank 3",
-   "spellId": 403840,
-   "level": 12,
-   "kind": "value",
-   "what": "direct: the values predict 14/22 or 15/23, the tooltip has [10, 13, 21]",
-   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 13 to 21 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers."
-  },
-  {
-   "class": "warlock",
    "ability": "Shadow Cleave",
    "rank": "Rank 4",
    "spellId": 403841,
    "level": 20,
    "kind": "value",
-   "what": "direct: the values predict 25/39 or 26/40, the tooltip has [10, 24, 36]",
+   "what": "direct: the values predict 23/37 or 24/38, the tooltip has [10, 24, 36]",
    "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 24 to 36 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers."
-  },
-  {
-   "class": "warlock",
-   "ability": "Shadow Cleave",
-   "rank": "Rank 5",
-   "spellId": 403842,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 40/62 or 41/63, the tooltip has [10, 40, 60]",
-   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 40 to 60 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers."
   },
   {
    "class": "warlock",
@@ -1568,26 +608,6 @@
    "kind": "value",
    "what": "periodic: the values predict 170 or 180 or 17 or 18, the tooltip has [43]",
    "tooltip": "Gives 43 health to the caster's pet every second for 10 sec as long as the caster channels. Generates reduced threat."
-  },
-  {
-   "class": "warlock",
-   "ability": "Searing Pain",
-   "rank": "Rank 1",
-   "spellId": 5676,
-   "level": 18,
-   "kind": "value",
-   "what": "direct: the values predict 23/29 or 24/30, the tooltip has [21, 25]",
-   "tooltip": "Inflict searing pain on the enemy target, causing 21 to 25 Fire damage.  Causes a high amount of threat."
-  },
-  {
-   "class": "warlock",
-   "ability": "Searing Pain",
-   "rank": "Rank 2",
-   "spellId": 17919,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 32/38 or 33/39, the tooltip has [30, 36]",
-   "tooltip": "Inflict searing pain on the enemy target, causing 30 to 36 Fire damage.  Causes a high amount of threat."
   },
   {
    "class": "warlock",
