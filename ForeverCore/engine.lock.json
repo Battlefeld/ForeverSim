@@ -34,7 +34,7 @@
     },
     {
       "file": "engine-patches/142-foreverchanges-client-corrections.patch",
-      "sha256": "0ba545807a742f5e31e8ea2bb841c491a4e9526168ce2b2ae607a13e789ce266",
+      "sha256": "68eb1ab43f0603fa05791d0e5362f452dc40583a6a12910a3086895f52e2ddf1",
       "reason": "Targeted talent layout and enchant 2618 corrections verified against ForeverChanges on 2026-10-28. Base client remains 70425; not a complete 70658 import.",
       "reference": "https://foreverchanges.pro/talents/mage"
     }
@@ -43,7 +43,7 @@
   "reference": "https://github.com/sage3648/mythicsim-forever-engine-go/tree/mythicsim/client70425",
   "branch": "mythicsim/client70425",
   "clientBuild": "1.60.1.70425",
-  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+86ac7b1d07a801c816491ebf",
+  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+b36fe44f767de2b3c0d06558",
   "overlay": "79a27325d2c024d9",
   "levelDataSHA256": "2a029563bc2860cd4947e68726a0a40e6ea4cef82f95182c7542b88958819f19"
 }
