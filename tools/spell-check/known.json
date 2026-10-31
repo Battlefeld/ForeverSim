@@ -1,0 +1,28 @@
+{
+ "_comment": "Spells the ForeverDB class list names that the engine's table does not have, and why that is fine. The spell check lists a missing spell only when it is not in here. Add an entry when a spell is shown to be built (patch) or not in Forever.",
+ "implemented": {
+  "409379": "Kill Command: engine patch 143",
+  "424799": "Shiv: engine patch 143"
+ },
+ "notInForever": {
+  "417045": "Tiger's Fury: replaced by Shifting Power (the engine has it, spell 1322605); player, 2026-10-31",
+  "417123": "Enhanced Restoration: not in Forever (player, 2026-10-31; apparently)",
+  "407804": "Divine Sacrifice: not in Forever (player; apparently)",
+  "425600": "Horn of Lordaeron: not in Forever (player; apparently)",
+  "407799": "Seal of Martyrdom: not in Forever (player; apparently)",
+  "407803": "Judgement of Martyrdom: not in Forever (player; apparently)",
+  "424036": "Secrets of Elune: not in Forever (player; apparently)",
+  "424041": "Secrets of Undeath: not in Forever (player; apparently)",
+  "424035": "Secrets of the Light: not in Forever (player; apparently)",
+  "424037": "Secrets of the Loa: not in Forever (player; apparently)",
+  "461475": "Valor of Azeroth: not in Forever (player; apparently)",
+  "2836": "Detect Traps: not in Forever (player; apparently)",
+  "126": "Eye of Kilrogg: not in Forever (player; apparently)",
+  "713": "Summon Incubus: not in Forever (player; apparently)",
+  "24547": "Natural Armor: not in Forever (player; apparently)",
+  "24556": "Natural Armor",
+  "24557": "Natural Armor",
+  "24558": "Natural Armor",
+  "24559": "Natural Armor"
+ }
+}

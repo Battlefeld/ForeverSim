@@ -100,6 +100,28 @@ class Run(unittest.TestCase):
             self.assertEqual(kinds, ['class', 'level', 'missing', 'value'])
             self.assertIn('ForeverDB.net', Path(str(out) + '.md').read_text())
 
+    def test_known_spells_are_not_listed_as_missing(self):
+        engine = [FROSTFIRE]
+        classes = {'mage': {'abilities': [{'name': 'Gone', 'ranks': [{'spellId': 99, 'rank': '', 'level': 1}]},
+                                          {'name': 'Built', 'ranks': [{'spellId': 98, 'rank': '', 'level': 1}]}]}}
+
+        class Fake:
+            def __init__(self, *a):
+                pass
+
+            def get(self, path):
+                return classes.get(path.rsplit('/', 1)[1]) if path.startswith('/classes/') else {'description': ''}
+
+        with tempfile.TemporaryDirectory() as d:
+            dump, known, out = Path(d) / 's.json', Path(d) / 'k.json', Path(d) / 'report'
+            dump.write_text(json.dumps(engine))
+            known.write_text(json.dumps({'implemented': {'98': 'built'}, 'notInForever': {}}))
+            with mock.patch.object(check, 'Api', Fake), mock.patch.dict(os.environ, {'FOREVERDB_API_KEY': 'x'}):
+                with mock.patch.object(sys, 'argv', ['check', '--dump', str(dump), '--out', str(out), '--classes', 'mage', '--known', str(known)]):
+                    self.assertEqual(check.main(), 0)
+            found = json.loads(Path(str(out) + '.json').read_text())['findings']
+            self.assertEqual([f['spellId'] for f in found], [99])
+
     def test_no_key_is_an_error(self):
         with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(sys, 'argv', ['check', '--dump', 'x', '--out', 'y']):
             self.assertEqual(check.main(), 2)

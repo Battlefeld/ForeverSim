@@ -143,6 +143,8 @@ def main():
     ap.add_argument('--budget', type=int, default=900, help='most API calls')
     ap.add_argument('--interval', type=float, default=1.2, help='seconds between calls (the API allows 60 a minute)')
     ap.add_argument('--classes', default=','.join(CLASSES))
+    ap.add_argument('--known', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'known.json'),
+                    help='spells that are built or not in Forever: not listed as missing')
     a = ap.parse_args()
 
     key = os.environ.get('FOREVERDB_API_KEY', '')
@@ -150,6 +152,10 @@ def main():
         print('FOREVERDB_API_KEY is not set', file=sys.stderr)
         return 2
     engine = {s['id']: s for s in json.load(open(a.dump))}
+    known = {}
+    if os.path.exists(a.known):
+        raw = json.load(open(a.known))
+        known = {int(k): v for group in ('implemented', 'notInForever') for k, v in raw.get(group, {}).items()}
     api = Api(key, a.budget, a.interval)
     findings, checked, build = [], 0, ''
     for cls in a.classes.split(','):
@@ -166,7 +172,8 @@ def main():
                 where = {'class': cls, 'ability': ability['name'], 'rank': rank.get('rank', ''), 'spellId': sid, 'level': rank.get('level')}
                 checked += 1
                 if spell is None:
-                    findings.append({**where, 'kind': 'missing', 'what': 'the engine table has no such spell'})
+                    if sid not in known:
+                        findings.append({**where, 'kind': 'missing', 'what': 'the engine table has no such spell'})
                     continue
                 if spell['name'] != ability['name'] or (spell['rank'] or '') != (rank.get('rank') or ''):
                     findings.append({**where, 'kind': 'name', 'what': f'engine: {spell["name"]!r} {spell["rank"]!r}'})
