@@ -17,8 +17,15 @@ cleanup() {
   rm -rf "$tempdir"
 }
 trap cleanup EXIT
-git -C "$workspace" fetch -q --no-tags origin +refs/heads/artifacts:refs/remotes/origin/artifacts
-git -C "$workspace" worktree add -q --detach "$worktree" refs/remotes/origin/artifacts
+if git -C "$workspace" fetch -q --no-tags origin +refs/heads/artifacts:refs/remotes/origin/artifacts; then
+  git -C "$workspace" worktree add -q --detach "$worktree" refs/remotes/origin/artifacts
+else
+  # no artifacts branch yet (first run, or it was deleted): start an empty one
+  git -C "$workspace" worktree add -q --detach "$worktree" HEAD
+  git -C "$worktree" checkout -q --orphan artifacts
+  git -C "$worktree" rm -rfq . >/dev/null 2>&1 || true
+  git -C "$worktree" clean -fdxq
+fi
 python - "$worktree" "$@" <<'PY'
 from pathlib import Path
 import hashlib
@@ -81,8 +88,9 @@ for attempt in 1 2 3 4 5; do
     exit 0
   fi
   echo "Artifact branch advanced; rebasing before retry $attempt" >&2
-  git -C "$workspace" fetch -q --no-tags origin +refs/heads/artifacts:refs/remotes/origin/artifacts
-  git -C "$worktree" rebase -q -X theirs refs/remotes/origin/artifacts
+  if git -C "$workspace" fetch -q --no-tags origin +refs/heads/artifacts:refs/remotes/origin/artifacts; then
+    git -C "$worktree" rebase -q -X theirs refs/remotes/origin/artifacts
+  fi
 done
 echo "Cannot publish to artifacts after five retries" >&2
 exit 1

@@ -42,12 +42,16 @@ jobs:
         shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/forever-data"
-          git fetch --no-tags origin artifacts
-          if git cat-file -e FETCH_HEAD:data-watch/latest/state.json.gz 2>/dev/null; then
-            git show FETCH_HEAD:data-watch/latest/state.json.gz > "$RUNNER_TEMP/forever-data/previous.json.gz"
-          fi
-          if git cat-file -e FETCH_HEAD:data-watch/latest/blueposts.json 2>/dev/null; then
-            git show FETCH_HEAD:data-watch/latest/blueposts.json > "$RUNNER_TEMP/forever-data/blueposts-previous.json"
+          # the branch artifacts holds the last state; the first run (or a deleted branch) starts without one
+          if git fetch --no-tags origin artifacts; then
+            if git cat-file -e FETCH_HEAD:data-watch/latest/state.json.gz 2>/dev/null; then
+              git show FETCH_HEAD:data-watch/latest/state.json.gz > "$RUNNER_TEMP/forever-data/previous.json.gz"
+            fi
+            if git cat-file -e FETCH_HEAD:data-watch/latest/blueposts.json 2>/dev/null; then
+              git show FETCH_HEAD:data-watch/latest/blueposts.json > "$RUNNER_TEMP/forever-data/blueposts-previous.json"
+            fi
+          else
+            echo "::notice::no artifacts branch yet: starting without a previous state"
           fi
       - name: Read Blizzard version service directly
         run: >-
