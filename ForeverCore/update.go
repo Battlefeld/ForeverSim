@@ -29,8 +29,8 @@ var Build = ""
 // FOREVERCORE_SIGNING_KEY. Empty: updates are off.
 var updatePublicKey = "mY8688LGM2UeoA7sDo3FXy80c7qnwLYbDOe7hrcl3Hs="
 
-// updateManifestURL: the manifest beside the program on the artifacts branch of the private repository (read with
-// the GitHub access, token.go).
+// updateManifestURL: the manifest beside the program on the artifacts branch (public; a GitHub access, token.go,
+// is used when there is one: it lifts GitHub's limit of 60 requests an hour).
 var updateManifestURL = "https://api.github.com/repos/Battlefeld/ForeverSim/contents/windows/package/forevercore-update.json?ref=artifacts"
 
 // updateProgramURL: where the workflow puts the program (the manifest names it).
@@ -91,9 +91,6 @@ type updateState struct {
 func checkUpdate(ctx context.Context, appDir string) (string, *updateManifest, error) {
 	if updatePublicKey == "" || Build == "" {
 		return "", nil, nil
-	}
-	if githubHost(updateManifestURL) && githubToken() == "" {
-		return "", nil, fmt.Errorf("GitHub-Zugang fehlt (im Fenster eintragen)")
 	}
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()

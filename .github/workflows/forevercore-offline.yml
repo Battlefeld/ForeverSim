@@ -1,8 +1,7 @@
 name: ForeverCore integration
 on:
-  # main and pull requests only (work on other branches costs no Actions minutes), not for documentation
+  # every branch (the repository is public: Actions minutes are free), not for documentation
   push:
-    branches: [main]
     paths:
       - 'ForeverCore/**'
       - 'ForeverCoreBridge/**'

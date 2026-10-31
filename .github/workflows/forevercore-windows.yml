@@ -2,8 +2,7 @@ name: ForeverCore Windows bridge regression
 on:
   push:
     branches: [main]
-    # a Windows runner counts twice: only when the Windows code changes
-    paths: ['ForeverCore/*_windows.go', 'ForeverCore/*_windows_test.go', '.github/workflows/forevercore-windows.yml']
+    paths: ['ForeverCore/**', '!**.md', '.github/workflows/forevercore-windows.yml']
   workflow_dispatch:
 permissions:
   contents: write

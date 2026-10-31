@@ -695,5 +695,11 @@ Stufe 1/5/49/50/59/60. Diese Mock-Prüfungen ersetzen keine Ingame-Abnahme.
 - Guide-Loot: Forever Guide 1.35.1 (mit Erlaubnis des Datenautors)
 - Lizenztexte: Ordner `Lizenzen\`
 
+**Lizenz:** Der eigene Code dieses Repositorys (ForeverCore, ForeverCoreBridge, ForeverSimBridge, Werkzeuge) steht
+unter der MIT-Lizenz (`LICENSE`). Übernommene Teile behalten ihre Lizenz: MythicSim/WoWSims-Werte MIT
+(`ForeverSimBridge/THIRD_PARTY_LICENSES.txt`), aus cmangos classic-db abgeleitete Werte (`warlock-demons.json`)
+GPL-3.0, der Guide-Loot nach der Erlaubnis seines Datenautors. Das mitgelieferte ForeverRoutes-Addon und seine Routen
+stehen unter den Lizenzen von ForeverRoutes (Code MIT, Datensatz GPL-3.0, RestedXP-Routen CC BY-NC-SA 4.0).
+
 Die Bridge-Addons sind unabhängige Fan-Werkzeuge und stehen in keiner Verbindung zu Blizzard
 Entertainment.

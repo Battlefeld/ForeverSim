@@ -1,7 +1,7 @@
 package main
 
-// The GitHub access the private repositories need for updates of ForeverCore and of the routes: entered once in the
-// window, kept in the app folder encrypted for the Windows user (DPAPI, token_windows.go), never shown again. An
+// An optional GitHub access for updates of ForeverCore and of the routes (needed only while a repository is private):
+// entered once in the window, kept in the app folder encrypted for the Windows user (DPAPI, token_windows.go), never shown again. An
 // environment variable (FOREVER_GITHUB_TOKEN, GH_TOKEN, GITHUB_TOKEN) still wins.
 
 import (
