@@ -79,6 +79,31 @@ def fetch_upstream(repo, url):
        '+refs/heads/mythicsim/*:refs/remotes/origin/mythicsim/*')
 
 
+# Files that are numbers, generated from the client's tables, tests, interface or documents: not the calculation.
+DATA_SUFFIXES = ('.json', '.bin', '.results', '.md', '.txt', '.png', '.jpg', '.svg', '.webp', '.css', '.scss', '.html',
+                 '.ts', '.tsx', '.mts', '.mjs', '.yml', '.yaml', '.lock', '.sum', '.sh', '.toml')
+DATA_DIRS = ('assets/', 'ui/', 'docs/', 'schemas/', 'locales/', '.github/')
+
+
+def is_calculation_file(path):
+    """True for a file that carries the rules of the calculation (Go code, the protobuf schema, the build files)."""
+    if path.startswith(DATA_DIRS) or path.endswith(DATA_SUFFIXES):
+        return False
+    if path.endswith('_test.go') or '_auto_gen' in path or path.endswith('_gen.go') or '/testdata/' in path:
+        return False
+    return True
+
+
+def calculation_changes(repo, locked, base):
+    """The calculation files that differ between the locked commit and base: a list (empty when none), or None when the
+    two cannot be compared (the locked commit is not in the fetched history)."""
+    if subprocess.run(['git', '-C', str(repo), 'cat-file', '-e', locked + '^{commit}'], capture_output=True).returncode != 0:
+        return None
+    names = git(repo, 'diff', '--name-only', locked, base).splitlines()
+    changed = [n for n in names if is_calculation_file(n)]
+    return changed if changed else False
+
+
 def pick_base(repo, locked, forced=None):
     if forced:
         ref = f'origin/{forced}'
@@ -377,8 +402,18 @@ def main():
         repo = a.work.resolve() / 'upstream.git-work'
         fetch_upstream(repo, lock['repository'])
         branch, base, _ = pick_base(repo, lock['commit'], a.branch)
-        print(f'changed={"true" if base != lock["commit"] else "false"}')
+        code = calculation_changes(repo, lock['commit'], base)
+        # a new upstream base only matters when the calculation changed; numbers, generated tables, tests, the UI and
+        # documents are ours to keep (we maintain the values ourselves)
+        print(f'changed={"true" if base != lock["commit"] and code is not False else "false"}')
         print(f'base={branch} {base}', file=sys.stderr)
+        if base != lock['commit']:
+            if code is None:
+                print('calculation: cannot compare with the locked commit, treating as changed', file=sys.stderr)
+            elif code is False:
+                print('calculation: unchanged (only data, generated tables, tests, UI or documents differ)', file=sys.stderr)
+            else:
+                print('calculation: changed in ' + ', '.join(code[:12]) + (' ...' if len(code) > 12 else ''), file=sys.stderr)
         return 0
     work = a.work.resolve()
     work.mkdir(parents=True, exist_ok=True)

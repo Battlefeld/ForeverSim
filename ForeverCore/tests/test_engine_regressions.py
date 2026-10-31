@@ -114,3 +114,19 @@ class CheckoutPreparationTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class CalculationChangeTests(unittest.TestCase):
+    """Only a change of the calculation makes an engine update necessary."""
+
+    def test_calculation_files(self):
+        import engine_update as e
+        for path in ('sim/mage/frostfire_bolt.go', 'sim/core/spell.go', 'proto/common.proto', 'go.mod',
+                     'sim/core/spelldata/spelldata.go', 'tools/database/gen_spelldata/main.go'):
+            self.assertTrue(e.is_calculation_file(path), path)
+
+    def test_data_files(self):
+        import engine_update as e
+        for path in ('sim/mage/spell_data_auto_gen.go', 'sim/core/spelldata/spells_auto_gen.go', 'sim/mage/frostfire_bolt_test.go',
+                     'assets/database/db.json', 'ui/app/Sim.tsx', 'docs/readme.md', 'sim/mage/testdata/x.results'):
+            self.assertFalse(e.is_calculation_file(path), path)

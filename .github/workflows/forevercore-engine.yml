@@ -30,7 +30,9 @@ env:
   ENGINE_BRANCH: main
 
 jobs:
-  # A few seconds: is there a newer MythicSim base than the lock? The hour-long update runs only then (or by hand).
+  # A few seconds: did the CALCULATION of MythicSim change since the lock (Go rules, the schema, the build)? Numbers,
+  # generated tables, tests, the interface and documents do not count: we keep the values ourselves. The hour-long
+  # update runs only when the calculation changed (or by hand); otherwise this workflow stays green and does nothing.
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
