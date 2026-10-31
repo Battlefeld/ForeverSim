@@ -1,0 +1,33 @@
+name: api-probe
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: tooltips of the spells the engine lacks
+        env:
+          FOREVERDB_API_KEY: ${{ secrets.FOREVERDB_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, time, urllib.request
+          key = os.environ['FOREVERDB_API_KEY']
+          ids = {409379: 'Kill Command', 410115: 'Cobra Slayer', 424799: 'Shiv', 417045: "Tiger's Fury", 414687: 'Sunfire bear',
+                 414689: 'Sunfire cat', 414683: 'Living Seed', 417123: 'Enhanced Restoration', 407799: 'Seal of Martyrdom',
+                 407803: 'Judgement of Martyrdom', 440677: 'Righteous Judgement', 407804: 'Divine Sacrifice',
+                 425600: 'Horn of Lordaeron', 412784: 'Metamorphosis: Demonic Howl', 461475: 'Valor of Azeroth', 426241: 'Invocation'}
+          for sid, name in ids.items():
+              req = urllib.request.Request('https://foreverdb.net/api/v1/spells/%d' % sid, headers={'X-API-Key': key, 'User-Agent': 'ForeverSim-probe'})
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as r:
+                      d = json.load(r)['data']
+                  print('==', sid, name, '|', d.get('rank'), '|', (d.get('description') or '').replace('\n', ' ')[:900])
+                  lc = d.get('liveClient')
+                  if lc: print('   liveClient:', json.dumps(lc)[:300])
+              except Exception as e:
+                  print('==', sid, name, 'ERROR', e)
+              time.sleep(1.3)
+          PY
