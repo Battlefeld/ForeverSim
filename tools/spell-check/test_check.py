@@ -41,9 +41,12 @@ class Values(unittest.TestCase):
         # 100 at spell level 10, 2 more per level, capped at level 40: 120 at level 20, and at 30 the same as 100 + 2 * 20
         spell = {'durationMs': 0, 'effects': [{'type': check.E_SCHOOL_DAMAGE, 'aura': 0, 'base': 100, 'ppl': 2.0, 'variance': 0,
                                                 'periodMs': 0, 'spellLevel': 10, 'maxLevel': 40}]}
-        self.assertEqual(check.check_values(spell, 'Deals 140 damage. (Numbers at level 30.)', 30), [])
-        self.assertEqual(check.check_values(spell, 'Deals 120 damage.', 20), [])
-        self.assertEqual(len(check.check_values(spell, 'Deals 100 damage.', 30)), 1)
+        self.assertEqual(check.check_values(spell, 'Deals 140 damage. (Numbers at level 30; they grow with your level.)'), [])
+        self.assertEqual(check.check_values(spell, 'Deals 120 damage. (Numbers at level 20; they grow with your level.)'), [])
+        self.assertEqual(len(check.check_values(spell, 'Deals 100 damage. (Numbers at level 30; they grow with your level.)')), 1)
+        # no such sentence: the rank's own numbers, at its spell level
+        self.assertEqual(check.check_values(spell, 'Deals 100 damage.'), [])
+        self.assertEqual(len(check.check_values(spell, 'Deals 140 damage.')), 1)
 
     def test_a_periodic_effect_may_be_shown_per_tick(self):
         mend = {'durationMs': 5000, 'effects': [{'type': check.E_APPLY_AURA, 'aura': check.A_PERIODIC_HEAL, 'base': 19, 'ppl': 0,

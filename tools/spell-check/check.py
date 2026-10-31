@@ -115,6 +115,10 @@ def check_values(spell, text, level=30):
     nums = numbers(text)
     if not nums:
         return []  # a tooltip without a number ("Judge the target, dealing Holy damage") says nothing to compare
+    # only a tooltip that says "(Numbers at level 30; they grow with your level.)" is written for a level; every other
+    # one shows the rank's own numbers, without the gain per level
+    stated = re.search(r'Numbers at level (\d+)', text or '')
+    level = int(stated.group(1)) if stated else 0
     problems = []
     for label, alts in expected_values(spell, level):
         if not any(all(float(v) in nums for v in alt) for alt in alts):
