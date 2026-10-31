@@ -1,5 +1,5 @@
 {
- "previous": "bcdda5184aa68466f407e3727f99abf7d5454a27+b36fe44f767de2b3c0d06558",
+ "previous": "bcdda5184aa68466f407e3727f99abf7d5454a27+c4b2c53b09eff5ca2fb5fb32",
  "ok": true,
  "branch": "mythicsim/client70425",
  "base": "bcdda5184aa68466f407e3727f99abf7d5454a27",
@@ -8,7 +8,8 @@
   "engine-patches/139-fingers-of-frost.patch",
   "engine-patches/140-stormstrike.patch",
   "engine-patches/141-windfury-flametongue.patch",
-  "engine-patches/142-foreverchanges-client-corrections.patch"
+  "engine-patches/142-foreverchanges-client-corrections.patch",
+  "engine-patches/143-forever-new-combat-spells.patch"
  ],
  "patchesDropped": [],
  "clientBuild": "1.60.1.70425",
@@ -351,5 +352,5 @@
   }
  },
  "problems": [],
- "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+c5ea652251ba5aa5d25af19d"
+ "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+d2f403ecfc5c7cf20f056051"
 }
