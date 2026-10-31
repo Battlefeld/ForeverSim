@@ -47,7 +47,8 @@ dann dessen `config.json`.
 - **Auktionshaus:** Leiste rechts am Fenster: Scannen, Berechnen, dann `/reload` – danach steht das beste Item je
   Platz in der Liste.
 
-Alles Weitere (Befehle, Filter, Grenzen): `README.md`.
+Alles Weitere (Befehle, Filter, Grenzen): [Funktionsweise](https://github.com/Battlefeld/ForeverSim/blob/main/docs/FUNKTIONSWEISE.md).
+Lizenzen und Quellen: Ordner `Lizenzen`.
 
 
 ## Automatische Datenpflege ab 0.6.0-autodata1
@@ -85,10 +86,8 @@ Hotfix-Fingerabdruck der kompilierten Engine passen. Der derzeitige HTTP-403-Feh
 beim Blizzard-DB2-Abruf bleibt daher als ausstehende Hotfix-Prüfung sichtbar. Das
 Archivieren eines lokalen Caches übersetzt dessen Werte noch nicht in Kampfformeln.
 
-Bei privaten GitHub-Repositories braucht der PC einmalig Leseberechtigung für beide
-Repositories. Der Client verwendet dafür eine vorhandene Umgebungsvariable
-`FOREVER_GITHUB_TOKEN` (alternativ `GH_TOKEN` oder `GITHUB_TOKEN`). Das Token wird
-nicht in Konfigurationsdateien oder Protokolle geschrieben und nur an GitHub gesendet.
-Ohne Zugriff bleibt die Prüfung sichtbar fehlgeschlagen; sie meldet keine Aktualität.
+Die Repositories sind öffentlich; Updates brauchen keinen GitHub-Zugang. Ein Token (im Fenster oder als
+`FOREVER_GITHUB_TOKEN`) hebt nur GitHubs Grenze von 60 Abfragen pro Stunde auf; es wird verschlüsselt gespeichert und
+nur an GitHub gesendet.
 ForeverRoutes wird ausschließlich aus seinem eigenen Release installiert; das
 ForeverSim-Paket überschreibt das eigenständige HUD nicht mit einer alten Kopie.

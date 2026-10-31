@@ -1,9 +1,11 @@
 # ForeverCore 1.0 – Windows-Zentrale, One-EXE-Installation und ForeverSim-Umbau
 
-> **STATUS: KONZEPT / UMBAU-SPEZIFIKATION, NICHT IMPLEMENTIERT.**
+> **STATUS: Ursprüngliches Konzept (29.10.2026), seitdem großteils umgesetzt.** ForeverCore.exe installiert,
+> aktualisiert und startet heute alles; der aktuelle Stand steht in der [README](../README.md). Dieses Dokument bleibt als
+> Planungsgrundlage erhalten.
 >
 > Dieses ergänzende README definiert den angestrebten Umbau. Es ersetzt nicht die bestehende README.md, ändert keine Laufzeitfunktionen und behauptet keine abgeschlossene Ingame-Validierung.
-> Gegenstück: [ForeverRoutes – Windows-Integration](https://github.com/Battlefeld/ForeverRoutes/blob/main/README-FOREVERCORE-WINDOWS.md).
+> Gegenstück: [ForeverRoutes – Windows-Integration](https://github.com/Battlefeld/ForeverRoutes/blob/main/docs/konzept-forevercore-windows.md).
 > **Ziel:** Nutzer lädt **eine** signierte Datei `ForeverCore.exe` herunter, startet sie per Doppelklick und erledigt die gesamte Installation, Einrichtung, Aktualisierung, Simulation und Routenverwaltung grafisch. Kein CMD/PowerShell, keine manuell zu installierende `MythicSim.exe`, `foreverroutes.exe`, `Lua.exe` oder Addon-ZIP.
 
 
