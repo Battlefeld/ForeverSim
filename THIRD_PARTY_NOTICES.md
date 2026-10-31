@@ -24,8 +24,8 @@ Wer nur den eigenen Code weiterverwendet (ohne Katalog und `warlock-demons.json`
 | [NorgannonDB](https://github.com/zmarotrix/NorgannonDB) | Dungeons, Stufen, Bosse, Beute, Dropchancen (Instanzen aus DungeonJournal by Exehn) | GPL-3.0 |
 | [cmangos classic-db](https://github.com/cmangos/classic-db) | Werte der Hexenmeister-Begleiter je Stufe, Ausrüstungsplätze von Items | GPL-3.0 |
 | [QuestieDB](https://github.com/Questie/QuestieDB) | Quest-Angaben für die Routenberechnung | GPL-3.0 nach Angabe des Questie-Teams |
-| [ForeverDB.net](https://foreverdb.net) | Quest-Beobachtungen, live abgefragt. Data from ForeverDB.net. | keine Lizenz genannt; Nutzung mit Quellenangabe |
-| [Wowhead Forever](https://www.wowhead.com/forever), [ForeverChanges](https://foreverchanges.pro) | Einzelne Werte zu Essen, Verzauberungen, Talenten, jeweils mit Link in der Datei | einzelne Fakten mit Quellenangabe |
+| [ForeverDB.net](https://foreverdb.net) | Quest-Beobachtungen und die Tooltips der Zauber (Gegenprobe der Zahlen, Spell-Check), live abgefragt. Data from ForeverDB.net. | keine Lizenz genannt; Nutzung mit Quellenangabe |
+| [Wowhead Forever](https://www.wowhead.com/forever), [ForeverChanges](https://foreverchanges.pro) | Einzelne Werte zu Essen, Verzauberungen, Talenten, jeweils mit Link in der Datei; Kosten und Abklingzeit neuer Zauber (Kill Command, Shiv); die Stufenformeln von 28 neuen Zaubern (`sim/core/spelldata/forever_scaling_gen.go` im Engine-Patch 144) | einzelne Fakten mit Quellenangabe |
 | Tabellen des Spielclients (`PlayerExpectedStat`) | Grundwerte je Klasse und Stufe in `leveling-data.json` | Spielinhalt von Blizzard Entertainment |
 
 ## Spielinhalte

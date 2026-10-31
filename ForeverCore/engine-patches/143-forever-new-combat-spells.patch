@@ -30,7 +30,7 @@ index e89696d..4bfdf9f 100644
  		HunterSpellMultiShot | HunterSpellRapidFire |
 diff --git a/sim/hunter/kill_command.go b/sim/hunter/kill_command.go
 new file mode 100644
-index 0000000..e6c0eeb
+index 0000000..fad48da
 --- /dev/null
 +++ b/sim/hunter/kill_command.go
 @@ -0,0 +1,89 @@
@@ -49,8 +49,8 @@ index 0000000..e6c0eeb
 +//	or Bite done by the pet reduces the damage bonus by 20%."
 +//
 +// The bonus is three charges: the first Claw or Bite deals +60%, the next +40%, the next +20%, then the aura is
-+// gone (or after 30 s). The tooltip does not say whether the command is on the global cooldown; it takes the
-+// hunter's usual one.
++// gone (or after 30 s). The command is not on the global cooldown (confirmed in the game by the player of the
++// project; the tooltip does not say).
 +const (
 +	killCommandSpellID        = 409379
 +	killCommandDuration       = 30 * time.Second
@@ -106,7 +106,7 @@ index 0000000..e6c0eeb
 +		},
 +		Cast: core.CastConfig{
 +			DefaultCast: core.Cast{
-+				GCD: core.GCDDefault,
++				GCD: 0, // off the global cooldown
 +			},
 +			CD: core.Cooldown{
 +				Timer:    hunter.NewTimer(),

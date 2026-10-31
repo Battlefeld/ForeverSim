@@ -54,6 +54,14 @@ class Values(unittest.TestCase):
         self.assertEqual(check.check_values(mend, 'Heals your pet 20 health every second. Lasts 5 sec.'), [])
         self.assertEqual(check.check_values(mend, 'Heals your pet 100 health over 5 sec.'), [])
 
+    def test_the_engines_own_amount_is_used_when_the_dump_has_it(self):
+        # a spell that scales with the level in the engine: avg30 is what the tooltip names, whatever base says
+        spell = {'durationMs': 0, 'effects': [{'type': check.E_SCHOOL_DAMAGE, 'aura': 0, 'base': 276, 'ppl': 0, 'variance': 0.2,
+                                                'periodMs': 0, 'spellLevel': 1, 'maxLevel': 1, 'avg30': 147.0, 'avg0': 276.0}]}
+        text = 'Causes 132 to 162 Arcane damage. (Numbers at level 30; they grow with your level.)'
+        self.assertEqual(check.check_values(spell, text), [])
+        self.assertEqual(len(check.check_values(spell, 'Causes 248 to 304 Arcane damage. (Numbers at level 30; they grow with your level.)')), 1)
+
     def test_a_tooltip_without_numbers_is_not_compared(self):
         self.assertEqual(check.check_values(FROSTFIRE, 'Judge the target, dealing Holy damage.'), [])
 

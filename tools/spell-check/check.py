@@ -93,7 +93,14 @@ def expected_values(spell, level=30):
     average and average+1 are both accepted; a periodic effect may be shown per tick or as the total."""
     out = []
     for e in spell.get('effects') or []:
-        base, var = average(e, level), e['variance']
+        # the engine's own amount where the dump has it (it knows the spells that scale with the level)
+        if level == 30 and 'avg30' in e:
+            base = e['avg30']
+        elif level == 0 and 'avg0' in e:
+            base = e['avg0']
+        else:
+            base = average(e, level)
+        var = e['variance']
         is_direct = e['type'] in (E_SCHOOL_DAMAGE, E_HEAL)
         is_periodic = e['type'] == E_APPLY_AURA and e['aura'] in (A_PERIODIC_DAMAGE, A_PERIODIC_HEAL) and e['periodMs'] > 0
         if is_direct and base > 0:

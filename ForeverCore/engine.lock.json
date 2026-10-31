@@ -40,16 +40,22 @@
     },
     {
       "file": "engine-patches/143-forever-new-combat-spells.patch",
-      "sha256": "3865e4c560a7514b60cf18b55b4a3fc97ae430405556e75d5e8d3f3479da5cd9",
-      "reason": "Forever's new combat spells the pinned base (client 70425) lacks: Kill Command (hunter, spell 409379) and Shiv (rogue, spell 424799), from the tooltips of ForeverDB and Wowhead Forever. Assumptions are in the source comments (Shiv: weapon-speed energy surcharge not modelled; Kill Command: global cooldown assumed).",
+      "sha256": "32376529c75a0c8e70d239e68a27a1e2a819587cdad9508b88ab92e06a08183a",
+      "reason": "Forever's new combat spells the pinned base (client 70425) lacks: Kill Command (hunter, spell 409379) and Shiv (rogue, spell 424799), from the tooltips of ForeverDB and Wowhead Forever. Assumptions are in the source comments (Shiv: weapon-speed energy surcharge not modelled; Kill Command is off the global cooldown, as the project player confirmed in the game).",
       "reference": "https://foreverdb.net/spell/409379"
+    },
+    {
+      "file": "engine-patches/144-forever-level-scaling.patch",
+      "sha256": "62a716ce1e4be6b89e206e7fa11741aa340232f3670b55b61f75a4b997c87827",
+      "reason": "Forever scales its newer spells with the level: the engine kept the coefficient (N) and used it flat at every level (Starsurge 248 to 304 instead of 132 to 162 at level 30). The table of 28 spells with their level polynomial (A + B*L + C*L^2) is read from the Wowhead Forever tooltips and checked against the ForeverDB tooltips (16 spells) and the engine's own coefficients; tools/spell-check/scaling.py regenerates it.",
+      "reference": "https://nether.wowhead.com/tooltip/spell/417157?dataEnv=16"
     }
   ],
   "characterLevel": 60,
   "reference": "https://github.com/sage3648/mythicsim-forever-engine-go/tree/mythicsim/client70425",
   "branch": "mythicsim/client70425",
   "clientBuild": "1.60.1.70425",
-  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+c4b2c53b09eff5ca2fb5fb32",
+  "buildIdentity": "bcdda5184aa68466f407e3727f99abf7d5454a27+aca0f1e7027e23d43d0fdb7d",
   "overlay": "79a27325d2c024d9",
   "levelDataSHA256": "2a029563bc2860cd4947e68726a0a40e6ea4cef82f95182c7542b88958819f19"
 }
