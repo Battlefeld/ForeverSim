@@ -1,0 +1,47 @@
+// Prints the engine's spell table as JSON for tools/spell-check/check.py. Copied into the engine checkout as
+// cmd/spelldump/main.go by the workflow; it is not part of any module of this repository.
+package main
+
+import (
+	"encoding/json"
+	"os"
+
+	"github.com/wowsims/forever/sim/core/spelldata"
+)
+
+type effect struct {
+	Index    int     `json:"index"`
+	Type     int     `json:"type"`
+	Aura     int     `json:"aura"`
+	Base     float64 `json:"base"`
+	PPL      float64 `json:"ppl"`
+	Variance float64 `json:"variance"`
+	SPCoef   float64 `json:"spCoef"`
+	PeriodMs int     `json:"periodMs"`
+}
+
+type spell struct {
+	ID         int      `json:"id"`
+	Name       string   `json:"name"`
+	Rank       string   `json:"rank"`
+	SpellLevel int      `json:"spellLevel"`
+	CastMs     int      `json:"castMs"`
+	DurationMs int      `json:"durationMs"`
+	Effects    []effect `json:"effects"`
+}
+
+func main() {
+	out := []spell{}
+	for _, s := range spelldata.All() {
+		row := spell{ID: int(s.ID), Name: s.Name, Rank: s.Rank, SpellLevel: int(s.SpellLevel), CastMs: int(s.CastTimeMs), DurationMs: int(s.DurationMs)}
+		for _, e := range s.Effects {
+			row.Effects = append(row.Effects, effect{Index: int(e.Index), Type: int(e.Type), Aura: int(e.Aura), Base: e.BasePoints, PPL: e.PPL,
+				Variance: e.Variance, SPCoef: e.SPCoef, PeriodMs: int(e.PeriodMs)})
+		}
+		out = append(out, row)
+	}
+	enc := json.NewEncoder(os.Stdout)
+	if err := enc.Encode(out); err != nil {
+		os.Exit(1)
+	}
+}

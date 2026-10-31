@@ -1,0 +1,62 @@
+# Compares the engine's spell table with the ForeverDB API (ranks, levels, damage and healing numbers) and publishes the
+# list of differences. It only reports; it never changes the engine. Needs the repository secret FOREVERDB_API_KEY.
+name: Forever spell check
+
+on:
+  schedule:
+    - cron: '30 11 * * 3'   # Wednesday, after the engine check
+  workflow_dispatch:
+    inputs:
+      max_level:
+        description: 'Only ranks taught at this level or lower'
+        default: '30'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forever-spell-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tests of the checker
+        run: python -m unittest discover -s tools/spell-check -p 'test_*.py' -v
+      - name: protoc
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq protobuf-compiler
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: The engine's spell table
+        env:
+          GOTOOLCHAIN: auto
+        run: |
+          python ForeverCore/checkout_engine.py --destination "$RUNNER_TEMP/engine"
+          (cd ForeverCore && python -c "import sys; from pathlib import Path; import engine_update as e; e.prepare_checkout(Path(sys.argv[1]))" "$RUNNER_TEMP/engine")
+          mkdir -p "$RUNNER_TEMP/engine/cmd/spelldump"
+          cp tools/spell-check/spelldump.go.tmpl "$RUNNER_TEMP/engine/cmd/spelldump/main.go"
+          (cd "$RUNNER_TEMP/engine" && go run -tags=with_db ./cmd/spelldump > "$RUNNER_TEMP/spells.json")
+      - name: Compare with the API
+        env:
+          FOREVERDB_API_KEY: ${{ secrets.FOREVERDB_API_KEY }}
+        run: |
+          python tools/spell-check/check.py --dump "$RUNNER_TEMP/spells.json" --out "$RUNNER_TEMP/spell-check" \
+            --max-level "${{ inputs.max_level || '30' }}"
+          cat "$RUNNER_TEMP/spell-check.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Keep the report on the artifacts branch
+        run: |
+          bash .github/scripts/publish-artifacts.sh \
+            "$RUNNER_TEMP/spell-check.md::spell-check/latest.md" \
+            "$RUNNER_TEMP/spell-check.json::spell-check/latest.json"
