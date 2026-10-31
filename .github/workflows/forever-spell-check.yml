@@ -52,11 +52,17 @@ jobs:
         env:
           FOREVERDB_API_KEY: ${{ secrets.FOREVERDB_API_KEY }}
         run: |
+          if [ -z "$FOREVERDB_API_KEY" ]; then
+            echo "::notice::Repository secret FOREVERDB_API_KEY is not set: the comparison is skipped (Settings > Secrets and variables > Actions)"
+            echo "No FOREVERDB_API_KEY in this repository: the comparison was skipped." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           python tools/spell-check/check.py --dump "$RUNNER_TEMP/spells.json" --out "$RUNNER_TEMP/spell-check" \
             --max-level "${{ inputs.max_level || '30' }}"
           cat "$RUNNER_TEMP/spell-check.md" >> "$GITHUB_STEP_SUMMARY"
       - name: Keep the report on the artifacts branch
         run: |
+          [ -f "$RUNNER_TEMP/spell-check.md" ] || { echo "no report to keep"; exit 0; }
           bash .github/scripts/publish-artifacts.sh \
             "$RUNNER_TEMP/spell-check.md::spell-check/latest.md" \
             "$RUNNER_TEMP/spell-check.json::spell-check/latest.json"
