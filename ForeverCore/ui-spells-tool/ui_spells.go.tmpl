@@ -1,0 +1,77 @@
+// Exports the facts of every class spell the engine knows, per spell id, for the addon's class tables:
+// go run <file> > ui-spells.json (run from the engine checkout). Level-aware numbers are taken at the
+// level each rank is taught at, which is where the in-game tooltip of a fresh rank reads.
+package main
+
+import (
+	"encoding/json"
+	"os"
+	"strconv"
+
+	"github.com/wowsims/forever/sim/core/spelldata"
+)
+
+type effectFacts struct {
+	Type   int     `json:"type"`
+	Aura   int     `json:"aura"`
+	Min    float64 `json:"min"`
+	Max    float64 `json:"max"`
+	SP     float64 `json:"spCoef"`
+	AP     float64 `json:"apCoef"`
+	Period int     `json:"periodMs"`
+	PPL    float64 `json:"perLevel"`
+}
+
+type powerFacts struct {
+	Type int     `json:"type"`
+	Cost int     `json:"cost"`
+	Pct  float64 `json:"pct"`
+}
+
+type spellFacts struct {
+	Name     string        `json:"name"`
+	Rank     int           `json:"rank"`
+	Family   int           `json:"family"`
+	School   int           `json:"school"`
+	Level    int           `json:"level"`
+	BaseLvl  int           `json:"baseLevel"`
+	MaxLvl   int           `json:"maxLevel"`
+	CastMs   int           `json:"castMs"`
+	GCDMs    int           `json:"gcdMs"`
+	CDMs     int           `json:"cooldownMs"`
+	DurMs    int           `json:"durationMs"`
+	MinRange float64       `json:"minRange"`
+	MaxRange float64       `json:"maxRange"`
+	Effects  []effectFacts `json:"effects"`
+	Powers   []powerFacts  `json:"powers"`
+}
+
+func main() {
+	out := map[string]spellFacts{}
+	for _, s := range spelldata.All() {
+		if s.ClassFlags.Family == 0 {
+			continue
+		}
+		f := spellFacts{
+			Name: s.Name, Rank: int(s.RankNumber()), Family: int(s.ClassFlags.Family), School: int(s.School),
+			Level: int(s.SpellLevel), BaseLvl: int(s.BaseLevel), MaxLvl: int(s.MaxLevel),
+			CastMs: int(s.CastTimeMs), GCDMs: int(s.GCDMs), CDMs: int(s.CooldownMs), DurMs: int(s.DurationMs),
+			MinRange: float64(s.MinRange), MaxRange: float64(s.MaxRange),
+		}
+		level := int32(s.SpellLevel)
+		for i := range s.Effects {
+			e := &s.Effects[i]
+			f.Effects = append(f.Effects, effectFacts{
+				Type: int(e.Type), Aura: int(e.Aura), Min: e.MinAt(level), Max: e.MaxAt(level),
+				SP: e.SPCoef, AP: e.APCoef, Period: int(e.PeriodMs), PPL: e.PPL,
+			})
+		}
+		for _, p := range s.Powers {
+			f.Powers = append(f.Powers, powerFacts{Type: int(p.Type), Cost: int(p.Cost), Pct: float64(p.CostPct)})
+		}
+		out[strconv.Itoa(int(s.ID))] = f
+	}
+	if err := json.NewEncoder(os.Stdout).Encode(out); err != nil {
+		panic(err)
+	}
+}

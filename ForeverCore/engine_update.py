@@ -36,6 +36,7 @@ from golden_dps import suite_dps  # noqa: E402
 from engine_identity import build_identity, leveling_digest
 from engine_source import client_build as read_client_build
 from talent_layout import write as write_talent_layout
+import ui_spells
 from compare_results import canon, differences  # noqa: E402
 
 SMOKE_LEVELS = [10, 20, 30, 45, 59]
@@ -463,6 +464,7 @@ def main():
                 shutil.copyfile(leveling, CORE / 'leveling-data.json')
             shutil.copyfile(engine_data, CORE / 'engine-data.json')
             write_talent_layout(manifest, CORE.parent / 'ForeverSimBridge/TalentLayoutData.lua')
+            ui_spells.refresh_classes(overlay_src)
             if families:
                 shutil.copyfile(families, CORE / 'creature-families.json')
         print(f"engine {new_lock['buildIdentity']} + overlay {new_lock['overlay']}: all checks passed")
