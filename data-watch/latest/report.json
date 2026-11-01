@@ -69,10 +69,20 @@
     "status": "available",
     "source": "https://theforeverera.com/en/blue.xml",
     "baseline": false,
-    "changes": [],
+    "changes": [
+      {
+        "title": "Blizzard Entertainment: World of Warcraft: Forever Goes Live Globally November 4!",
+        "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-goes-live-globally-november-4/2396008/1",
+        "sha256": "81b7c3b4173482c30dd1f2e5c06a786383d74b5d8fa167c05cd1f5b469e0e247",
+        "published": "Thu, 29 Oct 2026 21:00:50 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-goes-live-globally-november-4/2396008/1",
+        "kind": "new"
+      }
+    ],
     "relevantChanges": 0
   },
-  "checkedAt": "2026-10-31T10:59:51.862471Z",
+  "checkedAt": "2026-11-01T11:55:02.621851Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true
