@@ -37,3 +37,27 @@ class UiSpellTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class AlignTests(unittest.TestCase):
+    SPELLS = {'10': {'name': 'Curse', 'rank': 1}, '20': {'name': 'Curse', 'rank': 2}}
+
+    @staticmethod
+    def block(*rows):
+        return '{["curse"]={' + ','.join(rows) + '}}'
+
+    @staticmethod
+    def row(i, rank):
+        return '{["key"]="curse",["level"]=1,["rank"]=%d,["id"]=%d}' % (rank, i)
+
+    def test_unknown_id_becomes_the_engines_id_for_that_rank(self):
+        report = {'removed': [], 'remapped': []}
+        out = ui_spells.align_ranks(self.block(self.row(99, 1), self.row(20, 2)), self.SPELLS, report, 'x')
+        self.assertIn('["id"]=10', out)
+        self.assertEqual(report['remapped'], [('x', 'curse', 99, 10)])
+
+    def test_rank_the_engine_does_not_have_is_removed(self):
+        report = {'removed': [], 'remapped': []}
+        out = ui_spells.align_ranks(self.block(self.row(10, 1), self.row(20, 2), self.row(77, 3)), self.SPELLS, report, 'x')
+        self.assertEqual(out, self.block(self.row(10, 1), self.row(20, 2)))
+        self.assertEqual(report['removed'], [('x', 'curse', 77)])

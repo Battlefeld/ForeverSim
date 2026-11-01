@@ -138,13 +138,76 @@ def refresh_entry(entry, spell, changes):
     return new
 
 
+KEEP_UNKNOWN = {'autoAttack'}  # swings are no spells: the engine computes them from the weapon
+
+
+def rank_entries(block):
+    """[(start, end, key, id)] of the ability rank rows in the abilities block, in order."""
+    rows, pos = [], 0
+    for m in re.finditer(r'\["id"\]=(\d+)', block):
+        if m.start() < pos:
+            continue
+        start = block.rfind('{', 0, m.start())
+        while start >= 0:
+            seg = block[start:m.start()]
+            if seg.count('{') - seg.count('}') == 1:
+                break
+            start = block.rfind('{', 0, start)
+        if start < 0:
+            continue
+        end = match_brace(block, start) + 1
+        fields = top_fields(block[start:end])
+        if 'level' in fields and 'key' in fields and 'rank' in fields:
+            rows.append((start, end, block[start:end][slice(*fields['key'])].strip('"'), int(m.group(1))))
+            pos = end
+    return rows
+
+
+def align_ranks(block, spells, report, cls):
+    """A row whose spell id the engine does not know is the same spell under its new id, or it is gone."""
+    by_name = {}
+    for sid, s in spells.items():
+        if s['rank'] > 0:
+            by_name[(s['name'], s['rank'])] = int(sid)
+    rows = rank_entries(block)
+    names = {}
+    for _, _, key, sid in rows:
+        if str(sid) in spells:
+            names.setdefault(key, spells[str(sid)]['name'])
+    edits = []
+    for start, end, key, sid in rows:
+        if str(sid) in spells or key in KEEP_UNKNOWN:
+            continue
+        entry = block[start:end]
+        fields = top_fields(entry)
+        rank = int(float(entry[slice(*fields['rank'])]))
+        new = by_name.get((names.get(key), rank))
+        if new is None:
+            edits.append((start, end, None))
+            report['removed'].append((cls, key, sid))
+        else:
+            s, e = fields['id']
+            edits.append((start, end, entry[:s] + str(new) + entry[e:]))
+            report['remapped'].append((cls, key, sid, new))
+    for start, end, new in sorted(edits, reverse=True):
+        if new is None:
+            tail = end + 1 if block[end] == ',' else end
+            if tail == end and block[start - 1] == ',':
+                start -= 1
+            block = block[:start] + block[tail:]
+        else:
+            block = block[:start] + new + block[end:]
+    return block
+
+
 def refresh_file(path, spells, report):
     text = path.read_text()
     if '["abilities"]=' not in text:
         return
     a = text.index('["abilities"]=') + len('["abilities"]=')
     b = match_brace(text, a) + 1
-    block = text[a:b]
+    b_end = b
+    block = align_ranks(text[a:b], spells, report, path.stem)
     out, pos = [], 0
     for m in re.finditer(r'\["id"\]=(\d+)', block):
         if m.start() < pos:
@@ -180,7 +243,7 @@ def refresh_file(path, spells, report):
         pos = end
     for s, e, v in sorted(out, reverse=True):
         block = block[:s] + v + block[e:]
-    path.write_text(text[:a] + block + text[b:])
+    path.write_text(text[:a] + block + text[b_end:])
 
 
 def refresh_classes(engine, check=False, spells=None):
@@ -188,7 +251,7 @@ def refresh_classes(engine, check=False, spells=None):
     for s in spells.values():
         s['effects'] = s['effects'] or []
         s['powers'] = s['powers'] or []
-    report = {'changed': [], 'unknown': []}
+    report = {'changed': [], 'unknown': [], 'remapped': [], 'removed': []}
     for path in sorted(CLASSES.glob('*.lua')):
         before = path.read_text()
         refresh_file(path, spells, report)
@@ -205,7 +268,7 @@ def main():
     args = p.parse_args()
     spells = json.loads(args.spells.read_text()) if args.spells else None
     report = refresh_classes(args.engine, args.check, spells)
-    print(json.dumps({'changedRows': len(report['changed']), 'unknownIds': report['unknown']}, indent=1))
+    print(json.dumps({'changedRows': len(report['changed']), 'remapped': report['remapped'], 'removed': report['removed'], 'unknownIds': report['unknown']}, indent=1))
     return report
 
 
