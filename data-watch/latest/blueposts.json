@@ -2,6 +2,20 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 3 November (#9)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9",
+      "sha256": "5b3f8c0c6d38d83e2d67fff904d3a445fe6f245b27714f80853535bc5e4fcbd1",
+      "published": "Tue, 03 Nov 2026 03:21:28 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#9)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9",
+      "sha256": "e4c579c9fa7215d1c5a9f9afe8a2a134abf08fe469e8875efc0a7e5b2bf3bd85",
+      "published": "Tue, 03 Nov 2026 03:20:33 GMT",
+      "relevant": true
+    },
     "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-goes-live-globally-november-4/2396008/1": {
       "title": "Blizzard Entertainment: World of Warcraft: Forever Goes Live Globally November 4!",
       "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-goes-live-globally-november-4/2396008/1",
@@ -317,10 +331,10 @@
       "published": "Fri, 16 Oct 2026 00:16:31 GMT",
       "relevant": true
     },
-    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/6": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated October 26 (#6)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/6",
-      "sha256": "ecdde53c576ee732498132ada79815d6a6e33c51f66c7e55f35f6fa751caafde",
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#6)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6",
+      "sha256": "55cb7c115f85a4f5153d8cc8a571a5ca5d259ebe4db485d5ca703d8af09b10a6",
       "published": "Fri, 16 Oct 2026 00:15:23 GMT",
       "relevant": true
     },
@@ -337,27 +351,41 @@
       "sha256": "a4256e137e408c24180d9dba60e089c72d5122ec478bbb299d7ba30001637715",
       "published": "Thu, 15 Oct 2026 21:24:41 GMT",
       "relevant": true
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/beta-realm-maintenance-15-october/635803/1": {
-      "title": "Kaivax: Beta Realm Maintenance - 15 October",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/beta-realm-maintenance-15-october/635803/1",
-      "sha256": "095ab923614b00b98597e9b03105f3f99b91be1d9f7a29a730b8a5d62478d0d3",
-      "published": "Thu, 15 Oct 2026 20:01:36 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/beta-realm-maintenance-october-15/2383475/1": {
-      "title": "Kaivax: Beta Realm Maintenance - October 15",
-      "url": "https://us.forums.blizzard.com/en/wow/t/beta-realm-maintenance-october-15/2383475/1",
-      "sha256": "12f7337422148cb037e63db57c4c689ec07b495623b557c5899e23bb5bba0e73",
-      "published": "Thu, 15 Oct 2026 20:00:23 GMT",
-      "relevant": true
     }
   },
   "lastCheck": {
     "status": "available",
     "source": "https://theforeverera.com/en/blue.xml",
     "baseline": false,
-    "changes": [],
-    "relevantChanges": 0
+    "changes": [
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 3 November (#9)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9",
+        "sha256": "5b3f8c0c6d38d83e2d67fff904d3a445fe6f245b27714f80853535bc5e4fcbd1",
+        "published": "Tue, 03 Nov 2026 03:21:28 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#9)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9",
+        "sha256": "e4c579c9fa7215d1c5a9f9afe8a2a134abf08fe469e8875efc0a7e5b2bf3bd85",
+        "published": "Tue, 03 Nov 2026 03:20:33 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#6)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6",
+        "sha256": "55cb7c115f85a4f5153d8cc8a571a5ca5d259ebe4db485d5ca703d8af09b10a6",
+        "published": "Fri, 16 Oct 2026 00:15:23 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 3
   }
 }
