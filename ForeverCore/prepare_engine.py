@@ -73,14 +73,21 @@ def petswing(engine):
  """The pet's swing before attack power, per second of a 2 s swing: the creature dps over 2 s, 20% either side."""
  src=(engine/'sim/hunter/pets.go').read_text()
  m=re.search(r'const petSwingAverage = core\.CreatureAutoAttackDpsMaxLevel \* ([\d.]+)',src)
+ factor=float(m.group(1)) if m else None
+ # newer engines hand part of the creature dps to the pet as its own attack power (14 per point of dps)
+ # and swing the rest: (dps - share*dps) * seconds
+ ap=re.search(r'const petAttackPower = ([\d.]+) \* 14 \* core\.CreatureAutoAttackDpsMaxLevel',src)
+ rest=re.search(r'const petSwingAverage = \(core\.CreatureAutoAttackDpsMaxLevel - petAttackPower/14\) \* ([\d.]+)',src)
+ if factor is None and ap and rest:
+  factor=(1-float(ap.group(1)))*float(rest.group(1))
  var=re.search(r'BaseDamageMin:\s*petSwingAverage \* \(1 - ([\d.]+)\),\s*BaseDamageMax:\s*petSwingAverage \* \(1 \+ ([\d.]+)\)',src)
  dps=re.search(r'CreatureAutoAttackDpsMaxLevel\s*=\s*([\d.]+)',(engine/'sim/core/creature_values.go').read_text()) if (engine/'sim/core/creature_values.go').exists() else None
- if not m or not var:raise SystemExit('Pet swing not found in the engine source')
+ if factor is None or not var:raise SystemExit('Pet swing not found in the engine source')
  if not dps:
   hits=[p for p in (engine/'sim/core').glob('*.go') if re.search(r'CreatureAutoAttackDpsMaxLevel\s*=\s*[\d.]+',p.read_text())]
   if not hits:raise SystemExit('CreatureAutoAttackDpsMaxLevel not found')
   dps=re.search(r'CreatureAutoAttackDpsMaxLevel\s*=\s*([\d.]+)',hits[0].read_text())
- avg=float(dps.group(1))*float(m.group(1))
+ avg=float(dps.group(1))*factor
  return round(avg*(1-float(var.group(1))),4)/2,round(avg*(1+float(var.group(2))),4)/2
 out['hunter']=hunter_options(a.engine)
 # Map every APL's high-rank spell IDs to the actual learned ranks. The engine
