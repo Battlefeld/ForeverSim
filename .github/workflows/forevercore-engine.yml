@@ -1,4 +1,4 @@
-# Checks Engine daily (13:17 UTC, after the upstream day in Europe): upstream branch + overlays.
+# Checks Engine daily at about 8:00 Berlin time (06:55 UTC; GitHub schedules run in UTC, so 8:55 in summer time).
 #
 # Scheduled runs start from the default branch (main); the engine lock is updated there as well.
 # It works on ENGINE_BRANCH (main) and commits the new lock there.
@@ -7,7 +7,7 @@ name: ForeverCore engine update
 
 on:
   schedule:
-    - cron: '17 13 * * *'   # daily; a quick check, the hour-long update only when the calculation changed
+    - cron: '55 6 * * *'   # daily ~8:00 Berlin (winter); a quick check, the hour-long update only when the calculation changed
   workflow_dispatch:
     inputs:
       upstream_branch:
