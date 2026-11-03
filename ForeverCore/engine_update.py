@@ -37,6 +37,7 @@ from engine_identity import build_identity, leveling_digest
 from engine_source import client_build as read_client_build
 from talent_layout import write as write_talent_layout
 import ui_spells
+import enhancement_sources
 from compare_results import canon, differences  # noqa: E402
 
 SMOKE_LEVELS = [10, 20, 30, 45, 59]
@@ -446,6 +447,7 @@ def main():
         leveling = staged_leveling
         report['overlay'] = apply_overlay(overlay_src, leveling)
         manifest = json.loads(engine_data.read_text())
+        report['warnings'] = list(manifest.get('extractionWarnings', []))
         manifest.update(levelRange=[10, 60], levelOverlay=report['overlay']['overlay'],
                         liveHunter='hunter-live-ammo' in report['overlay']['applied'],
                         liveWarlock='warlock-live-demon-stats' in report['overlay']['applied'])
@@ -464,9 +466,22 @@ def main():
                 shutil.copyfile(leveling, CORE / 'leveling-data.json')
             shutil.copyfile(engine_data, CORE / 'engine-data.json')
             write_talent_layout(manifest, CORE.parent / 'ForeverSimBridge/TalentLayoutData.lua')
-            ui_spells.refresh_classes(overlay_src)
+            # the addon's class tables and the enhancement catalog follow the new engine; a step that cannot is
+            # reported and keeps its last state instead of undoing the checked engine
+            try:
+                ui_spells.refresh_classes(overlay_src)
+            except (OSError, ValueError, subprocess.SubprocessError) as issue:
+                report['warnings'].append(f'Klassentabellen nicht erneuert: {issue}')
+            try:
+                catalog_path = CORE / 'enhancements-data.json'
+                catalog = enhancement_sources.refresh(json.loads(catalog_path.read_text()), overlay_src, new_lock)
+                catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, separators=(',', ':')) + '\n')
+            except (OSError, ValueError, KeyError) as issue:
+                report['warnings'].append(f'Verzauberungskatalog nicht erneuert: {issue}')
             if families:
                 shutil.copyfile(families, CORE / 'creature-families.json')
+        for warning in report['warnings']:
+            print('warning:', warning)
         print(f"engine {new_lock['buildIdentity']} + overlay {new_lock['overlay']}: all checks passed")
     except (UpdateError, OverlayError, OSError, ValueError, subprocess.SubprocessError) as e:
         report['error'] = str(e)

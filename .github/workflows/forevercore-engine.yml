@@ -1,4 +1,4 @@
-# Checks Engine weekly (Wednesday 20:00 Asia/Tokyo): upstream branch + overlays.
+# Checks Engine daily (13:17 UTC, after the upstream day in Europe): upstream branch + overlays.
 #
 # Scheduled runs start from the default branch (main); the engine lock is updated there as well.
 # It works on ENGINE_BRANCH (main) and commits the new lock there.
@@ -7,7 +7,7 @@ name: ForeverCore engine update
 
 on:
   schedule:
-    - cron: '0 11 * * 3'   # Wednesday 20:00 JST / 11:00 UTC
+    - cron: '17 13 * * *'   # daily; a quick check, the hour-long update only when the calculation changed
   workflow_dispatch:
     inputs:
       upstream_branch:
@@ -108,7 +108,7 @@ jobs:
         run: |
           git config user.name 'forevercore-bot'
           git config user.email 'forevercore-bot@users.noreply.github.com'
-          git add ForeverSimBridge/TalentLayoutData.lua ForeverSimBridge/Classes ForeverCore/engine.lock.json ForeverCore/leveling-data.json ForeverCore/engine-data.json
+          git add ForeverSimBridge/TalentLayoutData.lua ForeverSimBridge/Classes ForeverCore/engine.lock.json ForeverCore/leveling-data.json ForeverCore/engine-data.json ForeverCore/enhancements-data.json
           if [ -f ForeverCore/creature-families.json ]; then git add ForeverCore/creature-families.json; fi
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -121,7 +121,7 @@ jobs:
           echo "identity=${identity}" >> "$GITHUB_OUTPUT"
 
       - name: Open issue on failure
-        if: failure() && github.event_name == 'workflow_dispatch'
+        if: failure() && github.event_name != 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -140,3 +140,21 @@ jobs:
           PYREPORT
           existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
           if [ -n "$existing" ]; then gh issue comment "$existing" --body-file "$RUNNER_TEMP/engine-failure.md"; else gh issue create --title "$title" --body-file "$RUNNER_TEMP/engine-failure.md"; fi
+
+      - name: Report readings that kept their last value
+        if: success() && github.event_name != 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PYWARN' > "$RUNNER_TEMP/engine-warnings.md"
+          import json
+          from pathlib import Path
+          r = json.loads(Path('ForeverCore/engine-update-report.json').read_text())
+          for w in r.get('warnings', []):
+              print('-', w)
+          PYWARN
+          if [ -s "$RUNNER_TEMP/engine-warnings.md" ]; then
+            title="ForeverCore: Engine-Update mit Warnungen"
+            existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
+            if [ -n "$existing" ]; then gh issue comment "$existing" --body-file "$RUNNER_TEMP/engine-warnings.md"; else gh issue create --title "$title" --body-file "$RUNNER_TEMP/engine-warnings.md"; fi
+          fi

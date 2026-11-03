@@ -3,6 +3,18 @@ import argparse,json,os,re,shutil,subprocess,tempfile
 from pathlib import Path
 from engine_source import verify_source
 p=argparse.ArgumentParser();p.add_argument('engine',type=Path);p.add_argument('output',type=Path);a=p.parse_args()
+# What the engine source no longer shows the way it is read here (upstream rewrote the code it comes from) does not
+# stop the update: the value of the last checked engine-data.json is kept and the reading is reported as a warning.
+try:PREVIOUS=json.loads((Path(__file__).resolve().parent/'engine-data.json').read_text())
+except (OSError,ValueError):PREVIOUS={}
+WARNINGS=[]
+def fact(key,read):
+ try:return read()
+ except (SystemExit,Exception) as issue:
+  if key not in PREVIOUS:raise
+  WARNINGS.append(f'{key}: {issue} (letzter geprüfter Wert behalten)')
+  print('Warnung:',WARNINGS[-1])
+  return PREVIOUS[key]
 def engine_facts(engine,spell_ids=()):
  """The engine's own readings, from its loaders: {rotations: {ui/specs folder: {name: rotation}} (apls and builds, .siml
  and .json), spells: {id: [{type, aura, base}]} for the given ids}. Needs the generated protobuf Go files."""
@@ -89,7 +101,7 @@ def petswing(engine):
   dps=re.search(r'CreatureAutoAttackDpsMaxLevel\s*=\s*([\d.]+)',hits[0].read_text())
  avg=float(dps.group(1))*factor
  return round(avg*(1-float(var.group(1))),4)/2,round(avg*(1+float(var.group(2))),4)/2
-out['hunter']=hunter_options(a.engine)
+out['hunter']=fact('hunter',lambda:hunter_options(a.engine))
 # Map every APL's high-rank spell IDs to the actual learned ranks. The engine
 # already generates these families from client spell data. Do not infer them
 # from translated names or hand-maintain a list of class spells.
@@ -110,7 +122,7 @@ def rotation_spell_rank_families(engine):
     families[key]=ranks
   result[cls]=families
  return result
-out['spellRankFamilies']=rotation_spell_rank_families(a.engine)
+out['spellRankFamilies']=fact('spellRankFamilies',lambda:rotation_spell_rank_families(a.engine))
 
 def armor_mitigation(engine):
  # The engine's physical mitigation K/(armor+K), K = base + perLevel * attacker level, floored.
@@ -119,7 +131,7 @@ def armor_mitigation(engine):
  f=re.search(r'return max\(1-defenderArmor/\(defenderArmor\+armorConstant\),\s*([\d.]+)\)',src)
  if not k or not f:raise SystemExit('Armor mitigation formula not found in the engine source')
  return {'base':float(k.group(1)),'perLevel':float(k.group(2)),'minMultiplier':float(f.group(1))}
-out['armorMitigation']=armor_mitigation(a.engine)
+out['armorMitigation']=fact('armorMitigation',lambda:armor_mitigation(a.engine))
 def class_live_options(engine):
  """What a live snapshot can set in each class's options, with every spell or enchant ID read from
  the engine: its generated rank ladders and the client spell store it was built from. Only options
@@ -193,7 +205,7 @@ def class_live_options(engine):
   ids=sorted(int(i) for i,n in store['Names'].items() if n.lower()==words)
   need(ids,'demon spell '+fn);petSpells[fn[0].lower()+fn[1:]]=ids
  return {'rules':rules,'warlockPets':registered,'warlockSummon':{n:v for n,v in summon.items() if v},'warlockPetSpells':petSpells}
-out['liveOptions']=class_live_options(a.engine)
+out['liveOptions']=fact('liveOptions',lambda:class_live_options(a.engine))
 db=json.loads((a.engine/'assets/database/db.json').read_text())
 out['items']={str(item['id']):True for item in db['items']}
 # Talent builds and gear sets the engine ships for each spec ("Engine Top" in the addon). Never fails the build.
@@ -203,4 +215,5 @@ try:
  for _line in _report:print('Vorlagen:',_line)
 except Exception as _issue:
  out['presets']={};print('Vorlagen: nicht gelesen:',_issue)
+out['extractionWarnings']=WARNINGS
 a.output.write_text(json.dumps(out,separators=(',',':')))
