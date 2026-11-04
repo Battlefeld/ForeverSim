@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/wowsims/forever",
-  "commit": "92c4c35b9e2364200ffb9e0f24573fb4904fac8f",
+  "commit": "8298ab833f0249a0f6ca89d567103f26c219ea2f",
   "buildTags": [
     "with_db"
   ],
@@ -15,7 +15,7 @@
   "reference": "https://github.com/wowsims/forever/tree/master",
   "branch": "master",
   "clientBuild": "1.60.1.70755",
-  "buildIdentity": "92c4c35b9e2364200ffb9e0f24573fb4904fac8f+96303987091b73c69fd64417",
+  "buildIdentity": "8298ab833f0249a0f6ca89d567103f26c219ea2f+38a86a5b0b4afa03b28e5d37",
   "overlay": "923d4eea0046b69b",
   "levelDataSHA256": "878d1fcf25648723d6d219824a4b0466e959b3760c79f0b7951ef833e3a6a467"
 }
