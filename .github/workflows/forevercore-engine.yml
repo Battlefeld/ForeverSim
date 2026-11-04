@@ -116,7 +116,13 @@ jobs:
           fi
           identity=$(python -c "import json;print(json.load(open('ForeverCore/engine.lock.json'))['buildIdentity'])")
           git commit -q -m "ForeverCore: Engine ${identity} mit Level-Overlay"
-          git push origin "HEAD:${ENGINE_BRANCH}"
+          # GitHub answers a push with a server error now and then: try again, with the newest main underneath
+          for wait in 0 10 30 60 120; do
+            sleep "$wait"
+            if git push origin "HEAD:${ENGINE_BRANCH}"; then pushed=1; break; fi
+            git pull -q --rebase origin "${ENGINE_BRANCH}" || true
+          done
+          [ -n "${pushed:-}" ] || { echo "push failed after retries"; exit 1; }
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "identity=${identity}" >> "$GITHUB_OUTPUT"
 
