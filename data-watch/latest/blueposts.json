@@ -2,6 +2,34 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1": {
+      "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
+      "url": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
+      "sha256": "855525767c4f7ed4db4ced96cdbf4c2d92ec5162821cc2818655a54cb1a105ac",
+      "published": "Tue, 03 Nov 2026 20:00:09 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1": {
+      "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
+      "sha256": "3287ee8db329b8b8819e5c98e19fe9478bcbb08aeae93f4023c822740fbc7aef",
+      "published": "Tue, 03 Nov 2026 20:00:07 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1": {
+      "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
+      "sha256": "52c6f1775694f0ca23128da5952ad581124ced52964f33ce8a8a0dcf72c234a4",
+      "published": "Tue, 03 Nov 2026 18:00:10 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1": {
+      "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
+      "sha256": "55330145da74bda39cbd16c629b12f64dd76704abcb792a9df7e3e1235dd02b2",
+      "published": "Tue, 03 Nov 2026 18:00:03 GMT",
+      "relevant": true
+    },
     "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9": {
       "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 3 November (#9)",
       "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9",
@@ -93,10 +121,10 @@
       "published": "Mon, 26 Oct 2026 20:35:53 GMT",
       "relevant": true
     },
-    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/7": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated October 26 (#7)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/7",
-      "sha256": "88b62d976b87c4979a53f7e9ab3be32415c2caf4c5e8e8bf49f3b795c097f656",
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#7)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
+      "sha256": "b772678f1d9a6bbbe439f55d33fd475299744e498bf10f2f851e42884376f67e",
       "published": "Mon, 26 Oct 2026 20:35:27 GMT",
       "relevant": true
     },
@@ -323,34 +351,6 @@
       "sha256": "b98a46f3783c08e80b95c218043504cf86915c9369648b0f96a3df056625c5be",
       "published": "Fri, 16 Oct 2026 01:06:44 GMT",
       "relevant": true
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-15-october/631316/6": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 15 October (#6)",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-15-october/631316/6",
-      "sha256": "69a0d513d7147bdf2d71dc04e61f836aabfd7328fa50a0224af8a428acb23470",
-      "published": "Fri, 16 Oct 2026 00:16:31 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#6)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6",
-      "sha256": "55cb7c115f85a4f5153d8cc8a571a5ca5d259ebe4db485d5ca703d8af09b10a6",
-      "published": "Fri, 16 Oct 2026 00:15:23 GMT",
-      "relevant": true
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-stress-test-19-october/635831/1": {
-      "title": "Kaivax: WoW Forever Stress Test 19 October",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-stress-test-19-october/635831/1",
-      "sha256": "b6ab316f8eaa78b6306f162304349cfed3c9eef8daca39c0e5aa5e365d2841f0",
-      "published": "Thu, 15 Oct 2026 21:25:58 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617/1": {
-      "title": "Kaivax: WoW Forever Stress Test October 21",
-      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617/1",
-      "sha256": "a4256e137e408c24180d9dba60e089c72d5122ec478bbb299d7ba30001637715",
-      "published": "Thu, 15 Oct 2026 21:24:41 GMT",
-      "relevant": true
     }
   },
   "lastCheck": {
@@ -359,30 +359,48 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 3 November (#9)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9",
-        "sha256": "5b3f8c0c6d38d83e2d67fff904d3a445fe6f245b27714f80853535bc5e4fcbd1",
-        "published": "Tue, 03 Nov 2026 03:21:28 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9",
+        "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
+        "url": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
+        "sha256": "855525767c4f7ed4db4ced96cdbf4c2d92ec5162821cc2818655a54cb1a105ac",
+        "published": "Tue, 03 Nov 2026 20:00:09 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#9)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9",
-        "sha256": "e4c579c9fa7215d1c5a9f9afe8a2a134abf08fe469e8875efc0a7e5b2bf3bd85",
-        "published": "Tue, 03 Nov 2026 03:20:33 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9",
+        "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
+        "sha256": "3287ee8db329b8b8819e5c98e19fe9478bcbb08aeae93f4023c822740fbc7aef",
+        "published": "Tue, 03 Nov 2026 20:00:07 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#6)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6",
-        "sha256": "55cb7c115f85a4f5153d8cc8a571a5ca5d259ebe4db485d5ca703d8af09b10a6",
-        "published": "Fri, 16 Oct 2026 00:15:23 GMT",
+        "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
+        "sha256": "52c6f1775694f0ca23128da5952ad581124ced52964f33ce8a8a0dcf72c234a4",
+        "published": "Tue, 03 Nov 2026 18:00:10 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
+        "sha256": "55330145da74bda39cbd16c629b12f64dd76704abcb792a9df7e3e1235dd02b2",
+        "published": "Tue, 03 Nov 2026 18:00:03 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#7)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
+        "sha256": "b772678f1d9a6bbbe439f55d33fd475299744e498bf10f2f851e42884376f67e",
+        "published": "Mon, 26 Oct 2026 20:35:27 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
         "kind": "new"
       }
     ],

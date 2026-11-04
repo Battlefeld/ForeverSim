@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "products": {
+    "wowf": {
+      "source": "https://us.version.battle.net/wowf/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "9d9888f2d89a2dcc9eacc68a2d7cb3dc",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
+        "KeyRing": "",
+        "BuildId": "70755",
+        "VersionsName": "1.60.1.70755",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      },
+      "responseSHA256": "e38e3b82dd11c789b646e057d58205a2b96227d572d8563fb412d52f51a3eb3e"
+    },
+    "wow_classic_beta": {
+      "source": "https://us.version.battle.net/wow_classic_beta/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      },
+      "responseSHA256": "3bc6a0eecec88a930552f5e5d81c5949a249321200ec5d7c85df7cc29f5762d8"
+    }
+  },
+  "buildChanges": {
+    "wowf": {
+      "before": {
+        "BuildConfig": "7feb61f3c994bcb168526b8db521514a",
+        "BuildId": "70707",
+        "CDNConfig": "aced69cc895b8fbb802f35e442ebe6fc",
+        "KeyRing": "",
+        "ProductConfig": "2ced73c17301c297ca062bc7c3583420",
+        "Region": "eu",
+        "VersionsName": "1.60.1.70707"
+      },
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "9d9888f2d89a2dcc9eacc68a2d7cb3dc",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
+        "KeyRing": "",
+        "BuildId": "70755",
+        "VersionsName": "1.60.1.70755",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      }
+    },
+    "wow_classic_beta": {
+      "before": {
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "BuildId": "70532",
+        "CDNConfig": "aced69cc895b8fbb802f35e442ebe6fc",
+        "KeyRing": "",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5",
+        "Region": "eu",
+        "VersionsName": "1.60.1.70532"
+      },
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      }
+    }
+  },
+  "tables": {},
+  "documentationStatus": "not_assessed",
+  "hotfixCoverage": "downloaded_not_applied",
+  "limitations": [
+    "Server-only changes invisible to client data require in-game measurements.",
+    "A data delta without matching release notes is a candidate undocumented change, not proof."
+  ],
+  "raidbots": {
+    "wowf": {
+      "format": 9,
+      "build": 70755,
+      "records": 39384,
+      "bytes": 2444077,
+      "sha256": "7fcc56624c352424ae977ccf9084e6fd111dd8561eed2f88459fdcb4af52ab96",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70755/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    },
+    "wow_classic_beta": {
+      "format": 9,
+      "build": 70532,
+      "records": 55213,
+      "bytes": 4237177,
+      "sha256": "07b22580aba86a03fa69f864b9ceb9137f5d3bb3294e36ce88cb7f5abcc1f0ab",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70532/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    }
+  },
+  "extractionRequired": true,
+  "effectiveBuild": null,
+  "exportedCacheSHA256": null,
+  "blueposts": {
+    "status": "available",
+    "source": "https://theforeverera.com/en/blue.xml",
+    "baseline": false,
+    "changes": [
+      {
+        "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
+        "url": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
+        "sha256": "855525767c4f7ed4db4ced96cdbf4c2d92ec5162821cc2818655a54cb1a105ac",
+        "published": "Tue, 03 Nov 2026 20:00:09 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
+        "sha256": "3287ee8db329b8b8819e5c98e19fe9478bcbb08aeae93f4023c822740fbc7aef",
+        "published": "Tue, 03 Nov 2026 20:00:07 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
+        "sha256": "52c6f1775694f0ca23128da5952ad581124ced52964f33ce8a8a0dcf72c234a4",
+        "published": "Tue, 03 Nov 2026 18:00:10 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
+        "sha256": "55330145da74bda39cbd16c629b12f64dd76704abcb792a9df7e3e1235dd02b2",
+        "published": "Tue, 03 Nov 2026 18:00:03 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#7)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
+        "sha256": "b772678f1d9a6bbbe439f55d33fd475299744e498bf10f2f851e42884376f67e",
+        "published": "Mon, 26 Oct 2026 20:35:27 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 3
+  },
+  "checkedAt": "2026-11-04T13:04:25.208116Z",
+  "clientExtraction": {
+    "status": "failed",
+    "previousDataRetained": true
+  }
+}

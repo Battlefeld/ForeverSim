@@ -5,27 +5,27 @@
       "source": "https://us.version.battle.net/wowf/versions",
       "row": {
         "Region": "eu",
-        "BuildConfig": "7feb61f3c994bcb168526b8db521514a",
-        "CDNConfig": "aced69cc895b8fbb802f35e442ebe6fc",
+        "BuildConfig": "9d9888f2d89a2dcc9eacc68a2d7cb3dc",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
         "KeyRing": "",
-        "BuildId": "70707",
-        "VersionsName": "1.60.1.70707",
-        "ProductConfig": "2ced73c17301c297ca062bc7c3583420"
+        "BuildId": "70755",
+        "VersionsName": "1.60.1.70755",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
       },
-      "responseSHA256": "92cd84cd584613673287088b47f0351cffeb5dab9268c33d9b1531e355bd2749"
+      "responseSHA256": "e38e3b82dd11c789b646e057d58205a2b96227d572d8563fb412d52f51a3eb3e"
     },
     "wow_classic_beta": {
       "source": "https://us.version.battle.net/wow_classic_beta/versions",
       "row": {
         "Region": "eu",
         "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "CDNConfig": "aced69cc895b8fbb802f35e442ebe6fc",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
         "KeyRing": "",
         "BuildId": "70532",
         "VersionsName": "1.60.1.70532",
         "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
       },
-      "responseSHA256": "35bd6c2c664e426f254b953a0f81a32345c3178ed6ac4716b1dfa08df9dea504"
+      "responseSHA256": "3bc6a0eecec88a930552f5e5d81c5949a249321200ec5d7c85df7cc29f5762d8"
     }
   },
   "buildChanges": {
@@ -33,7 +33,7 @@
       "before": {
         "BuildConfig": "7feb61f3c994bcb168526b8db521514a",
         "BuildId": "70707",
-        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
+        "CDNConfig": "aced69cc895b8fbb802f35e442ebe6fc",
         "KeyRing": "",
         "ProductConfig": "2ced73c17301c297ca062bc7c3583420",
         "Region": "eu",
@@ -41,19 +41,19 @@
       },
       "after": {
         "Region": "eu",
-        "BuildConfig": "7feb61f3c994bcb168526b8db521514a",
-        "CDNConfig": "aced69cc895b8fbb802f35e442ebe6fc",
+        "BuildConfig": "9d9888f2d89a2dcc9eacc68a2d7cb3dc",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
         "KeyRing": "",
-        "BuildId": "70707",
-        "VersionsName": "1.60.1.70707",
-        "ProductConfig": "2ced73c17301c297ca062bc7c3583420"
+        "BuildId": "70755",
+        "VersionsName": "1.60.1.70755",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
       }
     },
     "wow_classic_beta": {
       "before": {
         "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
         "BuildId": "70532",
-        "CDNConfig": "c74a0a5afa69d7b60e07f7dae9fc7969",
+        "CDNConfig": "aced69cc895b8fbb802f35e442ebe6fc",
         "KeyRing": "",
         "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5",
         "Region": "eu",
@@ -62,7 +62,7 @@
       "after": {
         "Region": "eu",
         "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "CDNConfig": "aced69cc895b8fbb802f35e442ebe6fc",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
         "KeyRing": "",
         "BuildId": "70532",
         "VersionsName": "1.60.1.70532",
@@ -80,12 +80,12 @@
   "raidbots": {
     "wowf": {
       "format": 9,
-      "build": 70707,
-      "records": 44619,
-      "bytes": 2263071,
-      "sha256": "856ae35638fd1ac862f015708e45ea0aeabf5b2fb5ad87a9835de637923b1d6e",
+      "build": 70755,
+      "records": 39384,
+      "bytes": 2444077,
+      "sha256": "7fcc56624c352424ae977ccf9084e6fd111dd8561eed2f88459fdcb4af52ab96",
       "status": "available",
-      "source": "https://storage.googleapis.com/raidbots-static/wow/70707/enUS/DBCache.bin",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70755/enUS/DBCache.bin",
       "region": "NA",
       "locale": "enUS",
       "verification": "raidbots_verified_not_completeness_guarantee"
@@ -112,36 +112,54 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 3 November (#9)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9",
-        "sha256": "5b3f8c0c6d38d83e2d67fff904d3a445fe6f245b27714f80853535bc5e4fcbd1",
-        "published": "Tue, 03 Nov 2026 03:21:28 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/9",
+        "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
+        "url": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
+        "sha256": "855525767c4f7ed4db4ced96cdbf4c2d92ec5162821cc2818655a54cb1a105ac",
+        "published": "Tue, 03 Nov 2026 20:00:09 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#9)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9",
-        "sha256": "e4c579c9fa7215d1c5a9f9afe8a2a134abf08fe469e8875efc0a7e5b2bf3bd85",
-        "published": "Tue, 03 Nov 2026 03:20:33 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9",
+        "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
+        "sha256": "3287ee8db329b8b8819e5c98e19fe9478bcbb08aeae93f4023c822740fbc7aef",
+        "published": "Tue, 03 Nov 2026 20:00:07 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#6)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6",
-        "sha256": "55cb7c115f85a4f5153d8cc8a571a5ca5d259ebe4db485d5ca703d8af09b10a6",
-        "published": "Fri, 16 Oct 2026 00:15:23 GMT",
+        "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
+        "sha256": "52c6f1775694f0ca23128da5952ad581124ced52964f33ce8a8a0dcf72c234a4",
+        "published": "Tue, 03 Nov 2026 18:00:10 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/6",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
+        "sha256": "55330145da74bda39cbd16c629b12f64dd76704abcb792a9df7e3e1235dd02b2",
+        "published": "Tue, 03 Nov 2026 18:00:03 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#7)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
+        "sha256": "b772678f1d9a6bbbe439f55d33fd475299744e498bf10f2f851e42884376f67e",
+        "published": "Mon, 26 Oct 2026 20:35:27 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
         "kind": "new"
       }
     ],
     "relevantChanges": 3
   },
-  "checkedAt": "2026-11-03T12:52:44.648618Z",
+  "checkedAt": "2026-11-04T13:04:25.208116Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true
