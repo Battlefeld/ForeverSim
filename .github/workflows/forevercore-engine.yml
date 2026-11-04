@@ -21,6 +21,7 @@ on:
 permissions:
   contents: write
   issues: write
+  actions: write
 
 concurrency:
   group: forevercore-engine
@@ -125,6 +126,17 @@ jobs:
           [ -n "${pushed:-}" ] || { echo "push failed after retries"; exit 1; }
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "identity=${identity}" >> "$GITHUB_OUTPUT"
+
+      # a push made with the workflow token starts no other workflow: start the EXE build and the checks by hand,
+      # so ForeverCore.exe ships the new engine without anyone pushing again
+      - name: Build and check the new engine
+        if: success() && steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for w in forevercore-package.yml forevercore-offline.yml forevercore-windows.yml; do
+            gh workflow run "$w" --ref "${ENGINE_BRANCH}" || echo "could not start $w"
+          done
 
       - name: Open issue on failure
         if: failure() && github.event_name != 'push'
