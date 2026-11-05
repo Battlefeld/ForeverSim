@@ -46,8 +46,22 @@ local function objectives(id)
  return out
 end
 
+-- The quest log through C_QuestLog (what the Forever client has); GetQuestLogTitle only where that is missing.
 local function questLog()
  local out={}
+ if C_QuestLog and C_QuestLog.GetNumQuestLogEntries and C_QuestLog.GetInfo then
+  local n=call(C_QuestLog.GetNumQuestLogEntries)or 0
+  for i=1,n do
+   local info=call(C_QuestLog.GetInfo,i)
+   local id=type(info)=='table'and info.questID
+   if id and not info.isHeader and type(id)=='number'and id>0 then
+    local done=C_QuestLog.IsComplete and call(C_QuestLog.IsComplete,id)
+    if done==nil then done=info.isComplete==1 or info.isComplete==true end
+    out[#out+1]={id=id,ready=done and true or nil,objectives=objectives(id)}
+   end
+  end
+  if #out>0 or not GetQuestLogTitle then return out end
+ end
  local n=call(GetNumQuestLogEntries)or 0
  for i=1,n do
   local _,_,_,isHeader,_,isComplete,_,id=call(GetQuestLogTitle,i)

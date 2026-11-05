@@ -30,7 +30,10 @@ local function questRewards(out)
  if type(entries)~='number' or entries<1 or type(SelectQuestLogEntry)~='function' or type(GetQuestLogItemLink)~='function' then return end
  local before=call(GetQuestLogSelection)
  for i=1,entries do
-  local _,_,_,header=call(GetQuestLogTitle,i)
+  -- the Forever client has C_QuestLog.GetInfo; GetQuestLogTitle only on older clients
+  local header
+  if C_QuestLog and C_QuestLog.GetInfo then local info=call(C_QuestLog.GetInfo,i);header=type(info)=='table'and info.isHeader
+  else local _,_,_,h=call(GetQuestLogTitle,i);header=h end
   if not header then
    call(SelectQuestLogEntry,i)
    for _,kind in ipairs({'choice','reward'})do

@@ -72,3 +72,19 @@ UnitGUID=function(u)if u=='npc'then return'Creature-0-1-1-1-3310-0000'end;return
 MOCK.Fire('TAXIMAP_OPENED');assert(R.Capture().live.flightMasters[1]==3310,'flight master not remembered')
 for _,e in ipairs(MOCK.errors)do error(e.kind..': '..tostring(e.msg))end
 io.write('route next test ok\n')
+-- the Forever client reads the log through C_QuestLog; GetQuestLogTitle is not there
+do
+ local oldTitle,oldNum,oldInfo,oldDone=GetQuestLogTitle,C_QuestLog.GetNumQuestLogEntries,C_QuestLog.GetInfo,C_QuestLog.IsComplete
+ GetQuestLogTitle=nil
+ C_QuestLog.GetNumQuestLogEntries=function()return 3,2 end
+ C_QuestLog.GetInfo=function(i)
+  if i==1 then return{title='Durotar',isHeader=true}end
+  if i==2 then return{title='Sarkoth',questID=790}end
+  return{title='Vile Familiars',questID=792}
+ end
+ C_QuestLog.IsComplete=function(id)return id==792 end
+ local s=R.Capture()
+ assert(#s.live.active==2 and s.live.active[1].id==790 and s.live.active[2].ready==true and s.live.active[1].ready==nil,'C_QuestLog log')
+ GetQuestLogTitle,C_QuestLog.GetNumQuestLogEntries,C_QuestLog.GetInfo,C_QuestLog.IsComplete=oldTitle,oldNum,oldInfo,oldDone
+end
+io.write('route-next C_QuestLog ok\n')
