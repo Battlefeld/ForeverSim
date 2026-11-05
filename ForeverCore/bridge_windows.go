@@ -173,7 +173,9 @@ func runBridge(ctx context.Context, s *Service) error {
 				}
 			}
 			if e != nil {
-				if time.Since(lastDiagnostic) > 10*time.Second {
+				// the addon hides the strip while it has nothing to send, so after the first frame an empty
+				// scan is normal; the hint is only for a connection that never came up
+				if validFrames == 0 && time.Since(lastDiagnostic) > 30*time.Second {
 					log.Printf("WoW %d,%d: kein gueltiges Pixelfeld; WoW im Vordergrund und /fc ping senden (gueltige Frames bisher: %d)", x, y, validFrames)
 					lastDiagnostic = time.Now()
 				}
