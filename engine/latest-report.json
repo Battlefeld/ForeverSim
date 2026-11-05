@@ -1,12 +1,12 @@
 {
- "previous": "92c4c35b9e2364200ffb9e0f24573fb4904fac8f+96303987091b73c69fd64417",
+ "previous": "8298ab833f0249a0f6ca89d567103f26c219ea2f+38a86a5b0b4afa03b28e5d37",
  "ok": true,
  "branch": "master",
- "base": "8298ab833f0249a0f6ca89d567103f26c219ea2f",
+ "base": "df3746362c2f4e4be55dfea3be940099713e5a97",
  "descendsFromLock": true,
- "clientBuild": "1.60.1.70755",
- "levelData": "refreshed from PlayerExpectedStat 1.60.1.70755",
- "creatureFamilies": "refreshed from CreatureFamily 1.60.1.70755",
+ "clientBuild": "1.60.1.70790",
+ "levelData": "refreshed from PlayerExpectedStat 1.60.1.70790",
+ "creatureFamilies": "refreshed from CreatureFamily 1.60.1.70790",
  "overlay": {
   "overlay": "923d4eea0046b69b",
   "applied": [
@@ -59,7 +59,7 @@
    "sim/core/zz_forevercore_leveldata.go"
   ],
   "levelLiterals": [
-   "sim/core/target.go:204: if target.Level == 63 && options.SuppressDodge {",
+   "sim/core/target.go:209: if target.Level == 63 && options.SuppressDodge {",
    "sim/core/weapon_test_fixture.go:86: Targets:  []*proto.Target{{Name: \"target\", Level: 63, MobType: proto.MobType_MobTypeHumanoid}},"
   ]
  },
@@ -127,11 +127,11 @@
    "59": 697.4
   },
   "TestDpsWarrior": {
-   "60": 332.3,
-   "10": 140.5,
-   "20": 195.7,
-   "30": 222.3,
-   "45": 275.0,
+   "60": 333.0,
+   "10": 140.2,
+   "20": 195.8,
+   "30": 222.7,
+   "45": 275.5,
    "59": 325.7
   },
   "TestElemental": {
@@ -170,12 +170,12 @@
    "60": null
   },
   "TestFeralCat": {
-   "60": 552.2,
+   "60": 569.0,
    "10": 93.0,
    "20": 274.9,
-   "30": 335.3,
-   "45": 405.0,
-   "59": 487.7
+   "30": 342.8,
+   "45": 412.7,
+   "59": 496.4
   },
   "TestFeralCatCoverage": {
    "60": null
@@ -260,5 +260,5 @@
   }
  },
  "problems": [],
- "buildIdentity": "8298ab833f0249a0f6ca89d567103f26c219ea2f+38a86a5b0b4afa03b28e5d37"
+ "buildIdentity": "df3746362c2f4e4be55dfea3be940099713e5a97+312ee740f6c1c1559585f909"
 }
