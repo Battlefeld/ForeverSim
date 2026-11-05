@@ -178,7 +178,16 @@ local function makeFrame()
  frame:Hide()
  return frame
 end
-function R.Show()makeFrame():Show();R.Draw()end
+-- With the ForeverRoutes addon the live plan shows in its route window (FR.SetLive); this small window is only
+-- for players without it, so the two never lie on top of each other.
+function R.Show()
+ local FR=ForeverRoutes
+ if FR and FR.SetLive and FR.Show then
+  if frame then frame:Hide()end
+  pcall(FR.Show);return
+ end
+ makeFrame():Show();R.Draw()
+end
 function R.Draw()
  if not frame then return end
  local r=R.last

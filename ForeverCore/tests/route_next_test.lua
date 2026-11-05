@@ -88,3 +88,13 @@ do
  GetQuestLogTitle,C_QuestLog.GetNumQuestLogEntries,C_QuestLog.GetInfo,C_QuestLog.IsComplete=oldTitle,oldNum,oldInfo,oldDone
 end
 io.write('route-next C_QuestLog ok\n')
+-- with the ForeverRoutes addon the live plan shows in its window, not in a second one on top of it
+do
+ local shown=0
+ ForeverRoutes={SetLive=function()end,Show=function()shown=shown+1 end}
+ R.Show()
+ assert(shown==1,'ForeverRoutes window must be shown')
+ assert(not(ForeverCoreRouteFrame and ForeverCoreRouteFrame:IsShown()),'bridge route window must stay hidden')
+ ForeverRoutes=nil
+ io.write('route window ok\n')
+end
