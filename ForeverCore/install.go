@@ -5,6 +5,7 @@ package main
 // reply slots, the configuration.
 
 import (
+	"bytes"
 	"bufio"
 	"crypto/sha256"
 	"encoding/hex"
@@ -170,6 +171,26 @@ func payloadAddons(p fs.FS) []string {
 	return out
 }
 
+// tocsUnchanged: every addon of the package is installed with the same .toc, so its file list is the same and a
+// running WoW loads the new files with /reload (a new or changed .toc needs WoW restarted).
+func tocsUnchanged(p fs.FS, addons string) bool {
+	set := payloadAddons(p)
+	if len(set) == 0 || addons == "" {
+		return false
+	}
+	for _, name := range set {
+		want, err := fs.ReadFile(p, path.Join("AddOns", name, name+".toc"))
+		if err != nil {
+			return false
+		}
+		have, err := os.ReadFile(filepath.Join(addons, name, name+".toc"))
+		if err != nil || !bytes.Equal(bytes.ReplaceAll(have, []byte("\r\n"), []byte("\n")), bytes.ReplaceAll(want, []byte("\r\n"), []byte("\n"))) {
+			return false
+		}
+	}
+	return true
+}
+
 // InstallReport says what an installation did.
 type InstallReport struct {
 	AppDir   string   `json:"appDir"`
@@ -184,11 +205,17 @@ type InstallReport struct {
 // to a backup first; other addons, the WTF folder and the user's data in appDir stay as they are. A failure leaves the
 // old addons in place (each is swapped in from a complete staged copy).
 func install(p fs.FS, addons, appDir, version string, now time.Time) (InstallReport, error) {
+	return installWith(p, addons, appDir, version, now, false)
+}
+
+// installWith: install; whileRunning lets it run with WoW open, for addons whose file lists did not change
+// (tocsUnchanged), which WoW then takes with /reload.
+func installWith(p fs.FS, addons, appDir, version string, now time.Time, whileRunning bool) (InstallReport, error) {
 	rep := InstallReport{AppDir: appDir, Addons: addons}
 	if err := checkPayload(p); err != nil {
 		return rep, err
 	}
-	if wowRunning() {
+	if !whileRunning && wowRunning() {
 		return rep, fmt.Errorf("WoW laeuft noch: bitte WoW vollstaendig schliessen und dann erneut installieren")
 	}
 	if addons == "" || !filepath.IsAbs(addons) || !strings.EqualFold(filepath.Base(addons), "AddOns") {

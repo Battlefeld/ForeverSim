@@ -131,7 +131,8 @@ async function refresh() {
   show($("stRoutes"), state.routes ? "ok" : "warn", state.routes ? "Routen " + state.routes.version : "Routen: noch kein Update geladen");
   const u = state.update || {};
   if (u.available) show($("stUpdate"), "warn", "Update bereit: " + u.available);
-  else if (state.addonsPending) show($("stUpdate"), "warn", "Neue Addon-Versionen werden eingespielt, sobald WoW geschlossen ist");
+  else if (state.reloadNeeded) show($("stUpdate"), "warn", "Neue Addons eingespielt: in WoW /reload eingeben");
+  else if (state.addonsPending) show($("stUpdate"), "warn", "Neue Addon-Versionen werden eingespielt, sobald WoW geschlossen ist (Dateiliste geändert)");
   else if (!u.enabled) show($("stUpdate"), "", "Updates: in dieser Testversion aus");
   else if (u.error) show($("stUpdate"), "bad", "Update-Prüfung: " + u.error);
   else show($("stUpdate"), "ok", "Aktuell" + (u.checked ? " (geprüft " + u.checked + ")" : ""));

@@ -68,8 +68,10 @@ type app struct {
 	quit      func()
 	update    updateState
 	ready     string // a downloaded program, checked, to swap in
-	restart   string // the program to start after quitting (an update or going back)
-	elevate   bool   // start it with administrator rights (Windows asks once; WoW in Program Files)
+	// reloadNeeded: new addons went in while WoW runs; /reload in the game takes them
+	reloadNeeded bool
+	restart      string // the program to start after quitting (an update or going back)
+	elevate      bool   // start it with administrator rights (Windows asks once; WoW in Program Files)
 }
 
 // runApp serves the window and keeps the connection running until the window says to quit.
@@ -150,12 +152,27 @@ func (a *app) keepUpToDate(ctx context.Context) {
 	a.mu.Unlock()
 	next := time.Now().Add(20 * time.Second)
 	for {
-		if a.addonsPending() && !wowRunning() {
+		if a.addonsPending() {
 			var m installManifest
 			if loadJSON(filepath.Join(a.dir, installManifestName), &m) == nil {
-				log.Printf("Addons dieser Version werden eingespielt (WoW ist geschlossen)")
-				a.install(m.Addons)
+				if !wowRunning() {
+					log.Printf("Addons dieser Version werden eingespielt (WoW ist geschlossen)")
+					a.install(m.Addons)
+				} else if tocsUnchanged(a.payload, m.Addons) {
+					// same file lists: WoW takes the new files with /reload, no restart needed
+					log.Printf("Addons dieser Version werden eingespielt, WoW laeuft: im Spiel /reload eingeben")
+					if _, err := a.installLive(m.Addons); err == nil {
+						a.mu.Lock()
+						a.reloadNeeded = true
+						a.mu.Unlock()
+					}
+				}
 			}
+		}
+		if !wowRunning() {
+			a.mu.Lock()
+			a.reloadNeeded = false
+			a.mu.Unlock()
 		}
 		if time.Now().After(next) {
 			next = time.Now().Add(6 * time.Hour)
@@ -349,6 +366,7 @@ type appStatus struct {
 	Routes      *routesStatus `json:"routes,omitempty"`
 	Update      updateState   `json:"update"`
 	Pending     bool          `json:"addonsPending"` // the addons of this version wait for WoW to close
+	Reload      bool          `json:"reloadNeeded"`  // new addons were put in while WoW runs: /reload takes them
 	GitHub      bool          `json:"github"`        // a GitHub access is there (updates of the private repositories)
 }
 
@@ -384,6 +402,9 @@ func (a *app) status() appStatus {
 	_, err = os.Stat(filepath.Join(a.dir, "ForeverCore.old.exe"))
 	st.Update.Previous = err == nil
 	st.Pending = a.addonsPending()
+	a.mu.Lock()
+	st.Reload = a.reloadNeeded
+	a.mu.Unlock()
 	st.GitHub = githubToken() != ""
 	return st
 }
@@ -397,7 +418,12 @@ func (a *app) wowChoices() []WoWInstall {
 	return wowInstalls(append(wowRoots(), cur), cur)
 }
 
-func (a *app) install(addons string) (any, error) {
+func (a *app) install(addons string) (any, error) { return a.installMode(addons, false) }
+
+// installLive installs with WoW open (only for addons whose file lists did not change).
+func (a *app) installLive(addons string) (any, error) { return a.installMode(addons, true) }
+
+func (a *app) installMode(addons string, whileRunning bool) (any, error) {
 	a.mu.Lock()
 	if a.busy != "" {
 		a.mu.Unlock()
@@ -407,7 +433,7 @@ func (a *app) install(addons string) (any, error) {
 	a.mu.Unlock()
 	defer func() { a.mu.Lock(); a.busy = ""; a.mu.Unlock() }()
 	running := a.stopBridge()
-	rep, err := install(a.payload, addons, a.dir, installedLabel(), time.Now())
+	rep, err := installWith(a.payload, addons, a.dir, installedLabel(), time.Now(), whileRunning)
 	if err != nil {
 		log.Printf("Installation fehlgeschlagen: %v", err)
 		if running {

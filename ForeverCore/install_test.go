@@ -1,7 +1,9 @@
 package main
 
 import (
+	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -130,5 +132,29 @@ func TestWowHelpersAreNotTheGame(t *testing.T) {
 		if got := isWowClient(name); got != want {
 			t.Errorf("%s: %v, want %v", name, got, want)
 		}
+	}
+}
+
+func TestTocsUnchangedAllowsReloadInstall(t *testing.T) {
+	p := testPayload()
+	addons := filepath.Join(t.TempDir(), "AddOns")
+	if tocsUnchanged(p, addons) {
+		t.Fatal("nothing installed yet must need a restart")
+	}
+	for _, name := range payloadAddons(p) {
+		b, err := fs.ReadFile(p, path.Join("AddOns", name, name+".toc"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		os.MkdirAll(filepath.Join(addons, name), 0o755)
+		os.WriteFile(filepath.Join(addons, name, name+".toc"), b, 0o644)
+	}
+	if !tocsUnchanged(p, addons) {
+		t.Fatal("same .toc files must allow /reload")
+	}
+	name := payloadAddons(p)[0]
+	os.WriteFile(filepath.Join(addons, name, name+".toc"), []byte("## Interface: 1\nOther.lua\n"), 0o644)
+	if tocsUnchanged(p, addons) {
+		t.Fatal("a changed .toc must need a restart")
 	}
 }
