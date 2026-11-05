@@ -46,8 +46,7 @@ func wowProcess() bool {
 	var e windows.ProcessEntry32
 	e.Size = uint32(unsafe.Sizeof(e))
 	for err = windows.Process32First(snap, &e); err == nil; err = windows.Process32Next(snap, &e) {
-		name := strings.ToLower(windows.UTF16ToString(e.ExeFile[:]))
-		if strings.HasPrefix(name, "wow") && strings.HasSuffix(name, ".exe") {
+		if isWowClient(windows.UTF16ToString(e.ExeFile[:])) {
 			return true
 		}
 	}

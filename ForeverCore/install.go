@@ -48,6 +48,16 @@ var userData = map[string]bool{"config.json": true, "Data": true, "Backups": tru
 // wowRunning reports a running WoW client (window_windows.go); nothing runs WoW elsewhere.
 var wowRunning = func() bool { return false }
 
+// wowHelpers are Blizzard programs named Wow*.exe that are not the game and often keep running after it closed:
+// voice chat, the crash reporter. They hold no addon file open.
+var wowHelpers = map[string]bool{"wowvoiceproxy.exe": true, "wowerror.exe": true, "wowvoiceproxyt.exe": true}
+
+// isWowClient: a process name of a WoW game client (Wow.exe, WowClassic.exe, WowClassicB.exe, ...).
+func isWowClient(exe string) bool {
+	name := strings.ToLower(filepath.Base(exe))
+	return strings.HasPrefix(name, "wow") && strings.HasSuffix(name, ".exe") && !wowHelpers[name]
+}
+
 // WoWInstall is an AddOns folder of a WoW installation.
 type WoWInstall struct {
 	Addons  string `json:"addons"`

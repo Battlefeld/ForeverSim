@@ -124,3 +124,11 @@ func TestWoWInstallsForeverFirst(t *testing.T) {
 		t.Fatalf("the current installation is not first: %+v", got)
 	}
 }
+
+func TestWowHelpersAreNotTheGame(t *testing.T) {
+	for name, want := range map[string]bool{"Wow.exe": true, "WowClassic.exe": true, "WowClassicB.exe": true, "WowVoiceProxy.exe": false, "WowError.exe": false, "notepad.exe": false, "Wow.dll": false} {
+		if got := isWowClient(name); got != want {
+			t.Errorf("%s: %v, want %v", name, got, want)
+		}
+	}
+}
