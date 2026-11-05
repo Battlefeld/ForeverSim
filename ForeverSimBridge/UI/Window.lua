@@ -45,7 +45,8 @@ function UI.Connected()
  if not(u and u.State)then return false,'ForeverCore nicht geladen'end
  local state,text=u.State()
  -- blue only after ForeverCore.exe has answered in this session; a queued job alone proves nothing
- return u.lastOk~=nil and(state=='ok'or state=='busy'),text
+ -- a pending data check (warning) is no lost connection: only an error or the strip switched off are
+ return u.lastOk~=nil and state~='error'and state~='off'and state~='idle',text
 end
 
 local frame
