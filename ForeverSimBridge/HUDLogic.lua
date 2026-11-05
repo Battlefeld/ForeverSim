@@ -48,14 +48,30 @@ local function power(unit)
  return n or 0,max or 0,n~=nil and max~=nil
 end
 -- remaining seconds, can use now, only the global cooldown. math.huge when the game does not tell.
+-- In combat the client keeps cooldowns secret. Then the HUD counts on its own: when the player cast the spell
+-- (UNIT_SPELLCAST_SUCCEEDED, HUD.OnCast) and the spell's own cooldown, read before the fight.
+local castAt,baseCD={},{}
+local function readBase(id)
+ if baseCD[id]then return baseCD[id]end
+ for _,f in each(C_Spell and C_Spell.GetSpellBaseCooldown,GetSpellBaseCooldown)do
+  local ok,ms=pcall(f,id);ms=ok and num(ms)or nil
+  if ms then if ms>0 then baseCD[id]=ms/1000 end;return ms/1000 end
+ end
+end
+local function ownCooldown(id)
+ local cd=baseCD[id]or 0;local t=castAt[id]
+ local left=t and math.max(0,t+cd-now())or 0
+ return left,true,cd<=1.6,cd
+end
 local function cooldown(id)
+ readBase(id)
  if C_Spell and C_Spell.GetSpellCooldown then
   local ok,info=pcall(C_Spell.GetSpellCooldown,id)
   if ok then
-   if protected(info)then return math.huge,false,false end
+   if protected(info)then return ownCooldown(id)end
    if type(info)=='table'then
     local st,du=num(info.startTime),num(info.duration)
-    if not st or not du or protected(info.isEnabled)then return math.huge,false,false end
+    if not st or not du or protected(info.isEnabled)then return ownCooldown(id)end
     return math.max(0,st+du-now()),info.isEnabled~=false,du<=1.6,du
    end
   end
@@ -66,7 +82,7 @@ local function cooldown(id)
    a,b=num(a),num(b)
    if a and b and not protected(enabled)then return math.max(0,a+b-now()),enabled~=0,b<=1.6,b end
   end
-  return math.huge,false,false
+  return ownCooldown(id)
  end
  return 0,true,true,0
 end
@@ -75,7 +91,9 @@ local function usable(id)
  local f=(C_Spell and C_Spell.IsSpellUsable)or IsUsableSpell
  if not f then return true end
  local ok,u,noMana=pcall(f,id)
- if not ok or protected(u)or protected(noMana)then return false end
+ if not ok then return false end
+ -- a secret answer (in combat) is no reason to drop the spell: the HUD then suggests it as if usable
+ if protected(u)or protected(noMana)then return true end
  return u==true
 end
 local function spellName(id)
@@ -307,8 +325,8 @@ end
 
 -- The queue ----------------------------------------------------------------------------------------------------------------
 local recentCasts={}
-function HUD.OnCast(id)id=num(id);if id then recentCasts[id]=now()end end
-function HUD.ClearCasts()recentCasts={}end
+function HUD.OnCast(id)id=num(id);if id then recentCasts[id]=now();castAt[id]=now()end end
+function HUD.ClearCasts()recentCasts={};castAt={}end
 local GCD=1.5
 -- Items: {id,icon,name,state='ready'|'wait',delay,proc}. The first is the one to press now; the following are what the
 -- same rotation asks for next, with the effect of each cast taken into account (cooldown, DoT). A spell that is only a

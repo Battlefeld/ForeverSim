@@ -92,7 +92,14 @@ local secret={}
 local realSecret=issecretvalue
 issecretvalue=function(v)return v==secret end
 C_Spell.GetSpellCooldown=function(id)return id==A and secret or{startTime=0,duration=0,isEnabled=true}end
-items=HUD.Build({{spellId=A},{spellId=B}},1);assert(items[1].id==B,'a hidden cooldown is skipped')
+-- a hidden cooldown (the client hides them in combat) is counted by the HUD itself: the spell's own cooldown from
+-- when the player cast it
+local realBase=GetSpellBaseCooldown;GetSpellBaseCooldown=function(id)return id==A and 8000 or 0 end
+HUD.ClearCasts()
+items=HUD.Build({{spellId=A},{spellId=B}},1);assert(items[1].id==A,'a hidden cooldown never cast counts as ready')
+HUD.OnCast(A);MOCK.Advance(1)
+items=HUD.Build({{spellId=A},{spellId=B}},1);assert(items[1].id==B,'a hidden cooldown just cast waits for its own cooldown')
+GetSpellBaseCooldown=realBase;HUD.ClearCasts()
 C_Spell.GetSpellCooldown=function(id)local left=cd[id]or 0;if left>0 then return{startTime=GetTime()-1,duration=left+1,isEnabled=true}end;return{startTime=0,duration=0,isEnabled=true}end
 issecretvalue=realSecret
 -- an aura whose identity is hidden counts as present, not as missing
