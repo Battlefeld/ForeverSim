@@ -56,6 +56,7 @@ pre { margin:0; max-height:220px; overflow:auto; background:#101216; border:1px 
       <button id="bridgeBtn" class="secondary"></button>
       <button id="updateBtn" style="display:none">Update installieren und neu starten</button>
       <button id="backBtn" class="secondary" style="display:none">Vorherige Version</button>
+      <button id="checkBtn" class="secondary">Nach Updates suchen</button>
       <button id="repairBtn" class="secondary">Prüfen und reparieren</button>
       <button id="folderBtn" class="secondary">Ordner öffnen</button>
       <button id="quitBtn" class="secondary">Beenden</button>
@@ -170,6 +171,7 @@ $("elevBtn").onclick = async () => { try { await call("/api/elevate", {}); msg($
 $("bridgeBtn").onclick = async () => { try { await call("/api/bridge", { on: !state.bridge }); } catch (e) { msg($("stateMsg"), false, e.message); } refresh(); };
 $("repairBtn").onclick = () => { $("setup").dataset.open = "1"; if (!choicesLoaded) loadChoices(); $("setup").style.display = ""; $("setup").scrollIntoView({ behavior: "smooth" }); };
 $("updateBtn").onclick = async () => { try { await call("/api/update", {}); msg($("stateMsg"), true, "ForeverCore startet mit der neuen Version neu …"); } catch (e) { msg($("stateMsg"), false, e.message); } };
+$("checkBtn").onclick = async () => { try { await call("/api/update", { check: true }); msg($("stateMsg"), true, "Suche nach einer neuen Version … (dauert bis zu einer halben Minute)"); } catch (e) { msg($("stateMsg"), false, e.message); } };
 $("backBtn").onclick = async () => { try { await call("/api/update", { back: true }); msg($("stateMsg"), true, "ForeverCore startet mit der vorherigen Version neu …"); } catch (e) { msg($("stateMsg"), false, e.message); } };
 $("ghSave").onclick = async () => { try { await call("/api/github", { token: $("ghToken").value }); $("ghToken").value = ""; msg($("ghMsg"), true, "Gespeichert. Updates werden beim nächsten Prüfen geladen."); } catch (e) { msg($("ghMsg"), false, e.message); } refresh(); };
 $("ghRemove").onclick = async () => { try { await call("/api/github", { token: "" }); msg($("ghMsg"), true, "Entfernt."); } catch (e) { msg($("ghMsg"), false, e.message); } refresh(); };

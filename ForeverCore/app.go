@@ -70,6 +70,7 @@ type app struct {
 	ready     string // a downloaded program, checked, to swap in
 	// reloadNeeded: new addons went in while WoW runs; /reload in the game takes them
 	reloadNeeded bool
+	checkNow     bool   // the player asked to look for a new version
 	restart      string // the program to start after quitting (an update or going back)
 	elevate      bool   // start it with administrator rights (Windows asks once; WoW in Program Files)
 }
@@ -144,7 +145,7 @@ func installedLabel() string {
 	return Version
 }
 
-// keepUpToDate looks for a new program after the start and then every six hours, and installs the addons this
+// keepUpToDate looks for a new program after the start and then every quarter of an hour (or when asked), and installs the addons this
 // program carries once WoW is closed, when the installation has those of an older program.
 func (a *app) keepUpToDate(ctx context.Context) {
 	a.mu.Lock()
@@ -174,8 +175,13 @@ func (a *app) keepUpToDate(ctx context.Context) {
 			a.reloadNeeded = false
 			a.mu.Unlock()
 		}
-		if time.Now().After(next) {
-			next = time.Now().Add(6 * time.Hour)
+		a.mu.Lock()
+		now := a.checkNow
+		a.checkNow = false
+		a.mu.Unlock()
+		if now || time.Now().After(next) {
+			// a small signed manifest: looking every quarter of an hour costs nothing and brings fixes the same hour
+			next = time.Now().Add(15 * time.Minute)
 			path, m, err := checkUpdate(ctx, a.dir)
 			a.mu.Lock()
 			a.update.Checked = time.Now().Format("02.01. 15:04")
@@ -314,10 +320,17 @@ func (a *app) routes() http.Handler {
 	})
 	api("/api/update", http.MethodPost, func(r *http.Request) (any, error) {
 		var req struct {
-			Back bool `json:"back"`
+			Back  bool `json:"back"`
+			Check bool `json:"check"` // look for a new version now instead of at the next check
 		}
 		if err := json.NewDecoder(io.LimitReader(r.Body, 1<<10)).Decode(&req); err != nil {
 			return nil, err
+		}
+		if req.Check {
+			a.mu.Lock()
+			a.checkNow = true
+			a.mu.Unlock()
+			return map[string]bool{"checking": true}, nil
 		}
 		if req.Back {
 			return map[string]bool{"restarting": true}, a.goBackUpdate()
