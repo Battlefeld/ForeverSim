@@ -27,7 +27,7 @@ assert(#s.live.active==2 and s.live.active[1].id==790 and s.live.active[1].objec
 assert(s.live.active[2].ready==true,'finished quest must be ready')
 assert(math.abs(s.live.hearthIn-3000)<1,'hearthstone cooldown')
 -- the wand, the professions and the options switched on in ForeverRoutes go along
-GetItemCount=function(id)return id==11287 and 1 or 0 end;ForeverRoutes={HasProfessions=function()return true end}
+GetItemCount=function(id)return id==11287 and 1 or 0 end;C_Item=C_Item or{};C_Item.GetItemCount=GetItemCount;ForeverRoutes={HasProfessions=function()return true end}
 ForeverRoutesCharDB={opts={[79976]=true,[1503]=false}}
 local s2=R.Capture();assert(s2.live.wand==true and s2.live.prof==true,'wand and professions')
 assert(s2.options and #s2.options==1 and s2.options[1]==79976,'options switched on')

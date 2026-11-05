@@ -82,7 +82,10 @@ end
 -- The Lesser Magic Wand (item 11287) in the bags or worn; Skinning and Leatherworking learned (the ForeverRoutes
 -- addon reads the skill lines). nil when not known.
 local function hasWand()
- return(call(GetItemCount,11287)or 0)>0 or call(IsEquippedItem,11287)==true
+ -- Forever's client may lack the old globals: the C_Item functions first
+ local count=(C_Item and C_Item.GetItemCount)or GetItemCount
+ local worn=(C_Item and C_Item.IsEquippedItem)or IsEquippedItem
+ return(tonumber(call(count,11287))or 0)>0 or call(worn,11287)==true
 end
 local function hasProfessions()
  if type(ForeverRoutes)=='table'and type(ForeverRoutes.HasProfessions)=='function'then return ForeverRoutes.HasProfessions()end
