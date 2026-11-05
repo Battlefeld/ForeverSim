@@ -2,6 +2,76 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://us.forums.blizzard.com/en/wow/t/zeppelins-broken/2401777/15": {
+      "title": "Aggrend: Zeppelins broken? (#15)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/zeppelins-broken/2401777/15",
+      "sha256": "449747af62e02885646f9211fe8e7107041e363a8ae3cc5fe302298766a12bf0",
+      "published": "Thu, 05 Nov 2026 06:39:29 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/why-do-i-see-maybe-8-people-inside-the-main-city/2401806/27": {
+      "title": "Aggrend: Why do I see maybe 8 people inside the main city? (#27)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/why-do-i-see-maybe-8-people-inside-the-main-city/2401806/27",
+      "sha256": "8a7a0dc9d1bf90b9da9090e7b63090e27ebd8ae474a0b55ae0a8faf73fb5acad",
+      "published": "Thu, 05 Nov 2026 06:35:55 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/639604/1": {
+      "title": "Kaivax: Issues Resolved for Invite-a-Friend Players",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/639604/1",
+      "sha256": "d20060cb21aefd970d541659eb7c5e62b3ec18a0a6128e444855344d6e797ffd",
+      "published": "Thu, 05 Nov 2026 02:44:03 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/2401646/1": {
+      "title": "Kaivax: Issues Resolved for Invite-a-Friend Players",
+      "url": "https://us.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/2401646/1",
+      "sha256": "5ae7cd84922ece94274ea9a56142d126eb08abd640ad17ed6ee0c55308de6889",
+      "published": "Thu, 05 Nov 2026 02:43:58 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/2401461/1": {
+      "title": "Blizzard Entertainment: Set Your Campfire Ablaze with the Pouch of Violet Dust!",
+      "url": "https://us.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/2401461/1",
+      "sha256": "e189cac2047fdbb353468bc1c8bc771598c770a30c2a7f68ba79d67acb4c0931",
+      "published": "Thu, 05 Nov 2026 00:30:07 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/639571/1": {
+      "title": "Blizzard Entertainment: Set Your Campfire Ablaze with the Pouch of Violet Dust!",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/639571/1",
+      "sha256": "5c963431df6b6d4a45203357ba1ea0689e7cba901a5c4646c1d7fe9489efa43f",
+      "published": "Thu, 05 Nov 2026 00:30:06 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/language-and-social-settings/639555/1": {
+      "title": "Kaivax: Language and Social Settings",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/language-and-social-settings/639555/1",
+      "sha256": "e6ae643486c5ef2096e2f38ffd513a22aa148f0edb73e5a48cdcd3dc9a188062",
+      "published": "Wed, 04 Nov 2026 23:44:07 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/10": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 3 November (#10)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/10",
+      "sha256": "6774afa8ecd8c8d519715d7b35f39ef8cf4379591a27b63f9beecf31cd06ea0c",
+      "published": "Wed, 04 Nov 2026 19:36:09 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/10": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#10)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/10",
+      "sha256": "7a389c4e5e9a2cfe0271328ff0f1e3f7b39218f1c904f50244f94d5ed35ae998",
+      "published": "Wed, 04 Nov 2026 19:35:16 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-launch-time/2400905/1": {
+      "title": "Kaivax: World of Warcraft: Forever Launch Time",
+      "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-launch-time/2400905/1",
+      "sha256": "dd958baa03252e5346add96144aa7b8a2d7c597c087d2607db8b987647c14a68",
+      "published": "Wed, 04 Nov 2026 18:13:53 GMT",
+      "relevant": false
+    },
     "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1": {
       "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
       "url": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
@@ -44,10 +114,10 @@
       "published": "Tue, 03 Nov 2026 03:20:33 GMT",
       "relevant": true
     },
-    "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-goes-live-globally-november-4/2396008/1": {
-      "title": "Blizzard Entertainment: World of Warcraft: Forever Goes Live Globally November 4!",
-      "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-goes-live-globally-november-4/2396008/1",
-      "sha256": "81b7c3b4173482c30dd1f2e5c06a786383d74b5d8fa167c05cd1f5b469e0e247",
+    "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-now-live/2396008/1": {
+      "title": "Blizzard Entertainment: World of Warcraft: Forever Now Live!",
+      "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-now-live/2396008/1",
+      "sha256": "11c882ebbd06ec9db1cd882b9686d829e598b5bec027c45be6cba2881f4c2f09",
       "published": "Thu, 29 Oct 2026 21:00:50 GMT",
       "relevant": false
     },
@@ -107,10 +177,10 @@
       "published": "Tue, 27 Oct 2026 15:37:57 GMT",
       "relevant": true
     },
-    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/8": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated October 26 (#8)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/8",
-      "sha256": "1a1ec35e4628851483401817b62e51727e2d43bd9a86430e1b32d0b1eb1becc7",
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/8": {
+      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#8)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/8",
+      "sha256": "41fd1b488004a526e772b4385dca0872851eb31078cae22d95968700bb7f5e43",
       "published": "Tue, 27 Oct 2026 15:37:37 GMT",
       "relevant": true
     },
@@ -281,76 +351,6 @@
       "sha256": "f88c0dda5d715d7a76986a037613f904c317e3991e38469058b4ee646cfda519",
       "published": "Tue, 20 Oct 2026 19:00:16 GMT",
       "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-raid-overview%E2%80%94locations-raid-sizes-and-attunement/2387820/1": {
-      "title": "Blizzard Entertainment: World of Warcraft: Forever Raid Overview\u2014Locations, Raid Sizes, and Attunement",
-      "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-raid-overview%E2%80%94locations-raid-sizes-and-attunement/2387820/1",
-      "sha256": "db7355f17297b44bdd8762da0ed66a5e9e27f5fa4009d04249a6788a79ea30f5",
-      "published": "Tue, 20 Oct 2026 19:00:15 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/explore-the-new-dungeons-of-world-of-warcraft-forever/636727/1": {
-      "title": "Blizzard Entertainment: Explore the New Dungeons of World of Warcraft: Forever",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/explore-the-new-dungeons-of-world-of-warcraft-forever/636727/1",
-      "sha256": "739e5b7e59e397c6c32f22d15c3e6a8aba07e47b44c31b0a93b49898765b8bb3",
-      "published": "Tue, 20 Oct 2026 17:00:17 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/explore-the-new-dungeons-of-world-of-warcraft-forever/2387658/1": {
-      "title": "Blizzard Entertainment: Explore the New Dungeons of World of Warcraft: Forever",
-      "url": "https://us.forums.blizzard.com/en/wow/t/explore-the-new-dungeons-of-world-of-warcraft-forever/2387658/1",
-      "sha256": "eb9ba94fbd077f87851b90f09e7795f2177936b6ffc253ce74c00a7068377c2f",
-      "published": "Tue, 20 Oct 2026 17:00:14 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-stress-test-21-october/635831/19": {
-      "title": "Kaivax: WoW Forever Stress Test 21 October (#19)",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-stress-test-21-october/635831/19",
-      "sha256": "7efd93b757392b470519cffeb542ce894a087a31666434c21ec8ee20fb15e901",
-      "published": "Fri, 16 Oct 2026 22:40:08 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617/39": {
-      "title": "Kaivax: WoW Forever Stress Test October 21 (#39)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617/39",
-      "sha256": "78160e02e0398c1cea71b299e77d37bec9f06ba476a6e33d6ad113a84d8d8d0d",
-      "published": "Fri, 16 Oct 2026 22:39:55 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/datamined-in-the-latest-beta-build/636148/1": {
-      "title": "Kaivax: Datamined in the Latest Beta Build",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/datamined-in-the-latest-beta-build/636148/1",
-      "sha256": "2387c3170f1bbcaebfe6e787d599f7db48aef0f14fe61e2cf03d61e453997422",
-      "published": "Fri, 16 Oct 2026 22:05:30 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/datamined-in-the-latest-beta-build/2385060/1": {
-      "title": "Kaivax: Datamined in the Latest Beta Build",
-      "url": "https://us.forums.blizzard.com/en/wow/t/datamined-in-the-latest-beta-build/2385060/1",
-      "sha256": "b13f1340b931ec6d7f97503cc9bd01017036d429b338daa4407fa9c388ecbf92",
-      "published": "Fri, 16 Oct 2026 22:05:24 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/druid-cat-form-quest/636086/3": {
-      "title": "Kaivax: Druid cat form quest (#3)",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/druid-cat-form-quest/636086/3",
-      "sha256": "cd100a91af7e2f1f6f9c482dab2173fb1841e6716f4d5a4e2bf7462ebed6f10c",
-      "published": "Fri, 16 Oct 2026 17:58:39 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/druid-cat-form-quest/2384010/56": {
-      "title": "Kaivax: Druid cat form quest (#56)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/druid-cat-form-quest/2384010/56",
-      "sha256": "c8879a45a5a41cbd97cae1fdb81770b35960527bf40317d7ada316bdce2ad314",
-      "published": "Fri, 16 Oct 2026 17:56:38 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/beta-realm-maintenance-october-15/2383475/1169": {
-      "title": "Zorbrix: Beta Realm Maintenance - October 15 (#1169)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/beta-realm-maintenance-october-15/2383475/1169",
-      "sha256": "b98a46f3783c08e80b95c218043504cf86915c9369648b0f96a3df056625c5be",
-      "published": "Fri, 16 Oct 2026 01:06:44 GMT",
-      "relevant": true
     }
   },
   "lastCheck": {
@@ -359,51 +359,114 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
-        "url": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
-        "sha256": "855525767c4f7ed4db4ced96cdbf4c2d92ec5162821cc2818655a54cb1a105ac",
-        "published": "Tue, 03 Nov 2026 20:00:09 GMT",
+        "title": "Aggrend: Zeppelins broken? (#15)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/zeppelins-broken/2401777/15",
+        "sha256": "449747af62e02885646f9211fe8e7107041e363a8ae3cc5fe302298766a12bf0",
+        "published": "Thu, 05 Nov 2026 06:39:29 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/zeppelins-broken/2401777/15",
+        "kind": "new"
+      },
+      {
+        "title": "Aggrend: Why do I see maybe 8 people inside the main city? (#27)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/why-do-i-see-maybe-8-people-inside-the-main-city/2401806/27",
+        "sha256": "8a7a0dc9d1bf90b9da9090e7b63090e27ebd8ae474a0b55ae0a8faf73fb5acad",
+        "published": "Thu, 05 Nov 2026 06:35:55 GMT",
         "relevant": false,
-        "id": "https://us.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/2400119/1",
+        "id": "https://us.forums.blizzard.com/en/wow/t/why-do-i-see-maybe-8-people-inside-the-main-city/2401806/27",
         "kind": "new"
       },
       {
-        "title": "Blizzard Entertainment: Explore WoW: Forever with a Gamepad",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
-        "sha256": "3287ee8db329b8b8819e5c98e19fe9478bcbb08aeae93f4023c822740fbc7aef",
-        "published": "Tue, 03 Nov 2026 20:00:07 GMT",
+        "title": "Kaivax: Issues Resolved for Invite-a-Friend Players",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/639604/1",
+        "sha256": "d20060cb21aefd970d541659eb7c5e62b3ec18a0a6128e444855344d6e797ffd",
+        "published": "Thu, 05 Nov 2026 02:44:03 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/639604/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Issues Resolved for Invite-a-Friend Players",
+        "url": "https://us.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/2401646/1",
+        "sha256": "5ae7cd84922ece94274ea9a56142d126eb08abd640ad17ed6ee0c55308de6889",
+        "published": "Thu, 05 Nov 2026 02:43:58 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/2401646/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: Set Your Campfire Ablaze with the Pouch of Violet Dust!",
+        "url": "https://us.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/2401461/1",
+        "sha256": "e189cac2047fdbb353468bc1c8bc771598c770a30c2a7f68ba79d67acb4c0931",
+        "published": "Thu, 05 Nov 2026 00:30:07 GMT",
         "relevant": false,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/explore-wow-forever-with-a-gamepad/639280/1",
+        "id": "https://us.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/2401461/1",
         "kind": "new"
       },
       {
-        "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
-        "sha256": "52c6f1775694f0ca23128da5952ad581124ced52964f33ce8a8a0dcf72c234a4",
-        "published": "Tue, 03 Nov 2026 18:00:10 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/2400000/1",
+        "title": "Blizzard Entertainment: Set Your Campfire Ablaze with the Pouch of Violet Dust!",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/639571/1",
+        "sha256": "5c963431df6b6d4a45203357ba1ea0689e7cba901a5c4646c1d7fe9489efa43f",
+        "published": "Thu, 05 Nov 2026 00:30:06 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/639571/1",
         "kind": "new"
       },
       {
-        "title": "Blizzard Entertainment: WoW: Forever\u2014What\u2019s New and What Feels Familiar",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
-        "sha256": "55330145da74bda39cbd16c629b12f64dd76704abcb792a9df7e3e1235dd02b2",
-        "published": "Tue, 03 Nov 2026 18:00:03 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever%E2%80%94what%E2%80%99s-new-and-what-feels-familiar/639257/1",
+        "title": "Kaivax: Language and Social Settings",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/language-and-social-settings/639555/1",
+        "sha256": "e6ae643486c5ef2096e2f38ffd513a22aa148f0edb73e5a48cdcd3dc9a188062",
+        "published": "Wed, 04 Nov 2026 23:44:07 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/language-and-social-settings/639555/1",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#7)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
-        "sha256": "b772678f1d9a6bbbe439f55d33fd475299744e498bf10f2f851e42884376f67e",
-        "published": "Mon, 26 Oct 2026 20:35:27 GMT",
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 3 November (#10)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/10",
+        "sha256": "6774afa8ecd8c8d519715d7b35f39ef8cf4379591a27b63f9beecf31cd06ea0c",
+        "published": "Wed, 04 Nov 2026 19:36:09 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/10",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#10)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/10",
+        "sha256": "7a389c4e5e9a2cfe0271328ff0f1e3f7b39218f1c904f50244f94d5ed35ae998",
+        "published": "Wed, 04 Nov 2026 19:35:16 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/10",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: World of Warcraft: Forever Launch Time",
+        "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-launch-time/2400905/1",
+        "sha256": "dd958baa03252e5346add96144aa7b8a2d7c597c087d2607db8b987647c14a68",
+        "published": "Wed, 04 Nov 2026 18:13:53 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-launch-time/2400905/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: World of Warcraft: Forever Now Live!",
+        "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-now-live/2396008/1",
+        "sha256": "11c882ebbd06ec9db1cd882b9686d829e598b5bec027c45be6cba2881f4c2f09",
+        "published": "Thu, 29 Oct 2026 21:00:50 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-now-live/2396008/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#8)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/8",
+        "sha256": "41fd1b488004a526e772b4385dca0872851eb31078cae22d95968700bb7f5e43",
+        "published": "Tue, 27 Oct 2026 15:37:37 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/8",
         "kind": "new"
       }
     ],
-    "relevantChanges": 3
+    "relevantChanges": 6
   }
 }

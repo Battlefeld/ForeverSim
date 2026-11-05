@@ -1,0 +1,230 @@
+{
+  "schema": 1,
+  "products": {
+    "wowf": {
+      "source": "https://us.version.battle.net/wowf/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "9006ba6948388dd0d4a0578e64b8a92e",
+        "CDNConfig": "0e139f0e95542dbe2a5462d8a6b2ebae",
+        "KeyRing": "",
+        "BuildId": "70790",
+        "VersionsName": "1.60.1.70790",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      },
+      "responseSHA256": "eed638ed548a448b235b4541c5db4549de63403b8b839160803f5283e8997ba4"
+    },
+    "wow_classic_beta": {
+      "source": "https://us.version.battle.net/wow_classic_beta/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "0e139f0e95542dbe2a5462d8a6b2ebae",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      },
+      "responseSHA256": "0a9123bab26ae4a4e613760c6056b2ad4279e3f858db9f049be432bfbc36401a"
+    }
+  },
+  "buildChanges": {
+    "wowf": {
+      "before": {
+        "BuildConfig": "9d9888f2d89a2dcc9eacc68a2d7cb3dc",
+        "BuildId": "70755",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
+        "KeyRing": "",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a",
+        "Region": "eu",
+        "VersionsName": "1.60.1.70755"
+      },
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "9006ba6948388dd0d4a0578e64b8a92e",
+        "CDNConfig": "0e139f0e95542dbe2a5462d8a6b2ebae",
+        "KeyRing": "",
+        "BuildId": "70790",
+        "VersionsName": "1.60.1.70790",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      }
+    },
+    "wow_classic_beta": {
+      "before": {
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "BuildId": "70532",
+        "CDNConfig": "483baa37d48c06ae7d14c83a591c469e",
+        "KeyRing": "",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5",
+        "Region": "eu",
+        "VersionsName": "1.60.1.70532"
+      },
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "0e139f0e95542dbe2a5462d8a6b2ebae",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      }
+    }
+  },
+  "tables": {},
+  "documentationStatus": "not_assessed",
+  "hotfixCoverage": "downloaded_not_applied",
+  "limitations": [
+    "Server-only changes invisible to client data require in-game measurements.",
+    "A data delta without matching release notes is a candidate undocumented change, not proof."
+  ],
+  "raidbots": {
+    "wowf": {
+      "format": 9,
+      "build": 70790,
+      "records": 51599,
+      "bytes": 3875072,
+      "sha256": "4d4a2f101fe5e8910fcdc0d8cc806af8f242ae0bb39633224616fa1c02214c46",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70790/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    },
+    "wow_classic_beta": {
+      "format": 9,
+      "build": 70532,
+      "records": 55213,
+      "bytes": 4237177,
+      "sha256": "07b22580aba86a03fa69f864b9ceb9137f5d3bb3294e36ce88cb7f5abcc1f0ab",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70532/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    }
+  },
+  "extractionRequired": true,
+  "effectiveBuild": null,
+  "exportedCacheSHA256": null,
+  "blueposts": {
+    "status": "available",
+    "source": "https://theforeverera.com/en/blue.xml",
+    "baseline": false,
+    "changes": [
+      {
+        "title": "Aggrend: Zeppelins broken? (#15)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/zeppelins-broken/2401777/15",
+        "sha256": "449747af62e02885646f9211fe8e7107041e363a8ae3cc5fe302298766a12bf0",
+        "published": "Thu, 05 Nov 2026 06:39:29 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/zeppelins-broken/2401777/15",
+        "kind": "new"
+      },
+      {
+        "title": "Aggrend: Why do I see maybe 8 people inside the main city? (#27)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/why-do-i-see-maybe-8-people-inside-the-main-city/2401806/27",
+        "sha256": "8a7a0dc9d1bf90b9da9090e7b63090e27ebd8ae474a0b55ae0a8faf73fb5acad",
+        "published": "Thu, 05 Nov 2026 06:35:55 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/why-do-i-see-maybe-8-people-inside-the-main-city/2401806/27",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Issues Resolved for Invite-a-Friend Players",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/639604/1",
+        "sha256": "d20060cb21aefd970d541659eb7c5e62b3ec18a0a6128e444855344d6e797ffd",
+        "published": "Thu, 05 Nov 2026 02:44:03 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/639604/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Issues Resolved for Invite-a-Friend Players",
+        "url": "https://us.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/2401646/1",
+        "sha256": "5ae7cd84922ece94274ea9a56142d126eb08abd640ad17ed6ee0c55308de6889",
+        "published": "Thu, 05 Nov 2026 02:43:58 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/issues-resolved-for-invite-a-friend-players/2401646/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: Set Your Campfire Ablaze with the Pouch of Violet Dust!",
+        "url": "https://us.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/2401461/1",
+        "sha256": "e189cac2047fdbb353468bc1c8bc771598c770a30c2a7f68ba79d67acb4c0931",
+        "published": "Thu, 05 Nov 2026 00:30:07 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/2401461/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: Set Your Campfire Ablaze with the Pouch of Violet Dust!",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/639571/1",
+        "sha256": "5c963431df6b6d4a45203357ba1ea0689e7cba901a5c4646c1d7fe9489efa43f",
+        "published": "Thu, 05 Nov 2026 00:30:06 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/set-your-campfire-ablaze-with-the-pouch-of-violet-dust/639571/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Language and Social Settings",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/language-and-social-settings/639555/1",
+        "sha256": "e6ae643486c5ef2096e2f38ffd513a22aa148f0edb73e5a48cdcd3dc9a188062",
+        "published": "Wed, 04 Nov 2026 23:44:07 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/language-and-social-settings/639555/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 3 November (#10)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/10",
+        "sha256": "6774afa8ecd8c8d519715d7b35f39ef8cf4379591a27b63f9beecf31cd06ea0c",
+        "published": "Wed, 04 Nov 2026 19:36:09 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-3-november/631316/10",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#10)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/10",
+        "sha256": "7a389c4e5e9a2cfe0271328ff0f1e3f7b39218f1c904f50244f94d5ed35ae998",
+        "published": "Wed, 04 Nov 2026 19:35:16 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/10",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: World of Warcraft: Forever Launch Time",
+        "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-launch-time/2400905/1",
+        "sha256": "dd958baa03252e5346add96144aa7b8a2d7c597c087d2607db8b987647c14a68",
+        "published": "Wed, 04 Nov 2026 18:13:53 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-launch-time/2400905/1",
+        "kind": "new"
+      },
+      {
+        "title": "Blizzard Entertainment: World of Warcraft: Forever Now Live!",
+        "url": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-now-live/2396008/1",
+        "sha256": "11c882ebbd06ec9db1cd882b9686d829e598b5bec027c45be6cba2881f4c2f09",
+        "published": "Thu, 29 Oct 2026 21:00:50 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-now-live/2396008/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#8)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/8",
+        "sha256": "41fd1b488004a526e772b4385dca0872851eb31078cae22d95968700bb7f5e43",
+        "published": "Tue, 27 Oct 2026 15:37:37 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/8",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 6
+  },
+  "checkedAt": "2026-11-05T13:17:18.639312Z",
+  "clientExtraction": {
+    "status": "failed",
+    "previousDataRetained": true
+  }
+}
