@@ -190,8 +190,8 @@ func TestItemLinkPreservesIdentity(t *testing.T) {
 	if num(got, "enchant") != 456 || num(got, "randomSuffix") != 789 || num(got, "id") != 123 {
 		t.Fatal(got)
 	}
-	if len(got["gems"].([]any)) != 4 {
-		t.Fatal(got)
+	if _, ok := got["gems"]; ok {
+		t.Fatal("gems must not be sent: the engine's item has no gems field", got)
 	}
 }
 

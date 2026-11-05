@@ -768,13 +768,7 @@ func parseItemLink(raw string, fallback map[string]any) map[string]any {
 			out["randomSuffix"] = math.Abs(float64(id))
 		}
 	}
-	var gems []any
-	for i := 2; i <= 5 && i < len(parts); i++ {
-		id, _ := strconv.Atoi(parts[i])
-		gems = append(gems, float64(id))
-	}
-	if len(gems) > 0 {
-		out["gems"] = gems
-	}
+	// the gem fields of the link (parts 2-5) are not sent: Forever has no sockets and the engine's item has no
+	// gems any more (an unknown field makes it reject the whole request)
 	return out
 }
