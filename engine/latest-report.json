@@ -1,8 +1,8 @@
 {
- "previous": "8298ab833f0249a0f6ca89d567103f26c219ea2f+38a86a5b0b4afa03b28e5d37",
+ "previous": "df3746362c2f4e4be55dfea3be940099713e5a97+312ee740f6c1c1559585f909",
  "ok": true,
  "branch": "master",
- "base": "df3746362c2f4e4be55dfea3be940099713e5a97",
+ "base": "df57e257131a38475559e9d9275016b5aecb4a75",
  "descendsFromLock": true,
  "clientBuild": "1.60.1.70790",
  "levelData": "refreshed from PlayerExpectedStat 1.60.1.70790",
@@ -127,12 +127,12 @@
    "59": 697.4
   },
   "TestDpsWarrior": {
-   "60": 333.0,
-   "10": 140.2,
-   "20": 195.8,
-   "30": 222.7,
-   "45": 275.5,
-   "59": 325.7
+   "60": 327.6,
+   "10": 138.7,
+   "20": 192.9,
+   "30": 219.7,
+   "45": 271.2,
+   "59": 320.9
   },
   "TestElemental": {
    "60": 478.6,
@@ -243,12 +243,12 @@
    "59": 580.9
   },
   "TestRogue": {
-   "60": 443.6,
+   "60": 437.7,
    "10": 161.2,
-   "20": 233.1,
-   "30": 264.5,
-   "45": 324.6,
-   "59": 408.6
+   "20": 232.0,
+   "30": 263.2,
+   "45": 320.4,
+   "59": 402.9
   },
   "TestShadowPriest": {
    "60": 542.1,
@@ -260,5 +260,5 @@
   }
  },
  "problems": [],
- "buildIdentity": "df3746362c2f4e4be55dfea3be940099713e5a97+312ee740f6c1c1559585f909"
+ "buildIdentity": "df57e257131a38475559e9d9275016b5aecb4a75+d2229495edb5aaef5ce6548a"
 }
