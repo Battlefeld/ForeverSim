@@ -111,6 +111,99 @@ local function bind()
  return nil
 end
 
+-- The player's own pace, measured without the combat log (Blizzard blocks addons that register it): a fight is
+-- PLAYER_REGEN_DISABLED to PLAYER_REGEN_ENABLED, its kills the XP gains in it (not the hand-ins), its creature the
+-- target when it began; the rest after it lasts until health and mana are back (90 % / 80 %), the player walks off, or
+-- the next fight starts (at most 90 s). Per creature and level: seconds of fighting and resting per kill, sent along
+-- so the planner plans with this character's real speed, gear and rests (route/feedback.go).
+local P={fight=nil,rest=nil,lastXP=nil,lastLevel=nil,turnedIn=-1e9,target=nil}
+R.pace=P
+local function now()return GetTime and GetTime()or 0 end
+local function plain(v)return v~=nil and not(issecretvalue and issecretvalue(v))end
+local function targetNPC()
+ local g=call(UnitGUID,'target')
+ if plain(g)then return npcID(g)end
+end
+local function share(cur,max)
+ if not plain(cur)or not plain(max)or type(max)~='number'or max<=0 then return 1 end
+ return cur/max
+end
+local function rested()
+ local hp=share(call(UnitHealth,'player'),call(UnitHealthMax,'player'))
+ local mana=1
+ if call(UnitPowerType,'player')==0 then mana=share(call(UnitPower,'player',0),call(UnitPowerMax,'player',0))end
+ return hp>=0.9 and mana>=0.8
+end
+local function record(f,rest)
+ if not f or f.kills<1 or not f.npc then return end
+ local pace=charDB('routePace');local key=f.level..':'..f.npc
+ local e=pace[key]or{n=0,f=0,r=0};pace[key]=e
+ e.n=e.n+f.kills;e.f=e.f+f.seconds;e.r=e.r+rest
+ -- the newest measurements count: an old level's are dropped
+ for k in pairs(pace)do local l=tonumber(k:match('^(%d+):'))if l and l<f.level-2 then pace[k]=nil end end
+end
+local function finishRest(t)
+ local r=P.rest;if not r then return end
+ P.rest=nil;record(r.fight,math.min(90,math.max(0,t-r.start)))
+end
+local function xpGain()
+ local xp,level=call(UnitXP,'player'),call(UnitLevel,'player')
+ if type(xp)~='number'or type(level)~='number'then return 0 end
+ local gain=0
+ if P.lastXP then
+  if level>(P.lastLevel or level)then gain=(P.lastMax or 0)-P.lastXP+xp else gain=xp-P.lastXP end
+ end
+ P.lastXP,P.lastLevel,P.lastMax=xp,level,call(UnitXPMax,'player')
+ return gain
+end
+function R.PaceEvent(event)
+ local t=now()
+ if event=='PLAYER_TARGET_CHANGED'then if not P.fight then P.target=targetNPC()end;return end
+ if event=='QUEST_TURNED_IN'then P.turnedIn=t;return end
+ if event=='PLAYER_REGEN_DISABLED'then
+  finishRest(t)
+  P.fight={start=t,kills=0,npc=targetNPC()or P.target,level=call(UnitLevel,'player')or 0}
+  return
+ end
+ if event=='PLAYER_REGEN_ENABLED'then
+  local f=P.fight;P.fight=nil
+  if f then f.seconds=t-f.start;P.rest={start=t,fight=f}end
+  return
+ end
+ if event=='PLAYER_XP_UPDATE'or event=='PLAYER_LEVEL_UP'then
+  local gain=xpGain()
+  if gain<=0 or t-P.turnedIn<2 then return end
+  local f=P.fight or(P.rest and t-P.rest.start<2 and P.rest.fight)
+  if f then f.kills=f.kills+1 end
+ end
+end
+local paceFrame=CreateFrame('Frame')
+for _,e in ipairs({'PLAYER_REGEN_DISABLED','PLAYER_REGEN_ENABLED','PLAYER_XP_UPDATE','PLAYER_LEVEL_UP','QUEST_TURNED_IN','PLAYER_TARGET_CHANGED'})do pcall(paceFrame.RegisterEvent,paceFrame,e)end
+paceFrame:SetScript('OnEvent',function(_,event)R.PaceEvent(event)end)
+local moving=0
+paceFrame:SetScript('OnUpdate',function(_,dt)
+ local r=P.rest;if not r then moving=0;return end
+ local t=now()
+ if t-r.start<2 then return end -- the last kill's XP comes just after the fight
+ if rested()or t-r.start>=90 then finishRest(t);return end
+ local speed=call(GetUnitSpeed,'player')
+ if plain(speed)and type(speed)=='number'and speed>0 then moving=moving+dt else moving=0 end
+ if moving>=1 then finishRest(t-moving)end -- walked off: the rest ended when the walking began
+end)
+-- The measurements of this level and the two before, as route-next takes them.
+function R.PaceFeedback()
+ local level=call(UnitLevel,'player')or 0;local kills={}
+ for key,e in pairs(charDB('routePace'))do
+  local l,npc=key:match('^(%d+):(%d+)$');l,npc=tonumber(l),tonumber(npc)
+  if l and npc and npc>0 and l>=level-2 and e.n>0 and e.f>0 then
+   kills[#kills+1]={npc=npc,playerLevel=l,fightSeconds=e.f/e.n,restSeconds=e.r/e.n,samples=e.n}
+  end
+ end
+ if #kills==0 then return nil end
+ table.sort(kills,function(a,b)return a.playerLevel==b.playerLevel and a.npc<b.npc or a.playerLevel<b.playerLevel end)
+ return{schema='foreverroutes.combat-feedback.v1',source='measured',kills=kills}
+end
+
 -- What route-next sends: small on purpose (finished quests are the bulk, a few KB).
 function R.Capture()
  if InCombatLockdown and InCombatLockdown()then error('Route nur ausserhalb des Kampfes')end
@@ -120,7 +213,7 @@ function R.Capture()
  -- "Solo mit Dungeon" when the player chose it in the ForeverRoutes addon (/fr dungeon)
  local db=type(ForeverRoutesCharDB)=='table'and ForeverRoutesCharDB or{}
  local dungeons=(db.dungeons==true or db.group==true)or nil
- live.wand=hasWand();live.prof=hasProfessions()
+ live.wand=hasWand();live.prof=hasProfessions();live.combatFeedback=R.PaceFeedback()
  return{race=race,class=class,faction=call(UnitFactionGroup,'player'),dungeons=dungeons,options=options(db),live=live}
 end
 

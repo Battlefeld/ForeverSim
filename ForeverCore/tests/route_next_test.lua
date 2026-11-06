@@ -98,3 +98,27 @@ do
  ForeverRoutes=nil
  io.write('route window ok\n')
 end
+-- The player's pace without the combat log: fights from combat start to end, kills from XP gains, the rest until the
+-- next fight; sent with the live state per creature and level.
+do
+ ForeverCoreBridgeDB=ForeverCoreBridgeDB or{}
+ local t,xp=1000,100
+ GetTime=function()return t end;UnitXP=function()return xp end;UnitXPMax=function()return 2000 end;UnitLevel=function()return 12 end
+ UnitGUID=function(u)if u=='target'then return'Creature-0-0-0-0-3125-0000'end;return'Player-1-1'end
+ local R=ForeverCoreClient.Route
+ R.PaceEvent('PLAYER_XP_UPDATE') -- the XP before
+ for _=1,3 do
+  R.PaceEvent('PLAYER_TARGET_CHANGED');R.PaceEvent('PLAYER_REGEN_DISABLED')
+  t=t+12;xp=xp+80;R.PaceEvent('PLAYER_XP_UPDATE')
+  R.PaceEvent('PLAYER_REGEN_ENABLED');t=t+20
+ end
+ R.PaceEvent('PLAYER_REGEN_DISABLED') -- the next fight ends the third rest
+ R.PaceEvent('QUEST_TURNED_IN');xp=xp+500;R.PaceEvent('PLAYER_XP_UPDATE') -- a hand-in is no kill
+ local fb=R.PaceFeedback()
+ assert(fb and fb.source=='measured'and #fb.kills==1,'pace measured')
+ local k=fb.kills[1]
+ assert(k.npc==3125 and k.playerLevel==12 and k.samples==3,'per creature and level: '..k.samples)
+ assert(math.abs(k.fightSeconds-12)<0.01 and math.abs(k.restSeconds-20)<0.01,'fight and rest per kill')
+ local s=R.Capture();assert(s.live.combatFeedback and s.live.combatFeedback.kills[1].npc==3125,'sent with the live state')
+ io.write('route pace ok\n')
+end
