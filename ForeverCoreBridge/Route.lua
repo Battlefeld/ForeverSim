@@ -309,6 +309,8 @@ end
 function R.Apply(result,issue)
  R.waiting=false
  local FR=ForeverRoutes
+ -- asked in combat (the state is read only out of combat): ask again once the fight is over
+ if issue and InCombatLockdown and InCombatLockdown()then R.afterCombat=true end
  if issue then R.issue=issue else
   R.issue=nil;R.last=result;R.at=GetTime and GetTime()or 0
   -- one arrow: the ForeverRoutes addon sets it when it is there
@@ -317,7 +319,10 @@ function R.Apply(result,issue)
  R.Draw()
  -- the ForeverRoutes addon shows the live plan in place of its stored route, and goes back to that when planning fails
  if FR and FR.SetLive then
-  FR.SetLive(not issue and result or nil)
+  -- a failed planning keeps the live plan being played (one bad request, a fight, a timeout must not throw it
+  -- away); the stored route only stands in while there has been no live plan at all
+  if not issue then FR.SetLive(result)elseif not FR.live then FR.SetLive(nil)end
+  FR.liveIssue=issue
   if FR.Refresh then pcall(FR.Refresh)end
  end
 end
@@ -344,11 +349,15 @@ local function schedule(delay)
  if not R.Enabled()or R.scheduled then return end
  R.scheduled=true
  local wait=math.max(delay or DELAY,MIN_GAP-((GetTime and GetTime()or 0)-(R.requestedAt or-1e9)))
- C_Timer.After(wait,function()R.scheduled=false;R.requestedAt=GetTime and GetTime()or 0;R.Request(false)end)
+ C_Timer.After(wait,function()
+  R.scheduled=false
+  if InCombatLockdown and InCombatLockdown()then R.afterCombat=true;return end -- the state is read out of combat
+  R.requestedAt=GetTime and GetTime()or 0;R.Request(false)
+ end)
 end
 R.schedule=schedule
 local events=CreateFrame('Frame')
-for _,e in ipairs({'PLAYER_ENTERING_WORLD','QUEST_ACCEPTED','QUEST_TURNED_IN','QUEST_REMOVED','QUEST_LOG_UPDATE','PLAYER_LEVEL_UP','TAXIMAP_OPENED','CONFIRM_BINDER'})do pcall(events.RegisterEvent,events,e)end
+for _,e in ipairs({'PLAYER_REGEN_ENABLED','PLAYER_ENTERING_WORLD','QUEST_ACCEPTED','QUEST_TURNED_IN','QUEST_REMOVED','QUEST_LOG_UPDATE','PLAYER_LEVEL_UP','TAXIMAP_OPENED','CONFIRM_BINDER'})do pcall(events.RegisterEvent,events,e)end
 events:SetScript('OnEvent',function(_,event)
  if event=='TAXIMAP_OPENED'then
   local id=npcID(call(UnitGUID,'npc'))
@@ -357,6 +366,10 @@ events:SetScript('OnEvent',function(_,event)
  end
  if event=='CONFIRM_BINDER'then
   local b=charDB('routeBind');b.candidate=R.Position();b.oldName=call(GetBindLocation)
+  return
+ end
+ if event=='PLAYER_REGEN_ENABLED'then
+  if R.afterCombat then R.afterCombat=nil;schedule(1)end
   return
  end
  if event=='QUEST_LOG_UPDATE'then

@@ -122,3 +122,19 @@ do
  local s=R.Capture();assert(s.live.combatFeedback and s.live.combatFeedback.kills[1].npc==3125,'sent with the live state')
  io.write('route pace ok\n')
 end
+-- A failed planning keeps the live plan being played; in combat it asks again after the fight.
+do
+ local R=ForeverCoreClient.Route
+ local set={n=0}
+ ForeverRoutes={SetLive=function(r)set.n=set.n+1;set[set.n]=r or false;ForeverRoutes.live=r and r.steps or nil end,Show=function()end,Refresh=function()end}
+ R.Apply({steps={{op='accept',quest=1}}},nil)
+ assert(ForeverRoutes.live and set.n==1,'plan taken')
+ InCombatLockdown=function()return true end
+ R.Apply(nil,'Route nur ausserhalb des Kampfes')
+ assert(ForeverRoutes.live and set.n==1 and ForeverRoutes.liveIssue,'failed planning keeps the plan')
+ assert(R.afterCombat,'asks again after the fight')
+ InCombatLockdown=function()return false end
+ ForeverRoutes.live=nil;R.Apply(nil,'Fehler');assert(set.n==2 and set[2]==false,'without a plan the stored route stands in')
+ ForeverRoutes=nil;R.afterCombat=nil
+ io.write('route keeps plan ok\n')
+end
