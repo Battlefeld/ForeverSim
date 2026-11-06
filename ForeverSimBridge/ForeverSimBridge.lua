@@ -131,6 +131,64 @@ local function itemSpell(ref)
 end
 FUSLive.itemInfo=itemInfo
 local effectScanner
+-- Classic writes many plain stats as "Equip:" lines (crit and hit chance, mana per 5, spell damage, attack power,
+-- defense ...). They are read here into the item's stats; a line that changes no damage (defense, dodge, healing,
+-- resistances, "when fighting ...") is ignored. An item counts as not computable (special effect) only for a
+-- "Use:" or "Chance on hit:" line or an "Equip:" line not understood.
+local EQUIP_STATS={
+ -- {patterns (lower case, %d+ captured), stat key of the item model, raw client key for the engine, percent?}
+ {{'improves your chance to get a critical strike with spells by (%d+)%%','erhöht eure chance, einen kritischen treffer durch zauber zu erzielen, um (%d+)%%'},'critPct','ITEM_MOD_SPELL_CRIT_RATING_SHORT',true},
+ {{'improves your chance to get a critical strike by (%d+)%%','erhöht eure chance, einen kritischen treffer zu erzielen, um (%d+)%%'},'critPct','ITEM_MOD_CRIT_RATING_SHORT',true},
+ {{'improves your chance to hit with spells by (%d+)%%','erhöht eure trefferchance mit zaubern um (%d+)%%'},'hitPct','ITEM_MOD_SPELL_HIT_RATING_SHORT',true},
+ {{'improves your chance to hit by (%d+)%%','erhöht eure trefferchance um (%d+)%%'},'hitPct','ITEM_MOD_HIT_RATING_SHORT',true},
+ {{'restores (%d+) mana per 5 sec','stellt alle 5 sek%. (%d+) punkt%S* mana wieder her'},'mp5','ITEM_MOD_MANA_REGENERATION_SHORT'},
+ {{'increases damage and healing done by magical spells and effects by up to (%d+)','erhöht durch sämtliche zauber und magische effekte verursachten schaden und heilung um bis zu (%d+)'},'sp','ITEM_MOD_SPELL_POWER_SHORT'},
+ {{'increases damage done by shadow spells and effects by up to (%d+)','erhöht durch schattenzauber und schatteneffekte zugefügten schaden um bis zu (%d+)'},'shadowSp','ITEM_MOD_SHADOW_DAMAGE_SHORT'},
+ {{'increases damage done by fire spells and effects by up to (%d+)','erhöht durch feuerzauber und feuereffekte zugefügten schaden um bis zu (%d+)'},'fireSp','ITEM_MOD_FIRE_DAMAGE_SHORT'},
+ {{'increases damage done by frost spells and effects by up to (%d+)','erhöht durch frostzauber und frosteffekte zugefügten schaden um bis zu (%d+)'},'frostSp','ITEM_MOD_FROST_DAMAGE_SHORT'},
+ {{'increases damage done by nature spells and effects by up to (%d+)','erhöht durch naturzauber und natureffekte zugefügten schaden um bis zu (%d+)'},'natureSp','ITEM_MOD_NATURE_DAMAGE_SHORT'},
+ {{'increases damage done by arcane spells and effects by up to (%d+)','erhöht durch arkanzauber und arkaneffekte zugefügten schaden um bis zu (%d+)'},'arcaneSp','ITEM_MOD_ARCANE_DAMAGE_SHORT'},
+ {{'increases damage done by holy spells and effects by up to (%d+)','erhöht durch heiligzauber und heiligeffekte zugefügten schaden um bis zu (%d+)'},'holySp','ITEM_MOD_HOLY_DAMAGE_SHORT'},
+ {{'%+(%d+) ranged attack power','increases ranged attack power by (%d+)','%+(%d+) distanzangriffskraft'},'rap','ITEM_MOD_RANGED_ATTACK_POWER_SHORT'},
+ {{'%+(%d+) attack power%.?$','increases attack power by (%d+)','%+(%d+) angriffskraft%.?$'},'ap','ITEM_MOD_ATTACK_POWER_SHORT'},
+}
+-- Equip lines that change no damage dealt: defense, avoidance, block, healing only, resistances, situational
+-- bonuses, movement, professions.
+local EQUIP_IGNORED={'defense','verteidigung','dodge','ausweichen','parry','parieren','block','healing done by spells','heilung','resistance','widerstand',
+ 'when fighting','im kampf gegen','movement speed','bewegungstempo','water breathing','wasseratmung','stealth','verstohlenheit','fishing','angeln',
+ 'mining','bergbau','herbalism','kräuterkunde','skinning','kürschnerei','armor','rüstung','health per 5','gesundheit alle 5','threat','bedrohung',
+ 'swimming','schwimm','detect','entdeck','reputation','ruf','experience','erfahrung'}
+local function equipLine(lower,item,level)
+ lower=lower:gsub('^equip:%s*',''):gsub('^anlegen:%s*','')
+ for _,e in ipairs(EQUIP_STATS)do
+  for _,pat in ipairs(e[1])do
+   local n=tonumber(lower:match(pat))
+   if n then
+    local key,raw=e[2],e[3]
+    -- the client may list the same bonus in its stat table already: then it is counted there
+    if(item.rawStats[raw]or 0)>0 then return true end
+    if e[4]then
+     -- the engine's rating per percent at this level (the same for every class: the first class data that has it)
+     local _,class=UnitClass('player');local per
+     local order={FUSLiveData[string.lower(class or'')]}
+     for _,d in pairs(FUSLiveData)do if type(d)=='table'then order[#order+1]=d end end
+     for _,data in ipairs(order)do
+      local row=type(data)=='table'and data.levelStats and data.levelStats[tostring(level)]
+      per=per or(row and row.ratingPerPercent and row.ratingPerPercent[key])
+     end
+     if not per then return false end -- no rating conversion for this level: not computable
+     item.stats[key]=(item.stats[key]or 0)+n;item.rawStats[raw]=(item.rawStats[raw]or 0)+n*per
+    else
+     item.stats[key]=(item.stats[key]or 0)+n;item.rawStats[raw]=(item.rawStats[raw]or 0)+n
+    end
+    return true
+   end
+  end
+ end
+ for _,w in ipairs(EQUIP_IGNORED)do if lower:find(w,1,true)then return true end end
+ return false
+end
+FUSLive.equipLine=equipLine
 local function unknownTooltipEffect(link,item)
  if not CreateFrame then return true end
  if not effectScanner then
@@ -138,6 +196,7 @@ local function unknownTooltipEffect(link,item)
   effectScanner:SetOwner(UIParent,'ANCHOR_NONE')
  end
  effectScanner:SetOwner(UIParent,'ANCHOR_NONE');effectScanner:ClearLines();effectScanner:SetHyperlink(link)
+ local level=UnitLevel and UnitLevel('player')or 1
  for n=1,effectScanner:NumLines() do
   local line=_G['ForeverSimEffectScannerTextLeft'..n]
   local text=line and publicString(line:GetText()) or ''
@@ -145,11 +204,7 @@ local function unknownTooltipEffect(link,item)
   -- Never score on-use/proc lines as if they were ordinary passive stats.
   if lower:find('^use:') or lower:find('^benutzen:') or lower:find('^chance on hit:') or lower:find('^trefferchance:') then return true end
   if lower:find('^equip:') or lower:find('^anlegen:') then
-   -- Only a matching stat already returned by the client is accepted.
-   local known=false
-   local patterns={ap={'increases attack power','erhöht die angriffskraft'},rap={'increases ranged attack power','erhöht die distanzangriffskraft'},holySp={'increases damage done by holy spells','erhöht durch heiligzauber'},natureSp={'increases damage done by nature spells','erhöht durch naturzauber'},arcaneSp={'increases damage done by arcane spells','erhöht durch arkane zauber'},sp={'increases damage and healing done by magical spells','erhöht durch zauber und magische effekte verursachten schaden'},shadowSp={'increases damage done by shadow spells','erhöht durch schattenzauber'},fireSp={'increases damage done by fire spells','erhöht durch feuerzauber'},frostSp={'increases damage done by frost spells','erhöht durch frostzauber'}}
-   for key,names in pairs(patterns) do for _,prefix in ipairs(names)do if lower:find(prefix,1,true) and (item.stats[key] or 0)>0 then known=true end end end
-   if not known then return true end
+   if not equipLine(lower,item,level)then return true end
   end
  end
  return false
@@ -200,7 +255,7 @@ local function makeItem(link,source)
  if not slot then return nil end
  local parsedStats=itemStats(link)
  if protected(parsedStats) or type(parsedStats)~='table' then parsedStats=nil end
- local item={quality=quality,id=iid,name=name or ('Item #'..tostring(iid or '?')),slot=slot,minLevel=requiredLevel or 1,stats={},rawStats={},source=source,twoHanded=equipLoc=='INVTYPE_2HWEAPON',weaponType=(classID==2 or equipLoc=='INVTYPE_HOLDABLE' or equipLoc=='INVTYPE_WEAPONOFFHAND' or equipLoc=='INVTYPE_WEAPON' or equipLoc=='INVTYPE_WEAPONMAINHAND' or equipLoc=='INVTYPE_2HWEAPON' or equipLoc=='INVTYPE_RANGED' or equipLoc=='INVTYPE_RANGEDRIGHT') and subType or nil,weaponClass=classID,weaponSubclass=subClassID,itemClass=classID,itemSubclass=subClassID,equipLoc=equipLoc,statsComplete=parsedStats~=nil,hasUnmodeledEffects=itemSpell(link)~=nil}
+ local item={quality=quality,id=iid,name=name or ('Item #'..tostring(iid or '?')),slot=slot,minLevel=requiredLevel or 1,stats={},rawStats={},source=source,twoHanded=equipLoc=='INVTYPE_2HWEAPON',weaponType=(classID==2 or equipLoc=='INVTYPE_HOLDABLE' or equipLoc=='INVTYPE_WEAPONOFFHAND' or equipLoc=='INVTYPE_WEAPON' or equipLoc=='INVTYPE_WEAPONMAINHAND' or equipLoc=='INVTYPE_2HWEAPON' or equipLoc=='INVTYPE_RANGED' or equipLoc=='INVTYPE_RANGEDRIGHT') and subType or nil,weaponClass=classID,weaponSubclass=subClassID,itemClass=classID,itemSubclass=subClassID,equipLoc=equipLoc,statsComplete=parsedStats~=nil,hasUnmodeledEffects=(not CreateFrame)and itemSpell(link)~=nil or false}
  local subtype=string.lower(tostring(subType or ''))
  if classID==4 and subClassID==1 then item.armorType='cloth'
  elseif classID==4 and subClassID==2 then item.armorType='leather'
