@@ -134,11 +134,20 @@ local function rested()
  if call(UnitPowerType,'player')==0 then mana=share(call(UnitPower,'player',0),call(UnitPowerMax,'player',0))end
  return hp>=0.9 and mana>=0.8
 end
+local function manaSnapshot()
+ if call(UnitPowerType,'player')~=0 then return nil,nil end
+ local current,maximum=call(UnitPower,'player',0),call(UnitPowerMax,'player',0)
+ if not plain(current)or not plain(maximum)or type(current)~='number'or type(maximum)~='number'or maximum<=0 then return nil,nil end
+ return current,maximum
+end
 local function record(f,rest)
  if not f or f.kills<1 or not f.npc then return end
  local pace=charDB('routePace');local key=f.level..':'..f.npc
  local e=pace[key]or{n=0,f=0,r=0};pace[key]=e
  e.n=e.n+f.kills;e.f=e.f+f.seconds;e.r=e.r+rest
+ if f.manaStart and f.manaEnd and f.manaMax and f.manaStart>=f.manaEnd then
+  e.mn=(e.mn or 0)+f.kills;e.md=(e.md or 0)+(f.manaStart-f.manaEnd);e.mm=f.manaMax
+ end
  -- the newest measurements count: an old level's are dropped
  for k in pairs(pace)do local l=tonumber(k:match('^(%d+):'))if l and l<f.level-2 then pace[k]=nil end end
 end
@@ -162,12 +171,13 @@ function R.PaceEvent(event)
  if event=='QUEST_TURNED_IN'then P.turnedIn=t;return end
  if event=='PLAYER_REGEN_DISABLED'then
   finishRest(t)
-  P.fight={start=t,kills=0,npc=targetNPC()or P.target,level=call(UnitLevel,'player')or 0}
+  local mana,maximum=manaSnapshot()
+  P.fight={start=t,kills=0,npc=targetNPC()or P.target,level=call(UnitLevel,'player')or 0,manaStart=mana,manaMax=maximum}
   return
  end
  if event=='PLAYER_REGEN_ENABLED'then
   local f=P.fight;P.fight=nil
-  if f then f.seconds=t-f.start;P.rest={start=t,fight=f}end
+  if f then f.seconds=t-f.start;f.manaEnd=manaSnapshot();P.rest={start=t,fight=f}end
   return
  end
  if event=='PLAYER_XP_UPDATE'or event=='PLAYER_LEVEL_UP'then
@@ -196,7 +206,7 @@ function R.PaceFeedback()
  for key,e in pairs(charDB('routePace'))do
   local l,npc=key:match('^(%d+):(%d+)$');l,npc=tonumber(l),tonumber(npc)
   if l and npc and npc>0 and l>=level-2 and e.n>0 and e.f>0 then
-   kills[#kills+1]={npc=npc,playerLevel=l,fightSeconds=e.f/e.n,restSeconds=e.r/e.n,samples=e.n}
+   kills[#kills+1]={npc=npc,playerLevel=l,fightSeconds=e.f/e.n,restSeconds=e.r/e.n,samples=e.n,manaNetPerKill=e.mn and e.mn>=3 and e.md/e.mn or nil,manaMax=e.mm}
   end
  end
  if #kills==0 then return nil end
