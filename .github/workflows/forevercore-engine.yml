@@ -94,6 +94,20 @@ jobs:
           if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
           python ForeverCore/engine_update.py "${args[@]}"
 
+      # the new engine against ForeverCore's tests that run the actual engine (the package build runs the same): an
+      # engine that breaks them is not committed, the failure opens the issue below and the last lock stays
+      - name: Test the new engine with ForeverCore
+        if: success() && github.event_name != 'push' && inputs.dry_run != true
+        env:
+          GOTOOLCHAIN: auto
+        run: |
+          python ForeverCore/checkout_engine.py
+          python ForeverCore/build_engine.py --output "$RUNNER_TEMP/ForeverEngine-linux"
+          export FC_TEST_ENGINE="$RUNNER_TEMP/ForeverEngine-linux"
+          export FC_TEST_RUNTIME="$GITHUB_WORKSPACE"
+          export FC_TEST_LUA=/usr/bin/lua5.1
+          (cd ForeverCore && go test ./... && go vet ./...)
+
       - name: Save engine update report to artifacts branch
         if: always()
         shell: bash
