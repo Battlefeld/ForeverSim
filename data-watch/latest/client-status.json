@@ -1,32 +1,32 @@
 {
   "schema": 1,
-  "checkedAt": "2026-11-06T13:01:40.603139Z",
+  "checkedAt": "2026-11-07T11:48:11.505938Z",
   "products": {
     "wowf": {
       "source": "https://us.version.battle.net/wowf/versions",
       "row": {
         "Region": "eu",
-        "BuildConfig": "9006ba6948388dd0d4a0578e64b8a92e",
-        "CDNConfig": "0e139f0e95542dbe2a5462d8a6b2ebae",
+        "BuildConfig": "5ada954223f7c409ea172361f5c9e565",
+        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
         "KeyRing": "",
-        "BuildId": "70790",
-        "VersionsName": "1.60.1.70790",
+        "BuildId": "70862",
+        "VersionsName": "1.60.1.70862",
         "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
       },
-      "responseSHA256": "eed638ed548a448b235b4541c5db4549de63403b8b839160803f5283e8997ba4"
+      "responseSHA256": "52073d30d843d1a85d71eefdde53fa9aec88606f3a1462ed6e9828b24b8a7594"
     },
     "wow_classic_beta": {
       "source": "https://us.version.battle.net/wow_classic_beta/versions",
       "row": {
         "Region": "eu",
         "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "CDNConfig": "0e139f0e95542dbe2a5462d8a6b2ebae",
+        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
         "KeyRing": "",
         "BuildId": "70532",
         "VersionsName": "1.60.1.70532",
         "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
       },
-      "responseSHA256": "0a9123bab26ae4a4e613760c6056b2ad4279e3f858db9f049be432bfbc36401a"
+      "responseSHA256": "c58a8000ee38331e64765506ab1e9dc2329a573decd98914283f0ebe9a83d9b6"
     }
   },
   "effectiveBuild": null,

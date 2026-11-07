@@ -2,6 +2,27 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#4)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4",
+      "sha256": "0ed2364dc9afde0a98fa6e33c21fd81741de8e76eb23552502e33116b1ab5c32",
+      "published": "Sat, 07 Nov 2026 01:02:28 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/class-tuning-incoming-10-november/640100/1": {
+      "title": "Kaivax: Class Tuning Incoming - 10 November",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/class-tuning-incoming-10-november/640100/1",
+      "sha256": "e036d1260f1af09aeff2c6ae62045b3942153f7674aa9ceeeee5e50c57d14180",
+      "published": "Fri, 06 Nov 2026 21:12:54 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/class-tuning-incoming-november-10/2404092/1": {
+      "title": "Kaivax: Class Tuning Incoming - November 10",
+      "url": "https://us.forums.blizzard.com/en/wow/t/class-tuning-incoming-november-10/2404092/1",
+      "sha256": "68b48a2b5caf7cf873a53e1ac00cc0ff7dea26b16d0c924c9628450b0b78a640",
+      "published": "Fri, 06 Nov 2026 21:11:39 GMT",
+      "relevant": true
+    },
     "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-5-2026/639885/1": {
       "title": "Kaivax: WoW: Forever Hotfixes - November 5, 2026",
       "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-5-2026/639885/1",
@@ -330,27 +351,6 @@
       "sha256": "8e33caf69cd74b03aa9e593da1723fa224adc66a820b8efa1fb58063681823b4",
       "published": "Tue, 20 Oct 2026 21:00:15 GMT",
       "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/claim-your-world-of-warcraft-forever-character-names/2387945/1": {
-      "title": "Blizzard Entertainment: Claim Your World of Warcraft: Forever Character Names",
-      "url": "https://us.forums.blizzard.com/en/wow/t/claim-your-world-of-warcraft-forever-character-names/2387945/1",
-      "sha256": "5e034eb2cdfcdc4671266f622081b3286206bb43d406a1c7ef66354f0d2749cb",
-      "published": "Tue, 20 Oct 2026 21:00:12 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/heads-up-wow-forever-stress-test-on-21-october/636749/1": {
-      "title": "Kaivax: Heads Up -- WoW Forever Stress Test on 21 October",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/heads-up-wow-forever-stress-test-on-21-october/636749/1",
-      "sha256": "4dbb489b5f8b7b26ffb982d1d5b471addcb89896a9499045fa38837b444b6e52",
-      "published": "Tue, 20 Oct 2026 20:31:37 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/heads-up-wow-forever-stress-test-on-october-21/2387920/1": {
-      "title": "Kaivax: Heads Up -- WoW Forever Stress Test on October 21",
-      "url": "https://us.forums.blizzard.com/en/wow/t/heads-up-wow-forever-stress-test-on-october-21/2387920/1",
-      "sha256": "d81d61e563135cc02200401c464b205adae0c561f482475b38a44aea8c0138ca",
-      "published": "Tue, 20 Oct 2026 20:30:35 GMT",
-      "relevant": false
     }
   },
   "lastCheck": {
@@ -359,24 +359,33 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 5, 2026",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-5-2026/639885/1",
-        "sha256": "f79ccbcb9f6d9702d2b064eeaec5fe9fe647b4aaa46822510e833c2f4ae3b6a7",
-        "published": "Fri, 06 Nov 2026 02:35:12 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#4)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4",
+        "sha256": "0ed2364dc9afde0a98fa6e33c21fd81741de8e76eb23552502e33116b1ab5c32",
+        "published": "Sat, 07 Nov 2026 01:02:28 GMT",
         "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-5-2026/639885/1",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4",
         "kind": "new"
       },
       {
-        "title": "Blizzard Entertainment: WoW: Forever\u2013 Watch Forging Forever",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%93-watch-forging-forever/2402802/1",
-        "sha256": "a74ac10d24035eb07d295f672bfcb2e304c2a0fa381a94a8513294486ed473e3",
-        "published": "Thu, 05 Nov 2026 22:00:07 GMT",
-        "relevant": false,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%93-watch-forging-forever/2402802/1",
+        "title": "Kaivax: Class Tuning Incoming - 10 November",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/class-tuning-incoming-10-november/640100/1",
+        "sha256": "e036d1260f1af09aeff2c6ae62045b3942153f7674aa9ceeeee5e50c57d14180",
+        "published": "Fri, 06 Nov 2026 21:12:54 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/class-tuning-incoming-10-november/640100/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Class Tuning Incoming - November 10",
+        "url": "https://us.forums.blizzard.com/en/wow/t/class-tuning-incoming-november-10/2404092/1",
+        "sha256": "68b48a2b5caf7cf873a53e1ac00cc0ff7dea26b16d0c924c9628450b0b78a640",
+        "published": "Fri, 06 Nov 2026 21:11:39 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/class-tuning-incoming-november-10/2404092/1",
         "kind": "new"
       }
     ],
-    "relevantChanges": 1
+    "relevantChanges": 3
   }
 }
