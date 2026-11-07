@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -29,11 +30,13 @@ var profileJobs sync.Map // profile path -> true while running, or the error tha
 func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	routesAccessMu.RLock()
 	defer routesAccessMu.RUnlock()
-	race := strings.ReplaceAll(str(j.State, "race"), " ", "")
-	class := strings.ToLower(str(j.State, "class"))
 	live := child(j.State, "live")
-	if race == "" || class == "" || live == nil {
+	if str(j.State, "race") == "" || str(j.State, "class") == "" || live == nil {
 		return nil, fmt.Errorf("Route: Volk, Klasse und Spielstand fehlen")
+	}
+	race, class, faction, identityErr := routeIdentity(str(j.State, "race"), str(j.State, "class"), str(j.State, "faction"))
+	if identityErr != nil {
+		return nil, identityErr
 	}
 	if child(live, "pos") == nil {
 		return nil, fmt.Errorf("Route: Position nicht lesbar (in Instanzen wird nicht geplant)")
@@ -49,7 +52,7 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	if horizon == 0 {
 		horizon = 3600
 	}
-	if horizon < 600 || horizon > 14400 {
+	if math.IsNaN(horizon) || math.IsInf(horizon, 0) || horizon < 600 || horizon > 14400 {
 		return nil, fmt.Errorf("Route: Planungszeitraum 600-14400 Sekunden")
 	}
 	dir, e := os.MkdirTemp("", "forevercore-route-")
@@ -59,10 +62,6 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	defer os.RemoveAll(dir)
 	in, out := filepath.Join(dir, "live.json"), filepath.Join(dir, "next.json")
 	// ForeverRoutes spells classes like the game's English names ("Warlock").
-	if race == "Scourge" { // the game's name of the Undead
-		race = "Undead"
-	}
-	faction := str(j.State, "faction") // Alliance or Horde: the Skyborne play on both sides
 	request := map[string]any{"race": race, "class": strings.ToUpper(class[:1]) + class[1:], "faction": faction, "live": live}
 	if opts, ok := j.State["options"].([]any); ok && len(opts) > 0 {
 		request["options"] = opts // the route's options switched on in the addon (/fr option)
@@ -82,7 +81,7 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 	}
 	// the class's kill profile ForeverRoutes ships beside the dataset, else one calculated here
 	profile, pending := filepath.Join(filepath.Dir(data), "profiles", class+".json"), ""
-	if _, err := os.Stat(profile); err != nil {
+	if !fileOK(profile) {
 		profile, pending = s.killProfileFor(class, race)
 	}
 	if profile != "" {
@@ -118,7 +117,7 @@ func (s *Service) killProfileFor(class, race string) (path, note string) {
 		rev = rev[:16]
 	}
 	file := filepath.Join(s.cfg.Data, "Profiles", fmt.Sprintf("%s-%s-%s.json", class, strings.ToLower(race), rev))
-	if _, e := os.Stat(file); e == nil {
+	if fileOK(file) {
 		return file, ""
 	}
 	if v, known := profileJobs.LoadOrStore(file, true); known {
@@ -152,6 +151,10 @@ func (s *Service) killProfileFor(class, race string) (path, note string) {
 // routeFile is the best route ForeverRoutes ships for a race and class (routes/<race>-<class>.json beside the dataset;
 // the Skyborne per side: skyborne-a, skyborne-h), or "" when there is none.
 func routeFile(data, race, class, faction string, dungeons bool) string {
+	race, class, faction, err := routeIdentity(race, class, faction)
+	if err != nil {
+		return ""
+	}
 	name := strings.ToLower(race)
 	if name == "skyborne" {
 		switch faction {
@@ -177,6 +180,50 @@ func routeFile(data, race, class, faction string, dungeons bool) string {
 }
 
 func fileOK(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
+	info, err := os.Stat(path)
+	return err == nil && info.Mode().IsRegular()
+}
+
+// Keep the live request, route filename and class profile on the same canonical identity. In particular, the
+// client calls Undead "Scourge", and Skyborne routes are separate for each faction. Only supported identifiers may
+// become path components; a malformed state must never select another character's route or profile.
+func routeIdentity(race, class, faction string) (string, string, string, error) {
+	races := map[string]string{
+		"human": "Human", "orc": "Orc", "dwarf": "Dwarf", "nightelf": "NightElf", "undead": "Undead",
+		"scourge": "Undead", "tauren": "Tauren", "gnome": "Gnome", "troll": "Troll", "skyborne": "Skyborne",
+	}
+	canonicalRace := races[strings.ToLower(strings.Join(strings.Fields(race), ""))]
+	if canonicalRace == "" {
+		return "", "", "", fmt.Errorf("Route: unbekanntes Volk %q", race)
+	}
+	canonicalClass := strings.ToLower(strings.TrimSpace(class))
+	switch canonicalClass {
+	case "warrior", "paladin", "hunter", "rogue", "priest", "shaman", "mage", "warlock", "druid":
+	default:
+		return "", "", "", fmt.Errorf("Route: unbekannte Klasse %q", class)
+	}
+	canonicalFaction := ""
+	switch strings.ToLower(strings.TrimSpace(faction)) {
+	case "":
+		if canonicalRace == "Skyborne" {
+			return "", "", "", fmt.Errorf("Route: Skyborne brauchen eine Fraktion (Alliance oder Horde)")
+		}
+	case "a", "alliance":
+		canonicalFaction = "Alliance"
+	case "h", "horde":
+		canonicalFaction = "Horde"
+	default:
+		return "", "", "", fmt.Errorf("Route: unbekannte Fraktion %q", faction)
+	}
+	if canonicalRace != "Skyborne" && canonicalFaction != "" {
+		expected := "Alliance"
+		switch canonicalRace {
+		case "Orc", "Undead", "Tauren", "Troll":
+			expected = "Horde"
+		}
+		if canonicalFaction != expected {
+			return "", "", "", fmt.Errorf("Route: Fraktion %s passt nicht zu %s", canonicalFaction, canonicalRace)
+		}
+	}
+	return canonicalRace, canonicalClass, canonicalFaction, nil
 }
