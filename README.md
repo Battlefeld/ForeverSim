@@ -16,6 +16,8 @@ ForeverSim ist ein inoffizielles Fan-Projekt und steht in keiner Verbindung zu B
 - **ForeverSim-Fenster (`/fus`):** beste Skillung, Rotation, Kampf-HUD und Auswertung, Beute, Verzauberungen und Buffs.
 - **Levelroute:** Das mitgelieferte Addon [ForeverRoutes](https://github.com/Battlefeld/ForeverRoutes) zeigt die beste
   Route bis Stufe 20 und plant mit ForeverCore live ab deinem Stand.
+  Die Live-Anfrage, Routendatei und das Kampfprofil verwenden dieselbe geprüfte Klassen-/Volks-/Fraktionskennung;
+  `Scourge`/`Undead`, `Night Elf`/`NightElf` und die beiden Skyborne-Fraktionen werden konsistent zugeordnet.
 - **Updates:** ForeverCore aktualisiert sich selbst (signiert, mit Weg zurück zur vorherigen Version), die Addons und
   die Routen.
 
