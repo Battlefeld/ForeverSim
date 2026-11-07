@@ -23,6 +23,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Exercise window polling beyond callback table capacity
-        run: go test -v -run '^(TestWowOriginCallbackReuse|TestPixelCalibration.*)$' -count=1 -timeout=3m .
+        run: go test -v -run '^(TestWowOriginCallbackReuse|TestPixelCalibration.*|TestWindowsIconResource)$' -count=1 -timeout=3m .
       - name: Build the executable
         run: go build -trimpath -o "$RUNNER_TEMP/ForeverCore.exe" .
