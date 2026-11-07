@@ -28,6 +28,12 @@ import (
 //go:embed app.html
 var appPage string
 
+// The checked-in Windows resource makes the same icon available to every Windows build and shortcut.
+// Regenerate it when assets/ForeverCore.ico changes.
+//go:generate go run github.com/akavel/rsrc@v0.10.2 -arch amd64 -ico assets/ForeverCore.ico -o icon_windows_amd64.syso
+//go:embed assets/ForeverCore.ico
+var appIcon []byte
+
 // appInfoName: where the running app says how to reach it (a second start opens its window).
 const appInfoName = "app.json"
 
@@ -249,6 +255,11 @@ func randomToken() string {
 
 func (a *app) routes() http.Handler {
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/x-icon")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Write(appIcon)
+	})
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" || r.URL.Query().Get("t") != a.token {
 			http.NotFound(w, r)

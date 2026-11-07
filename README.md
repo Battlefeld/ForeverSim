@@ -73,6 +73,12 @@ Bei schwarzen Bildschirmen zuerst die Grafik-API in WoW auf DirectX 11 stellen
 Bauen und testen: Workflows unter `.github/workflows` (`forevercore-offline` für alle Tests, `forevercore-package` baut
 die EXE und veröffentlicht sie im [Release „forevercore“](https://github.com/Battlefeld/ForeverSim/releases/tag/forevercore)). Lokal: `cd ForeverCore && go test ./...` und die Lua-Tests unter `ForeverCore/tests`.
 
+Das Programm-Icon liegt unter `ForeverCore/assets/ForeverCore.ico`. Die eingecheckte Windows-Ressource
+`icon_windows_amd64.syso` wird bei jedem Windows-amd64-Build automatisch eingebunden, auch von `build_app.py`.
+Fensteroberfläche, Desktop- und Startmenüverknüpfungen verwenden dasselbe Icon. Bei einem Austausch der ICO-Datei
+in `ForeverCore` einmal `go generate -run github.com/akavel/rsrc .` ausführen und die aktualisierte Ressource mit einchecken;
+die CI prüft, dass sie zur Vorlage passt.
+
 ## Lizenz
 
 - **Eigener Code und Grafiken:** MIT, siehe [`LICENSE`](LICENSE).
