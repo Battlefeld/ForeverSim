@@ -428,7 +428,8 @@ function O.Receive(result,err)
  if result.state=='running' then
   C.Say(result.message or 'Eigene Route wird berechnet')
   if O.checks==0 then chat(result.message or 'Eigene Route wird berechnet')end
-  if O.checks<O.CHECKS and C_Timer and C_Timer.After then O.checks=O.checks+1;C_Timer.After(O.CHECK,function()O.Request(false,true)end)end
+  -- the first minute every 5 seconds (a short run still shows its steps), then every 20
+  if O.checks<O.CHECKS and C_Timer and C_Timer.After then O.checks=O.checks+1;C_Timer.After(O.checks<=12 and 5 or O.CHECK,function()O.Request(false,true)end)end
  elseif result.state=='done' then
   O.checks=0
   if result.key~=O.shown then
