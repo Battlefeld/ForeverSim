@@ -32,7 +32,9 @@ type personalStatus struct {
 	Finished string  `json:"finished,omitempty"`
 	Level    int     `json:"level,omitempty"`
 	Hours    float64 `json:"hours,omitempty"`
-	Key      string  `json:"key,omitempty"` // the character's items, talents and rotation the profile was calculated for
+	Key      string  `json:"key,omitempty"`     // the character's items, talents and rotation the profile was calculated for
+	Percent  int     `json:"percent,omitempty"` // how far the run is (the loading bar in the addon)
+	Phase    string  `json:"phase,omitempty"`
 }
 
 var personalMu sync.Mutex
@@ -90,7 +92,21 @@ func (s *Service) routeProfile(ctx context.Context, j Job) (any, error) {
 	st = personalStatus{State: "running", Message: "Eigene Route wird berechnet (einige Minuten)", Started: time.Now().UTC().Format(time.RFC3339), Level: level, Key: key}
 	s.setPersonalStatus(st)
 	go func() {
-		hours, e := s.planPersonal(context.Background(), j, req, level, dungeons)
+		// progress: the kill profile is most of the work (0-80 %), then the route (80-95 %) and the addon file
+		var last time.Time
+		report := func(percent int, phase string) { // called from the engine workers too: all under the lock
+			personalMu.Lock()
+			defer personalMu.Unlock()
+			if time.Since(last) < 2*time.Second && phase == "Kampfprofil" {
+				return
+			}
+			last = time.Now()
+			cur := st
+			cur.Percent, cur.Phase = percent, phase
+			cur.Message = fmt.Sprintf("Eigene Route: %s (%d %%)", phase, percent)
+			s.setPersonalStatus(cur)
+		}
+		hours, e := s.planPersonal(context.Background(), j, req, level, dungeons, report)
 		personalMu.Lock()
 		defer personalMu.Unlock()
 		done := st
@@ -99,7 +115,7 @@ func (s *Service) routeProfile(ctx context.Context, j Job) (any, error) {
 			log.Printf("Eigene Route: %v", e)
 			done.State, done.Message = "error", "Eigene Route: "+e.Error()
 		} else {
-			done.State, done.Hours = "done", hours
+			done.State, done.Hours, done.Percent, done.Phase = "done", hours, 100, "fertig"
 			done.Message = fmt.Sprintf("Eigene Route bis Stufe %d berechnet (%.1f h): im Spiel /reload eingeben", personalRouteTarget, hours)
 		}
 		s.setPersonalStatus(done)
@@ -108,14 +124,17 @@ func (s *Service) routeProfile(ctx context.Context, j Job) (any, error) {
 }
 
 // planPersonal: kill profile, route, addon file. Returns the route's hours from the character's level.
-func (s *Service) planPersonal(ctx context.Context, j Job, req map[string]any, level int, dungeons bool) (float64, error) {
+func (s *Service) planPersonal(ctx context.Context, j Job, req map[string]any, level int, dungeons bool, report func(percent int, phase string)) (float64, error) {
 	snap := child(j.State, "sim")
 	class := strings.ToLower(str(snap, "class"))
 	race, _, faction, e := routeIdentity(str(snap, "race"), class, str(snap, "faction"))
 	if e != nil {
 		return 0, e
 	}
-	profile, e := s.sim.personalKillProfile(ctx, req, class, level, personalRouteTarget)
+	report(1, "Kampfprofil")
+	profile, e := s.sim.personalKillProfile(ctx, req, class, level, personalRouteTarget, func(done, total int) {
+		report(1+done*79/max(total, 1), "Kampfprofil")
+	})
 	if e != nil {
 		return 0, e
 	}
@@ -147,10 +166,12 @@ func (s *Service) planPersonal(ctx context.Context, j Job, req map[string]any, l
 		}
 		return nil
 	}
+	report(80, "Route planen")
 	if e = run("extend", "-data", s.cfg.RoutesData, "-route", base, "-profiles", profiles, "-from", fmt.Sprint(level),
 		"-target", fmt.Sprint(personalRouteTarget), "-stages", "20s", "-budget", "0", "-out", planned); e != nil {
 		return 0, e
 	}
+	report(95, "ins Addon schreiben")
 	lua := filepath.Join(dir, "Personal.lua")
 	if e = run("export-addon", "-personal", "-data", s.cfg.RoutesData, "-routes", routes, "-profiles", profiles, "-out", lua); e != nil {
 		return 0, e
@@ -210,7 +231,7 @@ func parseTime(s string) time.Time { t, _ := time.Parse(time.RFC3339, s); return
 // personalKillProfile is the kill profile (as killProfile) of the live character: its engine request with each
 // level, fight length and target level. At its own level it fights with its own spellbook; above it the ranks of
 // each level (the overlay's choice), items and talents as they are now: still a lower bound for later levels.
-func (s *SimService) personalKillProfile(ctx context.Context, live map[string]any, class string, from, to int) (map[string]any, error) {
+func (s *SimService) personalKillProfile(ctx context.Context, live map[string]any, class string, from, to int, progress ...func(done, total int)) (map[string]any, error) {
 	var stats map[string]any
 	if e := json.Unmarshal(levelingData, &stats); e != nil {
 		return nil, e
@@ -252,7 +273,11 @@ func (s *SimService) personalKillProfile(ctx context.Context, live map[string]an
 		}
 		return req
 	}
-	levels, e := s.killLevels(ctx, base, from, to, iterations, request)
+	var step func(done, total int)
+	if len(progress) > 0 {
+		step = progress[0]
+	}
+	levels, e := s.killLevels(ctx, base, from, to, iterations, request, step)
 	if e != nil {
 		return nil, e
 	}

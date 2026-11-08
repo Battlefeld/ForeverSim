@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"sync/atomic"
 	"testing"
 )
 
@@ -16,7 +17,14 @@ func TestPersonalKillProfile(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	got, e := s.personalKillProfile(t.Context(), live, "mage", 30, 31)
+	var calls, last, total atomic.Int64
+	got, e := s.personalKillProfile(t.Context(), live, "mage", 30, 31, func(done, all int) {
+		calls.Add(1)
+		if int64(done) > last.Load() {
+			last.Store(int64(done))
+		}
+		total.Store(int64(all))
+	})
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -31,6 +39,9 @@ func TestPersonalKillProfile(t *testing.T) {
 		if p.Damage <= 0 {
 			t.Errorf("point %+v", p)
 		}
+	}
+	if n := int64(2 * len(killOffsets) * len(killWindows)); calls.Load() != n || last.Load() != n || total.Load() != n {
+		t.Fatalf("progress %d calls, last %d of %d", calls.Load(), last.Load(), total.Load())
 	}
 	if _, has := live[engineSpellsKey]; !has {
 		t.Fatal("the live request lost its spellbook")

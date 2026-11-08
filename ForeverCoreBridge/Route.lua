@@ -396,8 +396,9 @@ end
 -- the ForeverRoutes route from its level to 40 with it (job route-profile, a few minutes in the background). The addon
 -- takes it with /reload. Only when the player asks (/fc eigene route, ForeverRoutes' menu): the route stays as it is
 -- otherwise. /fc eigene route an: after every change of items, talents or level. The job answers at once; while it
--- runs, the state is asked again every two minutes, up to half an hour (each answer takes a reply slot).
-local O={rev=nil,checks=0,DELAY=30,CHECK=120,CHECKS=15}
+-- runs, the state is asked again every 20 seconds, up to half an hour (each answer takes a reply slot): the progress
+-- (O.state: state, percent, phase) shows as a loading bar in ForeverRoutes' window.
+local O={rev=nil,checks=0,DELAY=30,CHECK=20,CHECKS=90}
 C.PersonalRoute=O
 local function wanted()
  local d=ForeverCoreBridgeDB or{}
@@ -414,8 +415,16 @@ end
 local function chat(text)
  if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage('|cff66ccffForeverRoutes|r '..text)end
 end
+local function notify()
+ local fr=_G.ForeverRoutes
+ if fr and fr.Refresh then pcall(fr.Refresh)end
+end
 function O.Receive(result,err)
- if type(result)~='table' then if err then C.Say('Eigene Route: '..tostring(err));chat('Eigene Route: '..tostring(err))end;return end
+ if type(result)~='table' then
+  if err then C.Say('Eigene Route: '..tostring(err));chat('Eigene Route: '..tostring(err));O.state={state='error',message='Eigene Route: '..tostring(err)};notify()end
+  return
+ end
+ O.state=result;notify()
  if result.state=='running' then
   C.Say(result.message or 'Eigene Route wird berechnet')
   if O.checks==0 then chat(result.message or 'Eigene Route wird berechnet')end
@@ -434,11 +443,20 @@ function O.Receive(result,err)
 end
 function O.Request(force,check)
  O.scheduled=false
- if not force and not wanted()then return false end
+ -- the follow-up questions of a run (check) go out like the request that started it; in combat a bit later (the
+ -- character is read out of combat)
+ if check and InCombatLockdown and InCombatLockdown()then
+  if C_Timer and C_Timer.After then C_Timer.After(O.CHECK,function()O.Request(false,true)end)end
+  return false
+ end
+ if not force and not check and not wanted()then return false end
+ local d=ForeverCoreBridgeDB or{}
+ if d.enabled==false or d.pixelOff then return false end
  if not check and not force and O.rev==C.simRevision then return false end
  for _,job in ipairs(C.queue or{})do if job.kind=='route-profile'then return false end end
  if C.pending and C.pending.kind=='route-profile'then return false end
  if not check then O.rev=C.simRevision;O.checks=0 end
+ if force then O.state={state='running',percent=0,phase='wird gestartet',message='Eigene Route wird gestartet'};notify()end
  return C.Request('route-profile',{dungeons=dungeons(),force=force or nil},O.Receive)
 end
 function O.Schedule()

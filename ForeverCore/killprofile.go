@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 // The client's expected stats per class and level, the same table the engine's level overlay is built from.
@@ -237,7 +238,8 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 
 // killLevels runs every window of every level and target offset in the engine (request builds one run) and gathers
 // the points per level, with the naked character's health and mana of that level (base: leveling-data.json's class).
-func (s *SimService) killLevels(ctx context.Context, base map[string]any, from, to int, iterations float64, request func(level, target int, seconds float64) map[string]any) ([]*killLevel, error) {
+func (s *SimService) killLevels(ctx context.Context, base map[string]any, from, to int, iterations float64, request func(level, target int, seconds float64) map[string]any, progress ...func(done, total int)) ([]*killLevel, error) {
+	var finished atomic.Int64
 	type job struct {
 		level, offset int
 		seconds       float64
@@ -266,6 +268,9 @@ func (s *SimService) killLevels(ctx context.Context, base map[string]any, from, 
 					continue
 				}
 				points[i], errs[i] = killPointOf(res, jb.seconds, iterations)
+				if n := finished.Add(1); len(progress) > 0 && progress[0] != nil {
+					progress[0](int(n), len(jobs))
+				}
 			}
 		}()
 	}
