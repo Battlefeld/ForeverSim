@@ -2,6 +2,13 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/2403040/4": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#4)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/2403040/4",
+      "sha256": "eee33003657bdaeda0bc7ab2d351d1d9a201b63938a8ec09e98bf3aed94dae23",
+      "published": "Sat, 07 Nov 2026 01:07:59 GMT",
+      "relevant": true
+    },
     "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4": {
       "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#4)",
       "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4",
@@ -36,6 +43,27 @@
       "sha256": "a74ac10d24035eb07d295f672bfcb2e304c2a0fa381a94a8513294486ed473e3",
       "published": "Thu, 05 Nov 2026 22:00:07 GMT",
       "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/phasing-issues-with-group-still-persist-from-beta/2402367/2": {
+      "title": "Kaivax: Phasing issues with group still persist from beta (#2)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/phasing-issues-with-group-still-persist-from-beta/2402367/2",
+      "sha256": "3d34f23cbed9591a14a9049c0ca62038bf209218e52f07217423050be07b4f3c",
+      "published": "Thu, 05 Nov 2026 15:51:58 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/known-issues-wow-forever-updated-nov-5/2402363/1": {
+      "title": "Kaivax: Known Issues - WoW Forever - Updated Nov. 5",
+      "url": "https://us.forums.blizzard.com/en/wow/t/known-issues-wow-forever-updated-nov-5/2402363/1",
+      "sha256": "41b56cc27627efcc72a87b2db44aae894da00c6ee53e4105e96cdc10449bb2b5",
+      "published": "Thu, 05 Nov 2026 15:42:52 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-bug-report-forum-guidelines/2402319/1": {
+      "title": "Kaivax: WoW Forever Bug Report Forum Guidelines",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-bug-report-forum-guidelines/2402319/1",
+      "sha256": "4174db7765cb1ef11db0e003bcfe41f0ed79d382e5bb3ceb3f026f03eba82aec",
+      "published": "Thu, 05 Nov 2026 15:22:45 GMT",
+      "relevant": true
     },
     "https://us.forums.blizzard.com/en/wow/t/zeppelins-broken/2401777/15": {
       "title": "Aggrend: Zeppelins broken? (#15)",
@@ -323,34 +351,6 @@
       "sha256": "bda87e68da7cf9ba68ffd4ad5bfbafe28391ffb7bea1e169140d1434ef1b5e6d",
       "published": "Thu, 22 Oct 2026 15:30:54 GMT",
       "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/forever-beta-will-return-shortly/2389150/1": {
-      "title": "Zorbrix: Forever Beta Will Return Shortly",
-      "url": "https://us.forums.blizzard.com/en/wow/t/forever-beta-will-return-shortly/2389150/1",
-      "sha256": "5209ec9a5c4d56fe762ea7432cf4e7223173059317cf28c06bde071b8bf644e9",
-      "published": "Thu, 22 Oct 2026 01:46:44 GMT",
-      "relevant": true
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/testing-wow-forever-today-21-october/636859/131": {
-      "title": "Kaivax: Testing WoW Forever Today - 21 October (#131)",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/testing-wow-forever-today-21-october/636859/131",
-      "sha256": "d61323010acd62167f37be3e5b0715b7e69728cdcaf0ac3ae823f9280086fab0",
-      "published": "Wed, 21 Oct 2026 18:39:42 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/testing-wow-forever-today-october-21/2388547/1": {
-      "title": "Kaivax: Testing WoW Forever Today - October 21",
-      "url": "https://us.forums.blizzard.com/en/wow/t/testing-wow-forever-today-october-21/2388547/1",
-      "sha256": "a4e136bcd5c70884ff9bc29b7efbbe43be719aa95256f5aafb3eb75f7121584c",
-      "published": "Wed, 21 Oct 2026 16:28:54 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-early-name-reservations-are-now-live/636753/1": {
-      "title": "Blizzard Entertainment: World of Warcraft: Forever Early Name Reservations Are Now Live!",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/world-of-warcraft-forever-early-name-reservations-are-now-live/636753/1",
-      "sha256": "8e33caf69cd74b03aa9e593da1723fa224adc66a820b8efa1fb58063681823b4",
-      "published": "Tue, 20 Oct 2026 21:00:15 GMT",
-      "relevant": false
     }
   },
   "lastCheck": {
@@ -360,29 +360,38 @@
     "changes": [
       {
         "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#4)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4",
-        "sha256": "0ed2364dc9afde0a98fa6e33c21fd81741de8e76eb23552502e33116b1ab5c32",
-        "published": "Sat, 07 Nov 2026 01:02:28 GMT",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/2403040/4",
+        "sha256": "eee33003657bdaeda0bc7ab2d351d1d9a201b63938a8ec09e98bf3aed94dae23",
+        "published": "Sat, 07 Nov 2026 01:07:59 GMT",
         "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/2403040/4",
         "kind": "new"
       },
       {
-        "title": "Kaivax: Class Tuning Incoming - 10 November",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/class-tuning-incoming-10-november/640100/1",
-        "sha256": "e036d1260f1af09aeff2c6ae62045b3942153f7674aa9ceeeee5e50c57d14180",
-        "published": "Fri, 06 Nov 2026 21:12:54 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/class-tuning-incoming-10-november/640100/1",
+        "title": "Kaivax: Phasing issues with group still persist from beta (#2)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/phasing-issues-with-group-still-persist-from-beta/2402367/2",
+        "sha256": "3d34f23cbed9591a14a9049c0ca62038bf209218e52f07217423050be07b4f3c",
+        "published": "Thu, 05 Nov 2026 15:51:58 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/phasing-issues-with-group-still-persist-from-beta/2402367/2",
         "kind": "new"
       },
       {
-        "title": "Kaivax: Class Tuning Incoming - November 10",
-        "url": "https://us.forums.blizzard.com/en/wow/t/class-tuning-incoming-november-10/2404092/1",
-        "sha256": "68b48a2b5caf7cf873a53e1ac00cc0ff7dea26b16d0c924c9628450b0b78a640",
-        "published": "Fri, 06 Nov 2026 21:11:39 GMT",
+        "title": "Kaivax: Known Issues - WoW Forever - Updated Nov. 5",
+        "url": "https://us.forums.blizzard.com/en/wow/t/known-issues-wow-forever-updated-nov-5/2402363/1",
+        "sha256": "41b56cc27627efcc72a87b2db44aae894da00c6ee53e4105e96cdc10449bb2b5",
+        "published": "Thu, 05 Nov 2026 15:42:52 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/class-tuning-incoming-november-10/2404092/1",
+        "id": "https://us.forums.blizzard.com/en/wow/t/known-issues-wow-forever-updated-nov-5/2402363/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Bug Report Forum Guidelines",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-bug-report-forum-guidelines/2402319/1",
+        "sha256": "4174db7765cb1ef11db0e003bcfe41f0ed79d382e5bb3ceb3f026f03eba82aec",
+        "published": "Thu, 05 Nov 2026 15:22:45 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-bug-report-forum-guidelines/2402319/1",
         "kind": "new"
       }
     ],

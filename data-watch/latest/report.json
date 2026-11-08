@@ -28,48 +28,7 @@
       "responseSHA256": "c58a8000ee38331e64765506ab1e9dc2329a573decd98914283f0ebe9a83d9b6"
     }
   },
-  "buildChanges": {
-    "wowf": {
-      "before": {
-        "BuildConfig": "9006ba6948388dd0d4a0578e64b8a92e",
-        "BuildId": "70790",
-        "CDNConfig": "0e139f0e95542dbe2a5462d8a6b2ebae",
-        "KeyRing": "",
-        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a",
-        "Region": "eu",
-        "VersionsName": "1.60.1.70790"
-      },
-      "after": {
-        "Region": "eu",
-        "BuildConfig": "5ada954223f7c409ea172361f5c9e565",
-        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
-        "KeyRing": "",
-        "BuildId": "70862",
-        "VersionsName": "1.60.1.70862",
-        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
-      }
-    },
-    "wow_classic_beta": {
-      "before": {
-        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "BuildId": "70532",
-        "CDNConfig": "0e139f0e95542dbe2a5462d8a6b2ebae",
-        "KeyRing": "",
-        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5",
-        "Region": "eu",
-        "VersionsName": "1.60.1.70532"
-      },
-      "after": {
-        "Region": "eu",
-        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
-        "KeyRing": "",
-        "BuildId": "70532",
-        "VersionsName": "1.60.1.70532",
-        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
-      }
-    }
-  },
+  "buildChanges": {},
   "tables": {},
   "documentationStatus": "not_assessed",
   "hotfixCoverage": "downloaded_not_applied",
@@ -81,9 +40,9 @@
     "wowf": {
       "format": 9,
       "build": 70862,
-      "records": 61085,
-      "bytes": 4780894,
-      "sha256": "6119ef3a1dc48324fc368c29b30f3e8cdbee25abe6eaa7c4f4ccf8c61c47a2e1",
+      "records": 70634,
+      "bytes": 5248791,
+      "sha256": "97e77d12697d7f184fed5c77fb73672093e20ff358ad72037f3b614837f857b7",
       "status": "available",
       "source": "https://storage.googleapis.com/raidbots-static/wow/70862/enUS/DBCache.bin",
       "region": "NA",
@@ -113,35 +72,44 @@
     "changes": [
       {
         "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#4)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4",
-        "sha256": "0ed2364dc9afde0a98fa6e33c21fd81741de8e76eb23552502e33116b1ab5c32",
-        "published": "Sat, 07 Nov 2026 01:02:28 GMT",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/2403040/4",
+        "sha256": "eee33003657bdaeda0bc7ab2d351d1d9a201b63938a8ec09e98bf3aed94dae23",
+        "published": "Sat, 07 Nov 2026 01:07:59 GMT",
         "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/4",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/2403040/4",
         "kind": "new"
       },
       {
-        "title": "Kaivax: Class Tuning Incoming - 10 November",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/class-tuning-incoming-10-november/640100/1",
-        "sha256": "e036d1260f1af09aeff2c6ae62045b3942153f7674aa9ceeeee5e50c57d14180",
-        "published": "Fri, 06 Nov 2026 21:12:54 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/class-tuning-incoming-10-november/640100/1",
+        "title": "Kaivax: Phasing issues with group still persist from beta (#2)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/phasing-issues-with-group-still-persist-from-beta/2402367/2",
+        "sha256": "3d34f23cbed9591a14a9049c0ca62038bf209218e52f07217423050be07b4f3c",
+        "published": "Thu, 05 Nov 2026 15:51:58 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/phasing-issues-with-group-still-persist-from-beta/2402367/2",
         "kind": "new"
       },
       {
-        "title": "Kaivax: Class Tuning Incoming - November 10",
-        "url": "https://us.forums.blizzard.com/en/wow/t/class-tuning-incoming-november-10/2404092/1",
-        "sha256": "68b48a2b5caf7cf873a53e1ac00cc0ff7dea26b16d0c924c9628450b0b78a640",
-        "published": "Fri, 06 Nov 2026 21:11:39 GMT",
+        "title": "Kaivax: Known Issues - WoW Forever - Updated Nov. 5",
+        "url": "https://us.forums.blizzard.com/en/wow/t/known-issues-wow-forever-updated-nov-5/2402363/1",
+        "sha256": "41b56cc27627efcc72a87b2db44aae894da00c6ee53e4105e96cdc10449bb2b5",
+        "published": "Thu, 05 Nov 2026 15:42:52 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/class-tuning-incoming-november-10/2404092/1",
+        "id": "https://us.forums.blizzard.com/en/wow/t/known-issues-wow-forever-updated-nov-5/2402363/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW Forever Bug Report Forum Guidelines",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-bug-report-forum-guidelines/2402319/1",
+        "sha256": "4174db7765cb1ef11db0e003bcfe41f0ed79d382e5bb3ceb3f026f03eba82aec",
+        "published": "Thu, 05 Nov 2026 15:22:45 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-bug-report-forum-guidelines/2402319/1",
         "kind": "new"
       }
     ],
     "relevantChanges": 3
   },
-  "checkedAt": "2026-11-07T11:48:11.505938Z",
+  "checkedAt": "2026-11-08T12:06:26.781010Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true
