@@ -87,7 +87,7 @@ function C.Request(kind,payload,callback,opts)
  end
  -- One rotation for everything: item values, dungeon lists and simulations are computed with the rotation that is
  -- active for this character (see Sim.lua), not with the first one the engine happens to list.
- if(kind=='item'or kind=='sim'or kind=='weights'or kind=='analysis'or kind=='enhancements')and C.ActiveRotation then
+ if(kind=='item'or kind=='sim'or kind=='weights'or kind=='analysis'or kind=='enhancements'or kind=='route-profile')and C.ActiveRotation then
   payload=payload or{}
   if payload.rotation==nil then local name=C.ActiveRotation();if name then payload.rotation=name;payload.rotationSoft=true end end
  end
@@ -320,6 +320,10 @@ SlashCmdList.FOREVERCORE=function(msg)
   C.Say(ForeverCoreBridgeDB.prefetch and'Vorausberechnung an: Questbelohnungen und Taschen werden vorab verglichen'or'Vorausberechnung aus: Items werden erst beim Ansehen verglichen')
   if ForeverCoreBridgeDB.prefetch then C.Prefetch.Schedule()end
  elseif msg=='route'then C.RequestRoute()
+ elseif(msg=='eigene route'or msg=='eigene')and C.PersonalRoute then C.PersonalRoute.Request(true)
+ elseif(msg=='eigene route an'or msg=='eigene route aus')and C.PersonalRoute then
+  ForeverCoreBridgeDB.personalRoute=(msg=='eigene route an')or false
+  C.Say(ForeverCoreBridgeDB.personalRoute and'Eigene Route: wird nach Gear-, Talent- und Stufenwechsel neu berechnet'or'Eigene Route aus: die mitgelieferte Route gilt (/fc eigene route rechnet einmal)')
  elseif(msg=='route an'or msg=='route aus')and C.Route then
   ForeverCoreBridgeDB.routeNext=(msg=='route an')or nil
   C.Say(ForeverCoreBridgeDB.routeNext and'Route: plant nach jeder Quest-Aenderung neu (/fc route aus)'or'Route: automatisches Planen aus (/fc route plant einmal)')

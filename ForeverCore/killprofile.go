@@ -222,6 +222,22 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 		return req
 	}
 
+	levels, e := s.killLevels(ctx, base, from, to, iterations, request)
+	if e != nil {
+		return nil, e
+	}
+	return map[string]any{
+		"schema": killProfileSchema, "source": "ForeverCore " + Version + " / Engine " + s.Config.EngineRevision,
+		"class": class, "race": race, "spec": spec, "rotation": selected, "classOptions": options,
+		"gear": "starter weapon", "talents": "none", "spellbook": "ranks by level", "iterations": iterations,
+		"targetArmorEstimated": true, "levels": levels,
+		"note": "Synthetischer Charakter mit der weissen Startwaffe, sonst ohne Ausruestung und Talente (Untergrenze); Jaeger ohne Begleiter. Jeder Kampf beginnt mit vollem Mana; das Ziel greift nicht an.",
+	}, nil
+}
+
+// killLevels runs every window of every level and target offset in the engine (request builds one run) and gathers
+// the points per level, with the naked character's health and mana of that level (base: leveling-data.json's class).
+func (s *SimService) killLevels(ctx context.Context, base map[string]any, from, to int, iterations float64, request func(level, target int, seconds float64) map[string]any) ([]*killLevel, error) {
 	type job struct {
 		level, offset int
 		seconds       float64
@@ -278,13 +294,7 @@ func (s *SimService) killProfile(ctx context.Context, j Job) (any, error) {
 		lv.Targets[key] = append(lv.Targets[key], points[i])
 	}
 	sort.Slice(levels, func(a, b int) bool { return levels[a].Level < levels[b].Level })
-	return map[string]any{
-		"schema": killProfileSchema, "source": "ForeverCore " + Version + " / Engine " + s.Config.EngineRevision,
-		"class": class, "race": race, "spec": spec, "rotation": selected, "classOptions": options,
-		"gear": "starter weapon", "talents": "none", "spellbook": "ranks by level", "iterations": iterations,
-		"targetArmorEstimated": true, "levels": levels,
-		"note": "Synthetischer Charakter mit der weissen Startwaffe, sonst ohne Ausruestung und Talente (Untergrenze); Jaeger ohne Begleiter. Jeder Kampf beginnt mit vollem Mana; das Ziel greift nicht an.",
-	}, nil
+	return levels, nil
 }
 
 func cloneItems(items []any) []any {

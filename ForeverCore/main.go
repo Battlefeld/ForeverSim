@@ -142,6 +142,8 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 		r.Result, e = s.sim.Run(ctx, j)
 	case "route-next":
 		r.Result, e = s.routeNext(ctx, j)
+	case "route-profile":
+		r.Result, e = s.routeProfile(ctx, j)
 	case "kill-profile":
 		r.Result, e = s.sim.killProfile(ctx, j)
 	case "sources":

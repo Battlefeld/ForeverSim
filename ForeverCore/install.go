@@ -298,6 +298,9 @@ func installWith(p fs.FS, addons, appDir, version string, now time.Time, whileRu
 			}
 			return rep, fmt.Errorf("Addon %s: %w", name, err)
 		}
+		if name == "ForeverRoutes" {
+			restorePersonalRoute(filepath.Join(appDir, "Data"), target) // the character's own route stays
+		}
 	}
 	rep.AddonSet = set
 	// the reply slots

@@ -80,7 +80,11 @@ func (s *Service) routeNext(ctx context.Context, j Job) (any, error) {
 		args = append(args, "-route", r)
 	}
 	// the class's kill profile ForeverRoutes ships beside the dataset, else one calculated here
-	profile, pending := filepath.Join(filepath.Dir(data), "profiles", class+".json"), ""
+	// (the character's own one first, when ForeverCore calculated it for the personal route: job route-profile)
+	profile, pending := filepath.Join(personalDir(s.cfg), "profile-"+strings.ToLower(race)+"-"+class+".json"), ""
+	if !fileOK(profile) {
+		profile = filepath.Join(filepath.Dir(data), "profiles", class+".json")
+	}
 	if !fileOK(profile) {
 		profile, pending = s.killProfileFor(class, race)
 	}

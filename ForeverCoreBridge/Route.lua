@@ -384,3 +384,59 @@ C.Capture=function(kind,...)
  if kind=='route-next'then return R.Capture()end
  return baseCapture(kind,...)
 end
+
+-- Own route: after a change of items, talents or level (a new simulation state) ForeverCore calculates the kill
+-- profile of this character (its items, talents and rotation) and plans the ForeverRoutes route from its level to 40
+-- with it (job route-profile, a few minutes in the background). The addon takes it with /reload. The job answers at
+-- once; while it runs, the state is asked again twice later (each answer takes a reply slot). /fc eigene route:
+-- calculate again now.
+local O={rev=nil,checks=0,DELAY=30,CHECK=240}
+C.PersonalRoute=O
+local function wanted()
+ local d=ForeverCoreBridgeDB or{}
+ if d.enabled==false or d.pixelOff or d.personalRoute==false then return false end
+ if InCombatLockdown and InCombatLockdown()then return false end
+ local level=UnitLevel and UnitLevel('player')or 0
+ return level>=10 and level<40
+end
+local function dungeons()
+ local c=_G.ForeverRoutesCharDB
+ if type(c)~='table' then return true end
+ return(c.dungeons or c.group)and true or false
+end
+function O.Receive(result,err)
+ if type(result)~='table' then if err then C.Say('Eigene Route: '..tostring(err))end;return end
+ if result.state=='running' then
+  C.Say(result.message or 'Eigene Route wird berechnet')
+  if O.checks<2 and C_Timer and C_Timer.After then O.checks=O.checks+1;C_Timer.After(O.CHECK,function()O.Request(false,true)end)end
+ elseif result.state=='done' then
+  O.checks=0
+  if result.key~=O.shown then
+   O.shown=result.key
+   C.Say(result.message or 'Eigene Route berechnet: /reload')
+   if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage('|cff66ccffForeverRoutes|r '..(result.message or 'Eigene Route berechnet: /reload'))end
+  end
+ elseif result.state=='error' then
+  O.checks=0
+  C.Say(result.message or 'Eigene Route fehlgeschlagen')
+ end
+end
+function O.Request(force,check)
+ O.scheduled=false
+ if not force and not wanted()then return false end
+ if not check and not force and O.rev==C.simRevision then return false end
+ for _,job in ipairs(C.queue or{})do if job.kind=='route-profile'then return false end end
+ if C.pending and C.pending.kind=='route-profile'then return false end
+ if not check then O.rev=C.simRevision;O.checks=0 end
+ return C.Request('route-profile',{dungeons=dungeons(),force=force or nil},O.Receive)
+end
+function O.Schedule()
+ if O.scheduled then return end
+ O.scheduled=true
+ if C_Timer and C_Timer.After then C_Timer.After(O.DELAY,function()O.Request(false)end)else O.Request(false)end
+end
+local personalFrame=CreateFrame and CreateFrame('Frame')
+if personalFrame then
+ for _,event in ipairs({'PLAYER_ENTERING_WORLD','PLAYER_EQUIPMENT_CHANGED','PLAYER_LEVEL_UP','PLAYER_TALENT_UPDATE','CHARACTER_POINTS_CHANGED'})do pcall(personalFrame.RegisterEvent,personalFrame,event)end
+ personalFrame:SetScript('OnEvent',function()O.Schedule()end)
+end
