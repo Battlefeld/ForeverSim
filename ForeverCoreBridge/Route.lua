@@ -404,21 +404,25 @@ local function dungeons()
  if type(c)~='table' then return true end
  return(c.dungeons or c.group)and true or false
 end
+local function chat(text)
+ if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage('|cff66ccffForeverRoutes|r '..text)end
+end
 function O.Receive(result,err)
- if type(result)~='table' then if err then C.Say('Eigene Route: '..tostring(err))end;return end
+ if type(result)~='table' then if err then C.Say('Eigene Route: '..tostring(err));chat('Eigene Route: '..tostring(err))end;return end
  if result.state=='running' then
   C.Say(result.message or 'Eigene Route wird berechnet')
+  if O.checks==0 then chat(result.message or 'Eigene Route wird berechnet')end
   if O.checks<2 and C_Timer and C_Timer.After then O.checks=O.checks+1;C_Timer.After(O.CHECK,function()O.Request(false,true)end)end
  elseif result.state=='done' then
   O.checks=0
   if result.key~=O.shown then
    O.shown=result.key
    C.Say(result.message or 'Eigene Route berechnet: /reload')
-   if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage('|cff66ccffForeverRoutes|r '..(result.message or 'Eigene Route berechnet: /reload'))end
+   chat(result.message or 'Eigene Route berechnet: /reload')
   end
  elseif result.state=='error' then
   O.checks=0
-  C.Say(result.message or 'Eigene Route fehlgeschlagen')
+  C.Say(result.message or 'Eigene Route fehlgeschlagen');chat(result.message or 'Eigene Route fehlgeschlagen')
  end
 end
 function O.Request(force,check)
