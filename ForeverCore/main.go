@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -109,6 +110,9 @@ func (s *Service) Execute(ctx context.Context, j Job) (r Reply) {
 			s.clientMu.Lock()
 			connected := s.clientSession != j.Session
 			s.clientSession = j.Session
+			if connected {
+				lastClientSession.Store(time.Now().UnixNano()) // a /reload or a new start of WoW: a new session
+			}
 			s.clientMu.Unlock()
 			if connected {
 				go s.checkClientData(ctx, true)
@@ -269,3 +273,7 @@ func newService(cfg Config) *Service {
 }
 
 func decodeJob(b []byte) (Job, error) { var j Job; e := json.Unmarshal(b, &j); return j, e }
+
+// lastClientSession: when the game last connected with a new session (each /reload and each start of WoW brings
+// one). The app uses it to know that addons put in while WoW ran are loaded now.
+var lastClientSession atomic.Int64

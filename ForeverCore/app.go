@@ -76,6 +76,7 @@ type app struct {
 	ready     string // a downloaded program, checked, to swap in
 	// reloadNeeded: new addons went in while WoW runs; /reload in the game takes them
 	reloadNeeded bool
+	reloadSince  int64 // when the addons went in while WoW ran (UnixNano): a game session after that has loaded them
 	checkNow     bool   // the player asked to look for a new version
 	restart      string // the program to start after quitting (an update or going back)
 	elevate      bool   // start it with administrator rights (Windows asks once; WoW in Program Files)
@@ -170,17 +171,18 @@ func (a *app) keepUpToDate(ctx context.Context) {
 					log.Printf("Addons dieser Version werden eingespielt, WoW laeuft: im Spiel /reload eingeben")
 					if _, err := a.installLive(m.Addons); err == nil {
 						a.mu.Lock()
-						a.reloadNeeded = true
+						a.reloadNeeded, a.reloadSince = true, time.Now().UnixNano()
 						a.mu.Unlock()
 					}
 				}
 			}
 		}
-		if !wowRunning() {
-			a.mu.Lock()
+		a.mu.Lock()
+		// loaded: WoW closed, or the game connected anew (/reload) after the addons went in
+		if a.reloadNeeded && (!wowRunning() || lastClientSession.Load() > a.reloadSince) {
 			a.reloadNeeded = false
-			a.mu.Unlock()
 		}
+		a.mu.Unlock()
 		a.mu.Lock()
 		now := a.checkNow
 		a.checkNow = false
@@ -202,10 +204,18 @@ func (a *app) keepUpToDate(ctx context.Context) {
 			}
 			a.mu.Unlock()
 		}
+		// while addons wait (for WoW to close, for /reload) look often: the status turns green right after
+		wait := 30 * time.Second
+		a.mu.Lock()
+		waiting := a.reloadNeeded
+		a.mu.Unlock()
+		if waiting || a.addonsPending() {
+			wait = 3 * time.Second
+		}
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.After(30 * time.Second):
+		case <-time.After(wait):
 		}
 	}
 }
