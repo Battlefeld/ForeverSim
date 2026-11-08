@@ -39,14 +39,21 @@ func TestPersonalKillProfile(t *testing.T) {
 
 func TestPersonalRouteFiles(t *testing.T) {
 	dir := t.TempDir()
-	if e := atomicWrite(personalLua(dir), []byte("-- route\n")); e != nil {
+	if e := atomicWrite(personalLua(dir), []byte("ForeverRoutesData.personal = {}\n")); e != nil {
 		t.Fatal(e)
 	}
 	addon := filepath.Join(t.TempDir(), "ForeverRoutes")
 	restorePersonalRoute(dir, addon)
 	b, e := os.ReadFile(filepath.Join(addon, "Data", "Personal.lua"))
-	if e != nil || string(b) != "-- route\n" {
+	if e != nil || string(b) != "ForeverRoutesData.personal = {}\n" {
 		t.Fatalf("not restored: %v %q", e, b)
+	}
+	// an earlier personal route (it replaced the shipped one whatever the data) is not put back
+	_ = atomicWrite(personalLua(dir), []byte("ForeverRoutesData.routes[\"x\"] = {}\n"))
+	old := filepath.Join(t.TempDir(), "ForeverRoutes")
+	restorePersonalRoute(dir, old)
+	if _, e := os.Stat(filepath.Join(old, "Data", "Personal.lua")); e == nil {
+		t.Fatal("an old-form personal route was put back")
 	}
 	a := personalKey(map[string]any{"x": 1.0}, 30, "e", "r")
 	if a == personalKey(map[string]any{"x": 1.0}, 31, "e", "r") || a == personalKey(map[string]any{"x": 2.0}, 30, "e", "r") || a != personalKey(map[string]any{"x": 1.0}, 30, "e", "r") {

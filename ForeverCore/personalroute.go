@@ -182,7 +182,9 @@ func personalHours(path string) float64 {
 
 // restorePersonalRoute puts ForeverCore's copy of the personal route into a freshly installed ForeverRoutes addon.
 func restorePersonalRoute(dataDir, addon string) {
-	if b, e := os.ReadFile(personalLua(dataDir)); e == nil {
+	// only one in the form the addon checks against its data (ForeverRoutesData.personal with dataVersion); an
+	// earlier one replaced the shipped route whatever the data were and is left out
+	if b, e := os.ReadFile(personalLua(dataDir)); e == nil && strings.Contains(string(b), "ForeverRoutesData.personal") {
 		_ = atomicWrite(filepath.Join(addon, "Data", "Personal.lua"), b)
 	}
 }
