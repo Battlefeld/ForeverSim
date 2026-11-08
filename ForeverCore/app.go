@@ -30,6 +30,7 @@ var appPage string
 
 // The checked-in Windows resource makes the same icon available to every Windows build and shortcut.
 // Regenerate it when assets/ForeverCore.ico changes.
+//
 //go:generate go run github.com/akavel/rsrc@v0.10.2 -arch amd64 -ico assets/ForeverCore.ico -o icon_windows_amd64.syso
 //go:embed assets/ForeverCore.ico
 var appIcon []byte
@@ -76,7 +77,7 @@ type app struct {
 	ready     string // a downloaded program, checked, to swap in
 	// reloadNeeded: new addons went in while WoW runs; /reload in the game takes them
 	reloadNeeded bool
-	reloadSince  int64 // when the addons went in while WoW ran (UnixNano): a game session after that has loaded them
+	reloadSince  int64  // when the addons went in while WoW ran (UnixNano): a game session after that has loaded them
 	checkNow     bool   // the player asked to look for a new version
 	restart      string // the program to start after quitting (an update or going back)
 	elevate      bool   // start it with administrator rights (Windows asks once; WoW in Program Files)
@@ -383,25 +384,26 @@ func (a *app) routes() http.Handler {
 
 // appStatus is what the window shows.
 type appStatus struct {
-	Version     string        `json:"version"`
-	Dir         string        `json:"dir"`
-	Installed   bool          `json:"installed"`
-	Damaged     []string      `json:"damaged,omitempty"`
-	Addons      string        `json:"addons,omitempty"`
-	Package     bool          `json:"package"`     // this program carries an installation package
-	PackageInfo string        `json:"packageInfo"` // why it cannot install, when it cannot
-	Bridge      bool          `json:"bridge"`      // the connection runs
-	BridgeError string        `json:"bridgeError,omitempty"`
-	Busy        string        `json:"busy,omitempty"`
-	WoW         bool          `json:"wow"`  // a WoW client runs
-	Data        any           `json:"data"` // the data check (ForeverCore's own status)
-	Backup      string        `json:"backup,omitempty"`
-	Installs    []WoWInstall  `json:"installs,omitempty"`
-	Routes      *routesStatus `json:"routes,omitempty"`
-	Update      updateState   `json:"update"`
-	Pending     bool          `json:"addonsPending"` // the addons of this version wait for WoW to close
-	Reload      bool          `json:"reloadNeeded"`  // new addons were put in while WoW runs: /reload takes them
-	GitHub      bool          `json:"github"`        // a GitHub access is there (updates of the private repositories)
+	Version     string          `json:"version"`
+	Dir         string          `json:"dir"`
+	Installed   bool            `json:"installed"`
+	Damaged     []string        `json:"damaged,omitempty"`
+	Addons      string          `json:"addons,omitempty"`
+	Package     bool            `json:"package"`     // this program carries an installation package
+	PackageInfo string          `json:"packageInfo"` // why it cannot install, when it cannot
+	Bridge      bool            `json:"bridge"`      // the connection runs
+	BridgeError string          `json:"bridgeError,omitempty"`
+	Busy        string          `json:"busy,omitempty"`
+	WoW         bool            `json:"wow"`  // a WoW client runs
+	Data        any             `json:"data"` // the data check (ForeverCore's own status)
+	Backup      string          `json:"backup,omitempty"`
+	Installs    []WoWInstall    `json:"installs,omitempty"`
+	Routes      *routesStatus   `json:"routes,omitempty"`
+	Update      updateState     `json:"update"`
+	Pending     bool            `json:"addonsPending"`      // the addons of this version wait for WoW to close
+	Reload      bool            `json:"reloadNeeded"`       // new addons were put in while WoW runs: /reload takes them
+	GitHub      bool            `json:"github"`             // a GitHub access is there (updates of the private repositories)
+	Personal    *personalStatus `json:"personal,omitempty"` // the own route (job route-profile): running, done or why not
 }
 
 type routesStatus struct {
@@ -440,6 +442,10 @@ func (a *app) status() appStatus {
 	st.Reload = a.reloadNeeded
 	a.mu.Unlock()
 	st.GitHub = githubToken() != ""
+	var own personalStatus
+	if loadJSON(filepath.Join(a.dir, "Data", "Personal", "status.json"), &own) == nil && own.State != "" {
+		st.Personal = &own
+	}
 	return st
 }
 

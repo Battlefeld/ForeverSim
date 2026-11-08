@@ -396,8 +396,8 @@ end
 -- the ForeverRoutes route from its level to 40 with it (job route-profile, a few minutes in the background). The addon
 -- takes it with /reload. Only when the player asks (/fc eigene route, ForeverRoutes' menu): the route stays as it is
 -- otherwise. /fc eigene route an: after every change of items, talents or level. The job answers at once; while it
--- runs, the state is asked again twice later (each answer takes a reply slot).
-local O={rev=nil,checks=0,DELAY=30,CHECK=240}
+-- runs, the state is asked again every two minutes, up to half an hour (each answer takes a reply slot).
+local O={rev=nil,checks=0,DELAY=30,CHECK=120,CHECKS=15}
 C.PersonalRoute=O
 local function wanted()
  local d=ForeverCoreBridgeDB or{}
@@ -419,7 +419,7 @@ function O.Receive(result,err)
  if result.state=='running' then
   C.Say(result.message or 'Eigene Route wird berechnet')
   if O.checks==0 then chat(result.message or 'Eigene Route wird berechnet')end
-  if O.checks<2 and C_Timer and C_Timer.After then O.checks=O.checks+1;C_Timer.After(O.CHECK,function()O.Request(false,true)end)end
+  if O.checks<O.CHECKS and C_Timer and C_Timer.After then O.checks=O.checks+1;C_Timer.After(O.CHECK,function()O.Request(false,true)end)end
  elseif result.state=='done' then
   O.checks=0
   if result.key~=O.shown then

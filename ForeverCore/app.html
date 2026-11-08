@@ -51,6 +51,7 @@ pre { margin:0; max-height:220px; overflow:auto; background:#101216; border:1px 
       <div class="row" id="stBridge"><span class="dot"></span><span></span></div>
       <div class="row" id="stWow"><span class="dot"></span><span></span></div>
       <div class="row" id="stRoutes"><span class="dot"></span><span></span></div>
+      <div class="row" id="stPersonal" style="display:none"><span class="dot"></span><span></span></div>
       <div class="row" id="stUpdate"><span class="dot"></span><span></span></div>
     </div>
     <div class="row" style="margin-top:14px">
@@ -131,6 +132,9 @@ async function refresh() {
   else show($("stBridge"), state.bridgeError ? "bad" : "warn", state.bridgeError ? "Verbindung: " + state.bridgeError : "Verbindung angehalten");
   show($("stWow"), state.wow ? "ok" : "warn", state.wow ? "WoW läuft" : "WoW ist nicht gestartet");
   show($("stRoutes"), state.routes ? "ok" : "warn", state.routes ? "Routen " + state.routes.version : "Routen: noch kein Update geladen");
+  const own = state.personal;
+  $("stPersonal").style.display = own ? "" : "none";
+  if (own) show($("stPersonal"), own.state === "done" ? "ok" : own.state === "error" ? "bad" : "warn", own.message || own.state);
   const u = state.update || {};
   if (u.available) show($("stUpdate"), "warn", "Update bereit: " + u.available);
   else if (state.reloadNeeded) show($("stUpdate"), "warn", "Neue Addons eingespielt: in WoW /reload eingeben");
