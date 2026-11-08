@@ -389,7 +389,10 @@ end)
 local baseCapture=C.Capture
 C.Capture=function(kind,...)
  if kind=='route-next'then return R.Capture()end
- return baseCapture(kind,...)
+ local s=baseCapture(kind,...)
+ -- the own route starts from where the character is: its finished quests, its quest log, level and place
+ if kind=='route-profile'and type(s)=='table'then local ok,r=pcall(R.Capture);if ok and type(r)=='table'then s.routeLive=r.live end end
+ return s
 end
 
 -- Own route: ForeverCore calculates the kill profile of this character (its items, talents and rotation) and plans

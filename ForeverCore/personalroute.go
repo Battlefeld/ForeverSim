@@ -167,8 +167,19 @@ func (s *Service) planPersonal(ctx context.Context, j Job, req map[string]any, l
 		return nil
 	}
 	report(80, "Route planen")
-	if e = run("extend", "-data", s.cfg.RoutesData, "-route", base, "-profiles", profiles, "-from", fmt.Sprint(level),
-		"-target", fmt.Sprint(personalRouteTarget), "-stages", "20s", "-budget", "0", "-out", planned); e != nil {
+	args := []string{"extend", "-data", s.cfg.RoutesData, "-route", base, "-profiles", profiles,
+		"-target", fmt.Sprint(personalRouteTarget), "-stages", "20s", "-budget", "0", "-out", planned}
+	if live := child(j.State, "routeLive"); live != nil {
+		// from the character's own quest state (finished quests, quest log, level, place) as the game reports it
+		in := filepath.Join(dir, "live.json")
+		if e = atomicWrite(in, jsonBytes(map[string]any{"live": live})); e != nil {
+			return 0, e
+		}
+		args = append(args, "-live", in)
+	} else {
+		args = append(args, "-from", fmt.Sprint(level)) // an older addon: from the route's own state at this level
+	}
+	if e = run(args...); e != nil {
 		return 0, e
 	}
 	report(95, "ins Addon schreiben")
