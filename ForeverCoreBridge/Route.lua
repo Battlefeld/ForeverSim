@@ -332,7 +332,14 @@ function R.Request(show)
  R.waiting=true;R.Draw()
  return C.Request('route-next',{horizon=3600},R.Apply)
 end
-function R.Enabled()return db().routeNext==true end
+-- planning after every quest change only when switched on here (/fc route an) and, with ForeverRoutes, its live plan
+-- is on (/fr live): otherwise the route stays as it is
+function R.Enabled()
+ if db().routeNext~=true then return false end
+ local fr=_G.ForeverRoutes
+ if fr and fr.LiveWanted then local ok,on=pcall(fr.LiveWanted);if ok and not on then return false end end
+ return true
+end
 
 -- Plans again after what changes the route: quests taken, finished, turned in or dropped, objective progress,
 -- a level, a new flight master. Waits a little so a burst of events gives one request.
@@ -385,16 +392,16 @@ C.Capture=function(kind,...)
  return baseCapture(kind,...)
 end
 
--- Own route: after a change of items, talents or level (a new simulation state) ForeverCore calculates the kill
--- profile of this character (its items, talents and rotation) and plans the ForeverRoutes route from its level to 40
--- with it (job route-profile, a few minutes in the background). The addon takes it with /reload. The job answers at
--- once; while it runs, the state is asked again twice later (each answer takes a reply slot). /fc eigene route:
--- calculate again now.
+-- Own route: ForeverCore calculates the kill profile of this character (its items, talents and rotation) and plans
+-- the ForeverRoutes route from its level to 40 with it (job route-profile, a few minutes in the background). The addon
+-- takes it with /reload. Only when the player asks (/fc eigene route, ForeverRoutes' menu): the route stays as it is
+-- otherwise. /fc eigene route an: after every change of items, talents or level. The job answers at once; while it
+-- runs, the state is asked again twice later (each answer takes a reply slot).
 local O={rev=nil,checks=0,DELAY=30,CHECK=240}
 C.PersonalRoute=O
 local function wanted()
  local d=ForeverCoreBridgeDB or{}
- if d.enabled==false or d.pixelOff or d.personalRoute==false then return false end
+ if d.enabled==false or d.pixelOff or d.personalRoute~=true then return false end
  if InCombatLockdown and InCombatLockdown()then return false end
  local level=UnitLevel and UnitLevel('player')or 0
  return level>=10 and level<40

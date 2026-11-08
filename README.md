@@ -47,8 +47,8 @@ Ausführlich: [Start-Anleitung](ForeverCore/README-DE.md) · [Ingame-Testanleitu
 | `/fc on` / `/fc off` | Berechnung ein/aus |
 | `/fc dungeon` | Drops des Dungeons, in dem du stehst |
 | `/fc prefetch an` / `aus` | Vorausberechnung ein/aus |
-| `/fc eigene route` | ForeverRoutes-Route mit deinem Gear und deinen Talenten neu berechnen (sonst automatisch nach Gear-, Talent- oder Stufenwechsel; danach `/reload`) |
-| `/fc eigene route an` / `aus` | Automatische Neuberechnung der eigenen Route ein/aus |
+| `/fc eigene route` | ForeverRoutes-Route mit deinem Gear und deinen Talenten neu berechnen (nur auf Wunsch; danach `/reload`) |
+| `/fc eigene route an` / `aus` | Eigene Route automatisch nach Gear-, Talent- oder Stufenwechsel neu berechnen (Standard: aus) |
 | `/fc log` | Kopierbares Protokoll |
 | `/fus` | ForeverSim-Fenster |
 | `/fr` | ForeverRoutes-Fenster |
