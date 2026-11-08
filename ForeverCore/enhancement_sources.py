@@ -20,6 +20,18 @@ STATS = {'Strength': ['StatStrength'], 'Agility': ['StatAgility'],
          'Armor': ['StatBonusArmor']}
 
 
+
+def engine_database(engine):
+    """The engine's item database as the engine loads it: db.json, then leftover_db.json merged in (the greens below
+    item level 40 moved out of the main list; assets/database/loader.go)."""
+    database = json.loads((Path(engine) / 'assets/database/db.json').read_text())
+    leftover = Path(engine) / 'assets/database/leftover_db.json'
+    if leftover.exists():
+        extra = json.loads(leftover.read_text())
+        for key in ('items', 'enchants'):
+            database[key] = database.get(key, []) + extra.get(key, [])
+    return database
+
 def food_rows(text):
     marker = 'WH.markup.printHtml('
     markup = json.JSONDecoder().raw_decode(text.split(marker, 1)[1])[0]
@@ -74,7 +86,7 @@ def generate(food_html, enchant_html, tooltip_dir, engine, lock):
         tooltip = json.loads(path.read_text()) if path.exists() else {}
         foods.append(food_entry(item_id, rows, tooltip))
     database_path = engine / 'assets/database/db.json'
-    database = json.loads(database_path.read_text())
+    database = engine_database(engine)
     by_recipe = {}
     for entry in database['enchants']:
         if entry.get('itemId'):
@@ -116,7 +128,7 @@ def refresh(catalog, engine, lock):
     each enchanting recipe is matched with the engine's enchants again, and the item geometry and the engine's enchant
     list come from the checkout. The engine update runs this, so a new engine never leaves the catalog on the old one."""
     database_path = Path(engine) / 'assets/database/db.json'
-    database = json.loads(database_path.read_text())
+    database = engine_database(engine)
     by_recipe = {}
     for entry in database['enchants']:
         if entry.get('itemId'):

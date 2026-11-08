@@ -207,6 +207,10 @@ def class_live_options(engine):
  return {'rules':rules,'warlockPets':registered,'warlockSummon':{n:v for n,v in summon.items() if v},'warlockPetSpells':petSpells}
 out['liveOptions']=fact('liveOptions',lambda:class_live_options(a.engine))
 db=json.loads((a.engine/'assets/database/db.json').read_text())
+# The engine loads db.json and then leftover_db.json (assets/database/loader.go merges them): the leftover one holds
+# the greens below item level 40 the engine moved out of its main list (leveling items), still simulated.
+leftover=a.engine/'assets/database/leftover_db.json'
+if leftover.exists():db['items']=db['items']+json.loads(leftover.read_text()).get('items',[])
 out['items']={str(item['id']):True for item in db['items']}
 # Talent builds and gear sets the engine ships for each spec ("Engine Top" in the addon). Never fails the build.
 try:
