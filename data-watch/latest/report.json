@@ -40,9 +40,9 @@
     "wowf": {
       "format": 9,
       "build": 70862,
-      "records": 70634,
-      "bytes": 5248791,
-      "sha256": "97e77d12697d7f184fed5c77fb73672093e20ff358ad72037f3b614837f857b7",
+      "records": 79140,
+      "bytes": 5693035,
+      "sha256": "6ae8f1517e8c821552388cd92f9455c170118a32848b9c1d2bdc70b2caac0940",
       "status": "available",
       "source": "https://storage.googleapis.com/raidbots-static/wow/70862/enUS/DBCache.bin",
       "region": "NA",
@@ -71,45 +71,27 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#4)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/2403040/4",
-        "sha256": "eee33003657bdaeda0bc7ab2d351d1d9a201b63938a8ec09e98bf3aed94dae23",
-        "published": "Sat, 07 Nov 2026 01:07:59 GMT",
+        "title": "Kaivax: Dungeon Enemy XP Increased - 8 November",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-8-november/640598/1",
+        "sha256": "60d5f11a88d8290102002487f059f46e71f35422d3ea41ab2032db95987be394",
+        "published": "Sun, 08 Nov 2026 19:48:33 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/2403040/4",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-8-november/640598/1",
         "kind": "new"
       },
       {
-        "title": "Kaivax: Phasing issues with group still persist from beta (#2)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/phasing-issues-with-group-still-persist-from-beta/2402367/2",
-        "sha256": "3d34f23cbed9591a14a9049c0ca62038bf209218e52f07217423050be07b4f3c",
-        "published": "Thu, 05 Nov 2026 15:51:58 GMT",
-        "relevant": false,
-        "id": "https://us.forums.blizzard.com/en/wow/t/phasing-issues-with-group-still-persist-from-beta/2402367/2",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: Known Issues - WoW Forever - Updated Nov. 5",
-        "url": "https://us.forums.blizzard.com/en/wow/t/known-issues-wow-forever-updated-nov-5/2402363/1",
-        "sha256": "41b56cc27627efcc72a87b2db44aae894da00c6ee53e4105e96cdc10449bb2b5",
-        "published": "Thu, 05 Nov 2026 15:42:52 GMT",
+        "title": "Kaivax: Dungeon Enemy XP Increased - November 8",
+        "url": "https://us.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-november-8/2406595/1",
+        "sha256": "33ea2c327257190b80beeff5879299b259b19db7c08416108c84ba2dabc06717",
+        "published": "Sun, 08 Nov 2026 19:47:33 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/known-issues-wow-forever-updated-nov-5/2402363/1",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: WoW Forever Bug Report Forum Guidelines",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-bug-report-forum-guidelines/2402319/1",
-        "sha256": "4174db7765cb1ef11db0e003bcfe41f0ed79d382e5bb3ceb3f026f03eba82aec",
-        "published": "Thu, 05 Nov 2026 15:22:45 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-bug-report-forum-guidelines/2402319/1",
+        "id": "https://us.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-november-8/2406595/1",
         "kind": "new"
       }
     ],
-    "relevantChanges": 3
+    "relevantChanges": 2
   },
-  "checkedAt": "2026-11-08T12:06:26.781010Z",
+  "checkedAt": "2026-11-09T13:58:28.807003Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true

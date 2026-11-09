@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "products": {
+    "wowf": {
+      "source": "https://us.version.battle.net/wowf/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "5ada954223f7c409ea172361f5c9e565",
+        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
+        "KeyRing": "",
+        "BuildId": "70862",
+        "VersionsName": "1.60.1.70862",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      },
+      "responseSHA256": "52073d30d843d1a85d71eefdde53fa9aec88606f3a1462ed6e9828b24b8a7594"
+    },
+    "wow_classic_beta": {
+      "source": "https://us.version.battle.net/wow_classic_beta/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      },
+      "responseSHA256": "c58a8000ee38331e64765506ab1e9dc2329a573decd98914283f0ebe9a83d9b6"
+    }
+  },
+  "buildChanges": {},
+  "tables": {},
+  "documentationStatus": "not_assessed",
+  "hotfixCoverage": "downloaded_not_applied",
+  "limitations": [
+    "Server-only changes invisible to client data require in-game measurements.",
+    "A data delta without matching release notes is a candidate undocumented change, not proof."
+  ],
+  "raidbots": {
+    "wowf": {
+      "format": 9,
+      "build": 70862,
+      "records": 79140,
+      "bytes": 5693035,
+      "sha256": "6ae8f1517e8c821552388cd92f9455c170118a32848b9c1d2bdc70b2caac0940",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70862/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    },
+    "wow_classic_beta": {
+      "format": 9,
+      "build": 70532,
+      "records": 55213,
+      "bytes": 4237177,
+      "sha256": "07b22580aba86a03fa69f864b9ceb9137f5d3bb3294e36ce88cb7f5abcc1f0ab",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70532/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    }
+  },
+  "extractionRequired": true,
+  "effectiveBuild": null,
+  "exportedCacheSHA256": null,
+  "blueposts": {
+    "status": "available",
+    "source": "https://theforeverera.com/en/blue.xml",
+    "baseline": false,
+    "changes": [
+      {
+        "title": "Kaivax: Dungeon Enemy XP Increased - 8 November",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-8-november/640598/1",
+        "sha256": "60d5f11a88d8290102002487f059f46e71f35422d3ea41ab2032db95987be394",
+        "published": "Sun, 08 Nov 2026 19:48:33 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-8-november/640598/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Dungeon Enemy XP Increased - November 8",
+        "url": "https://us.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-november-8/2406595/1",
+        "sha256": "33ea2c327257190b80beeff5879299b259b19db7c08416108c84ba2dabc06717",
+        "published": "Sun, 08 Nov 2026 19:47:33 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-november-8/2406595/1",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 2
+  },
+  "checkedAt": "2026-11-09T13:58:28.807003Z",
+  "clientExtraction": {
+    "status": "failed",
+    "previousDataRetained": true
+  }
+}
