@@ -2,6 +2,34 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 9, 2026 (#5)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
+      "sha256": "0e29c3e7b39beeb1207965b014909421860bb90ac8cd117ad527479721c8708a",
+      "published": "Tue, 10 Nov 2026 04:23:46 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#5)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
+      "sha256": "625a27da6e3baf62b2f338e682d0193bac3ed863b44151eb3ec914d470896ec0",
+      "published": "Tue, 10 Nov 2026 04:23:39 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174": {
+      "title": "Kaivax: PvP Faction Balance Updates - November 10 (#174)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
+      "sha256": "8cce249628acb615f521331bb2bd7bb44469e610d552a8a4746053489d97126a",
+      "published": "Tue, 10 Nov 2026 03:11:34 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1": {
+      "title": "Kaivax: PvP Faction Balance Updates - 11 November",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
+      "sha256": "acb4e1ceca2bde0c9fae38369c742e2584d1cd12176c88f1f5601754da8b3851",
+      "published": "Tue, 10 Nov 2026 02:06:08 GMT",
+      "relevant": true
+    },
     "https://eu.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-8-november/640598/1": {
       "title": "Kaivax: Dungeon Enemy XP Increased - 8 November",
       "url": "https://eu.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-8-november/640598/1",
@@ -323,34 +351,6 @@
       "sha256": "bf8347c69268e2c8d5e8c239278b7654c02a160ace5254c7c2f86ba00d648aa4",
       "published": "Thu, 22 Oct 2026 20:19:58 GMT",
       "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-beta-celebration-is-underway/2389633/1": {
-      "title": "Kaivax: The WoW Forever Beta Celebration is Underway",
-      "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-beta-celebration-is-underway/2389633/1",
-      "sha256": "6430bbad020ab113ff6dc7e1aac10286420b19f9d9d02eae2ba9a350ddfe4623",
-      "published": "Thu, 22 Oct 2026 17:00:00 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-beta-celebration-is-underway/637055/1": {
-      "title": "Kaivax: The WoW Forever Beta Celebration is Underway",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-beta-celebration-is-underway/637055/1",
-      "sha256": "bbbf57bf7df2d883670c741cda972b0433f12374b73499fe34bcd1b64119dcf9",
-      "published": "Thu, 22 Oct 2026 17:00:00 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-5-end-of-beta-special/637043/1": {
-      "title": "Kaivax: The WoW: Forever Podcast: Episode 5 - End of Beta Special",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-5-end-of-beta-special/637043/1",
-      "sha256": "05851101dcb99b4bf178882318fc101181bdf9b012dc642d62be6d261c5f417e",
-      "published": "Thu, 22 Oct 2026 16:22:03 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-5-end-of-beta-special/2389565/1": {
-      "title": "Kaivax: The WoW: Forever Podcast: Episode 5 - End of Beta Special",
-      "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-5-end-of-beta-special/2389565/1",
-      "sha256": "9bc66285da921c0760224fc1c7d701b6ac862065ad27a6e77ef317437e2dec1c",
-      "published": "Thu, 22 Oct 2026 16:21:16 GMT",
-      "relevant": false
     }
   },
   "lastCheck": {
@@ -359,24 +359,42 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: Dungeon Enemy XP Increased - 8 November",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-8-november/640598/1",
-        "sha256": "60d5f11a88d8290102002487f059f46e71f35422d3ea41ab2032db95987be394",
-        "published": "Sun, 08 Nov 2026 19:48:33 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 9, 2026 (#5)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
+        "sha256": "0e29c3e7b39beeb1207965b014909421860bb90ac8cd117ad527479721c8708a",
+        "published": "Tue, 10 Nov 2026 04:23:46 GMT",
         "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-8-november/640598/1",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
         "kind": "new"
       },
       {
-        "title": "Kaivax: Dungeon Enemy XP Increased - November 8",
-        "url": "https://us.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-november-8/2406595/1",
-        "sha256": "33ea2c327257190b80beeff5879299b259b19db7c08416108c84ba2dabc06717",
-        "published": "Sun, 08 Nov 2026 19:47:33 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#5)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
+        "sha256": "625a27da6e3baf62b2f338e682d0193bac3ed863b44151eb3ec914d470896ec0",
+        "published": "Tue, 10 Nov 2026 04:23:39 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/dungeon-enemy-xp-increased-november-8/2406595/1",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: PvP Faction Balance Updates - November 10 (#174)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
+        "sha256": "8cce249628acb615f521331bb2bd7bb44469e610d552a8a4746053489d97126a",
+        "published": "Tue, 10 Nov 2026 03:11:34 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: PvP Faction Balance Updates - 11 November",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
+        "sha256": "acb4e1ceca2bde0c9fae38369c742e2584d1cd12176c88f1f5601754da8b3851",
+        "published": "Tue, 10 Nov 2026 02:06:08 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
         "kind": "new"
       }
     ],
-    "relevantChanges": 2
+    "relevantChanges": 4
   }
 }

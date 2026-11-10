@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "products": {
+    "wowf": {
+      "source": "https://us.version.battle.net/wowf/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "5ada954223f7c409ea172361f5c9e565",
+        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
+        "KeyRing": "",
+        "BuildId": "70862",
+        "VersionsName": "1.60.1.70862",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      },
+      "responseSHA256": "52073d30d843d1a85d71eefdde53fa9aec88606f3a1462ed6e9828b24b8a7594"
+    },
+    "wow_classic_beta": {
+      "source": "https://us.version.battle.net/wow_classic_beta/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      },
+      "responseSHA256": "c58a8000ee38331e64765506ab1e9dc2329a573decd98914283f0ebe9a83d9b6"
+    }
+  },
+  "buildChanges": {},
+  "tables": {},
+  "documentationStatus": "not_assessed",
+  "hotfixCoverage": "downloaded_not_applied",
+  "limitations": [
+    "Server-only changes invisible to client data require in-game measurements.",
+    "A data delta without matching release notes is a candidate undocumented change, not proof."
+  ],
+  "raidbots": {
+    "wowf": {
+      "format": 9,
+      "build": 70862,
+      "records": 85552,
+      "bytes": 6047997,
+      "sha256": "a1137766129c50b0a4340705ccec2616480965fcda42bdadd0795b1488dfe638",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70862/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    },
+    "wow_classic_beta": {
+      "format": 9,
+      "build": 70532,
+      "records": 55213,
+      "bytes": 4237177,
+      "sha256": "07b22580aba86a03fa69f864b9ceb9137f5d3bb3294e36ce88cb7f5abcc1f0ab",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70532/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    }
+  },
+  "extractionRequired": true,
+  "effectiveBuild": null,
+  "exportedCacheSHA256": null,
+  "blueposts": {
+    "status": "available",
+    "source": "https://theforeverera.com/en/blue.xml",
+    "baseline": false,
+    "changes": [
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 9, 2026 (#5)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
+        "sha256": "0e29c3e7b39beeb1207965b014909421860bb90ac8cd117ad527479721c8708a",
+        "published": "Tue, 10 Nov 2026 04:23:46 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#5)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
+        "sha256": "625a27da6e3baf62b2f338e682d0193bac3ed863b44151eb3ec914d470896ec0",
+        "published": "Tue, 10 Nov 2026 04:23:39 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: PvP Faction Balance Updates - November 10 (#174)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
+        "sha256": "8cce249628acb615f521331bb2bd7bb44469e610d552a8a4746053489d97126a",
+        "published": "Tue, 10 Nov 2026 03:11:34 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: PvP Faction Balance Updates - 11 November",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
+        "sha256": "acb4e1ceca2bde0c9fae38369c742e2584d1cd12176c88f1f5601754da8b3851",
+        "published": "Tue, 10 Nov 2026 02:06:08 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 4
+  },
+  "checkedAt": "2026-11-10T13:32:38.671819Z",
+  "clientExtraction": {
+    "status": "failed",
+    "previousDataRetained": true
+  }
+}
