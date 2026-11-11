@@ -357,71 +357,7 @@
     "status": "available",
     "source": "https://theforeverera.com/en/blue.xml",
     "baseline": false,
-    "changes": [
-      {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#6)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6",
-        "sha256": "4794a8385b38f044297e310ef0c8e5ac66658ef1752b3f6198cdf179e980da57",
-        "published": "Wed, 11 Nov 2026 03:27:33 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: Bugged/missing shaman totems since Monday's server chaos (#2)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/buggedmissing-shaman-totems-since-mondays-server-chaos/2409772/2",
-        "sha256": "59f4180eb87507e5049ca3a27e4d57703fdc54978c279bd432d25cef43cb414b",
-        "published": "Wed, 11 Nov 2026 01:10:36 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/buggedmissing-shaman-totems-since-mondays-server-chaos/2409772/2",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: No gold from quests at lvl 60? Seriously? (#93)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/no-gold-from-quests-at-lvl-60-seriously/640380/93",
-        "sha256": "265ec0b819bff834299e46f30ebf5949481999fa2669c65b3e540e14f8d71b52",
-        "published": "Tue, 10 Nov 2026 21:56:33 GMT",
-        "relevant": false,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/no-gold-from-quests-at-lvl-60-seriously/640380/93",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: Gold at 60 for quests (#165)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/gold-at-60-for-quests/2405161/165",
-        "sha256": "16fa1738ad4527d84ccef47c6ea4854d69c1c1f2c2c6360c8f9f76de1fdaf40c",
-        "published": "Tue, 10 Nov 2026 21:56:23 GMT",
-        "relevant": false,
-        "id": "https://us.forums.blizzard.com/en/wow/t/gold-at-60-for-quests/2405161/165",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: Dungeon xp still not enough (#30)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/dungeon-xp-still-not-enough/640969/30",
-        "sha256": "d8bc02805d52e6a4cfd79c85f0efdf73ad3431781889de302f229edf6a9bfbd4",
-        "published": "Tue, 10 Nov 2026 21:35:31 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/dungeon-xp-still-not-enough/640969/30",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: The majority WANTS increased dungeon XP (#254)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/the-majority-wants-increased-dungeon-xp/2406555/254",
-        "sha256": "286acc7a0b53ed48cc65806fbbd70f0535ecaee4699aca33fabe75a652f39b32",
-        "published": "Tue, 10 Nov 2026 21:35:22 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/the-majority-wants-increased-dungeon-xp/2406555/254",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#5)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/639885/5",
-        "sha256": "4e00ea2fd37229069b93be789a5d165f980205be8b033c27bda88e5b1ca59798",
-        "published": "Tue, 10 Nov 2026 04:23:39 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/639885/5",
-        "kind": "new"
-      }
-    ],
-    "relevantChanges": 5
+    "changes": [],
+    "relevantChanges": 0
   }
 }
