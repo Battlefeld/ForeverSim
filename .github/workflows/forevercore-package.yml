@@ -82,7 +82,7 @@ jobs:
           toc="$RUNNER_TEMP/openmap/OpenMap/OpenMap.toc"
           missing=0
           while IFS= read -r line; do
-            f="$(printf '%s' "$line" | tr -d '\r' | sed -e 's#\\#/#g' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+            f="$(printf '%s' "$line" | tr -d '\r' | sed -e 's#\\#/#g' -e 's/[[:space:]]*\[[^]]*\]//g' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
             case "$f" in ''|'#'*) continue ;; esac
             [ -f "$RUNNER_TEMP/openmap/OpenMap/$f" ] || { echo "::error::OpenMap.toc loads $f, not in the checkout"; missing=1; }
           done < "$toc"
