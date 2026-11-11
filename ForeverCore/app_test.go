@@ -11,12 +11,14 @@ import (
 )
 
 func TestAppWindowInstallsAndGuards(t *testing.T) {
+	t.Setenv("FC_NO_CLIENT_DATA", "1")
 	dir := t.TempDir()
 	addons := filepath.Join(dir, "WoW", "_classic_beta_", "Interface", "AddOns")
 	os.MkdirAll(addons, 0o755)
 	a := &app{dir: filepath.Join(dir, "App"), token: "secret", payload: testPayload(), log: &logRing{max: 10}}
 	srv := httptest.NewServer(a.routes())
 	defer srv.Close()
+	defer a.stopBridge()
 	do := func(method, path, body string, hdr map[string]string) (*http.Response, map[string]any) {
 		req, _ := http.NewRequest(method, srv.URL+path, strings.NewReader(body))
 		for k, v := range hdr {

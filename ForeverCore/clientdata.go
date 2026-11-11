@@ -37,6 +37,11 @@ func (s *Service) startClientData(ctx context.Context) {
 	if s.cfg.Addons == "" || s.cfg.Data == "" {
 		return
 	}
+	// tests that install into a temp folder must not start the online
+	// checks: they would keep writing into the folder after the test ends
+	if os.Getenv("FC_NO_CLIENT_DATA") == "1" {
+		return
+	}
 	s.clientOnce.Do(func() {
 		var saved clientDataStatus
 		_ = loadJSON(filepath.Join(s.cfg.Data, "ClientData", "status.json"), &saved)
