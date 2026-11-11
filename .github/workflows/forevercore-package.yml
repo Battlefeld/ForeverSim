@@ -64,11 +64,11 @@ jobs:
           mkdir -p "$RUNNER_TEMP/routes"
           # the one ForeverCore.exe installs both addons: no routes addon, no program
           gh release download --repo Battlefeld/ForeverRoutes --pattern ForeverRoutes-addon.zip --dir "$RUNNER_TEMP/routes"
-      - name: OpenMap (newest Forever tag, else main)
+      - name: OpenMap (newest version tag, else main)
         run: |
-          url=https://github.com/jiforever/wowforever-openmap.git
+          url=https://github.com/openmap-world/openmap.git
           export GIT_TERMINAL_PROMPT=0
-          tag="$(git ls-remote --tags --refs "$url" 2>/dev/null | sed 's#.*refs/tags/##' | grep -i forever | sort -V | tail -1 || true)"
+          tag="$(git ls-remote --tags --refs "$url" 2>/dev/null | sed 's#.*refs/tags/##' | grep -vi retail | grep -E '^v?[0-9]' | sort -V | tail -1 || true)"
           ref="${tag:-main}"
           # OpenMap is a bonus: when its repository cannot be reached, ForeverCore.exe is built without it
           if ! git -c credential.helper= clone -q --depth 1 --branch "$ref" "$url" "$RUNNER_TEMP/openmap"; then

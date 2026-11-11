@@ -1,5 +1,5 @@
 name: OpenMap watch
-# ForeverCore.exe carries OpenMap (jiforever/wowforever-openmap). Once a day: a new OpenMap version builds a new
+# ForeverCore.exe carries OpenMap (openmap-world/openmap). Once a day: a new OpenMap version builds a new
 # ForeverCore.exe, which installs it the next time ForeverCore starts.
 on:
   schedule:
@@ -16,10 +16,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          url=https://github.com/jiforever/wowforever-openmap.git
+          url=https://github.com/openmap-world/openmap.git
           export GIT_TERMINAL_PROMPT=0
           if ! git ls-remote "$url" HEAD >/dev/null 2>&1; then echo "::warning::OpenMap not reachable ($url)"; exit 0; fi
-          tag="$(git ls-remote --tags --refs "$url" | sed 's#.*refs/tags/##' | grep -i forever | sort -V | tail -1 || true)"
+          tag="$(git ls-remote --tags --refs "$url" | sed 's#.*refs/tags/##' | grep -vi retail | grep -E '^v?[0-9]' | sort -V | tail -1 || true)"
           ref="${tag:-main}"
           sha="$(git ls-remote "$url" "refs/tags/$ref^{}" "refs/tags/$ref" "refs/heads/$ref" | head -1 | cut -f1)"
           [ -n "$sha" ] || { echo "::error::OpenMap $ref not found"; exit 1; }
