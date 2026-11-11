@@ -1,11 +1,10 @@
 {
  "summary": {
-  "ranksChecked": 826,
-  "apiCalls": 241,
+  "ranksChecked": 818,
+  "apiCalls": 240,
   "findings": {
-   "value": 61,
-   "missing": 12,
-   "name": 1
+   "value": 45,
+   "missing": 11
   },
   "maxLevel": 30
  },
@@ -17,8 +16,8 @@
    "spellId": 417148,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 16 or 17, the tooltip has [15, 60, 109]",
-   "tooltip": "Heals all party members within 15 yards of the target for 109. (Numbers at level 60; they grow with your level.)"
+   "what": "direct: the values predict 16 or 17, the tooltip has [15, 60, 108]",
+   "tooltip": "Heals all party members within 15 yards of the target for 108. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "druid",
@@ -46,8 +45,8 @@
    "spellId": 408247,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 161/189 or 162/190, the tooltip has [20, 60, 1094, 1284]",
-   "tooltip": "Heals a friendly target for 1094 to 1284. Heals for an additional 20% if you have a Rejuvenation, Regrowth, Lifebloom, or Wild Growth effect active on the target. This spell benefits from and triggers all effects associated with Healing Touch or Regrowth. (Numbers at level 60; they grow with your le"
+   "what": "direct: the values predict 161/189 or 162/190, the tooltip has [20, 60, 1093, 1283]",
+   "tooltip": "Heals a friendly target for 1093 to 1283. Heals for an additional 20% if you have a Rejuvenation, Regrowth, Lifebloom, or Wild Growth effect active on the target. This spell benefits from and triggers all effects associated with Healing Touch or Regrowth. (Numbers at level 60; they grow with your le"
   },
   {
    "class": "druid",
@@ -56,8 +55,8 @@
    "spellId": 417157,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 248/304 or 249/305, the tooltip has [1, 60, 80, 370, 453]",
-   "tooltip": "Launch surging stellar energies that cause 370 to 453 Arcane damage, and increases the damage done by your next 1 Starfire cast by 80% for 15 sec.\n\nStarsurge benefits from and triggers most talents and effects that trigger or benefit from Wrath or Starfire.\n(Numbers at level 60; they grow with your "
+   "what": "direct: the values predict 248/304 or 249/305, the tooltip has [1, 60, 80, 369, 453]",
+   "tooltip": "Launch surging stellar energies that cause 369 to 453 Arcane damage, and increases the damage done by your next 1 Starfire cast by 80% for 15 sec.\n\nStarsurge benefits from and triggers most talents and effects that trigger or benefit from Wrath or Starfire.\n(Numbers at level 60; they grow with your "
   },
   {
    "class": "druid",
@@ -66,8 +65,8 @@
    "spellId": 414684,
    "level": 1,
    "kind": "value",
-   "what": "periodic: the values predict 260 or 264 or 65 or 66, the tooltip has [60, 194, 227, 388]",
-   "tooltip": "Burns the enemy for 194 to 227 Nature damage and then an additional 388 Nature damage over 12 sec. (Numbers at level 60; they grow with your level.)"
+   "what": "periodic: the values predict 260 or 264 or 65 or 66, the tooltip has [60, 193, 226, 387]",
+   "tooltip": "Burns the enemy for 193 to 226 Nature damage and then an additional 387 Nature damage over 12 sec. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "druid",
@@ -76,8 +75,8 @@
    "spellId": 414684,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 130/152 or 131/153, the tooltip has [60, 194, 227, 388]",
-   "tooltip": "Burns the enemy for 194 to 227 Nature damage and then an additional 388 Nature damage over 12 sec. (Numbers at level 60; they grow with your level.)"
+   "what": "direct: the values predict 130/152 or 131/153, the tooltip has [60, 193, 226, 387]",
+   "tooltip": "Burns the enemy for 193 to 226 Nature damage and then an additional 387 Nature damage over 12 sec. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "druid",
@@ -99,53 +98,13 @@
   },
   {
    "class": "druid",
-   "ability": "Starfire",
-   "rank": "Rank 1",
-   "spellId": 2912,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 102/124 or 102/126, the tooltip has [73, 89]",
-   "tooltip": "Causes 73 to 89 Arcane damage to the target."
-  },
-  {
-   "class": "druid",
-   "ability": "Starfire",
-   "rank": "Rank 2",
-   "spellId": 8949,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 139/169 or 140/170, the tooltip has [99, 121]",
-   "tooltip": "Causes 99 to 121 Arcane damage to the target."
-  },
-  {
-   "class": "druid",
    "ability": "Ferocious Bite",
    "rank": "Rank 1",
    "spellId": 1328618,
    "level": 24,
    "kind": "value",
-   "what": "direct: the values predict 11/23 or 12/24, the tooltip has [0.6, 1, 2, 3, 4, 5, 33, 43, 57, 67, 81, 91]",
-   "tooltip": "Finishing move that causes damage per combo point and converts each extra point of energy into 0.6 additional damage.  Damage is increased by your Attack Power.\n   1 point  : 33-43 damage\n   2 points: 57-67 damage\n   3 points: 81-91 damage\n   4 points: 105-115 damage\n   5 points: 129-139 damage"
-  },
-  {
-   "class": "druid",
-   "ability": "Rake",
-   "rank": "Rank 1",
-   "spellId": 1822,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 27 or 28, the tooltip has [1, 23, 48]",
-   "tooltip": "Rake the target for 23 damage and an additional 48 damage over 9 sec.  Awards 1 combo point."
-  },
-  {
-   "class": "druid",
-   "ability": "Rake",
-   "rank": "Rank 1",
-   "spellId": 1822,
-   "level": 24,
-   "kind": "value",
-   "what": "periodic: the values predict 60 or 63 or 20 or 21, the tooltip has [1, 23, 48]",
-   "tooltip": "Rake the target for 23 damage and an additional 48 damage over 9 sec.  Awards 1 combo point."
+   "what": "direct: the values predict 11/23 or 12/24, the tooltip has [0.7, 1, 2, 3, 4, 5, 40, 54, 70, 84, 100, 114]",
+   "tooltip": "Finishing move that causes damage per combo point and converts each extra point of energy into 0.7 additional damage.  Damage is increased by your Attack Power.\n   1 point  : 40-54 damage\n   2 points: 70-84 damage\n   3 points: 100-114 damage\n   4 points: 130-144 damage\n   5 points: 160-174 damage"
   },
   {
    "class": "hunter",
@@ -155,86 +114,6 @@
    "level": 1,
    "kind": "missing",
    "what": "the engine table has no such spell"
-  },
-  {
-   "class": "hunter",
-   "ability": "Serpent Sting",
-   "rank": "Rank 1",
-   "spellId": 1978,
-   "level": 4,
-   "kind": "value",
-   "what": "periodic: the values predict 15 or 20 or 3 or 4, the tooltip has [10]",
-   "tooltip": "Stings the target, causing 10 Nature damage over 15 sec.  Only one Sting per Hunter can be active on any one target."
-  },
-  {
-   "class": "hunter",
-   "ability": "Serpent Sting",
-   "rank": "Rank 2",
-   "spellId": 13549,
-   "level": 10,
-   "kind": "value",
-   "what": "periodic: the values predict 35 or 40 or 7 or 8, the tooltip has [30]",
-   "tooltip": "Stings the target, causing 30 Nature damage over 15 sec.  Only one Sting per Hunter can be active on any one target."
-  },
-  {
-   "class": "hunter",
-   "ability": "Serpent Sting",
-   "rank": "Rank 3",
-   "spellId": 13550,
-   "level": 18,
-   "kind": "value",
-   "what": "periodic: the values predict 70 or 75 or 14 or 15, the tooltip has [60]",
-   "tooltip": "Stings the target, causing 60 Nature damage over 15 sec.  Only one Sting per Hunter can be active on any one target."
-  },
-  {
-   "class": "hunter",
-   "ability": "Serpent Sting",
-   "rank": "Rank 4",
-   "spellId": 13551,
-   "level": 26,
-   "kind": "value",
-   "what": "periodic: the values predict 130 or 135 or 26 or 27, the tooltip has [110]",
-   "tooltip": "Stings the target, causing 110 Nature damage over 15 sec.  Only one Sting per Hunter can be active on any one target."
-  },
-  {
-   "class": "hunter",
-   "ability": "Arcane Shot",
-   "rank": "Rank 1",
-   "spellId": 3044,
-   "level": 6,
-   "kind": "value",
-   "what": "direct: the values predict 25 or 26, the tooltip has [20]",
-   "tooltip": "An instant shot that causes 20 Arcane damage."
-  },
-  {
-   "class": "hunter",
-   "ability": "Arcane Shot",
-   "rank": "Rank 2",
-   "spellId": 14281,
-   "level": 12,
-   "kind": "value",
-   "what": "direct: the values predict 35 or 36, the tooltip has [26]",
-   "tooltip": "An instant shot that causes 26 Arcane damage."
-  },
-  {
-   "class": "hunter",
-   "ability": "Arcane Shot",
-   "rank": "Rank 3",
-   "spellId": 14282,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 50 or 51, the tooltip has [39]",
-   "tooltip": "An instant shot that causes 39 Arcane damage."
-  },
-  {
-   "class": "hunter",
-   "ability": "Arcane Shot",
-   "rank": "Rank 4",
-   "spellId": 14283,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 85 or 86, the tooltip has [65]",
-   "tooltip": "An instant shot that causes 65 Arcane damage."
   },
   {
    "class": "hunter",
@@ -262,8 +141,8 @@
    "spellId": 425124,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 226/264 or 227/265, the tooltip has [60, 300, 393, 459]",
-   "tooltip": "Unleash all of your remaining mana in a surge of energy focused at the target dealing 393 to 459 Arcane damage, increased by up to 300% based on your mana remaining. Afterward, your normal mana regeneration is activated and increased by 300% for 8 sec. (Numbers at level 60; they grow with your level"
+   "what": "direct: the values predict 226/264 or 227/265, the tooltip has [60, 300, 392, 458]",
+   "tooltip": "Unleash all of your remaining mana in a surge of energy focused at the target dealing 392 to 458 Arcane damage, increased by up to 300% based on your mana remaining. Afterward, your normal mana regeneration is activated and increased by 300% for 8 sec. (Numbers at level 60; they grow with your level"
   },
   {
    "class": "mage",
@@ -272,8 +151,8 @@
    "spellId": 428878,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 280/420 or 281/421, the tooltip has [0, 5, 20, 60, 487, 730]",
-   "tooltip": "Unleash a reality-distorting burst of raw magic at your enemy, dealing 487 to 730 Chimeric damage.\n\nIncreasing your Balefire Bolt and Pyroblast damage by 20%, decreasing your Spirit by 20%, and stacking up to 5 times for 30 sec. If your Spirit reaches 0, you die.\n\nThis spell will be checked against "
+   "what": "direct: the values predict 280/420 or 281/421, the tooltip has [0, 5, 20, 60, 486, 730]",
+   "tooltip": "Unleash a reality-distorting burst of raw magic at your enemy, dealing 486 to 730 Chimeric damage.\n\nIncreasing your Balefire Bolt and Pyroblast damage by 20%, decreasing your Spirit by 20%, and stacking up to 5 times for 30 sec. If your Spirit reaches 0, you die.\n\nThis spell will be checked against "
   },
   {
    "class": "mage",
@@ -282,8 +161,8 @@
    "spellId": 400613,
    "level": 1,
    "kind": "value",
-   "what": "periodic: the values predict 340 or 344 or 85 or 86, the tooltip has [10, 60, 297, 591]",
-   "tooltip": "The target becomes a Living Bomb, taking 591 Fire damage over 12 sec.  After 12 sec or when the spell is dispelled, the target explodes dealing 297 Fire damage to all enemies within 10 yards.\n\nLiving Bomb benefits from all talents and effects that trigger from or modify Scorch.\n(Numbers at level 60;"
+   "what": "periodic: the values predict 340 or 344 or 85 or 86, the tooltip has [10, 60, 297, 590]",
+   "tooltip": "The target becomes a Living Bomb, taking 590 Fire damage over 12 sec.  After 12 sec or when the spell is dispelled, the target explodes dealing 297 Fire damage to all enemies within 10 yards.\n\nLiving Bomb benefits from all talents and effects that trigger from or modify Scorch.\n(Numbers at level 60;"
   },
   {
    "class": "mage",
@@ -307,13 +186,83 @@
   },
   {
    "class": "mage",
+   "ability": "Frostbolt",
+   "rank": "Rank 1",
+   "spellId": 116,
+   "level": 4,
+   "kind": "value",
+   "what": "direct: the values predict 18/20 or 19/21, the tooltip has [17, 20, 40]",
+   "tooltip": "Launches a bolt of frost at the enemy, causing 17 to 20  Frost damage and slowing movement speed by 40% for 5 sec."
+  },
+  {
+   "class": "mage",
+   "ability": "Frostbolt",
+   "rank": "Rank 2",
+   "spellId": 205,
+   "level": 8,
+   "kind": "value",
+   "what": "direct: the values predict 27/31 or 28/32, the tooltip has [27, 30, 40]",
+   "tooltip": "Launches a bolt of frost at the enemy, causing 27 to 30  Frost damage and slowing movement speed by 40% for 6 sec."
+  },
+  {
+   "class": "mage",
+   "ability": "Frostbolt",
+   "rank": "Rank 3",
+   "spellId": 837,
+   "level": 14,
+   "kind": "value",
+   "what": "direct: the values predict 43/49 or 44/50, the tooltip has [40, 43, 48]",
+   "tooltip": "Launches a bolt of frost at the enemy, causing 43 to 48  Frost damage and slowing movement speed by 40% for 6 sec."
+  },
+  {
+   "class": "mage",
+   "ability": "Frostbolt",
+   "rank": "Rank 4",
+   "spellId": 7322,
+   "level": 20,
+   "kind": "value",
+   "what": "direct: the values predict 66/74 or 67/75, the tooltip has [40, 66, 73]",
+   "tooltip": "Launches a bolt of frost at the enemy, causing 66 to 73  Frost damage and slowing movement speed by 40% for 7 sec."
+  },
+  {
+   "class": "mage",
+   "ability": "Frostbolt",
+   "rank": "Rank 5",
+   "spellId": 8406,
+   "level": 26,
+   "kind": "value",
+   "what": "direct: the values predict 99/109 or 100/110, the tooltip has [40, 99, 108]",
+   "tooltip": "Launches a bolt of frost at the enemy, causing 99 to 108  Frost damage and slowing movement speed by 40% for 7 sec."
+  },
+  {
+   "class": "mage",
+   "ability": "Frost Nova",
+   "rank": "Rank 2",
+   "spellId": 865,
+   "level": 26,
+   "kind": "value",
+   "what": "direct: the values predict 32/36 or 33/37, the tooltip has [32, 35]",
+   "tooltip": "Blasts enemies near the caster for 32 to 35 Frost damage and freezes them in place for up to 8 sec.  Damage caused may interrupt the effect."
+  },
+  {
+   "class": "mage",
+   "ability": "Cone of Cold",
+   "rank": "Rank 1",
+   "spellId": 120,
+   "level": 26,
+   "kind": "value",
+   "what": "direct: the values predict 92/102 or 93/103, the tooltip has [4, 10, 40, 92, 101]",
+   "tooltip": "Targets in a cone in front of the caster take 92 to 101  Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec."
+  },
+  {
+   "class": "mage",
    "ability": "Living Flame",
    "rank": "",
    "spellId": 401558,
    "level": 0,
    "kind": "value",
-   "what": "periodic: the values predict 200 or 202 or 100 or 101, the tooltip has [60, 174]",
-   "tooltip": "Deals 174 Fire damage every 1 sec. (Numbers at level 60; they grow with your level.)"
+   "what": "periodic: the values predict 200 or 202 or 100 or 101, the tooltip has [60, 173]",
+   "tooltip": "Deals 173 Fire damage every 1 sec. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "paladin",
@@ -322,8 +271,8 @@
    "spellId": 458856,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 355/393 or 356/394, the tooltip has [50, 60, 2390, 2646]",
-   "tooltip": "Heals a friendly target for 2390 to 2646. 50% of any excess healing on the target is converted into an absorption shield that lasts 15 sec. Multiple casts of Divine Light do not accumulate this shield.\n\nDivine Light benefits from all talents and effects that trigger from or modify Holy Light.\n(Numbe"
+   "what": "direct: the values predict 355/393 or 356/394, the tooltip has [50, 60, 2389, 2645]",
+   "tooltip": "Heals a friendly target for 2389 to 2645. 50% of any excess healing on the target is converted into an absorption shield that lasts 15 sec. Multiple casts of Divine Light do not accumulate this shield.\n\nDivine Light benefits from all talents and effects that trigger from or modify Holy Light.\n(Numbe"
   },
   {
    "class": "paladin",
@@ -341,8 +290,8 @@
    "spellId": 440658,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 179 or 180, the tooltip has [60, 214]",
-   "tooltip": "Slam the target with your shield, causing Holy damage based on your block value plus an additional 214. (Numbers at level 60; they grow with your level.)"
+   "what": "direct: the values predict 179 or 180, the tooltip has [60, 213]",
+   "tooltip": "Slam the target with your shield, causing Holy damage based on your block value plus an additional 213. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "priest",
@@ -361,8 +310,8 @@
    "spellId": 431655,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 122/142 or 123/143, the tooltip has [3, 30, 60, 230, 267]",
-   "tooltip": "Blasts the target for 230 to 267 Shadowfrost damage, and increases the critical strike chance of your next Mind Blast on the target by 30%, stacking up to 3 times. (Numbers at level 60; they grow with your level.)"
+   "what": "direct: the values predict 122/142 or 123/143, the tooltip has [3, 30, 60, 229, 267]",
+   "tooltip": "Blasts the target for 229 to 267 Shadowfrost damage, and increases the critical strike chance of your next Mind Blast on the target by 30%, stacking up to 3 times. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "priest",
@@ -371,8 +320,8 @@
    "spellId": 402668,
    "level": 1,
    "kind": "value",
-   "what": "periodic: the values predict 325 or 330 or 65 or 66, the tooltip has [2, 60, 612]",
-   "tooltip": "Applies your Vampiric Embrace talent to your target, causes 612 Shadow damage over 15 sec to your target, and causes all party members to gain mana equal to 2% of any Shadow spell damage you deal to the target. (Numbers at level 60; they grow with your level.)"
+   "what": "periodic: the values predict 325 or 330 or 65 or 66, the tooltip has [2, 60, 611]",
+   "tooltip": "Applies your Vampiric Embrace talent to your target, causes 611 Shadow damage over 15 sec to your target, and causes all party members to gain mana equal to 2% of any Shadow spell damage you deal to the target. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "priest",
@@ -381,8 +330,8 @@
    "spellId": 425204,
    "level": 1,
    "kind": "value",
-   "what": "periodic: the values predict 774 or 780 or 129 or 130, the tooltip has [60, 1457]",
-   "tooltip": "Afflicts the target with a disease that causes 1457 Shadow damage over 18 sec. (Numbers at level 60; they grow with your level.)"
+   "what": "periodic: the values predict 774 or 780 or 129 or 130, the tooltip has [60, 1456]",
+   "tooltip": "Afflicts the target with a disease that causes 1456 Shadow damage over 18 sec. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "rogue",
@@ -391,18 +340,8 @@
    "spellId": 400009,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 53/81 or 54/82, the tooltip has [1, 2, 3, 4, 5, 60, 148, 226, 238, 329, 364, 420]",
-   "tooltip": "Ranged Finishing move that causes damage per combo point, increased by Attack Power, and Stuns the target:\n\n   1 point:   148 to 226 damage, 1 sec Stun\n   2 points: 238 to 364 damage, 2 sec Stun\n   3 points: 329 to 503 damage, 3 sec Stun\n   4 points: 420 to 641 damage, 4 sec Stun\n   5 points: 510 to"
-  },
-  {
-   "class": "rogue",
-   "ability": "Eviscerate",
-   "rank": "Rank 2",
-   "spellId": 6760,
-   "level": 8,
-   "kind": "value",
-   "what": "direct: the values predict 3/11 or 3/13, the tooltip has [1, 2, 3, 4, 5, 14, 22, 25, 33, 36, 44, 47]",
-   "tooltip": "Finishing move that causes damage per combo point, increased by Attack Power:\n   1 point  : 14-22 damage\n   2 points: 25-33 damage\n   3 points: 36-44 damage\n   4 points: 47-55 damage\n   5 points: 58-66 damage"
+   "what": "direct: the values predict 53/81 or 54/82, the tooltip has [1, 2, 3, 4, 5, 60, 147, 225, 238, 328, 364, 419]",
+   "tooltip": "Ranged Finishing move that causes damage per combo point, increased by Attack Power, and Stuns the target:\n\n   1 point:   147 to 225 damage, 1 sec Stun\n   2 points: 238 to 364 damage, 2 sec Stun\n   3 points: 328 to 502 damage, 3 sec Stun\n   4 points: 419 to 641 damage, 4 sec Stun\n   5 points: 510 to"
   },
   {
    "class": "rogue",
@@ -411,8 +350,8 @@
    "spellId": 6761,
    "level": 16,
    "kind": "value",
-   "what": "direct: the values predict 6/20 or 6/22, the tooltip has [1, 2, 3, 4, 5, 25, 39, 44, 58, 63, 77, 82]",
-   "tooltip": "Finishing move that causes damage per combo point, increased by Attack Power:\n   1 point  : 25-39 damage\n   2 points: 44-58 damage\n   3 points: 63-77 damage\n   4 points: 82-96 damage\n   5 points: 101-115 damage"
+   "what": "direct: the values predict 6/20 or 6/22, the tooltip has [1, 2, 3, 4, 5, 25, 38, 44, 57, 63, 76, 82]",
+   "tooltip": "Finishing move that causes damage per combo point, increased by Attack Power:\n   1 point  : 25-38 damage\n   2 points: 44-57 damage\n   3 points: 63-76 damage\n   4 points: 82-95 damage\n   5 points: 101-114 damage"
   },
   {
    "class": "rogue",
@@ -425,182 +364,14 @@
    "tooltip": "Finishing move that causes damage per combo point, increased by Attack Power:\n   1 point  : 41-61 damage\n   2 points: 72-92 damage\n   3 points: 103-123 damage\n   4 points: 134-154 damage\n   5 points: 165-185 damage"
   },
   {
-   "class": "rogue",
-   "ability": "Coup de Grace",
-   "rank": "",
-   "spellId": 1310709,
-   "level": 30,
-   "kind": "missing",
-   "what": "the engine table has no such spell"
-  },
-  {
-   "class": "shaman",
-   "ability": "Lightning Bolt",
-   "rank": "Rank 1",
-   "spellId": 403,
-   "level": 1,
-   "kind": "value",
-   "what": "direct: the values predict 15/17 or 16/18, the tooltip has [14, 16]",
-   "tooltip": "Casts a bolt of lightning at the target for 14 to 16 Nature damage."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lightning Bolt",
-   "rank": "Rank 2",
-   "spellId": 529,
-   "level": 8,
-   "kind": "value",
-   "what": "direct: the values predict 28/32 or 29/33, the tooltip has [25, 29]",
-   "tooltip": "Casts a bolt of lightning at the target for 25 to 29 Nature damage."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lightning Bolt",
-   "rank": "Rank 3",
-   "spellId": 548,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 48/56 or 49/57, the tooltip has [41, 49]",
-   "tooltip": "Casts a bolt of lightning at the target for 41 to 49 Nature damage."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lightning Bolt",
-   "rank": "Rank 4",
-   "spellId": 915,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 68/78 or 69/79, the tooltip has [57, 65]",
-   "tooltip": "Casts a bolt of lightning at the target for 57 to 65 Nature damage."
-  },
-  {
-   "class": "shaman",
-   "ability": "Lightning Bolt",
-   "rank": "Rank 5",
-   "spellId": 943,
-   "level": 26,
-   "kind": "value",
-   "what": "direct: the values predict 102/116 or 103/117, the tooltip has [76, 88]",
-   "tooltip": "Casts a bolt of lightning at the target for 76 to 88 Nature damage."
-  },
-  {
    "class": "shaman",
    "ability": "Molten Blast",
    "rank": "",
    "spellId": 425339,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 72/108 or 73/109, the tooltip has [5, 10, 60, 121, 181]",
-   "tooltip": "Blast up to 10 enemies in a cone in front of you for 121 to 181 (+5% of attack power) Fire damage. This ability generates a high amount of threat. Flame Shock periodic damage has a 10% chance to reset the cooldown on Molten Blast. (Numbers at level 60; they grow with your level.)"
-  },
-  {
-   "class": "shaman",
-   "ability": "Earth Shock",
-   "rank": "Rank 1",
-   "spellId": 8042,
-   "level": 4,
-   "kind": "value",
-   "what": "direct: the values predict 19/21 or 20/22, the tooltip has [17, 19]",
-   "tooltip": "Instantly shocks the target with concussive force, causing 17 to 19 Nature damage.  It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec.  Causes a high amount of threat."
-  },
-  {
-   "class": "shaman",
-   "ability": "Earth Shock",
-   "rank": "Rank 2",
-   "spellId": 8044,
-   "level": 8,
-   "kind": "value",
-   "what": "direct: the values predict 35/37 or 36/38, the tooltip has [32, 34]",
-   "tooltip": "Instantly shocks the target with concussive force, causing 32 to 34 Nature damage.  It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec.  Causes a high amount of threat."
-  },
-  {
-   "class": "shaman",
-   "ability": "Earth Shock",
-   "rank": "Rank 3",
-   "spellId": 8045,
-   "level": 14,
-   "kind": "value",
-   "what": "direct: the values predict 65/69 or 66/70, the tooltip has [47, 51]",
-   "tooltip": "Instantly shocks the target with concussive force, causing 47 to 51 Nature damage.  It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec.  Causes a high amount of threat."
-  },
-  {
-   "class": "shaman",
-   "ability": "Earth Shock",
-   "rank": "Rank 4",
-   "spellId": 8046,
-   "level": 24,
-   "kind": "value",
-   "what": "direct: the values predict 126/134 or 127/135, the tooltip has [78, 84]",
-   "tooltip": "Instantly shocks the target with concussive force, causing 78 to 84 Nature damage.  It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec.  Causes a high amount of threat."
-  },
-  {
-   "class": "shaman",
-   "ability": "Flame Shock",
-   "rank": "Rank 1",
-   "spellId": 8050,
-   "level": 10,
-   "kind": "value",
-   "what": "direct: the values predict 25 or 26, the tooltip has [20, 28]",
-   "tooltip": "Instantly sears the target with fire, causing 20 Fire damage immediately and 28 Fire damage over 12 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Flame Shock",
-   "rank": "Rank 2",
-   "spellId": 8052,
-   "level": 18,
-   "kind": "value",
-   "what": "direct: the values predict 51 or 52, the tooltip has [32, 33]",
-   "tooltip": "Instantly sears the target with fire, causing 33 Fire damage immediately and 32 Fire damage over 12 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Flame Shock",
-   "rank": "Rank 2",
-   "spellId": 8052,
-   "level": 18,
-   "kind": "value",
-   "what": "periodic: the values predict 48 or 52 or 12 or 13, the tooltip has [32, 33]",
-   "tooltip": "Instantly sears the target with fire, causing 33 Fire damage immediately and 32 Fire damage over 12 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Flame Shock",
-   "rank": "Rank 3",
-   "spellId": 8053,
-   "level": 28,
-   "kind": "value",
-   "what": "direct: the values predict 95 or 96, the tooltip has [43, 56]",
-   "tooltip": "Instantly sears the target with fire, causing 43 Fire damage immediately and 56 Fire damage over 12 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Flame Shock",
-   "rank": "Rank 3",
-   "spellId": 8053,
-   "level": 28,
-   "kind": "value",
-   "what": "periodic: the values predict 96 or 100 or 24 or 25, the tooltip has [43, 56]",
-   "tooltip": "Instantly sears the target with fire, causing 43 Fire damage immediately and 56 Fire damage over 12 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Frost Shock",
-   "rank": "Rank 1",
-   "spellId": 8056,
-   "level": 20,
-   "kind": "value",
-   "what": "direct: the values predict 95/101 or 96/102, the tooltip has [50, 64, 68]",
-   "tooltip": "Instantly shocks the target with frost, causing 64 to 68 Frost damage and slowing movement speed by 50%.  Lasts 8 sec."
-  },
-  {
-   "class": "shaman",
-   "ability": "Totemic Projection",
-   "rank": "",
-   "spellId": 437009,
-   "level": 22,
-   "kind": "name",
-   "what": "engine: 'Totemic Call' ''"
+   "what": "direct: the values predict 72/108 or 73/109, the tooltip has [5, 10, 60, 120, 181]",
+   "tooltip": "Blast up to 10 enemies in a cone in front of you for 120 to 181 (+5% of attack power) Fire damage. This ability generates a high amount of threat. Flame Shock periodic damage has a 10% chance to reset the cooldown on Molten Blast. (Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "shaman",
@@ -618,8 +389,8 @@
    "spellId": 403629,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 522/662 or 523/663, the tooltip has [4, 60, 841, 1066]",
-   "tooltip": "Sends a bolt of chaotic fire at the enemy, dealing 841 to 1066 Chaos damage.  Chaos Bolt always hits, cannot be resisted, and its knowledge causes all your Fire spells to pierce through absorption effects. Chaos Bolt gains a high chance to be resisted when used against monsters 4 or more levels abov"
+   "what": "direct: the values predict 522/662 or 523/663, the tooltip has [4, 60, 840, 1066]",
+   "tooltip": "Sends a bolt of chaotic fire at the enemy, dealing 840 to 1066 Chaos damage.  Chaos Bolt always hits, cannot be resisted, and its knowledge causes all your Fire spells to pierce through absorption effects. Chaos Bolt gains a high chance to be resisted when used against monsters 4 or more levels abov"
   },
   {
    "class": "warlock",
@@ -660,12 +431,52 @@
   {
    "class": "warlock",
    "ability": "Shadow Cleave",
+   "rank": "Rank 1",
+   "spellId": 403835,
+   "level": 1,
+   "kind": "value",
+   "what": "direct: the values predict 2/6 or 3/7, the tooltip has [3, 6, 10, 60]",
+   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 3 to 6 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers.\n(Numbers at level 60; they grow with your level.)"
+  },
+  {
+   "class": "warlock",
+   "ability": "Shadow Cleave",
+   "rank": "Rank 2",
+   "spellId": 403839,
+   "level": 6,
+   "kind": "value",
+   "what": "direct: the values predict 7/13 or 8/14, the tooltip has [6, 10, 12, 60]",
+   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 6 to 12 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers.\n(Numbers at level 60; they grow with your level.)"
+  },
+  {
+   "class": "warlock",
+   "ability": "Shadow Cleave",
+   "rank": "Rank 3",
+   "spellId": 403840,
+   "level": 12,
+   "kind": "value",
+   "what": "direct: the values predict 17/27 or 18/28, the tooltip has [10, 14, 23, 60]",
+   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 14 to 23 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers.\n(Numbers at level 60; they grow with your level.)"
+  },
+  {
+   "class": "warlock",
+   "ability": "Shadow Cleave",
    "rank": "Rank 4",
    "spellId": 403841,
    "level": 20,
    "kind": "value",
-   "what": "direct: the values predict 23/37 or 24/38, the tooltip has [10, 24, 36]",
-   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 24 to 36 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers."
+   "what": "direct: the values predict 31/49 or 32/50, the tooltip has [10, 25, 39, 60]",
+   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 25 to 39 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers.\n(Numbers at level 60; they grow with your level.)"
+  },
+  {
+   "class": "warlock",
+   "ability": "Shadow Cleave",
+   "rank": "Rank 5",
+   "spellId": 403842,
+   "level": 28,
+   "kind": "value",
+   "what": "direct: the values predict 53/81 or 54/82, the tooltip has [10, 42, 60, 64]",
+   "tooltip": "Punish up to 10 nearby enemies with a Shadow lash, dealing 42 to 64 to each.\n\nShadow Cleave benefits from and triggers most talents and effects that Shadow Bolt benefits from and triggers.\n(Numbers at level 60; they grow with your level.)"
   },
   {
    "class": "warlock",
@@ -674,8 +485,8 @@
    "spellId": 426320,
    "level": 1,
    "kind": "value",
-   "what": "direct: the values predict 173 or 174, the tooltip has [26, 60, 279, 515]",
-   "tooltip": "Burns the enemy for 279 Shadowflame damage and then an additional 515 Shadowflame damage over 15 sec.\n\nShadowflame triggers and benefits from all effects that modify or interact with Immolate, or with Affliction, Destruction, Fire, or Shadow spells, but only one of Immolate or Shadowflame per Warloc"
+   "what": "direct: the values predict 173 or 174, the tooltip has [26, 60, 278, 515]",
+   "tooltip": "Burns the enemy for 278 Shadowflame damage and then an additional 515 Shadowflame damage over 15 sec.\n\nShadowflame triggers and benefits from all effects that modify or interact with Immolate, or with Affliction, Destruction, Fire, or Shadow spells, but only one of Immolate or Shadowflame per Warloc"
   },
   {
    "class": "warlock",
@@ -684,8 +495,8 @@
    "spellId": 426320,
    "level": 1,
    "kind": "value",
-   "what": "periodic: the values predict 320 or 325 or 64 or 65, the tooltip has [26, 60, 279, 515]",
-   "tooltip": "Burns the enemy for 279 Shadowflame damage and then an additional 515 Shadowflame damage over 15 sec.\n\nShadowflame triggers and benefits from all effects that modify or interact with Immolate, or with Affliction, Destruction, Fire, or Shadow spells, but only one of Immolate or Shadowflame per Warloc"
+   "what": "periodic: the values predict 320 or 325 or 64 or 65, the tooltip has [26, 60, 278, 515]",
+   "tooltip": "Burns the enemy for 278 Shadowflame damage and then an additional 515 Shadowflame damage over 15 sec.\n\nShadowflame triggers and benefits from all effects that modify or interact with Immolate, or with Affliction, Destruction, Fire, or Shadow spells, but only one of Immolate or Shadowflame per Warloc"
   },
   {
    "class": "warlock",
@@ -729,13 +540,23 @@
   },
   {
    "class": "warrior",
-   "ability": "Victory Rush",
-   "rank": "",
-   "spellId": 402927,
-   "level": 20,
+   "ability": "Revenge",
+   "rank": "Rank 1",
+   "spellId": 6572,
+   "level": 14,
    "kind": "value",
-   "what": "direct: the values predict 1 or 2, the tooltip has [10]",
-   "tooltip": "Instantly attack the target causing ? damage and healing you for 10% of your maximum health.  Only useable within 20 sec after you kill a non-trivial enemy."
+   "what": "direct: the values predict 20/24 or 21/25, the tooltip has [20, 23, 25]",
+   "tooltip": "Instantly counterattack an enemy for 20 to 23 (+25% of attack power) damage and a high amount of threat.  Revenge must follow a block, dodge or parry."
+  },
+  {
+   "class": "warrior",
+   "ability": "Revenge",
+   "rank": "Rank 2",
+   "spellId": 6574,
+   "level": 24,
+   "kind": "value",
+   "what": "direct: the values predict 31/37 or 31/39, the tooltip has [25, 30, 37]",
+   "tooltip": "Instantly counterattack an enemy for 30 to 37 (+25% of attack power) damage and a high amount of threat.  Revenge must follow a block, dodge or parry."
   }
  ]
 }
