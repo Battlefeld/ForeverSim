@@ -25,9 +25,7 @@ jobs:
           python-version: '3.12'
       - name: Toolchain
         run: |
-          # the Ubuntu mirrors fail now and then (11.11.): three tries
-          for i in 1 2 3; do sudo apt-get update -qq && sudo apt-get install -y -qq protobuf-compiler lua5.1 && break; sleep 30; done
-          command -v lua5.1 >/dev/null
+          .github/scripts/toolchain.sh lua protoc
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - name: Build and test actual Engine integration
