@@ -88,3 +88,82 @@ func TestRoutesUpdate(t *testing.T) {
 		t.Fatal("partial folder left behind")
 	}
 }
+
+func TestRoutesAddonUpdate(t *testing.T) {
+	files := map[string]string{"routes-data.json.gz": "data"}
+	zb, mb := testBundle(t, "v2", files, false)
+	var ab bytes.Buffer
+	zw := zip.NewWriter(&ab)
+	for n, body := range map[string]string{"ForeverRoutes/ForeverRoutes.toc": "## Interface: 16001\nCore.lua\n", "ForeverRoutes/Core.lua": "-- new", "ForeverRoutes/Data/Routes.lua": "-- routes v2"} {
+		w, _ := zw.Create(n)
+		w.Write([]byte(body))
+	}
+	zw.Close()
+	addon := ab.Bytes()
+	sum := sha256.Sum256(addon)
+	addonSum := hex.EncodeToString(sum[:]) + "  ForeverRoutes-addon.zip\n"
+	var srv *httptest.Server
+	srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/repos/x/y/releases/latest":
+			json.NewEncoder(w).Encode(map[string]any{"tag_name": "v2", "assets": []map[string]string{
+				{"name": routesBundle, "browser_download_url": srv.URL + "/b.zip"}, {"name": routesManifest, "browser_download_url": srv.URL + "/b.json"},
+				{"name": routesAddonZip, "browser_download_url": srv.URL + "/a.zip"}, {"name": routesAddonZip + ".sha256", "browser_download_url": srv.URL + "/a.sha"}}})
+		case "/b.zip":
+			w.Write(zb)
+		case "/b.json":
+			w.Write(mb)
+		case "/a.zip":
+			w.Write(addon)
+		case "/a.sha":
+			w.Write([]byte(addonSum))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer srv.Close()
+	routesAPI = srv.URL
+	base := t.TempDir()
+	addons := filepath.Join(base, "WoW", "Interface", "AddOns")
+	os.MkdirAll(filepath.Join(addons, "ForeverRoutes", "Data"), 0o755)
+	os.WriteFile(filepath.Join(addons, "ForeverRoutes", "Core.lua"), []byte("-- old"), 0o644)
+	os.WriteFile(filepath.Join(addons, "ForeverRoutes", "Stale.lua"), []byte("-- gone"), 0o644)
+	app := filepath.Join(base, "app")
+	os.MkdirAll(filepath.Join(app, "Data", "Personal"), 0o755)
+	os.WriteFile(filepath.Join(app, "Data", "Personal", "Personal.lua"), []byte("ForeverRoutesData.personal = {}"), 0o644)
+	cfg := Config{RoutesData: filepath.Join(app, "ForeverRoutes", "routes-data.json.gz"), RoutesRepo: "x/y", Addons: addons}
+	if _, _, err := updateRoutes(context.Background(), cfg); err != nil {
+		t.Fatal(err)
+	}
+	if b, _ := os.ReadFile(filepath.Join(addons, "ForeverRoutes", "Core.lua")); string(b) != "-- new" {
+		t.Fatalf("addon not replaced: %q", b)
+	}
+	if _, err := os.Stat(filepath.Join(addons, "ForeverRoutes", "Stale.lua")); !os.IsNotExist(err) {
+		t.Fatal("old addon file left behind")
+	}
+	if b, _ := os.ReadFile(filepath.Join(addons, "ForeverRoutes", "Data", "Personal.lua")); string(b) != "ForeverRoutesData.personal = {}" {
+		t.Fatal("personal route not put back")
+	}
+	for _, d := range []string{"ForeverRoutes.neu", "ForeverRoutes.alt"} {
+		if _, err := os.Stat(filepath.Join(addons, d)); !os.IsNotExist(err) {
+			t.Fatalf("%s left in AddOns", d)
+		}
+	}
+	// the same release again: the addon stays as it is
+	os.WriteFile(filepath.Join(addons, "ForeverRoutes", "Core.lua"), []byte("-- touched"), 0o644)
+	if _, _, err := updateRoutes(context.Background(), cfg); err != nil {
+		t.Fatal(err)
+	}
+	if b, _ := os.ReadFile(filepath.Join(addons, "ForeverRoutes", "Core.lua")); string(b) != "-- touched" {
+		t.Fatal("addon installed again for the same release")
+	}
+	// a damaged addon zip changes nothing
+	os.Remove(filepath.Join(app, routesAddonMarker))
+	addonSum = "00  ForeverRoutes-addon.zip\n"
+	if _, _, err := updateRoutes(context.Background(), cfg); err != nil {
+		t.Fatal(err)
+	}
+	if b, _ := os.ReadFile(filepath.Join(addons, "ForeverRoutes", "Core.lua")); string(b) != "-- touched" {
+		t.Fatal("damaged addon zip installed")
+	}
+}

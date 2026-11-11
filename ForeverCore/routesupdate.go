@@ -92,6 +92,7 @@ func updateRoutes(ctx context.Context, cfg Config) (string, bool, error) {
 	dir := routesDir(cfg)
 	var have routesBundleManifest
 	if raw, err := os.ReadFile(filepath.Join(dir, routesManifest)); err == nil && json.Unmarshal(raw, &have) == nil && have.Version == man.Version {
+		updateRoutesAddon(ctx, cfg, rel.Tag, urls)
 		return have.Version, false, nil
 	}
 	zb, err := fetchBounded(ctx, urls[routesBundle], routesBundleLimit)
@@ -126,7 +127,130 @@ func updateRoutes(ctx context.Context, cfg Config) (string, bool, error) {
 		return "", false, err
 	}
 	os.RemoveAll(old)
+	updateRoutesAddon(ctx, cfg, rel.Tag, urls)
 	return man.Version, true, nil
+}
+
+// The ForeverRoutes addon in WoW's AddOns folder comes with the same release (ForeverRoutes-addon.zip and its
+// SHA-256): before, only an installation from ForeverCore's own package put it there, so new routes never reached the
+// game. updateRoutesAddon brings it to the release's version: checked, unpacked beside the installed one, then swapped
+// in; the character's personal route goes back in; SavedVariables (WTF) are not touched. With WoW running only when
+// the addon's file list (its .toc) stays the same (WoW takes it with /reload), else at the next check. Failures are
+// logged and change nothing.
+const (
+	routesAddonZip    = "ForeverRoutes-addon.zip"
+	routesAddonName   = "ForeverRoutes"
+	routesAddonMarker = "ForeverRoutes-addon.version"
+	routesAddonLimit  = 64 << 20
+)
+
+func updateRoutesAddon(ctx context.Context, cfg Config, tag string, urls map[string]string) {
+	if err := updateRoutesAddonErr(ctx, cfg, tag, urls); err != nil {
+		log.Printf("ForeverRoutes-Addon: %v", err)
+	}
+}
+
+func updateRoutesAddonErr(ctx context.Context, cfg Config, tag string, urls map[string]string) error {
+	if cfg.Addons == "" || urls[routesAddonZip] == "" || urls[routesAddonZip+".sha256"] == "" {
+		return nil // no WoW folder set up, or a release without the addon
+	}
+	appDir := filepath.Dir(routesDir(cfg))
+	marker := filepath.Join(appDir, routesAddonMarker)
+	target := filepath.Join(cfg.Addons, routesAddonName)
+	if b, err := os.ReadFile(marker); err == nil && strings.TrimSpace(string(b)) == tag {
+		if _, err := os.Stat(filepath.Join(target, routesAddonName+".toc")); err == nil {
+			return nil
+		}
+	}
+	sb, err := fetchBounded(ctx, urls[routesAddonZip+".sha256"], 4<<10)
+	if err != nil {
+		return err
+	}
+	want := strings.ToLower(strings.TrimSpace(strings.Fields(string(sb) + " ")[0]))
+	zb, err := fetchBounded(ctx, urls[routesAddonZip], routesAddonLimit)
+	if err != nil {
+		return err
+	}
+	if sum := sha256.Sum256(zb); hex.EncodeToString(sum[:]) != want {
+		return fmt.Errorf("Pruefsumme stimmt nicht")
+	}
+	zr, err := zip.NewReader(bytes.NewReader(zb), int64(len(zb)))
+	if err != nil {
+		return err
+	}
+	fresh, old := target+".neu", target+".alt"
+	os.RemoveAll(fresh)
+	var toc []byte
+	for _, f := range zr.File {
+		name := path.Clean(f.Name)
+		if f.FileInfo().IsDir() {
+			continue
+		}
+		rest, ok := strings.CutPrefix(name, routesAddonName+"/")
+		if !ok || rest == "" || strings.HasPrefix(rest, "../") || strings.Contains(rest, "/../") {
+			os.RemoveAll(fresh)
+			return fmt.Errorf("unerwartete Datei %s", name)
+		}
+		rc, err := f.Open()
+		if err != nil {
+			os.RemoveAll(fresh)
+			return err
+		}
+		b, err := io.ReadAll(io.LimitReader(rc, routesAddonLimit))
+		rc.Close()
+		if err != nil {
+			os.RemoveAll(fresh)
+			return err
+		}
+		if rest == routesAddonName+".toc" {
+			toc = b
+		}
+		dest := filepath.Join(fresh, filepath.FromSlash(rest))
+		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
+			os.RemoveAll(fresh)
+			return err
+		}
+		if err := os.WriteFile(dest, b, 0o644); err != nil {
+			os.RemoveAll(fresh)
+			return err
+		}
+	}
+	if toc == nil {
+		os.RemoveAll(fresh)
+		return fmt.Errorf("Paket ohne %s.toc", routesAddonName)
+	}
+	if wowRunning() {
+		have, _ := os.ReadFile(filepath.Join(target, routesAddonName+".toc"))
+		norm := func(b []byte) []byte { return bytes.ReplaceAll(b, []byte("\r\n"), []byte("\n")) }
+		if !bytes.Equal(norm(have), norm(toc)) {
+			os.RemoveAll(fresh)
+			return fmt.Errorf("WoW laeuft und die Dateiliste hat sich geaendert: Update %s beim naechsten Start ohne WoW", tag)
+		}
+	}
+	// (no routesAccessMu: the planner does not read the addon, and updateRoutes holds that lock already)
+	os.RemoveAll(old)
+	if _, err := os.Stat(target); err == nil {
+		if err := os.Rename(target, old); err != nil {
+			os.RemoveAll(fresh)
+			return err
+		}
+	}
+	if err := os.Rename(fresh, target); err != nil {
+		os.Rename(old, target) // put the installed addon back
+		os.RemoveAll(fresh)
+		return err
+	}
+	os.RemoveAll(old)
+	dataDir := cfg.Data
+	if dataDir == "" {
+		dataDir = filepath.Join(appDir, "Data")
+	}
+	restorePersonalRoute(dataDir, target)
+	if err := os.WriteFile(marker, []byte(tag+"\n"), 0o644); err != nil {
+		return err
+	}
+	log.Printf("ForeverRoutes-Addon aktualisiert: %s", tag)
+	return nil
 }
 
 // unpackRoutes writes the bundle's files below dir, each checked against the manifest; no file outside it, none
