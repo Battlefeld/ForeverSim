@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"log"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // OpenMap (openmap-world/openmap, MIT; a seamless world map for Forever) is too big for ForeverCore.exe (its map art
@@ -36,4 +38,21 @@ func updateOpenMap(ctx context.Context, cfg Config) error {
 		Marker: filepath.Join(filepath.Dir(routesDir(cfg)), openMapMarker),
 		ZipURL: openMapBase + "OpenMap.zip", SHAURL: openMapBase + "OpenMap.zip.sha256", Limit: openMapLimit,
 	})
+}
+
+// keepOpenMapUpdated checks for a new OpenMap at start and then every hour. A download of 130 MB may take a while:
+// each check has its own 30 minutes.
+func keepOpenMapUpdated(ctx context.Context, cfg Config) {
+	for {
+		cctx, cancel := context.WithTimeout(ctx, 30*time.Minute)
+		if err := updateOpenMap(cctx, cfg); err != nil {
+			log.Printf("OpenMap-Update: %v", err)
+		}
+		cancel()
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(time.Hour):
+		}
+	}
 }

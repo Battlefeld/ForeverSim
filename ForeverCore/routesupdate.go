@@ -242,7 +242,8 @@ func installAddonPackage(ctx context.Context, a addonPackage) error {
 		os.RemoveAll(fresh)
 		return fmt.Errorf("Paket ohne %s.toc", a.Name)
 	}
-	if wowRunning() {
+	// an addon WoW has not loaded yet (no folder) can go in while WoW runs: WoW sees it at its next start
+	if _, err := os.Stat(target); err == nil && wowRunning() {
 		have, _ := os.ReadFile(filepath.Join(target, a.Name+".toc"))
 		norm := func(b []byte) []byte { return bytes.ReplaceAll(b, []byte("\r\n"), []byte("\n")) }
 		if !bytes.Equal(norm(have), norm(toc)) {
@@ -330,9 +331,6 @@ func keepRoutesUpdated(ctx context.Context, cfg Config) {
 			log.Printf("ForeverRoutes-Update: %v", err)
 		} else if changed {
 			log.Printf("ForeverRoutes aktualisiert: %s", v)
-		}
-		if err := updateOpenMap(ctx, cfg); err != nil {
-			log.Printf("OpenMap-Update: %v", err)
 		}
 		select {
 		case <-ctx.Done():

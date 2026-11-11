@@ -47,7 +47,12 @@ func fetchBounded(ctx context.Context, url string, max int64) ([]byte, error) {
 			req.Header.Set("Accept", "application/vnd.github.raw") // the file itself, up to 100 MB
 		}
 	}
-	client := &http.Client{Timeout: 90 * time.Second}
+	// 90 seconds for a whole download; a big one (OpenMap, 130 MB) is bounded by its caller's context instead
+	timeout := 90 * time.Second
+	if max > 64<<20 {
+		timeout = 0
+	}
+	client := &http.Client{Timeout: timeout}
 	r, e := client.Do(req)
 	if e != nil {
 		return nil, e

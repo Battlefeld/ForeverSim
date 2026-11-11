@@ -53,6 +53,9 @@ func (s *Service) startClientData(ctx context.Context) {
 		s.clientStatus = saved
 		s.clientMu.Unlock()
 		go s.watchClientQuests(ctx)
+		if !s.cfg.RoutesNoUpdate {
+			go keepOpenMapUpdated(ctx, s.cfg)
+		}
 		go func() {
 			s.checkClientData(ctx)
 			ticker := time.NewTicker(24 * time.Hour)
