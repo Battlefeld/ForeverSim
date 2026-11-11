@@ -35,7 +35,7 @@ jobs:
   # generated tables, tests, the interface and documents do not count: we keep the values ourselves. The hour-long
   # update runs only when the calculation changed (or by hand); otherwise this workflow stays green and does nothing.
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
       changed: ${{ steps.upstream.outputs.changed }}
@@ -50,7 +50,7 @@ jobs:
   update:
     needs: check
     if: needs.check.outputs.changed == 'true' || github.event_name != 'schedule'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4

@@ -61,6 +61,10 @@ class Api:
                     continue
                 if e.code == 404:
                     return None
+                if e.code >= 500:
+                    # a 502/503 from the API passes on its own; retry later
+                    time.sleep(15 * (attempt + 1))
+                    continue
                 raise
             except (urllib.error.URLError, TimeoutError):
                 time.sleep(5)
