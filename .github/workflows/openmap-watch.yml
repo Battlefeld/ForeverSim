@@ -1,0 +1,27 @@
+name: OpenMap watch
+# ForeverCore.exe carries OpenMap (jiforever/wowforever-openmap). Once a day: a new OpenMap version builds a new
+# ForeverCore.exe, which installs it the next time ForeverCore starts.
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  watch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Compare with the OpenMap in the release forevercore
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url=https://github.com/jiforever/wowforever-openmap.git
+          tag="$(git ls-remote --tags --refs "$url" | sed 's#.*refs/tags/##' | grep -i forever | sort -V | tail -1 || true)"
+          ref="${tag:-main}"
+          sha="$(git ls-remote "$url" "refs/tags/$ref^{}" "refs/tags/$ref" "refs/heads/$ref" | head -1 | cut -f1)"
+          [ -n "$sha" ] || { echo "::error::OpenMap $ref not found"; exit 1; }
+          notes="$(gh release view forevercore --repo "$GITHUB_REPOSITORY" --json body -q .body || true)"
+          if printf '%s' "$notes" | grep -q "$sha"; then echo "OpenMap $ref ($sha) is in ForeverCore.exe"; exit 0; fi
+          echo "OpenMap $ref ($sha) is new: building ForeverCore.exe"
+          gh workflow run forevercore-package.yml --repo "$GITHUB_REPOSITORY" --ref main
