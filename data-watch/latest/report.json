@@ -5,30 +5,71 @@
       "source": "https://us.version.battle.net/wowf/versions",
       "row": {
         "Region": "eu",
-        "BuildConfig": "5ada954223f7c409ea172361f5c9e565",
-        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
+        "BuildConfig": "0597e74b01a3f779d849ffe9b3270196",
+        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
         "KeyRing": "",
-        "BuildId": "70862",
-        "VersionsName": "1.60.1.70862",
+        "BuildId": "70888",
+        "VersionsName": "1.60.1.70888",
         "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
       },
-      "responseSHA256": "52073d30d843d1a85d71eefdde53fa9aec88606f3a1462ed6e9828b24b8a7594"
+      "responseSHA256": "61349c3a8c97b8ca5319f699598b367a47ef805cb49f6b5d130dc1a7b04438d5"
     },
     "wow_classic_beta": {
       "source": "https://us.version.battle.net/wow_classic_beta/versions",
       "row": {
         "Region": "eu",
         "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
+        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
         "KeyRing": "",
         "BuildId": "70532",
         "VersionsName": "1.60.1.70532",
         "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
       },
-      "responseSHA256": "c58a8000ee38331e64765506ab1e9dc2329a573decd98914283f0ebe9a83d9b6"
+      "responseSHA256": "9dd30a43153c9852d29a65c64aeb3f274de584639fe45a61c6eb721c01623825"
     }
   },
-  "buildChanges": {},
+  "buildChanges": {
+    "wowf": {
+      "before": {
+        "BuildConfig": "5ada954223f7c409ea172361f5c9e565",
+        "BuildId": "70862",
+        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
+        "KeyRing": "",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a",
+        "Region": "eu",
+        "VersionsName": "1.60.1.70862"
+      },
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "0597e74b01a3f779d849ffe9b3270196",
+        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
+        "KeyRing": "",
+        "BuildId": "70888",
+        "VersionsName": "1.60.1.70888",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      }
+    },
+    "wow_classic_beta": {
+      "before": {
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "BuildId": "70532",
+        "CDNConfig": "55a5dda25b026279080cad451b6cbf73",
+        "KeyRing": "",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5",
+        "Region": "eu",
+        "VersionsName": "1.60.1.70532"
+      },
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      }
+    }
+  },
   "tables": {},
   "documentationStatus": "not_assessed",
   "hotfixCoverage": "downloaded_not_applied",
@@ -39,12 +80,12 @@
   "raidbots": {
     "wowf": {
       "format": 9,
-      "build": 70862,
-      "records": 85552,
-      "bytes": 6047997,
-      "sha256": "a1137766129c50b0a4340705ccec2616480965fcda42bdadd0795b1488dfe638",
+      "build": 70888,
+      "records": 89697,
+      "bytes": 7205158,
+      "sha256": "f45fec7e4c70071a70590cf9d913103c8d09015d2aad53dd984bfee1502a372a",
       "status": "available",
-      "source": "https://storage.googleapis.com/raidbots-static/wow/70862/enUS/DBCache.bin",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70888/enUS/DBCache.bin",
       "region": "NA",
       "locale": "enUS",
       "verification": "raidbots_verified_not_completeness_guarantee"
@@ -71,45 +112,72 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 9, 2026 (#5)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
-        "sha256": "0e29c3e7b39beeb1207965b014909421860bb90ac8cd117ad527479721c8708a",
-        "published": "Tue, 10 Nov 2026 04:23:46 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#6)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6",
+        "sha256": "4794a8385b38f044297e310ef0c8e5ac66658ef1752b3f6198cdf179e980da57",
+        "published": "Wed, 11 Nov 2026 03:27:33 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#5)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
-        "sha256": "625a27da6e3baf62b2f338e682d0193bac3ed863b44151eb3ec914d470896ec0",
+        "title": "Kaivax: Bugged/missing shaman totems since Monday's server chaos (#2)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/buggedmissing-shaman-totems-since-mondays-server-chaos/2409772/2",
+        "sha256": "59f4180eb87507e5049ca3a27e4d57703fdc54978c279bd432d25cef43cb414b",
+        "published": "Wed, 11 Nov 2026 01:10:36 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/buggedmissing-shaman-totems-since-mondays-server-chaos/2409772/2",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: No gold from quests at lvl 60? Seriously? (#93)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/no-gold-from-quests-at-lvl-60-seriously/640380/93",
+        "sha256": "265ec0b819bff834299e46f30ebf5949481999fa2669c65b3e540e14f8d71b52",
+        "published": "Tue, 10 Nov 2026 21:56:33 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/no-gold-from-quests-at-lvl-60-seriously/640380/93",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Gold at 60 for quests (#165)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/gold-at-60-for-quests/2405161/165",
+        "sha256": "16fa1738ad4527d84ccef47c6ea4854d69c1c1f2c2c6360c8f9f76de1fdaf40c",
+        "published": "Tue, 10 Nov 2026 21:56:23 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/gold-at-60-for-quests/2405161/165",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Dungeon xp still not enough (#30)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/dungeon-xp-still-not-enough/640969/30",
+        "sha256": "d8bc02805d52e6a4cfd79c85f0efdf73ad3431781889de302f229edf6a9bfbd4",
+        "published": "Tue, 10 Nov 2026 21:35:31 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/dungeon-xp-still-not-enough/640969/30",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: The majority WANTS increased dungeon XP (#254)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/the-majority-wants-increased-dungeon-xp/2406555/254",
+        "sha256": "286acc7a0b53ed48cc65806fbbd70f0535ecaee4699aca33fabe75a652f39b32",
+        "published": "Tue, 10 Nov 2026 21:35:22 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/the-majority-wants-increased-dungeon-xp/2406555/254",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#5)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/639885/5",
+        "sha256": "4e00ea2fd37229069b93be789a5d165f980205be8b033c27bda88e5b1ca59798",
         "published": "Tue, 10 Nov 2026 04:23:39 GMT",
         "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: PvP Faction Balance Updates - November 10 (#174)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
-        "sha256": "8cce249628acb615f521331bb2bd7bb44469e610d552a8a4746053489d97126a",
-        "published": "Tue, 10 Nov 2026 03:11:34 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: PvP Faction Balance Updates - 11 November",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
-        "sha256": "acb4e1ceca2bde0c9fae38369c742e2584d1cd12176c88f1f5601754da8b3851",
-        "published": "Tue, 10 Nov 2026 02:06:08 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/639885/5",
         "kind": "new"
       }
     ],
-    "relevantChanges": 4
+    "relevantChanges": 5
   },
-  "checkedAt": "2026-11-10T13:32:38.671819Z",
+  "checkedAt": "2026-11-11T12:47:48.093370Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true

@@ -2,6 +2,48 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#6)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6",
+      "sha256": "4794a8385b38f044297e310ef0c8e5ac66658ef1752b3f6198cdf179e980da57",
+      "published": "Wed, 11 Nov 2026 03:27:33 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/buggedmissing-shaman-totems-since-mondays-server-chaos/2409772/2": {
+      "title": "Kaivax: Bugged/missing shaman totems since Monday's server chaos (#2)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/buggedmissing-shaman-totems-since-mondays-server-chaos/2409772/2",
+      "sha256": "59f4180eb87507e5049ca3a27e4d57703fdc54978c279bd432d25cef43cb414b",
+      "published": "Wed, 11 Nov 2026 01:10:36 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/no-gold-from-quests-at-lvl-60-seriously/640380/93": {
+      "title": "Kaivax: No gold from quests at lvl 60? Seriously? (#93)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/no-gold-from-quests-at-lvl-60-seriously/640380/93",
+      "sha256": "265ec0b819bff834299e46f30ebf5949481999fa2669c65b3e540e14f8d71b52",
+      "published": "Tue, 10 Nov 2026 21:56:33 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/gold-at-60-for-quests/2405161/165": {
+      "title": "Kaivax: Gold at 60 for quests (#165)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/gold-at-60-for-quests/2405161/165",
+      "sha256": "16fa1738ad4527d84ccef47c6ea4854d69c1c1f2c2c6360c8f9f76de1fdaf40c",
+      "published": "Tue, 10 Nov 2026 21:56:23 GMT",
+      "relevant": false
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/dungeon-xp-still-not-enough/640969/30": {
+      "title": "Kaivax: Dungeon xp still not enough (#30)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/dungeon-xp-still-not-enough/640969/30",
+      "sha256": "d8bc02805d52e6a4cfd79c85f0efdf73ad3431781889de302f229edf6a9bfbd4",
+      "published": "Tue, 10 Nov 2026 21:35:31 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/the-majority-wants-increased-dungeon-xp/2406555/254": {
+      "title": "Kaivax: The majority WANTS increased dungeon XP (#254)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/the-majority-wants-increased-dungeon-xp/2406555/254",
+      "sha256": "286acc7a0b53ed48cc65806fbbd70f0535ecaee4699aca33fabe75a652f39b32",
+      "published": "Tue, 10 Nov 2026 21:35:22 GMT",
+      "relevant": true
+    },
     "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5": {
       "title": "Kaivax: WoW: Forever Hotfixes - November 9, 2026 (#5)",
       "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
@@ -9,10 +51,10 @@
       "published": "Tue, 10 Nov 2026 04:23:46 GMT",
       "relevant": true
     },
-    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5": {
-      "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#5)",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
-      "sha256": "625a27da6e3baf62b2f338e682d0193bac3ed863b44151eb3ec914d470896ec0",
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/639885/5": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#5)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/639885/5",
+      "sha256": "4e00ea2fd37229069b93be789a5d165f980205be8b033c27bda88e5b1ca59798",
       "published": "Tue, 10 Nov 2026 04:23:39 GMT",
       "relevant": true
     },
@@ -309,48 +351,6 @@
       "sha256": "4eaca94b3cf1d934b9fc8922be21dfb37b19b8649302cd2a63589a72c5fa131f",
       "published": "Mon, 26 Oct 2026 17:01:29 GMT",
       "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/637228/1": {
-      "title": "Kaivax: Thank You For Testing the WoW Forever Beta",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/637228/1",
-      "sha256": "a8eb0a594b38b0fa7da2eaf1b9a78844edbb7684a885f09b795460bba3f4f2ce",
-      "published": "Fri, 23 Oct 2026 17:01:38 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/2390466/1": {
-      "title": "Kaivax: Thank You For Testing the WoW Forever Beta",
-      "url": "https://us.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/2390466/1",
-      "sha256": "c7b3b7d6b2e1216539f832e4e427567576079159481b93b342ed803d244a10d7",
-      "published": "Fri, 23 Oct 2026 17:01:12 GMT",
-      "relevant": true
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/637227/1": {
-      "title": "Kaivax: Thank You For Testing the WoW Forever Beta",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/637227/1",
-      "sha256": "9eb8f8caf4bf47fdf007126dfbb82e37c788f7d77d392bfeea24a4dda36b80dd",
-      "published": "Fri, 23 Oct 2026 17:00:44 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/2390465/1": {
-      "title": "Kaivax: Thank You For Testing the WoW Forever Beta",
-      "url": "https://us.forums.blizzard.com/en/wow/t/thank-you-for-testing-the-wow-forever-beta/2390465/1",
-      "sha256": "1e3c15f4df76ec5b02dd3b149899de0b5d6f0befb42562aac54736eef4b888c1",
-      "published": "Fri, 23 Oct 2026 17:00:41 GMT",
-      "relevant": true
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/beta-realm-restart-today-at-2300-cest/637088/1": {
-      "title": "Kaivax: Beta Realm Restart Today At 23:00 CEST",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/beta-realm-restart-today-at-2300-cest/637088/1",
-      "sha256": "74fec59579667ee029906ca7a8324182f117252d4fed8c0d70ef8b7a20c089e5",
-      "published": "Thu, 22 Oct 2026 20:20:36 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/beta-realm-restart-today-at-200-pm-pdt/2389801/1": {
-      "title": "Kaivax: Beta Realm Restart Today At 2:00 p.m. PDT",
-      "url": "https://us.forums.blizzard.com/en/wow/t/beta-realm-restart-today-at-200-pm-pdt/2389801/1",
-      "sha256": "bf8347c69268e2c8d5e8c239278b7654c02a160ace5254c7c2f86ba00d648aa4",
-      "published": "Thu, 22 Oct 2026 20:19:58 GMT",
-      "relevant": false
     }
   },
   "lastCheck": {
@@ -359,42 +359,69 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 9, 2026 (#5)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
-        "sha256": "0e29c3e7b39beeb1207965b014909421860bb90ac8cd117ad527479721c8708a",
-        "published": "Tue, 10 Nov 2026 04:23:46 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#6)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6",
+        "sha256": "4794a8385b38f044297e310ef0c8e5ac66658ef1752b3f6198cdf179e980da57",
+        "published": "Wed, 11 Nov 2026 03:27:33 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-9-2026/2403040/5",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 6, 2026 (#5)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
-        "sha256": "625a27da6e3baf62b2f338e682d0193bac3ed863b44151eb3ec914d470896ec0",
+        "title": "Kaivax: Bugged/missing shaman totems since Monday's server chaos (#2)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/buggedmissing-shaman-totems-since-mondays-server-chaos/2409772/2",
+        "sha256": "59f4180eb87507e5049ca3a27e4d57703fdc54978c279bd432d25cef43cb414b",
+        "published": "Wed, 11 Nov 2026 01:10:36 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/buggedmissing-shaman-totems-since-mondays-server-chaos/2409772/2",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: No gold from quests at lvl 60? Seriously? (#93)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/no-gold-from-quests-at-lvl-60-seriously/640380/93",
+        "sha256": "265ec0b819bff834299e46f30ebf5949481999fa2669c65b3e540e14f8d71b52",
+        "published": "Tue, 10 Nov 2026 21:56:33 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/no-gold-from-quests-at-lvl-60-seriously/640380/93",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Gold at 60 for quests (#165)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/gold-at-60-for-quests/2405161/165",
+        "sha256": "16fa1738ad4527d84ccef47c6ea4854d69c1c1f2c2c6360c8f9f76de1fdaf40c",
+        "published": "Tue, 10 Nov 2026 21:56:23 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/gold-at-60-for-quests/2405161/165",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Dungeon xp still not enough (#30)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/dungeon-xp-still-not-enough/640969/30",
+        "sha256": "d8bc02805d52e6a4cfd79c85f0efdf73ad3431781889de302f229edf6a9bfbd4",
+        "published": "Tue, 10 Nov 2026 21:35:31 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/dungeon-xp-still-not-enough/640969/30",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: The majority WANTS increased dungeon XP (#254)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/the-majority-wants-increased-dungeon-xp/2406555/254",
+        "sha256": "286acc7a0b53ed48cc65806fbbd70f0535ecaee4699aca33fabe75a652f39b32",
+        "published": "Tue, 10 Nov 2026 21:35:22 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/the-majority-wants-increased-dungeon-xp/2406555/254",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#5)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/639885/5",
+        "sha256": "4e00ea2fd37229069b93be789a5d165f980205be8b033c27bda88e5b1ca59798",
         "published": "Tue, 10 Nov 2026 04:23:39 GMT",
         "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-6-2026/639885/5",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: PvP Faction Balance Updates - November 10 (#174)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
-        "sha256": "8cce249628acb615f521331bb2bd7bb44469e610d552a8a4746053489d97126a",
-        "published": "Tue, 10 Nov 2026 03:11:34 GMT",
-        "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-november-10/2408781/174",
-        "kind": "new"
-      },
-      {
-        "title": "Kaivax: PvP Faction Balance Updates - 11 November",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
-        "sha256": "acb4e1ceca2bde0c9fae38369c742e2584d1cd12176c88f1f5601754da8b3851",
-        "published": "Tue, 10 Nov 2026 02:06:08 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/pvp-faction-balance-updates-11-november/641169/1",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/639885/5",
         "kind": "new"
       }
     ],
-    "relevantChanges": 4
+    "relevantChanges": 5
   }
 }
