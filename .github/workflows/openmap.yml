@@ -1,0 +1,59 @@
+name: OpenMap
+# OpenMap (openmap-world/openmap, MIT; map art Blizzard's) is too big for ForeverCore.exe. Once a day this workflow
+# packs its newest version for Forever (without the Retail client's data and textures) into the release "openmap":
+# OpenMap.zip, its SHA-256 and OpenMap.version. ForeverCore installs it into WoW's AddOns folder and keeps it there
+# at the newest version (ForeverCore/openmapupdate.go).
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: openmap
+  cancel-in-progress: false
+jobs:
+  openmap:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Newest OpenMap version
+        id: ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          export GIT_TERMINAL_PROMPT=0
+          url=https://github.com/openmap-world/openmap.git
+          tag="$(git ls-remote --tags --refs "$url" | sed 's#.*refs/tags/##' | grep -vi retail | grep -E '^v?[0-9]' | sort -V | tail -1 || true)"
+          ref="${tag:-main}"
+          git -c credential.helper= clone -q --depth 1 --branch "$ref" "$url" "$RUNNER_TEMP/openmap"
+          version="$ref $(git -C "$RUNNER_TEMP/openmap" rev-parse --short=12 HEAD)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          have="$(gh release download openmap --repo "$GITHUB_REPOSITORY" --pattern OpenMap.version --output - 2>/dev/null || true)"
+          if [ "$(printf '%s' "$have" | tr -d '\r\n')" = "$version" ]; then echo "OpenMap $version is published"; echo "new=false" >> "$GITHUB_OUTPUT"; else echo "new=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Pack OpenMap for Forever
+        if: steps.ref.outputs.new == 'true'
+        run: |
+          cd "$RUNNER_TEMP/openmap"
+          # every file the Forever .toc loads must be in the checkout (libraries a packager would add are not)
+          missing=0
+          while IFS= read -r line; do
+            f="$(printf '%s' "$line" | tr -d '\r' | sed -e 's#\\#/#g' -e 's/[[:space:]]*\[[^]]*\]//g' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+            case "$f" in ''|'#'*) continue ;; esac
+            [ -f "OpenMap/$f" ] || { echo "::error::OpenMap.toc loads $f, not in the checkout"; missing=1; }
+          done < OpenMap/OpenMap.toc
+          [ "$missing" = 0 ]
+          mkdir -p "$RUNNER_TEMP/out"
+          zip -qr -9 "$RUNNER_TEMP/out/OpenMap.zip" OpenMap -x 'OpenMap/OpenMap_Mainline.toc' 'OpenMap/Data/Retail/*' 'OpenMap/Media/Textures/Retail/*'
+          (cd "$RUNNER_TEMP/out" && sha256sum OpenMap.zip > OpenMap.zip.sha256)
+          printf '%s\n' "${{ steps.ref.outputs.version }}" > "$RUNNER_TEMP/out/OpenMap.version"
+          ls -la "$RUNNER_TEMP/out"
+      - name: Publish in the release openmap
+        if: steps.ref.outputs.new == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view openmap --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || gh release create openmap --repo "$GITHUB_REPOSITORY" --target main --title "OpenMap for ForeverCore" --notes "OpenMap (https://github.com/openmap-world/openmap, code MIT, map art Blizzard's) packed for WoW Forever; ForeverCore installs it and keeps it up to date."
+          # the version file last: ForeverCore takes a new version only when zip and checksum are already there
+          gh release upload openmap --repo "$GITHUB_REPOSITORY" --clobber "$RUNNER_TEMP/out/OpenMap.zip" "$RUNNER_TEMP/out/OpenMap.zip.sha256"
+          gh release upload openmap --repo "$GITHUB_REPOSITORY" --clobber "$RUNNER_TEMP/out/OpenMap.version"
+          gh release edit openmap --repo "$GITHUB_REPOSITORY" --notes "OpenMap ${{ steps.ref.outputs.version }} (https://github.com/openmap-world/openmap, code MIT, map art Blizzard's), packed for WoW Forever. ForeverCore installs it and keeps it up to date."

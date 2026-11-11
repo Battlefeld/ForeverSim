@@ -64,35 +64,10 @@ jobs:
           mkdir -p "$RUNNER_TEMP/routes"
           # the one ForeverCore.exe installs both addons: no routes addon, no program
           gh release download --repo Battlefeld/ForeverRoutes --pattern ForeverRoutes-addon.zip --dir "$RUNNER_TEMP/routes"
-      - name: OpenMap (newest version tag, else main)
-        run: |
-          url=https://github.com/openmap-world/openmap.git
-          export GIT_TERMINAL_PROMPT=0
-          tag="$(git ls-remote --tags --refs "$url" 2>/dev/null | sed 's#.*refs/tags/##' | grep -vi retail | grep -E '^v?[0-9]' | sort -V | tail -1 || true)"
-          ref="${tag:-main}"
-          # OpenMap is a bonus: when its repository cannot be reached, ForeverCore.exe is built without it
-          if ! git -c credential.helper= clone -q --depth 1 --branch "$ref" "$url" "$RUNNER_TEMP/openmap"; then
-            echo "::warning::OpenMap not reachable ($url): ForeverCore.exe is built without OpenMap"
-            echo "OPENMAP=nicht erreichbar" >> "$GITHUB_ENV"
-            exit 0
-          fi
-          sha="$(git -C "$RUNNER_TEMP/openmap" rev-parse HEAD)"
-          echo "OPENMAP=$ref $sha" >> "$GITHUB_ENV"
-          # every file the .toc loads must be in the checkout (libraries a packager would add are not)
-          toc="$RUNNER_TEMP/openmap/OpenMap/OpenMap.toc"
-          missing=0
-          while IFS= read -r line; do
-            f="$(printf '%s' "$line" | tr -d '\r' | sed -e 's#\\#/#g' -e 's/[[:space:]]*\[[^]]*\]//g' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
-            case "$f" in ''|'#'*) continue ;; esac
-            [ -f "$RUNNER_TEMP/openmap/OpenMap/$f" ] || { echo "::error::OpenMap.toc loads $f, not in the checkout"; missing=1; }
-          done < "$toc"
-          [ "$missing" = 0 ]
-          echo "OpenMap $ref ($sha)"
       - name: Package
         run: |
           mkdir -p dist
           routes=(--routes-addon "$RUNNER_TEMP/routes/ForeverRoutes-addon.zip")
-          if [ -f "$RUNNER_TEMP/openmap/OpenMap/OpenMap.toc" ]; then routes+=(--openmap "$RUNNER_TEMP/openmap"); fi
           python ForeverCore/package.py --core-exe "$RUNNER_TEMP/ForeverCore.exe" --engine-exe "$RUNNER_TEMP/ForeverEngine.exe" --lua "$RUNNER_TEMP/questiedb/tools/lua-binary/lua.exe" --engine-source deps/engine --lua-license "$RUNNER_TEMP/questiedb/tools/lua-binary/THIRD_PARTY_NOTICES.txt" "${routes[@]}" --output dist/ForeverCore_package.zip
       - name: The one ForeverCore.exe (window, installer, package built in)
         run: |
@@ -117,6 +92,4 @@ jobs:
           assets=(dist/ForeverCore.exe)
           if [ -f dist/forevercore-update.json ]; then assets+=(dist/forevercore-update.json); fi
           gh release upload forevercore "${assets[@]}" --clobber
-          gh release edit forevercore --notes "Build $BUILD: the one program that installs ForeverSim, ForeverRoutes and OpenMap and keeps them up to date. Download ForeverCore.exe and start it.
-
-          OpenMap: $OPENMAP"
+          gh release edit forevercore --notes "Build $BUILD: the one program that installs ForeverSim and ForeverRoutes and keeps them up to date. Download ForeverCore.exe and start it."

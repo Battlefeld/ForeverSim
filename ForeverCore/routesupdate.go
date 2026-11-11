@@ -155,19 +155,42 @@ func updateRoutesAddonErr(ctx context.Context, cfg Config, tag string, urls map[
 		return nil // no WoW folder set up, or a release without the addon
 	}
 	appDir := filepath.Dir(routesDir(cfg))
-	marker := filepath.Join(appDir, routesAddonMarker)
-	target := filepath.Join(cfg.Addons, routesAddonName)
-	if b, err := os.ReadFile(marker); err == nil && strings.TrimSpace(string(b)) == tag {
-		if _, err := os.Stat(filepath.Join(target, routesAddonName+".toc")); err == nil {
+	dataDir := cfg.Data
+	if dataDir == "" {
+		dataDir = filepath.Join(appDir, "Data")
+	}
+	return installAddonPackage(ctx, addonPackage{
+		Addons: cfg.Addons, Name: routesAddonName, Version: tag,
+		Marker: filepath.Join(appDir, routesAddonMarker),
+		ZipURL: urls[routesAddonZip], SHAURL: urls[routesAddonZip+".sha256"], Limit: routesAddonLimit,
+		After: func(target string) { restorePersonalRoute(dataDir, target) },
+	})
+}
+
+// addonPackage is one addon ForeverCore keeps up to date in WoW's AddOns folder from a zip with its SHA-256.
+type addonPackage struct {
+	Addons, Name, Version, Marker string
+	ZipURL, SHAURL                string
+	Limit                         int64
+	After                         func(target string) // after the swap (the personal route goes back in)
+}
+
+// installAddonPackage brings the addon to the package's version: checked, unpacked beside the installed one, then
+// swapped in; SavedVariables (WTF) are not touched. With WoW running only when the addon's file list (its .toc) stays
+// the same (WoW takes it with /reload), else at the next check. A failure changes nothing.
+func installAddonPackage(ctx context.Context, a addonPackage) error {
+	target := filepath.Join(a.Addons, a.Name)
+	if b, err := os.ReadFile(a.Marker); err == nil && strings.TrimSpace(string(b)) == a.Version {
+		if _, err := os.Stat(filepath.Join(target, a.Name+".toc")); err == nil {
 			return nil
 		}
 	}
-	sb, err := fetchBounded(ctx, urls[routesAddonZip+".sha256"], 4<<10)
+	sb, err := fetchBounded(ctx, a.SHAURL, 4<<10)
 	if err != nil {
 		return err
 	}
 	want := strings.ToLower(strings.TrimSpace(strings.Fields(string(sb) + " ")[0]))
-	zb, err := fetchBounded(ctx, urls[routesAddonZip], routesAddonLimit)
+	zb, err := fetchBounded(ctx, a.ZipURL, a.Limit)
 	if err != nil {
 		return err
 	}
@@ -186,7 +209,7 @@ func updateRoutesAddonErr(ctx context.Context, cfg Config, tag string, urls map[
 		if f.FileInfo().IsDir() {
 			continue
 		}
-		rest, ok := strings.CutPrefix(name, routesAddonName+"/")
+		rest, ok := strings.CutPrefix(name, a.Name+"/")
 		if !ok || rest == "" || strings.HasPrefix(rest, "../") || strings.Contains(rest, "/../") {
 			os.RemoveAll(fresh)
 			return fmt.Errorf("unerwartete Datei %s", name)
@@ -196,13 +219,13 @@ func updateRoutesAddonErr(ctx context.Context, cfg Config, tag string, urls map[
 			os.RemoveAll(fresh)
 			return err
 		}
-		b, err := io.ReadAll(io.LimitReader(rc, routesAddonLimit))
+		b, err := io.ReadAll(io.LimitReader(rc, a.Limit))
 		rc.Close()
 		if err != nil {
 			os.RemoveAll(fresh)
 			return err
 		}
-		if rest == routesAddonName+".toc" {
+		if rest == a.Name+".toc" {
 			toc = b
 		}
 		dest := filepath.Join(fresh, filepath.FromSlash(rest))
@@ -217,14 +240,14 @@ func updateRoutesAddonErr(ctx context.Context, cfg Config, tag string, urls map[
 	}
 	if toc == nil {
 		os.RemoveAll(fresh)
-		return fmt.Errorf("Paket ohne %s.toc", routesAddonName)
+		return fmt.Errorf("Paket ohne %s.toc", a.Name)
 	}
 	if wowRunning() {
-		have, _ := os.ReadFile(filepath.Join(target, routesAddonName+".toc"))
+		have, _ := os.ReadFile(filepath.Join(target, a.Name+".toc"))
 		norm := func(b []byte) []byte { return bytes.ReplaceAll(b, []byte("\r\n"), []byte("\n")) }
 		if !bytes.Equal(norm(have), norm(toc)) {
 			os.RemoveAll(fresh)
-			return fmt.Errorf("WoW laeuft und die Dateiliste hat sich geaendert: Update %s beim naechsten Start ohne WoW", tag)
+			return fmt.Errorf("WoW laeuft und die Dateiliste hat sich geaendert: Update %s beim naechsten Start ohne WoW", a.Version)
 		}
 	}
 	// (no routesAccessMu: the planner does not read the addon, and updateRoutes holds that lock already)
@@ -241,15 +264,13 @@ func updateRoutesAddonErr(ctx context.Context, cfg Config, tag string, urls map[
 		return err
 	}
 	os.RemoveAll(old)
-	dataDir := cfg.Data
-	if dataDir == "" {
-		dataDir = filepath.Join(appDir, "Data")
+	if a.After != nil {
+		a.After(target)
 	}
-	restorePersonalRoute(dataDir, target)
-	if err := os.WriteFile(marker, []byte(tag+"\n"), 0o644); err != nil {
+	if err := os.WriteFile(a.Marker, []byte(a.Version+"\n"), 0o644); err != nil {
 		return err
 	}
-	log.Printf("ForeverRoutes-Addon aktualisiert: %s", tag)
+	log.Printf("%s-Addon aktualisiert: %s", a.Name, a.Version)
 	return nil
 }
 
@@ -309,6 +330,9 @@ func keepRoutesUpdated(ctx context.Context, cfg Config) {
 			log.Printf("ForeverRoutes-Update: %v", err)
 		} else if changed {
 			log.Printf("ForeverRoutes aktualisiert: %s", v)
+		}
+		if err := updateOpenMap(ctx, cfg); err != nil {
+			log.Printf("OpenMap-Update: %v", err)
 		}
 		select {
 		case <-ctx.Done():
