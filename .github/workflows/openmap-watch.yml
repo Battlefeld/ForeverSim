@@ -17,6 +17,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           url=https://github.com/jiforever/wowforever-openmap.git
+          export GIT_TERMINAL_PROMPT=0
+          if ! git ls-remote "$url" HEAD >/dev/null 2>&1; then echo "::warning::OpenMap not reachable ($url)"; exit 0; fi
           tag="$(git ls-remote --tags --refs "$url" | sed 's#.*refs/tags/##' | grep -i forever | sort -V | tail -1 || true)"
           ref="${tag:-main}"
           sha="$(git ls-remote "$url" "refs/tags/$ref^{}" "refs/tags/$ref" "refs/heads/$ref" | head -1 | cut -f1)"
