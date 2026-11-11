@@ -31,6 +31,15 @@ func liveItemEligibility(j Job, item map[string]any) error {
 		return fmt.Errorf("Item gehoert zur anderen Fraktion")
 	}
 	contains := func(key string, value float64) bool {
+		// the weapon skills the character really has (the bridge reads them from the spellbook) count besides the
+		// class rules: a shaman with Two-Handed Maces may wear one, whatever the class table says
+		if weaponSkillKinds[key][value] {
+			for _, entry := range array(snap, "weaponSkills") {
+				if n, ok := entry.(float64); ok && n == value {
+					return true
+				}
+			}
+		}
 		for _, entry := range array(rules, key) {
 			if n, ok := entry.(float64); ok && n == value {
 				return true
@@ -88,4 +97,11 @@ func liveItemEligibility(j Job, item map[string]any) error {
 		}
 	}
 	return nil
+}
+
+// weaponSkillKinds: which weapon subclasses a weapon skill can add to each list of the class rules.
+var weaponSkillKinds = map[string]map[float64]bool{
+	"weaponSubclasses":  {0: true, 1: true, 4: true, 5: true, 6: true, 7: true, 8: true, 10: true, 13: true, 15: true},
+	"rangedSubclasses":  {2: true, 3: true, 16: true, 18: true, 19: true},
+	"twoHandSubclasses": {1: true, 5: true, 6: true, 8: true, 10: true},
 }

@@ -513,6 +513,9 @@ local function snapshot(forLive)
   if IsStealthed then local v=IsStealthed();if not protected(v)then snap.stealthed=v==true or v==1 end end
   if GetWeaponEnchantInfo then local mh,_,_,mhID,oh,_,_,ohID=GetWeaponEnchantInfo();if not protected(mh)and not protected(oh)and(not mh or publicNumber(mhID))and(not oh or publicNumber(ohID))then snap.weaponEnchants={mainhand=mh and mhID or 0,offhand=oh and ohID or 0}end end
   snap.dualWield=IsSpellKnown and not protected(IsSpellKnown(674))and IsSpellKnown(674)==true or false
+  -- the weapon skills the character has (passive spells in the spellbook): weapon subclass by skill spell
+  snap.weaponSkills={}
+  if IsSpellKnown then for spell,sub in pairs({[196]=0,[197]=1,[264]=2,[266]=3,[198]=4,[199]=5,[200]=6,[201]=7,[202]=8,[227]=10,[15590]=13,[1180]=15,[2567]=16,[5011]=18,[5009]=19})do local ok,known=pcall(IsSpellKnown,spell);if ok and not protected(known)and known==true then snap.weaponSkills[#snap.weaponSkills+1]=sub end end table.sort(snap.weaponSkills)end
   local form=GetShapeshiftFormID and publicNumber(GetShapeshiftFormID())or 0
   snap.form=({[1]='cat',[5]='bear',[8]='bear',[31]='moonkin',[28]='shadow',[17]='battle',[18]='defensive',[19]='berserker'})[form]or(string.lower(class)=='warrior'and'battle'or'caster')
   if UnitPowerMax then snap.stats.maxEnergy=publicNumber(UnitPowerMax('player',3));snap.stats.maxRage=publicNumber(UnitPowerMax('player',1))end

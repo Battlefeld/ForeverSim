@@ -138,7 +138,7 @@ local function stableSim(sim)
  local pet=type(sim.pet)=='table' and sim.pet or nil
  local hpet=hunter and type(hunter.pet)=='table' and hunter.pet or nil
  return {class=sim.class,level=sim.level,race=sim.race,faction=sim.faction,equipped=sim.equipped,talents=sim.talents,
-  spells=sim.spells,encounter=sim.encounter,dualWield=sim.dualWield,
+  spells=sim.spells,encounter=sim.encounter,dualWield=sim.dualWield,weaponSkills=sim.weaponSkills,
   petKind=pet and {type=pet.type,level=pet.level} or nil,
   ammo=hunter and hunter.ammo or nil,quiver=hunter and hunter.quiver or nil,
   petFamily=hpet and {family=hpet.family,familyId=hpet.familyId,level=hpet.level} or nil}
@@ -466,11 +466,13 @@ local function wearingRules(data,p,item,equipped,preview)
   local wc,ws=item.weaponClass or item.itemClass,item.weaponSubclass or item.itemSubclass
   if wc==nil or ws==nil then return 'Waffentyp nicht erkannt'end
   local function contains(a,v)for _,x in ipairs(a or {})do if x==v then return true end end return false end
-  local permitted=wc==2 and contains(rules.weaponSubclasses,ws)
-  if item.slot=='ranged'then permitted=wc==2 and contains(rules.rangedSubclasses,ws)end
-  if item.slot=='offhand'then permitted=(wc==2 and rules.dualWield and(preview or p.dualWield==true)and contains(rules.weaponSubclasses,ws))or wc==4 and(item.equipLoc=='INVTYPE_HOLDABLE'or(rules.shield and ws==6))end
+  local kinds={weapon={[0]=1,[1]=1,[4]=1,[5]=1,[6]=1,[7]=1,[8]=1,[10]=1,[13]=1,[15]=1},ranged={[2]=1,[3]=1,[16]=1,[18]=1,[19]=1},two={[1]=1,[5]=1,[6]=1,[8]=1,[10]=1}}
+  local function skill(kind,v)if not kinds[kind][v]then return false end for _,x in ipairs(p.weaponSkills or {})do if x==v then return true end end return false end
+  local permitted=wc==2 and(contains(rules.weaponSubclasses,ws)or skill('weapon',ws))
+  if item.slot=='ranged'then permitted=wc==2 and(contains(rules.rangedSubclasses,ws)or skill('ranged',ws))end
+  if item.slot=='offhand'then permitted=(wc==2 and rules.dualWield and(preview or p.dualWield==true)and (contains(rules.weaponSubclasses,ws)or skill('weapon',ws)))or wc==4 and(item.equipLoc=='INVTYPE_HOLDABLE'or(rules.shield and ws==6))end
   if not permitted then return 'Waffe oder Nebenhand nicht tragbar'end
-  if item.twoHanded and not contains(rules.twoHandSubclasses,ws)then return 'Zweihand-Regeln fehlen'end
+  if item.twoHanded and not contains(rules.twoHandSubclasses,ws)and not skill('two',ws)then return 'Zweihand-Regeln fehlen'end
  end
  for slot,other in pairs(equipped)do if slot~=item.slot and(item.uniqueEquip or item.unique)and item.id==other.id then return 'Einzigartig anlegbar'end end
 end

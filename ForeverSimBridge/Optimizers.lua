@@ -13,7 +13,7 @@ local aliases={shadowBolt={'shadow bolt','schattenblitz'},corruption={'corruptio
 local spellIds={[686]={'shadowBolt',1},[695]={'shadowBolt',2},[705]={'shadowBolt',3},[1088]={'shadowBolt',4},[1106]={'shadowBolt',5},[7641]={'shadowBolt',6},[11659]={'shadowBolt',7},[11660]={'shadowBolt',8},[11661]={'shadowBolt',9},[25307]={'shadowBolt',10},[172]={'corruption',1},[6222]={'corruption',2},[6223]={'corruption',3},[7648]={'corruption',4},[11671]={'corruption',5},[11672]={'corruption',6},[25311]={'corruption',7},[348]={'immolate',1},[707]={'immolate',2},[1094]={'immolate',3},[2941]={'immolate',4},[11665]={'immolate',5},[11667]={'immolate',6},[11668]={'immolate',7},[980]={'baneOfAgony',1},[1014]={'baneOfAgony',2},[6217]={'baneOfAgony',3},[11711]={'baneOfAgony',4},[11712]={'baneOfAgony',5},[11713]={'baneOfAgony',6},[1454]={'lifeTap',1},[1455]={'lifeTap',2},[1456]={'lifeTap',3},[11687]={'lifeTap',4},[11688]={'lifeTap',5},[11689]={'lifeTap',6}}
 P.spellAliases=aliases
 function P.normalizeSnapshot(snap)
- local p={class=string.lower(snap.class),level=snap.level,race=snap.race,faction=snap.faction,talents=snap.talents or {},hasSpellbook=true,knownSpellRanks={},petActive=snap.petActive==true,pet=snap.pet,petType=snap.petType,stats=snap.stats or {},soulShards=snap.soulShards or 0,sacrifice=snap.sacrifice,armor=snap.armor,shield=snap.shield,weaponEnhancement=snap.weaponEnhancement,inventory=snap.inventory or {},activeAuras=snap.activeAuras,baseMana=snap.baseMana,targetHealthPct=snap.targetHealthPct,equipped={},bossPlus=snap.bossPlus or(snap.encounter or {}).levelDifference or(snap.level==60 and 3 or 2),encounter=snap.encounter or {},spec=snap.spec,form=snap.form,dualWield=snap.dualWield,weaponEnchants=snap.weaponEnchants,stealthed=snap.stealthed}
+ local p={class=string.lower(snap.class),level=snap.level,race=snap.race,faction=snap.faction,talents=snap.talents or {},hasSpellbook=true,knownSpellRanks={},petActive=snap.petActive==true,pet=snap.pet,petType=snap.petType,stats=snap.stats or {},soulShards=snap.soulShards or 0,sacrifice=snap.sacrifice,armor=snap.armor,shield=snap.shield,weaponEnhancement=snap.weaponEnhancement,inventory=snap.inventory or {},activeAuras=snap.activeAuras,baseMana=snap.baseMana,targetHealthPct=snap.targetHealthPct,equipped={},bossPlus=snap.bossPlus or(snap.encounter or {}).levelDifference or(snap.level==60 and 3 or 2),encounter=snap.encounter or {},spec=snap.spec,form=snap.form,dualWield=snap.dualWield,weaponSkills=snap.weaponSkills,weaponEnchants=snap.weaponEnchants,stealthed=snap.stealthed}
  local data=FUSLiveData and FUSLiveData[p.class];local classIds={};local spellData=data;if data and data.combatModes then spellData=P.copy(data);for _,mode in pairs(data.combatModes)do for key,ranks in pairs(mode.abilityOverrides or {})do spellData.abilities[key]=ranks end end end;for k,rs in pairs(spellData and spellData.abilities or {})do for _,r in ipairs(rs)do if r.id then classIds[r.id]={k,r.rank}end end end
  for _,s in ipairs(snap.spells or {})do local key,rank=nil,s.rank or tonumber((s.rankText or ''):match('%d+'));local id=classIds[s.id]or spellIds[s.id]if id then key=id[1];rank=rank or id[2]end
   if not key then for k,names in pairs(data and data.spellAliases or aliases)do for _,n in ipairs(names)do if string.lower(s.name or '')==n then key=k end end end end
@@ -205,11 +205,13 @@ local function eligibility(data,p,item,equipped)
   local wc,ws=item.weaponClass or item.itemClass,item.weaponSubclass or item.itemSubclass
   if wc==nil or ws==nil then return 'Waffentyp nicht erkannt'end
   local function contains(a,v)for _,x in ipairs(a or {})do if x==v then return true end end return false end
-  local permitted=wc==2 and contains(rules.weaponSubclasses,ws)
-  if item.slot=='ranged'then permitted=wc==2 and contains(rules.rangedSubclasses,ws)end
-  if item.slot=='offhand'then permitted=(wc==2 and rules.dualWield and p.dualWield==true and contains(rules.weaponSubclasses,ws))or wc==4 and(item.equipLoc=='INVTYPE_HOLDABLE'or(rules.shield and ws==6))end
+  local kinds={weapon={[0]=1,[1]=1,[4]=1,[5]=1,[6]=1,[7]=1,[8]=1,[10]=1,[13]=1,[15]=1},ranged={[2]=1,[3]=1,[16]=1,[18]=1,[19]=1},two={[1]=1,[5]=1,[6]=1,[8]=1,[10]=1}}
+  local function skill(kind,v)if not kinds[kind][v]then return false end for _,x in ipairs(p.weaponSkills or {})do if x==v then return true end end return false end
+  local permitted=wc==2 and(contains(rules.weaponSubclasses,ws)or skill('weapon',ws))
+  if item.slot=='ranged'then permitted=wc==2 and(contains(rules.rangedSubclasses,ws)or skill('ranged',ws))end
+  if item.slot=='offhand'then permitted=(wc==2 and rules.dualWield and p.dualWield==true and (contains(rules.weaponSubclasses,ws)or skill('weapon',ws)))or wc==4 and(item.equipLoc=='INVTYPE_HOLDABLE'or(rules.shield and ws==6))end
   if not permitted then return 'Waffe oder Nebenhand nicht tragbar'end
-  if item.twoHanded and not contains(rules.twoHandSubclasses,ws)then return 'Zweihand-Regeln fehlen'end
+  if item.twoHanded and not contains(rules.twoHandSubclasses,ws)and not skill('two',ws)then return 'Zweihand-Regeln fehlen'end
  end
  for slot,other in pairs(equipped)do if slot~=item.slot and(item.uniqueEquip or item.unique)and item.id==other.id then return 'Einzigartig anlegbar'end end
 end
