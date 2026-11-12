@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "products": {
+    "wowf": {
+      "source": "https://us.version.battle.net/wowf/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "0597e74b01a3f779d849ffe9b3270196",
+        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
+        "KeyRing": "",
+        "BuildId": "70888",
+        "VersionsName": "1.60.1.70888",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      },
+      "responseSHA256": "01febce5b7470566e1d31ba993abc009dfd798b7959e54072beaa3cb7d5d3ab9"
+    },
+    "wow_classic_beta": {
+      "source": "https://us.version.battle.net/wow_classic_beta/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      },
+      "responseSHA256": "9dd30a43153c9852d29a65c64aeb3f274de584639fe45a61c6eb721c01623825"
+    }
+  },
+  "buildChanges": {},
+  "tables": {},
+  "documentationStatus": "not_assessed",
+  "hotfixCoverage": "downloaded_not_applied",
+  "limitations": [
+    "Server-only changes invisible to client data require in-game measurements.",
+    "A data delta without matching release notes is a candidate undocumented change, not proof."
+  ],
+  "raidbots": {
+    "wowf": {
+      "format": 9,
+      "build": 70888,
+      "records": 102655,
+      "bytes": 7654682,
+      "sha256": "fe5f81860b6345f24ff1bee1b1c6aea85ed7342ffeec8f4c9753b49e51e07d01",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70888/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    },
+    "wow_classic_beta": {
+      "format": 9,
+      "build": 70532,
+      "records": 55213,
+      "bytes": 4237177,
+      "sha256": "07b22580aba86a03fa69f864b9ceb9137f5d3bb3294e36ce88cb7f5abcc1f0ab",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70532/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    }
+  },
+  "extractionRequired": true,
+  "effectiveBuild": null,
+  "exportedCacheSHA256": null,
+  "blueposts": {
+    "status": "available",
+    "source": "https://theforeverera.com/en/blue.xml",
+    "baseline": false,
+    "changes": [
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#7)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+        "sha256": "29003c3042e27d23206e29fa28a6f2beb465ae06bc6fac99a64824dcb88c05a1",
+        "published": "Thu, 12 Nov 2026 00:50:13 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+        "sha256": "f76b4a2cb54727064b6ed560012e0bfcd37eff3e80b2503f826cdfaad6f74aa0",
+        "published": "Thu, 12 Nov 2026 00:48:47 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 2
+  },
+  "checkedAt": "2026-11-12T13:49:57.097499Z",
+  "clientExtraction": {
+    "status": "failed",
+    "previousDataRetained": true
+  }
+}

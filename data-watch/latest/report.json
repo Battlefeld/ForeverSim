@@ -12,7 +12,7 @@
         "VersionsName": "1.60.1.70888",
         "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
       },
-      "responseSHA256": "61349c3a8c97b8ca5319f699598b367a47ef805cb49f6b5d130dc1a7b04438d5"
+      "responseSHA256": "01febce5b7470566e1d31ba993abc009dfd798b7959e54072beaa3cb7d5d3ab9"
     },
     "wow_classic_beta": {
       "source": "https://us.version.battle.net/wow_classic_beta/versions",
@@ -40,9 +40,9 @@
     "wowf": {
       "format": 9,
       "build": 70888,
-      "records": 93963,
-      "bytes": 7345118,
-      "sha256": "5d1e64dfaf2de9900981dae2f790fc1ce20b174961bf86c0171439c7d203493e",
+      "records": 102655,
+      "bytes": 7654682,
+      "sha256": "fe5f81860b6345f24ff1bee1b1c6aea85ed7342ffeec8f4c9753b49e51e07d01",
       "status": "available",
       "source": "https://storage.googleapis.com/raidbots-static/wow/70888/enUS/DBCache.bin",
       "region": "NA",
@@ -69,10 +69,29 @@
     "status": "available",
     "source": "https://theforeverera.com/en/blue.xml",
     "baseline": false,
-    "changes": [],
-    "relevantChanges": 0
+    "changes": [
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#7)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+        "sha256": "29003c3042e27d23206e29fa28a6f2beb465ae06bc6fac99a64824dcb88c05a1",
+        "published": "Thu, 12 Nov 2026 00:50:13 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+        "sha256": "f76b4a2cb54727064b6ed560012e0bfcd37eff3e80b2503f826cdfaad6f74aa0",
+        "published": "Thu, 12 Nov 2026 00:48:47 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 2
   },
-  "checkedAt": "2026-11-11T19:11:16.611867Z",
+  "checkedAt": "2026-11-12T13:49:57.097499Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true

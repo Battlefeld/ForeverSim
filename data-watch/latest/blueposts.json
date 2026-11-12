@@ -2,6 +2,20 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#7)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+      "sha256": "29003c3042e27d23206e29fa28a6f2beb465ae06bc6fac99a64824dcb88c05a1",
+      "published": "Thu, 12 Nov 2026 00:50:13 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+      "sha256": "f76b4a2cb54727064b6ed560012e0bfcd37eff3e80b2503f826cdfaad6f74aa0",
+      "published": "Thu, 12 Nov 2026 00:48:47 GMT",
+      "relevant": true
+    },
     "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6": {
       "title": "Kaivax: WoW: Forever Hotfixes - November 10, 2026 (#6)",
       "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6",
@@ -337,27 +351,32 @@
       "sha256": "899f083f028bbb27f4f23dcd8829dab92a1fd264cc0a91ff51bcf626d0f90cdd",
       "published": "Mon, 26 Oct 2026 20:35:53 GMT",
       "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#7)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/7",
-      "sha256": "b772678f1d9a6bbbe439f55d33fd475299744e498bf10f2f851e42884376f67e",
-      "published": "Mon, 26 Oct 2026 20:35:27 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/watch-the-wow-forever-short-story-%E2%80%9Cunbowed%E2%80%9D/2392363/1": {
-      "title": "Blizzard Entertainment: Watch the WoW: Forever Short Story, \u201cUnbowed\u201d",
-      "url": "https://us.forums.blizzard.com/en/wow/t/watch-the-wow-forever-short-story-%E2%80%9Cunbowed%E2%80%9D/2392363/1",
-      "sha256": "4eaca94b3cf1d934b9fc8922be21dfb37b19b8649302cd2a63589a72c5fa131f",
-      "published": "Mon, 26 Oct 2026 17:01:29 GMT",
-      "relevant": false
     }
   },
   "lastCheck": {
     "status": "available",
     "source": "https://theforeverera.com/en/blue.xml",
     "baseline": false,
-    "changes": [],
-    "relevantChanges": 0
+    "changes": [
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#7)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+        "sha256": "29003c3042e27d23206e29fa28a6f2beb465ae06bc6fac99a64824dcb88c05a1",
+        "published": "Thu, 12 Nov 2026 00:50:13 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+        "sha256": "f76b4a2cb54727064b6ed560012e0bfcd37eff3e80b2503f826cdfaad6f74aa0",
+        "published": "Thu, 12 Nov 2026 00:48:47 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 2
   }
 }
