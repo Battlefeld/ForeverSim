@@ -38,7 +38,15 @@ function C.Capture(kind)
   s.mode=M.db.settings and M.db.settings.mode or'balanced'
   s.routeDB={settings=C.clean(M.db.settings),done=C.clean(M.db.done),phases=C.clean(M.db.phases),routeProgress=C.clean(M.db.routeProgress),completedPlans=C.clean(M.db.completedPlans),routeSkips=C.clean(M.db.routeSkips),skipHistory=C.clean(M.db.skipHistory),skipContexts=C.clean(M.db.skipContexts),deferred=C.clean(M.db.deferred),routeRecovery=C.clean(M.db.routeRecovery),routeTravel=C.clean(M.db.routeTravel),routeTravelVisits=C.clean(M.db.routeTravelVisits),buffs=C.clean(M.db.buffs),observedXP=C.clean(M.db.observedXP),dungeonRuns=C.clean(M.db.dungeonRuns)}
  end
- if kind=='sim'or kind=='item'or kind=='talent-compare'or kind=='presets'or kind=='build-detail'or kind=='rota-tune'or kind=='weights'or kind=='enhancements'or kind=='route-profile'then
+ -- the own route (route-profile) is planned without the simulation snapshot too (a new character, ForeverSim not
+ -- loaded): then with the class's kill profile instead of the character's own
+ local withSim=true
+ if kind=='route-profile'then
+  local P=FUSLive
+  local ok,snap=pcall(function()return P and P.capture and C.clean(P.capture(true))end)
+  withSim=ok and type(snap)=='table'and(tonumber(snap.level)or 0)>=10
+ end
+ if withSim and(kind=='sim'or kind=='item'or kind=='talent-compare'or kind=='presets'or kind=='build-detail'or kind=='rota-tune'or kind=='weights'or kind=='enhancements'or kind=='route-profile')then
   local P=FUSLive;if not P or not P.capture then error('ForeverSim fehlt')end
   s.sim=C.clean(P.capture(true));if not s.sim then error('SIM-Snapshot nicht lesbar')end
   if kind=='enhancements'and C.Enhancements then

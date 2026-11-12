@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -22,8 +23,36 @@ import (
 // addon (Data/Personal.lua, taken with /reload). It runs in the background, a few minutes; the job answers at once
 // with the state of the last run.
 
-// personalRouteTarget: the level the personal route goes to (the shipped routes past 20 go to 40).
-const personalRouteTarget = 40
+// personalRouteTarget: the level the personal route goes to (the dungeon choice lists the dungeons up to here).
+const personalRouteTarget = 45
+
+var dungeonKeyForm = regexp.MustCompile(`^[a-z0-9-]{1,60}$`)
+
+// chosenDungeons reads payload.dungeonKeys: the dungeons the player chose for the route. ok false: no choice sent
+// (every dungeon the planner likes); an empty list: none.
+func chosenDungeons(payload map[string]any) (keys []string, ok bool, err error) {
+	raw, has := payload["dungeonKeys"]
+	if !has || raw == nil {
+		return nil, false, nil
+	}
+	list, isList := raw.([]any)
+	if !isList {
+		// an empty Lua table arrives as {}
+		if m, isMap := raw.(map[string]any); isMap && len(m) == 0 {
+			return []string{}, true, nil
+		}
+		return nil, false, fmt.Errorf("Eigene Route: Dungeon-Auswahl ungueltig")
+	}
+	keys = []string{}
+	for _, v := range list {
+		k, isString := v.(string)
+		if !isString || !dungeonKeyForm.MatchString(k) || len(keys) >= 40 {
+			return nil, false, fmt.Errorf("Eigene Route: Dungeon-Auswahl ungueltig")
+		}
+		keys = append(keys, k)
+	}
+	return keys, true, nil
+}
 
 type personalStatus struct {
 	State    string  `json:"state"` // running, done, error
@@ -68,14 +97,26 @@ func (s *Service) routeProfile(ctx context.Context, j Job) (any, error) {
 	}
 	snap := child(j.State, "sim")
 	level := int(num(snap, "level"))
-	if level < minEngineLevel || level >= personalRouteTarget {
-		return nil, fmt.Errorf("Eigene Route: ab Stufe %d bis %d (Stufe %d)", minEngineLevel, personalRouteTarget-1, level)
+	if level == 0 {
+		level = int(num(child(j.State, "routeLive"), "level"))
 	}
-	req, e := s.sim.liveRequest(j)
+	if level < 1 || level >= personalRouteTarget {
+		return nil, fmt.Errorf("Eigene Route: bis Stufe %d (Stufe %d)", personalRouteTarget-1, level)
+	}
+	keys, chosen, e := chosenDungeons(j.Payload)
 	if e != nil {
-		return nil, fmt.Errorf("Eigene Route: %w", e)
+		return nil, e
 	}
-	key := personalKey(req, level, s.cfg.EngineRevision, routesBuild(s.cfg))
+	// the character's own kill profile from level 10 on (the engine's first level); below that, or when the character
+	// cannot be read for the engine, the class's shipped profile: the route is planned all the same
+	var req map[string]any
+	if snap != nil && level >= minEngineLevel {
+		if req, e = s.sim.liveRequest(j); e != nil {
+			log.Printf("Eigene Route: Kampfprofil der Klasse statt des eigenen (%v)", e)
+			req = nil
+		}
+	}
+	key := personalKey(map[string]any{"request": req, "dungeons": keys, "chosen": chosen}, level, s.cfg.EngineRevision, routesBuild(s.cfg))
 	personalMu.Lock()
 	defer personalMu.Unlock()
 	st := s.personalStatus()
@@ -88,6 +129,16 @@ func (s *Service) routeProfile(ctx context.Context, j Job) (any, error) {
 	dungeons := true
 	if v, ok := j.Payload["dungeons"].(bool); ok {
 		dungeons = v
+	}
+	if chosen {
+		dungeons = len(keys) > 0
+	}
+	choice := "" // extend -dungeon-keys
+	if chosen {
+		choice = "none"
+		if len(keys) > 0 {
+			choice = strings.Join(keys, ",")
+		}
 	}
 	st = personalStatus{State: "running", Message: "Eigene Route wird berechnet (einige Minuten)", Started: time.Now().UTC().Format(time.RFC3339), Level: level, Key: key}
 	s.setPersonalStatus(st)
@@ -106,7 +157,7 @@ func (s *Service) routeProfile(ctx context.Context, j Job) (any, error) {
 			cur.Message = fmt.Sprintf("Eigene Route: %s (%d %%)", phase, percent)
 			s.setPersonalStatus(cur)
 		}
-		hours, e := s.planPersonal(context.Background(), j, req, level, dungeons, report)
+		hours, e := s.planPersonal(context.Background(), j, req, level, dungeons, choice, report)
 		personalMu.Lock()
 		defer personalMu.Unlock()
 		done := st
@@ -124,17 +175,13 @@ func (s *Service) routeProfile(ctx context.Context, j Job) (any, error) {
 }
 
 // planPersonal: kill profile, route, addon file. Returns the route's hours from the character's level.
-func (s *Service) planPersonal(ctx context.Context, j Job, req map[string]any, level int, dungeons bool, report func(percent int, phase string)) (float64, error) {
-	snap := child(j.State, "sim")
-	class := strings.ToLower(str(snap, "class"))
-	race, _, faction, e := routeIdentity(str(snap, "race"), class, str(snap, "faction"))
-	if e != nil {
-		return 0, e
+func (s *Service) planPersonal(ctx context.Context, j Job, req map[string]any, level int, dungeons bool, choice string, report func(percent int, phase string)) (float64, error) {
+	who := child(j.State, "sim")
+	if who == nil {
+		who = j.State // the character itself (class, race, faction) when the simulation snapshot is not there
 	}
-	report(1, "Kampfprofil")
-	profile, e := s.sim.personalKillProfile(ctx, req, class, level, personalRouteTarget, func(done, total int) {
-		report(1+done*79/max(total, 1), "Kampfprofil")
-	})
+	class := strings.ToLower(str(who, "class"))
+	race, class, faction, e := routeIdentity(str(who, "race"), class, str(who, "faction"))
 	if e != nil {
 		return 0, e
 	}
@@ -143,11 +190,22 @@ func (s *Service) planPersonal(ctx context.Context, j Job, req map[string]any, l
 		return 0, e
 	}
 	defer os.RemoveAll(dir)
-	profiles := filepath.Join(dir, "profiles")
-	if e = atomicWrite(filepath.Join(profiles, class+".json"), jsonBytes(profile)); e != nil {
-		return 0, e
+	// the kill profiles: the class's shipped ones, and this character's own over its class's when it can be calculated
+	profiles := filepath.Join(filepath.Dir(s.cfg.RoutesData), "profiles")
+	if req != nil {
+		report(1, "Kampfprofil")
+		profile, e := s.sim.personalKillProfile(ctx, req, class, max(level, minEngineLevel), min(personalRouteTarget, 59), func(done, total int) {
+			report(1+done*79/max(total, 1), "Kampfprofil")
+		})
+		if e != nil {
+			return 0, e
+		}
+		profiles = filepath.Join(dir, "profiles")
+		if e = atomicWrite(filepath.Join(profiles, class+".json"), jsonBytes(profile)); e != nil {
+			return 0, e
+		}
+		_ = atomicWrite(filepath.Join(personalDir(s.cfg), "profile-"+strings.ToLower(race)+"-"+class+".json"), jsonBytes(profile))
 	}
-	_ = atomicWrite(filepath.Join(personalDir(s.cfg), "profile-"+strings.ToLower(race)+"-"+class+".json"), jsonBytes(profile))
 	base := routeFile(s.cfg.RoutesData, race, class, faction, dungeons)
 	if base == "" {
 		return 0, fmt.Errorf("keine Route fuer %s %s im Routen-Datensatz", race, class)
@@ -178,6 +236,9 @@ func (s *Service) planPersonal(ctx context.Context, j Job, req map[string]any, l
 		args = append(args, "-live", in)
 	} else {
 		args = append(args, "-from", fmt.Sprint(level)) // an older addon: from the route's own state at this level
+	}
+	if choice != "" {
+		args = append(args, "-dungeon-keys", choice) // only the dungeons the player chose, each run when it is due
 	}
 	if e = run(args...); e != nil {
 		return 0, e

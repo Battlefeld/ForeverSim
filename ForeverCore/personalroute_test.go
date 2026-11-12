@@ -71,3 +71,21 @@ func TestPersonalRouteFiles(t *testing.T) {
 		t.Fatal("key does not follow level and request")
 	}
 }
+
+func TestChosenDungeons(t *testing.T) {
+	if _, ok, e := chosenDungeons(map[string]any{}); ok || e != nil {
+		t.Fatal("no choice read as one")
+	}
+	if keys, ok, e := chosenDungeons(map[string]any{"dungeonKeys": map[string]any{}}); !ok || e != nil || len(keys) != 0 {
+		t.Fatal("an empty choice (no dungeon) not read")
+	}
+	keys, ok, e := chosenDungeons(map[string]any{"dungeonKeys": []any{"wailing-caverns", "shadowfang-keep"}})
+	if !ok || e != nil || len(keys) != 2 || keys[1] != "shadowfang-keep" {
+		t.Fatalf("choice %v %v %v", keys, ok, e)
+	}
+	for _, bad := range []any{[]any{"a b"}, []any{"-x --flag"}, []any{float64(3)}, "wailing-caverns", []any{"../x"}} {
+		if _, _, e := chosenDungeons(map[string]any{"dungeonKeys": bad}); e == nil {
+			t.Errorf("%v accepted", bad)
+		}
+	}
+}

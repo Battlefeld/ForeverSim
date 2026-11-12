@@ -408,7 +408,7 @@ local function wanted()
  if d.enabled==false or d.pixelOff or d.personalRoute~=true then return false end
  if InCombatLockdown and InCombatLockdown()then return false end
  local level=UnitLevel and UnitLevel('player')or 0
- return level>=10 and level<40
+ return level>=1 and level<45
 end
 local function dungeons()
  local c=_G.ForeverRoutesCharDB
@@ -461,7 +461,10 @@ function O.Request(force,check)
  if C.pending and C.pending.kind=='route-profile'then return false end
  if not check then O.rev=C.simRevision;O.checks=0 end
  if force then O.state={state='running',percent=0,phase='wird gestartet',message='Eigene Route wird gestartet'};notify()end
- return C.Request('route-profile',{dungeons=dungeons(),force=force or nil},O.Receive)
+ -- the dungeons the player chose in ForeverRoutes (its list of keys; none chosen: an empty list)
+ local c=_G.ForeverRoutesCharDB
+ local keys=type(c)=='table'and type(c.dungeonKeys)=='table'and c.dungeonKeys or nil
+ return C.Request('route-profile',{dungeons=dungeons(),dungeonKeys=keys,force=force or nil},O.Receive)
 end
 function O.Schedule()
  if O.scheduled then return end
