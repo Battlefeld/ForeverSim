@@ -2,6 +2,34 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
+      "sha256": "ad51208a31a238f457f04aa1cfadb661b4d737ff54b2607ec74bf603e8e6797b",
+      "published": "Thu, 12 Nov 2026 19:10:54 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#9)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
+      "sha256": "01feed73819bfab9d94d8ae1719699b565bba74fb002082cdd499a87984bfe76",
+      "published": "Thu, 12 Nov 2026 19:10:52 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1": {
+      "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
+      "sha256": "baab2119a0c71aec50f7f632fd602e10189b969b0d4927ae76a16a038035c119",
+      "published": "Thu, 12 Nov 2026 17:46:28 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1": {
+      "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
+      "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
+      "sha256": "5ff386d13446a52d1f78bd8914c51290e3b635a128eef06cefd1d9fcdda7a893",
+      "published": "Thu, 12 Nov 2026 17:46:04 GMT",
+      "relevant": false
+    },
     "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7": {
       "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#7)",
       "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
@@ -323,34 +351,6 @@
       "sha256": "308dceeee83a9b93bf575c4451e9990a8dc08b392a1f43e34f57ee12ec5aa238",
       "published": "Tue, 27 Oct 2026 20:02:47 GMT",
       "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/your-next-adventure-in-wow-forever-starts-in-the-wow-portal-room/2393349/1": {
-      "title": "Blizzard Entertainment: Your Next Adventure in WoW: Forever Starts in the WoW Portal Room",
-      "url": "https://us.forums.blizzard.com/en/wow/t/your-next-adventure-in-wow-forever-starts-in-the-wow-portal-room/2393349/1",
-      "sha256": "f1084da9063c712ccb455858976c4c230275607ddaf7fb3fc03c749e8399e89a",
-      "published": "Tue, 27 Oct 2026 19:00:06 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-26-october/631316/8": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 26 October (#8)",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-26-october/631316/8",
-      "sha256": "d698c3537eb91adf8862a327b0be527ac0a172582872a0d79f29b760de65e5cb",
-      "published": "Tue, 27 Oct 2026 15:37:57 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/8": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated November 2 (#8)",
-      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/8",
-      "sha256": "41fd1b488004a526e772b4385dca0872851eb31078cae22d95968700bb7f5e43",
-      "published": "Tue, 27 Oct 2026 15:37:37 GMT",
-      "relevant": true
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-26-october/631316/7": {
-      "title": "Kaivax: WoW Forever Beta Development Notes \u2013 Updated 26 October (#7)",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-26-october/631316/7",
-      "sha256": "899f083f028bbb27f4f23dcd8829dab92a1fd264cc0a91ff51bcf626d0f90cdd",
-      "published": "Mon, 26 Oct 2026 20:35:53 GMT",
-      "relevant": true
     }
   },
   "lastCheck": {
@@ -359,21 +359,39 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#7)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
-        "sha256": "29003c3042e27d23206e29fa28a6f2beb465ae06bc6fac99a64824dcb88c05a1",
-        "published": "Thu, 12 Nov 2026 00:50:13 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
+        "sha256": "ad51208a31a238f457f04aa1cfadb661b4d737ff54b2607ec74bf603e8e6797b",
+        "published": "Thu, 12 Nov 2026 19:10:54 GMT",
         "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
-        "sha256": "f76b4a2cb54727064b6ed560012e0bfcd37eff3e80b2503f826cdfaad6f74aa0",
-        "published": "Thu, 12 Nov 2026 00:48:47 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#9)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
+        "sha256": "01feed73819bfab9d94d8ae1719699b565bba74fb002082cdd499a87984bfe76",
+        "published": "Thu, 12 Nov 2026 19:10:52 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
+        "sha256": "baab2119a0c71aec50f7f632fd602e10189b969b0d4927ae76a16a038035c119",
+        "published": "Thu, 12 Nov 2026 17:46:28 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
+        "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
+        "sha256": "5ff386d13446a52d1f78bd8914c51290e3b635a128eef06cefd1d9fcdda7a893",
+        "published": "Thu, 12 Nov 2026 17:46:04 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
         "kind": "new"
       }
     ],

@@ -5,30 +5,71 @@
       "source": "https://us.version.battle.net/wowf/versions",
       "row": {
         "Region": "eu",
-        "BuildConfig": "0597e74b01a3f779d849ffe9b3270196",
-        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
+        "BuildConfig": "3627b099867bfde3e37a17cf44f69cdc",
+        "CDNConfig": "3363ac656da5f261cdc675ab28b2744c",
         "KeyRing": "",
-        "BuildId": "70888",
-        "VersionsName": "1.60.1.70888",
+        "BuildId": "70938",
+        "VersionsName": "1.60.1.70938",
         "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
       },
-      "responseSHA256": "01febce5b7470566e1d31ba993abc009dfd798b7959e54072beaa3cb7d5d3ab9"
+      "responseSHA256": "dba52275d6dd88b459081539e5f3d378588c9fdc596fcd6c5c1bdada00c4d534"
     },
     "wow_classic_beta": {
       "source": "https://us.version.battle.net/wow_classic_beta/versions",
       "row": {
         "Region": "eu",
         "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
+        "CDNConfig": "3363ac656da5f261cdc675ab28b2744c",
         "KeyRing": "",
         "BuildId": "70532",
         "VersionsName": "1.60.1.70532",
         "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
       },
-      "responseSHA256": "9dd30a43153c9852d29a65c64aeb3f274de584639fe45a61c6eb721c01623825"
+      "responseSHA256": "2e5d9dcb6e88978f15b16cebb8f5b85801ddc62513a0f60d6b6117aea4fd2430"
     }
   },
-  "buildChanges": {},
+  "buildChanges": {
+    "wowf": {
+      "before": {
+        "BuildConfig": "0597e74b01a3f779d849ffe9b3270196",
+        "BuildId": "70888",
+        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
+        "KeyRing": "",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a",
+        "Region": "eu",
+        "VersionsName": "1.60.1.70888"
+      },
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "3627b099867bfde3e37a17cf44f69cdc",
+        "CDNConfig": "3363ac656da5f261cdc675ab28b2744c",
+        "KeyRing": "",
+        "BuildId": "70938",
+        "VersionsName": "1.60.1.70938",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      }
+    },
+    "wow_classic_beta": {
+      "before": {
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "BuildId": "70532",
+        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
+        "KeyRing": "",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5",
+        "Region": "eu",
+        "VersionsName": "1.60.1.70532"
+      },
+      "after": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "3363ac656da5f261cdc675ab28b2744c",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      }
+    }
+  },
   "tables": {},
   "documentationStatus": "not_assessed",
   "hotfixCoverage": "downloaded_not_applied",
@@ -39,12 +80,12 @@
   "raidbots": {
     "wowf": {
       "format": 9,
-      "build": 70888,
-      "records": 102655,
-      "bytes": 7654682,
-      "sha256": "fe5f81860b6345f24ff1bee1b1c6aea85ed7342ffeec8f4c9753b49e51e07d01",
+      "build": 70938,
+      "records": 92469,
+      "bytes": 7346254,
+      "sha256": "490977e9feb6e4d62f851d29159d51f6b19eba0868a0e45a7f81e1c87f99759b",
       "status": "available",
-      "source": "https://storage.googleapis.com/raidbots-static/wow/70888/enUS/DBCache.bin",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70938/enUS/DBCache.bin",
       "region": "NA",
       "locale": "enUS",
       "verification": "raidbots_verified_not_completeness_guarantee"
@@ -71,27 +112,45 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#7)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
-        "sha256": "29003c3042e27d23206e29fa28a6f2beb465ae06bc6fac99a64824dcb88c05a1",
-        "published": "Thu, 12 Nov 2026 00:50:13 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
+        "sha256": "ad51208a31a238f457f04aa1cfadb661b4d737ff54b2607ec74bf603e8e6797b",
+        "published": "Thu, 12 Nov 2026 19:10:54 GMT",
         "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/7",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
         "kind": "new"
       },
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
-        "sha256": "f76b4a2cb54727064b6ed560012e0bfcd37eff3e80b2503f826cdfaad6f74aa0",
-        "published": "Thu, 12 Nov 2026 00:48:47 GMT",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#9)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
+        "sha256": "01feed73819bfab9d94d8ae1719699b565bba74fb002082cdd499a87984bfe76",
+        "published": "Thu, 12 Nov 2026 19:10:52 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/8",
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
+        "sha256": "baab2119a0c71aec50f7f632fd602e10189b969b0d4927ae76a16a038035c119",
+        "published": "Thu, 12 Nov 2026 17:46:28 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
+        "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
+        "sha256": "5ff386d13446a52d1f78bd8914c51290e3b635a128eef06cefd1d9fcdda7a893",
+        "published": "Thu, 12 Nov 2026 17:46:04 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
         "kind": "new"
       }
     ],
     "relevantChanges": 2
   },
-  "checkedAt": "2026-11-12T13:49:57.097499Z",
+  "checkedAt": "2026-11-13T13:11:21.093164Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true
