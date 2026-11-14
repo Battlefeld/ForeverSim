@@ -2,6 +2,34 @@
   "schema": 1,
   "feed": "https://theforeverera.com/en/blue.xml",
   "posts": {
+    "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/9": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#9)",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/9",
+      "sha256": "2e7f2ea5b200781bbc33da44cd01e1687d9d7404b594b341bfd188152b6d1117",
+      "published": "Sat, 14 Nov 2026 01:55:46 GMT",
+      "relevant": true
+    },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/10": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 13, 2026 (#10)",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/10",
+      "sha256": "084467c63d8946e65fa33672e7f6f9e91c7fec298a49fc166a6bc3f2ae2ae9d2",
+      "published": "Sat, 14 Nov 2026 01:54:07 GMT",
+      "relevant": true
+    },
+    "https://eu.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-13-november/642655/1": {
+      "title": "Kaivax: Lost Training Purchase Refunds - 13 November",
+      "url": "https://eu.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-13-november/642655/1",
+      "sha256": "e683d4a4a2d84beef9a95967b7317c5d28f5268cec36e69326b1c15b35dae9b1",
+      "published": "Sat, 14 Nov 2026 01:36:54 GMT",
+      "relevant": false
+    },
+    "https://us.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-november-13/2415068/1": {
+      "title": "Kaivax: Lost Training Purchase Refunds - November 13",
+      "url": "https://us.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-november-13/2415068/1",
+      "sha256": "3a7399edfc59a7597f4c896b6d8627a4c8bb694f9f36b26dab02f31e0d45e348",
+      "published": "Sat, 14 Nov 2026 01:36:48 GMT",
+      "relevant": false
+    },
     "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8": {
       "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
       "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
@@ -163,6 +191,13 @@
       "published": "Fri, 06 Nov 2026 02:35:12 GMT",
       "relevant": true
     },
+    "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/1": {
+      "title": "Kaivax: WoW: Forever Hotfixes - November 13, 2026",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/1",
+      "sha256": "aa4c9c74571d9bedcd1222aad59859c017c875584431345b678fe84571b1ae9a",
+      "published": "Fri, 06 Nov 2026 02:34:10 GMT",
+      "relevant": true
+    },
     "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%93-watch-forging-forever/2402802/1": {
       "title": "Blizzard Entertainment: WoW: Forever\u2013 Watch Forging Forever",
       "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever%E2%80%93-watch-forging-forever/2402802/1",
@@ -316,41 +351,6 @@
       "sha256": "cbe1d35e7c3ba646cc4059243daec602f47ee00b5a3c32a541b672c16b77a56e",
       "published": "Thu, 29 Oct 2026 16:18:25 GMT",
       "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-6-all-about-tech-ft-%E2%80%AAshobek/2395799/1": {
-      "title": "Kaivax: The WoW: Forever Podcast: Episode 6 - All About Tech ft. \u202a@Shobek",
-      "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-6-all-about-tech-ft-%E2%80%AAshobek/2395799/1",
-      "sha256": "3f19588f928964069a1d13745bc7801c20f71968ba9f5ff56a86539c031f1bb6",
-      "published": "Thu, 29 Oct 2026 16:17:57 GMT",
-      "relevant": false
-    },
-    "https://us.forums.blizzard.com/en/wow/t/new-player%E2%80%99s-starter-guide-welcome-to-world-of-warcraft-forever/2394974/1": {
-      "title": "Blizzard Entertainment: New Player\u2019s Starter Guide: Welcome to World of Warcraft: Forever",
-      "url": "https://us.forums.blizzard.com/en/wow/t/new-player%E2%80%99s-starter-guide-welcome-to-world-of-warcraft-forever/2394974/1",
-      "sha256": "3ba5875843ce3df84c6acfe77fb303f54681aeabd985945439faf2b4fad16879",
-      "published": "Wed, 28 Oct 2026 17:00:10 GMT",
-      "relevant": false
-    },
-    "https://eu.forums.blizzard.com/en/wow/t/overly-restrictive-name-check-and-fix-incoming-28-october/638147/1": {
-      "title": "Kaivax: Overly Restrictive Name Check and Fix Incoming - 28 October",
-      "url": "https://eu.forums.blizzard.com/en/wow/t/overly-restrictive-name-check-and-fix-incoming-28-october/638147/1",
-      "sha256": "689c20c7b13cb63f0775a6bf51ef614ed9c94ce7a88e4957602996db280588e6",
-      "published": "Wed, 28 Oct 2026 01:28:55 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/overly-restrictive-name-check-and-fix-incoming-october-27/2394467/1": {
-      "title": "Kaivax: Overly Restrictive Name Check and Fix Incoming - October 27",
-      "url": "https://us.forums.blizzard.com/en/wow/t/overly-restrictive-name-check-and-fix-incoming-october-27/2394467/1",
-      "sha256": "a6de758c504f6aad0495e5cd50e126fb7b532131636e58e2c69c5096f0eda513",
-      "published": "Wed, 28 Oct 2026 01:28:41 GMT",
-      "relevant": true
-    },
-    "https://us.forums.blizzard.com/en/wow/t/name-reservation-issue-for-oceanic-players/2393431/1": {
-      "title": "Kaivax: Name Reservation Issue for Oceanic Players",
-      "url": "https://us.forums.blizzard.com/en/wow/t/name-reservation-issue-for-oceanic-players/2393431/1",
-      "sha256": "308dceeee83a9b93bf575c4451e9990a8dc08b392a1f43e34f57ee12ec5aa238",
-      "published": "Tue, 27 Oct 2026 20:02:47 GMT",
-      "relevant": true
     }
   },
   "lastCheck": {
@@ -359,42 +359,51 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
-        "sha256": "ad51208a31a238f457f04aa1cfadb661b4d737ff54b2607ec74bf603e8e6797b",
-        "published": "Thu, 12 Nov 2026 19:10:54 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
-        "kind": "new"
-      },
-      {
         "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#9)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
-        "sha256": "01feed73819bfab9d94d8ae1719699b565bba74fb002082cdd499a87984bfe76",
-        "published": "Thu, 12 Nov 2026 19:10:52 GMT",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/9",
+        "sha256": "2e7f2ea5b200781bbc33da44cd01e1687d9d7404b594b341bfd188152b6d1117",
+        "published": "Sat, 14 Nov 2026 01:55:46 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/9",
         "kind": "new"
       },
       {
-        "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
-        "sha256": "baab2119a0c71aec50f7f632fd602e10189b969b0d4927ae76a16a038035c119",
-        "published": "Thu, 12 Nov 2026 17:46:28 GMT",
-        "relevant": false,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 13, 2026 (#10)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/10",
+        "sha256": "084467c63d8946e65fa33672e7f6f9e91c7fec298a49fc166a6bc3f2ae2ae9d2",
+        "published": "Sat, 14 Nov 2026 01:54:07 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/10",
         "kind": "new"
       },
       {
-        "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
-        "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
-        "sha256": "5ff386d13446a52d1f78bd8914c51290e3b635a128eef06cefd1d9fcdda7a893",
-        "published": "Thu, 12 Nov 2026 17:46:04 GMT",
+        "title": "Kaivax: Lost Training Purchase Refunds - 13 November",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-13-november/642655/1",
+        "sha256": "e683d4a4a2d84beef9a95967b7317c5d28f5268cec36e69326b1c15b35dae9b1",
+        "published": "Sat, 14 Nov 2026 01:36:54 GMT",
         "relevant": false,
-        "id": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-13-november/642655/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Lost Training Purchase Refunds - November 13",
+        "url": "https://us.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-november-13/2415068/1",
+        "sha256": "3a7399edfc59a7597f4c896b6d8627a4c8bb694f9f36b26dab02f31e0d45e348",
+        "published": "Sat, 14 Nov 2026 01:36:48 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-november-13/2415068/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 13, 2026",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/1",
+        "sha256": "aa4c9c74571d9bedcd1222aad59859c017c875584431345b678fe84571b1ae9a",
+        "published": "Fri, 06 Nov 2026 02:34:10 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/1",
         "kind": "new"
       }
     ],
-    "relevantChanges": 2
+    "relevantChanges": 3
   }
 }

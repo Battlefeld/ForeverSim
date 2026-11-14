@@ -28,48 +28,7 @@
       "responseSHA256": "2e5d9dcb6e88978f15b16cebb8f5b85801ddc62513a0f60d6b6117aea4fd2430"
     }
   },
-  "buildChanges": {
-    "wowf": {
-      "before": {
-        "BuildConfig": "0597e74b01a3f779d849ffe9b3270196",
-        "BuildId": "70888",
-        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
-        "KeyRing": "",
-        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a",
-        "Region": "eu",
-        "VersionsName": "1.60.1.70888"
-      },
-      "after": {
-        "Region": "eu",
-        "BuildConfig": "3627b099867bfde3e37a17cf44f69cdc",
-        "CDNConfig": "3363ac656da5f261cdc675ab28b2744c",
-        "KeyRing": "",
-        "BuildId": "70938",
-        "VersionsName": "1.60.1.70938",
-        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
-      }
-    },
-    "wow_classic_beta": {
-      "before": {
-        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "BuildId": "70532",
-        "CDNConfig": "8ecf609471cb2ea16667be9cc2b7a555",
-        "KeyRing": "",
-        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5",
-        "Region": "eu",
-        "VersionsName": "1.60.1.70532"
-      },
-      "after": {
-        "Region": "eu",
-        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
-        "CDNConfig": "3363ac656da5f261cdc675ab28b2744c",
-        "KeyRing": "",
-        "BuildId": "70532",
-        "VersionsName": "1.60.1.70532",
-        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
-      }
-    }
-  },
+  "buildChanges": {},
   "tables": {},
   "documentationStatus": "not_assessed",
   "hotfixCoverage": "downloaded_not_applied",
@@ -81,9 +40,9 @@
     "wowf": {
       "format": 9,
       "build": 70938,
-      "records": 92469,
-      "bytes": 7346254,
-      "sha256": "490977e9feb6e4d62f851d29159d51f6b19eba0868a0e45a7f81e1c87f99759b",
+      "records": 98863,
+      "bytes": 7609593,
+      "sha256": "96c56a2b6965ccb036934161c3119201b185fb55dfb44dbb54ef964f825cb909",
       "status": "available",
       "source": "https://storage.googleapis.com/raidbots-static/wow/70938/enUS/DBCache.bin",
       "region": "NA",
@@ -112,45 +71,54 @@
     "baseline": false,
     "changes": [
       {
-        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#8)",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
-        "sha256": "ad51208a31a238f457f04aa1cfadb661b4d737ff54b2607ec74bf603e8e6797b",
-        "published": "Thu, 12 Nov 2026 19:10:54 GMT",
-        "relevant": true,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/8",
-        "kind": "new"
-      },
-      {
         "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#9)",
-        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
-        "sha256": "01feed73819bfab9d94d8ae1719699b565bba74fb002082cdd499a87984bfe76",
-        "published": "Thu, 12 Nov 2026 19:10:52 GMT",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/9",
+        "sha256": "2e7f2ea5b200781bbc33da44cd01e1687d9d7404b594b341bfd188152b6d1117",
+        "published": "Sat, 14 Nov 2026 01:55:46 GMT",
         "relevant": true,
-        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/2403040/9",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/9",
         "kind": "new"
       },
       {
-        "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
-        "url": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
-        "sha256": "baab2119a0c71aec50f7f632fd602e10189b969b0d4927ae76a16a038035c119",
-        "published": "Thu, 12 Nov 2026 17:46:28 GMT",
-        "relevant": false,
-        "id": "https://eu.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/642185/1",
+        "title": "Kaivax: WoW: Forever Hotfixes - November 13, 2026 (#10)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/10",
+        "sha256": "084467c63d8946e65fa33672e7f6f9e91c7fec298a49fc166a6bc3f2ae2ae9d2",
+        "published": "Sat, 14 Nov 2026 01:54:07 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/10",
         "kind": "new"
       },
       {
-        "title": "Kaivax: The WoW Forever Podcast: Episode 7 - Turbo Nerds Lore-ing Out ft. @Nobbel87 & Platinum WoW",
-        "url": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
-        "sha256": "5ff386d13446a52d1f78bd8914c51290e3b635a128eef06cefd1d9fcdda7a893",
-        "published": "Thu, 12 Nov 2026 17:46:04 GMT",
+        "title": "Kaivax: Lost Training Purchase Refunds - 13 November",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-13-november/642655/1",
+        "sha256": "e683d4a4a2d84beef9a95967b7317c5d28f5268cec36e69326b1c15b35dae9b1",
+        "published": "Sat, 14 Nov 2026 01:36:54 GMT",
         "relevant": false,
-        "id": "https://us.forums.blizzard.com/en/wow/t/the-wow-forever-podcast-episode-7-turbo-nerds-lore-ing-out-ft-nobbel87-platinum-wow/2412856/1",
+        "id": "https://eu.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-13-november/642655/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Lost Training Purchase Refunds - November 13",
+        "url": "https://us.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-november-13/2415068/1",
+        "sha256": "3a7399edfc59a7597f4c896b6d8627a4c8bb694f9f36b26dab02f31e0d45e348",
+        "published": "Sat, 14 Nov 2026 01:36:48 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-november-13/2415068/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 13, 2026",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/1",
+        "sha256": "aa4c9c74571d9bedcd1222aad59859c017c875584431345b678fe84571b1ae9a",
+        "published": "Fri, 06 Nov 2026 02:34:10 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/1",
         "kind": "new"
       }
     ],
-    "relevantChanges": 2
+    "relevantChanges": 3
   },
-  "checkedAt": "2026-11-13T13:11:21.093164Z",
+  "checkedAt": "2026-11-14T12:16:40.300195Z",
   "clientExtraction": {
     "status": "failed",
     "previousDataRetained": true

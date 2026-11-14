@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "products": {
+    "wowf": {
+      "source": "https://us.version.battle.net/wowf/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "3627b099867bfde3e37a17cf44f69cdc",
+        "CDNConfig": "3363ac656da5f261cdc675ab28b2744c",
+        "KeyRing": "",
+        "BuildId": "70938",
+        "VersionsName": "1.60.1.70938",
+        "ProductConfig": "0d21f2f209a32c57f8c9b838cb35fd0a"
+      },
+      "responseSHA256": "dba52275d6dd88b459081539e5f3d378588c9fdc596fcd6c5c1bdada00c4d534"
+    },
+    "wow_classic_beta": {
+      "source": "https://us.version.battle.net/wow_classic_beta/versions",
+      "row": {
+        "Region": "eu",
+        "BuildConfig": "ad1802f4455e427ed8b7769aab25b0c0",
+        "CDNConfig": "3363ac656da5f261cdc675ab28b2744c",
+        "KeyRing": "",
+        "BuildId": "70532",
+        "VersionsName": "1.60.1.70532",
+        "ProductConfig": "fcfd1bc39031f5921d00aee2d869adb5"
+      },
+      "responseSHA256": "2e5d9dcb6e88978f15b16cebb8f5b85801ddc62513a0f60d6b6117aea4fd2430"
+    }
+  },
+  "buildChanges": {},
+  "tables": {},
+  "documentationStatus": "not_assessed",
+  "hotfixCoverage": "downloaded_not_applied",
+  "limitations": [
+    "Server-only changes invisible to client data require in-game measurements.",
+    "A data delta without matching release notes is a candidate undocumented change, not proof."
+  ],
+  "raidbots": {
+    "wowf": {
+      "format": 9,
+      "build": 70938,
+      "records": 98863,
+      "bytes": 7609593,
+      "sha256": "96c56a2b6965ccb036934161c3119201b185fb55dfb44dbb54ef964f825cb909",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70938/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    },
+    "wow_classic_beta": {
+      "format": 9,
+      "build": 70532,
+      "records": 55213,
+      "bytes": 4237177,
+      "sha256": "07b22580aba86a03fa69f864b9ceb9137f5d3bb3294e36ce88cb7f5abcc1f0ab",
+      "status": "available",
+      "source": "https://storage.googleapis.com/raidbots-static/wow/70532/enUS/DBCache.bin",
+      "region": "NA",
+      "locale": "enUS",
+      "verification": "raidbots_verified_not_completeness_guarantee"
+    }
+  },
+  "extractionRequired": true,
+  "effectiveBuild": null,
+  "exportedCacheSHA256": null,
+  "blueposts": {
+    "status": "available",
+    "source": "https://theforeverera.com/en/blue.xml",
+    "baseline": false,
+    "changes": [
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 11, 2026 (#9)",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/9",
+        "sha256": "2e7f2ea5b200781bbc33da44cd01e1687d9d7404b594b341bfd188152b6d1117",
+        "published": "Sat, 14 Nov 2026 01:55:46 GMT",
+        "relevant": true,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-11-2026/639885/9",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 13, 2026 (#10)",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/10",
+        "sha256": "084467c63d8946e65fa33672e7f6f9e91c7fec298a49fc166a6bc3f2ae2ae9d2",
+        "published": "Sat, 14 Nov 2026 01:54:07 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/10",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Lost Training Purchase Refunds - 13 November",
+        "url": "https://eu.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-13-november/642655/1",
+        "sha256": "e683d4a4a2d84beef9a95967b7317c5d28f5268cec36e69326b1c15b35dae9b1",
+        "published": "Sat, 14 Nov 2026 01:36:54 GMT",
+        "relevant": false,
+        "id": "https://eu.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-13-november/642655/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: Lost Training Purchase Refunds - November 13",
+        "url": "https://us.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-november-13/2415068/1",
+        "sha256": "3a7399edfc59a7597f4c896b6d8627a4c8bb694f9f36b26dab02f31e0d45e348",
+        "published": "Sat, 14 Nov 2026 01:36:48 GMT",
+        "relevant": false,
+        "id": "https://us.forums.blizzard.com/en/wow/t/lost-training-purchase-refunds-november-13/2415068/1",
+        "kind": "new"
+      },
+      {
+        "title": "Kaivax: WoW: Forever Hotfixes - November 13, 2026",
+        "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/1",
+        "sha256": "aa4c9c74571d9bedcd1222aad59859c017c875584431345b678fe84571b1ae9a",
+        "published": "Fri, 06 Nov 2026 02:34:10 GMT",
+        "relevant": true,
+        "id": "https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-13-2026/2403040/1",
+        "kind": "new"
+      }
+    ],
+    "relevantChanges": 3
+  },
+  "checkedAt": "2026-11-14T12:16:40.300195Z",
+  "clientExtraction": {
+    "status": "failed",
+    "previousDataRetained": true
+  }
+}
