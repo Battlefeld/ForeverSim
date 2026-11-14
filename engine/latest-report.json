@@ -2,10 +2,10 @@
  "previous": "449d15344788740ad0364bf34ddd8b010ae3322f+22819ec6e1c64e7b09051a69",
  "ok": false,
  "branch": "master",
- "base": "42c391a9854db454362cdfc334874f4957dc3b1d",
+ "base": "fca3d825d9b5db4f3b550d16296329816bcc85b4",
  "descendsFromLock": true,
- "clientBuild": "1.60.1.70888",
- "levelData": "refreshed from PlayerExpectedStat 1.60.1.70888",
- "creatureFamilies": "refreshed from CreatureFamily 1.60.1.70888",
+ "clientBuild": "1.60.1.70938",
+ "levelData": "refreshed from PlayerExpectedStat 1.60.1.70938",
+ "creatureFamilies": "refreshed from CreatureFamily 1.60.1.70938",
  "error": "anchor hunter-live-pet-stats in sim/hunter/pets.go: found 0, expected 1"
 }
